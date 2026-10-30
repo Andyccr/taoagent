@@ -1,3 +1,7 @@
+# 帝国之城（开发中，未发布版本）
+
+侧栏新增「城 帝国之城」：成员的真实状态以三维城市呈现（太和殿、希腊学园、罗马工程区、现代都会），包含移交信使、待建用地、团队、最近动态与回放，画面不调用模型。说明见 [docs/EMPIRE-CITY.md](docs/EMPIRE-CITY.md)，Linux 开发环境见 [docs/BOX-DEV-SETUP.md](docs/BOX-DEV-SETUP.md)。
+
 # TaoAgent 4.3.0
 
 界面收敛为广场、成员、记忆和工作；自主活动优先响应到期议题和公开交流。详见 [VALIDATION-4.3.0.md](VALIDATION-4.3.0.md)。

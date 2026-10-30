@@ -102306,7 +102306,7 @@ function workspacePath(store, key, raw) {
 }
 async function processRun(command, args, cwd, signal, onOutput, shell = false, timeoutMs = 12e4, env2 = process.env) {
   return await new Promise((resolve2, reject) => {
-    const child = spawn3(command, args, { cwd, shell, env: env2, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] }), timer = setTimeout(() => stop(), timeoutMs);
+    const child = spawn3(command, args, { cwd, shell, env: env2, windowsHide: true, detached: process.platform !== "win32", stdio: ["ignore", "pipe", "pipe"] }), timer = setTimeout(() => stop(), timeoutMs);
     let output = "", stopped = false;
     function stop() {
       if (stopped) return;
@@ -102317,6 +102317,12 @@ async function processRun(command, args, cwd, signal, onOutput, shell = false, t
         killer.once("exit", (code) => {
           if (code !== 0) child.kill("SIGTERM");
         });
+      } else if (child.pid) {
+        try {
+          process.kill(-child.pid, "SIGTERM");
+        } catch {
+          child.kill("SIGTERM");
+        }
       } else child.kill("SIGTERM");
     }
     signal.addEventListener("abort", stop, { once: true });
@@ -104448,12 +104454,14 @@ var DISTRICTS = ["china", "rome", "greece", "metro"];
 var STALE_MS = 10 * 60 * 1e3;
 var COMPLETE_MS = 20 * 1e3;
 var HANDOFF_MS = 60 * 1e3;
+var EVENT_LIMIT = 60;
+var EVENT_TURNS = 12;
 var PRIORITY = ["waiting", "error", "stale", "working", "delegating", "complete", "unknown", "idle"];
 var TONE_COLORS = ["#c45c4a", "#3d6b8c", "#6b7c3a", "#8a6232"];
 var KEYWORDS = {
   china: ["\u534F\u8C03", "\u6D3E\u5DE5", "\u603B\u7ECF\u7406", "\u7F16\u6392", "\u7EDF\u7B79", "orchestrat", "coordinator", "delegat"],
   rome: ["\u4EE3\u7801", "\u7F16\u7A0B", "\u7A0B\u5E8F\u5458", "\u8C03\u8BD5", "\u6D4B\u8BD5", "\u5B9E\u73B0", "\u5DE5\u7A0B", "program", "engineer", "debug", "implement"],
-  greece: ["\u7814\u7A76", "\u8D44\u6599", "\u8BBA\u6587", "\u77E5\u8BC6", "\u8BC1\u636E", "\u63A8\u7406", "\u6587\u6863", "research", "academ", "library"],
+  greece: ["\u7814\u7A76", "\u8D44\u6599", "\u8BBA\u6587", "\u77E5\u8BC6", "\u8BC1\u636E", "\u63A8\u7406", "\u6587\u6863", "\u6838\u9A8C", "\u98CE\u9669", "\u8BC4\u5BA1", "\u6545\u4E8B", "\u5267", "\u89D2\u8272\u626E\u6F14", "research", "academ", "library", "story", "review"],
   metro: ["\u6570\u636E", "\u76D1\u63A7", "\u901A\u4FE1", "\u6307\u6807", "analytics", "monitor", "dashboard", "metric"]
 };
 var DETAILS = {
@@ -104526,7 +104534,13 @@ function civilizationSnapshot(store, now = Date.now(), runningIds = []) {
   const groups = sessions.filter((session) => session.kind === "group");
   const coordinators = /* @__PURE__ */ new Map();
   for (const group of groups) if (group.coordinatorId && agents.some((agent) => agent.id === group.coordinatorId)) coordinators.set(group.coordinatorId, (coordinators.get(group.coordinatorId) || 0) + 1);
-  const leadId = [...coordinators.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] || null;
+  const coordinatorLead = [...coordinators.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] || null;
+  const leadId = coordinatorLead || (agents.some((agent) => agent.id === "main") ? "main" : null);
+  const leadSource = coordinatorLead ? "coordinator" : leadId ? "main" : "none";
+  const events = [];
+  const pushEvent = (event) => {
+    if (Number.isFinite(Date.parse(event.at))) events.push(event);
+  };
   const signals = /* @__PURE__ */ new Map();
   const tasks2 = [];
   const handoffs = [];
@@ -104552,6 +104566,11 @@ function civilizationSnapshot(store, now = Date.now(), runningIds = []) {
       continue;
     }
     for (const item of turns) if (item.usage?.usageReports && Number.isFinite(item.usage.measuredTotalTokens)) reportedTokens = (reportedTokens || 0) + (item.usage.measuredTotalTokens || 0);
+    for (const item of turns.slice(-EVENT_TURNS)) for (const speaker of item.speakers) {
+      if (!members.has(speaker.agentId)) continue;
+      const kind = speaker.status === "running" ? "working" : speaker.status === "complete" ? "complete" : speaker.status === "failed" && !quietFailure(speaker.error) ? "error" : null;
+      if (kind) pushEvent({ id: session.id + ":" + item.id + ":" + (speaker.eventId || speaker.agentId) + ":" + kind, at: kind === "working" ? item.at : item.updatedAt, kind, agentId: speaker.agentId, toAgentId: null, sessionId: session.id, title: null });
+    }
     const turn = turns.at(-1);
     const age = turn ? now - Date.parse(turn.updatedAt) : Number.POSITIVE_INFINITY;
     const heartbeat = live2(store, session.id, running, heartbeats);
@@ -104579,6 +104598,7 @@ function civilizationSnapshot(store, now = Date.now(), runningIds = []) {
       for (const agentId of members) signals.set(agentId, consider(signals.get(agentId) || null, { activity: "unknown", freshness: "fresh", since: null, sessionId: session.id, taskId: null, taskTitle: null }));
     }
     for (const action of actionFile.ok ? actionFile.value : []) {
+      if (action.agentId && members.has(action.agentId) && action.at) pushEvent({ id: session.id + ":action:" + (action.id || action.at), at: action.at, kind: "waiting", agentId: action.agentId, toAgentId: null, sessionId: session.id, title: null });
       if (action.status !== "pending" || !action.agentId || !members.has(action.agentId)) continue;
       waitingForUser++;
       signals.set(action.agentId, consider(signals.get(action.agentId) || null, { activity: "waiting", freshness: "fresh", since: action.at || null, sessionId: session.id, taskId: null, taskTitle: null }));
@@ -104593,6 +104613,9 @@ function civilizationSnapshot(store, now = Date.now(), runningIds = []) {
       const review = task.requireReview && task.status === "complete" && task.review?.status === "awaiting_review";
       const status = task.status === "pending" ? "pending" : review ? "review" : "complete";
       tasks2.push({ id: task.id, sessionId: session.id, title: clip(task.title || task.id, 80), assigneeId: task.assigneeId, fromAgentId: task.fromAgentId, status, at: task.at });
+      if (task.fromAgentId && task.assigneeId && task.fromAgentId !== task.assigneeId) pushEvent({ id: session.id + ":task:" + task.id, at: task.at, kind: "handoff", agentId: task.fromAgentId, toAgentId: task.assigneeId, sessionId: session.id, title: clip(task.title || task.id, 80) });
+      const delivered = task.status === "complete" ? task.resultHistory?.at(-1)?.at : void 0;
+      if (delivered && task.assigneeId) pushEvent({ id: session.id + ":task:" + task.id + ":done", at: delivered, kind: "delivered", agentId: task.assigneeId, toAgentId: task.fromAgentId || null, sessionId: session.id, title: clip(task.title || task.id, 80) });
       const handed = Date.parse(task.at), recent = Number.isFinite(handed) && now - handed <= HANDOFF_MS;
       if (recent && task.fromAgentId !== task.assigneeId && task.status === "pending") {
         handoffs.push({ id: session.id + ":" + task.id, fromAgentId: task.fromAgentId, toAgentId: task.assigneeId, taskId: task.id, at: task.at });
@@ -104612,6 +104635,7 @@ function civilizationSnapshot(store, now = Date.now(), runningIds = []) {
     return rows;
   });
   const waitingTasks = tasks2.filter((task) => task.status !== "complete").length;
+  const known = new Set(citizens.map((item) => item.id));
   return {
     generatedAt: new Date(now).toISOString(),
     source: "live",
@@ -104628,7 +104652,10 @@ function civilizationSnapshot(store, now = Date.now(), runningIds = []) {
     buildings,
     tasks: tasks2.filter((task) => task.status !== "complete").slice(0, 40),
     tasksState,
-    handoffs
+    handoffs,
+    events: events.filter((event) => known.has(event.agentId)).sort((a, b) => Date.parse(b.at) - Date.parse(a.at) || a.id.localeCompare(b.id)).slice(0, EVENT_LIMIT),
+    teams: groups.map((group) => ({ id: group.id, name: clip(group.title || group.id, 40), memberIds: store.groupMembers(group.id).filter((id2) => known.has(id2)), coordinatorId: group.coordinatorId && known.has(group.coordinatorId) ? group.coordinatorId : null, updatedAt: group.updatedAt })).filter((team) => team.memberIds.length).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
+    leadSource
   };
 }
 function citizen(agent, leadId, roles, signal, placed, tasks2) {
