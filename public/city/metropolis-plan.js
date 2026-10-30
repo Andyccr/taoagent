@@ -16,7 +16,7 @@ export const HARBOUR = { from: 20, to: 70, shore: 256 };
 const WONDERS = [
   // Larger ceremonial footprints (axis-aligned w×d); plazas clear lots via circleHitsBox.
   { id: 'palace', kind: 'palace', name: '紫宸宫', angle: 180, r: 96, w: 92, d: 118, rotY: Math.PI, district: 'chinese' },
-  { id: 'pagoda', kind: 'pagoda', name: '万佛塔', angle: 148, r: 118, w: 42, d: 42, rotY: 0, district: 'chinese' },
+  { id: 'pagoda', kind: 'pagoda', name: '万佛塔', angle: 138, r: 128, w: 40, d: 40, rotY: 0, district: 'chinese' },
   { id: 'wall', kind: 'wall', name: '万里城关', angle: 180, r: 186, w: 110, d: 40, rotY: 0, district: 'chinese' },
   { id: 'acropolis', kind: 'acropolis', name: '雅典卫城', angle: 270, r: 108, w: 78, d: 62, rotY: Math.PI / 2, district: 'greek' },
   { id: 'colosseum', kind: 'colosseum', name: '大斗兽场', angle: 58, r: 108, w: 58, d: 48, rotY: 0, district: 'roman' },
