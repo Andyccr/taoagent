@@ -2,7 +2,7 @@
 
 ## 帝国之城
 
-侧栏新增「城 帝国之城」：成员的真实状态以三维城市呈现（太和殿、希腊学园、罗马工程区、现代都会），包含移交信使、待建用地、团队、最近动态与回放，画面不调用模型。主助手默认坐镇中央大殿。说明见 [docs/EMPIRE-CITY.md](docs/EMPIRE-CITY.md)，Linux 开发环境见 [docs/BOX-DEV-SETUP.md](docs/BOX-DEV-SETUP.md)，验证见 [VALIDATION-4.4.0.md](VALIDATION-4.4.0.md)。
+侧栏新增「城 帝国之城」：成员的真实状态以三维城市呈现（太和殿、希腊学园、罗马工程区、现代都会），外围是一座带 8 座奇观、约 730 块街区的完整城市，新成员自动入驻可入驻用地；包含移交信使、团队、最近动态与回放，画面不调用模型。主助手默认坐镇中央大殿。说明见 [docs/EMPIRE-CITY.md](docs/EMPIRE-CITY.md)，Linux 开发环境见 [docs/BOX-DEV-SETUP.md](docs/BOX-DEV-SETUP.md)，验证见 [VALIDATION-4.4.0.md](VALIDATION-4.4.0.md)。
 
 # TaoAgent 4.3.0
 
