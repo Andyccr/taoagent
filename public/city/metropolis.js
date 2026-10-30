@@ -23,7 +23,7 @@ import { buildSupertall } from './wonder-supertall.js';
 import { buildCityWall } from './wonder-wall.js';
 
 const FILLERS = { chinese: CHINESE_FILLERS, greek: GREEK_FILLERS, roman: ROMAN_FILLERS, modern: MODERN_FILLERS, common: COMMON_FILLERS, outer: OUTER_FILLERS };
-const WONDER_BUILDERS = { palace: buildPalace, pagoda: buildGreatPagoda, acropolis: buildAcropolis, colosseum: buildColosseum, pantheon: buildPantheon, arch: buildTriumphalArch, supertall: buildSupertall, wall: () => buildCityWall(72) };
+const WONDER_BUILDERS = { palace: buildPalace, pagoda: buildGreatPagoda, acropolis: buildAcropolis, colosseum: buildColosseum, pantheon: buildPantheon, arch: buildTriumphalArch, supertall: buildSupertall, wall: () => buildCityWall(100) };
 const GROUND = { chinese: '#c9c19f', greek: '#cfcab4', roman: '#c8b48e', modern: '#b9bcb6', mixed: '#c4c0a4', blend: '#c9c3a6', harbour: '#b7c2b0', industrial: '#b5b0a4', suburb: '#b8bf98', country: '#a9b98a', farmland: '#a9b98a' };
 const PARK = { park: '#8fb36a', plaza: '#d6cdb6', market: '#cdbf9f' };
 const CROP = ['#c9b458', '#8fae5a', '#a7c46a', '#b98e4f'];
