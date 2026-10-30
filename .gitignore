@@ -1,0 +1,12 @@
+/home/
+/backups/
+/node_modules*
+/.next/
+/.taoagent/
+/.validation/
+/.test-tmp/
+*.log
+.env*
+/.audit/
+/.cli-check-*/
+/.test-npm-cache/

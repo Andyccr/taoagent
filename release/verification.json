@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-23",
+  "version": "3.8.0",
+  "previousVerification": "verification-3.7.0.json",
+  "tests": {
+    "passed": 156,
+    "command": "npm test",
+    "failed": 0,
+    "newConcurrencyRegressions": 11
+  },
+  "syntax": "npm run lint:baseline passed",
+  "build": "npm run build passed",
+  "bundleSHA256": "614564a8a50ec2d59323093c7307286c22ea3b050135deee67a39d3057708a04",
+  "groupRuntime": {
+    "parallelContextProvenance": true,
+    "stopDrainsAllLanes": true,
+    "persistedBudgetEnforced": true,
+    "serializedExternalEffectsPerChat": true,
+    "maxConcurrentLanes": 2,
+    "independentApprovalWaiters": true,
+    "maximumListenersOfferedPerReply": 2,
+    "listenersShareLaneLimit": true,
+    "coalescedListenerOpportunities": true,
+    "resumeDoesNotReplayCompletedSpeeches": true,
+    "interjectionSupersedesOldDrafts": true,
+    "immediateDeliveryWakeup": true,
+    "oneLanePerAgent": true,
+    "departedMembersCannotPublish": true
+  },
+  "interface": {
+    "interleavingAndDiscardedFrameRegressionTests": true,
+    "animationFrameBatchedPainting": true,
+    "eventScopedStreamBuffers": true,
+    "browserVisualInspectionThisRevision": false
+  },
+  "liveLocalHTTP": "OpenAI-compatible, Anthropic-compatible and Gemini-compatible synthetic streaming tests passed",
+  "portableZipRestoration": "passed",
+  "realProviderCalledThisRevision": false,
+  "realModelQualityMeasured": false,
+  "typescriptFullTypeCheckThisRevision": false
+}

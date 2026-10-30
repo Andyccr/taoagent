@@ -1,0 +1,514 @@
+{
+  "version": "4.1.0",
+  "platform": "win32",
+  "arch": "x64",
+  "builtAt": "2026-10-28T18:15:40.052Z",
+  "node": "v24.19.0",
+  "files": [
+    {
+      "path": "启动 Taoagent.cmd",
+      "bytes": 43,
+      "sha256": "bbef5e9fbf82c1e93978642a023d59f12ce38fdb731d1822e92d0cd3c78aefda"
+    },
+    {
+      "path": "启动.sh",
+      "bytes": 76,
+      "sha256": "7961fd82b3f19123befc230b95c42d74557d0784fa3032a367da8f44a7bd0531"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 1690,
+      "sha256": "b1ba531f2658d8fd09a865e1330ef18ad6d0af555630904384c238c415e09caf"
+    },
+    {
+      "path": "app.ts",
+      "bytes": 39887,
+      "sha256": "95879f1ebcc881201aa8c9dbee0c951ae0dcca7d5d8f6075ecdae420f055bf40"
+    },
+    {
+      "path": "audience.ts",
+      "bytes": 7933,
+      "sha256": "adc052ad062f639176811901857777de5a324f7117a0856b83f5f0240e403bed"
+    },
+    {
+      "path": "AUDIT.md",
+      "bytes": 27479,
+      "sha256": "a02c783aeb7391a5759144db14c3d4442a1c2a4d0aadb336af4f9c7012511e81"
+    },
+    {
+      "path": "build.mjs",
+      "bytes": 1580,
+      "sha256": "3e070192d81bed9be4af9eb258f48ff0901e5821adff417ec39e952083708422"
+    },
+    {
+      "path": "Check Taoagent.cmd",
+      "bytes": 116,
+      "sha256": "72b24b41cfcc311295330eee1172baa22cbe5fe70a16f8330d8505e741414d15"
+    },
+    {
+      "path": "CLAUDE.md",
+      "bytes": 1690,
+      "sha256": "b1ba531f2658d8fd09a865e1330ef18ad6d0af555630904384c238c415e09caf"
+    },
+    {
+      "path": "COLLABORATION-RELEASE.md",
+      "bytes": 9461,
+      "sha256": "38b023ac86fc9dce33a8bbc84903c3283deab6968698ac40c985f994cae1e93c"
+    },
+    {
+      "path": "collaboration.ts",
+      "bytes": 3972,
+      "sha256": "6d6e755a33f73176e18492ea5e20a2ba1964bf2ec1985887b86bb47fb9ce1279"
+    },
+    {
+      "path": "COMMUNICATION.md",
+      "bytes": 11769,
+      "sha256": "58a842904d2d0949853df3f0b36f74e837c25e06a0b90d1520244bed0f38e58f"
+    },
+    {
+      "path": "communication.ts",
+      "bytes": 7725,
+      "sha256": "60a99d7d5cf8422f85ac584dd3180e97dc7f02b3ef90a6502cd55d8f8d148fec"
+    },
+    {
+      "path": "context.ts",
+      "bytes": 3532,
+      "sha256": "6ba00bebd30d356d4428537cb37793f3d28b6fe4de252480db1d1d60106485fc"
+    },
+    {
+      "path": "defaults.ts",
+      "bytes": 8415,
+      "sha256": "5e42b232fb26af4d1decae325d139e1b36f06c495ebf0f120f686f9933dd62dd"
+    },
+    {
+      "path": "EMERGENT-GROUP-CHAT-DESIGN.md",
+      "bytes": 23308,
+      "sha256": "fa0f4cb440dbd7ec4306376e5048570c4dc87295f05ee99d64a19fd3ce2153aa"
+    },
+    {
+      "path": "evolution.ts",
+      "bytes": 22913,
+      "sha256": "bc3906b97c68f27dc228f2fddc0da7d9227f75410c15c20cf4c4ddc283005f7f"
+    },
+    {
+      "path": "execution.ts",
+      "bytes": 24332,
+      "sha256": "06b60eaab74add3f926f8e4a9a49e49c4d9ee5b4decdeca8bba782f0ad3b5cf3"
+    },
+    {
+      "path": "launcher.mjs",
+      "bytes": 6713,
+      "sha256": "f21e796ee8a69f99498e06edcb3202dcb1be125ad718b46ef6eecc72620fe363"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 1100,
+      "sha256": "62d63a87dd3ce76d51ed180846cc29d4def477511af6dba5133f14f5437af7a2"
+    },
+    {
+      "path": "migrate.ts",
+      "bytes": 9726,
+      "sha256": "5de5bde8619c21c25aae8e936c3eb054b83879ac65f6e828a0a1f33f6b8802b3"
+    },
+    {
+      "path": "models.ts",
+      "bytes": 4509,
+      "sha256": "c5a9ad6c089aea3040f88e24d1b6ebb5384f467cb9022c879912e963986258fc"
+    },
+    {
+      "path": "NOTICE",
+      "bytes": 391,
+      "sha256": "929c0d5fc96ed72407cd3995a4f5d1f6f1564b81da572c0a1b99f82c0d671025"
+    },
+    {
+      "path": "OPENBOT-OPTIMIZATION.md",
+      "bytes": 6918,
+      "sha256": "0cbf939f6a1bc8e65ba8fb1e420f93a429cc41d16d6bc103638ecc242ab953e1"
+    },
+    {
+      "path": "opencode-go.ts",
+      "bytes": 1235,
+      "sha256": "0b0f835f1bd56600946983a155295e380995d050e7ea457919a76f81a79e64f9"
+    },
+    {
+      "path": "pack-windows.mjs",
+      "bytes": 4370,
+      "sha256": "a7389b7b0292de53b8117df14593cc4da11f6e20a893ed91506b8cc86540b75a"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 59938,
+      "sha256": "de83a0dd8f1381ee5e65d2310162dc226ccb3f9b30244deae904160a8e86bee1"
+    },
+    {
+      "path": "package.json",
+      "bytes": 2402,
+      "sha256": "a05c3f1732aa6c8c7602b72b1023115979bbda172fdbee06dd1f96626da44a8d"
+    },
+    {
+      "path": "pi.ts",
+      "bytes": 9065,
+      "sha256": "7871b47a5a5be566884a5f9166898aa8c8e45b50b33e808ae31ac3a9f62a3466"
+    },
+    {
+      "path": "portable.ts",
+      "bytes": 6605,
+      "sha256": "e2826e54d2c5b42b318248bdcf0d10cbfec1785f98c303324c4ac986e34a17ef"
+    },
+    {
+      "path": "public/appearance-boot.js",
+      "bytes": 780,
+      "sha256": "033e9adb410cf8be93b17cf245567bbf18f77550086ef34e6050516793d249ea"
+    },
+    {
+      "path": "public/client.js",
+      "bytes": 154703,
+      "sha256": "0d552939e5311c21bef1b218d1c0f6e2ea6557e10c88e859704a3513e5efce78"
+    },
+    {
+      "path": "public/index.html",
+      "bytes": 36674,
+      "sha256": "f0b2fa41080763e7b76ddcf13283f395334f326733563896ac397fb6094b261e"
+    },
+    {
+      "path": "public/style.css",
+      "bytes": 69321,
+      "sha256": "8abb2a2f091818bc60c88679d007f06d1b4035c45e707522912b5e3046dc671f"
+    },
+    {
+      "path": "public/town.css",
+      "bytes": 9523,
+      "sha256": "9168881e355b8a1d17041000ecaa8dd13397e6500fbf0ccf810aa648b11ce6c8"
+    },
+    {
+      "path": "public/town.js",
+      "bytes": 26567,
+      "sha256": "41725b65adc6a4fea48a88cf0ad6d4d22f9c43647a231cfa5450c953aa70e7fc"
+    },
+    {
+      "path": "queue.ts",
+      "bytes": 13169,
+      "sha256": "9cd9d6b47eeae0b0f41a9936812678b9374886fecfcd9fc53a6486274cf2cc83"
+    },
+    {
+      "path": "README.md",
+      "bytes": 38008,
+      "sha256": "5f7370cd42905193c4f1b808c2aae96c3bd2bafa22dfff5fce2454564a7bb14d"
+    },
+    {
+      "path": "REAL-DAILY-4.0.0.json",
+      "bytes": 21995,
+      "sha256": "41e6a5f640ce7b67eda474a3d46bea5727a6962b98b1c8fa22c912c11649c640"
+    },
+    {
+      "path": "REAL-UNIFIED-4.1.0.json",
+      "bytes": 32650,
+      "sha256": "4c4eb0fd600500a754ff28c2aede13f34bd072406ef7b0e92b75daf4279e849c"
+    },
+    {
+      "path": "reasoning.ts",
+      "bytes": 8113,
+      "sha256": "3c16a81289aeefcb59afd338d513d2b22fe8a177319a5f6bb087251fdc82fd20"
+    },
+    {
+      "path": "release/build.json",
+      "bytes": 1494,
+      "sha256": "18d5da491659a5cf04038de4c3ab882b1df01c528188cb19f9ad7f608e54767d"
+    },
+    {
+      "path": "release/PI-LICENSE",
+      "bytes": 1069,
+      "sha256": "0457f5bcec3b3b211605dfb5d1a49042fd638f3686a410fe099c24a25af13c48"
+    },
+    {
+      "path": "release/server.mjs",
+      "bytes": 4457586,
+      "sha256": "8399ac7bb979849832aa7262590dc091990d9cedc96cfb1ef4247d3174853881"
+    },
+    {
+      "path": "release/server.mjs.LEGAL.txt",
+      "bytes": 1032,
+      "sha256": "a7056cd777cf91d23cc3c3e913837b85f2afb9a9bfb268ed247a1f455de3edd9"
+    },
+    {
+      "path": "release/THIRD-PARTY-NOTICES.txt",
+      "bytes": 117506,
+      "sha256": "ccdcb49e7fac4095a121cbe39e7e3993e6bf3761e3cfed528d0e1f445004f413"
+    },
+    {
+      "path": "runtime.ts",
+      "bytes": 59459,
+      "sha256": "db990926912ae522eb4218591e3d6105d8bce9e8e4d8e07086dc8cfa43836a1a"
+    },
+    {
+      "path": "runtime/LICENSE.txt",
+      "bytes": 157606,
+      "sha256": "148eacf7863ef4329224a29398623077200a27194aa075569faf4a0a85566ca5"
+    },
+    {
+      "path": "runtime/node.exe",
+      "bytes": 92825416,
+      "sha256": "3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237"
+    },
+    {
+      "path": "social-state.ts",
+      "bytes": 21889,
+      "sha256": "435f491f1cae86510fd88e2322f37c59716c50c3d8ade88a9bd2b804ae126b4a"
+    },
+    {
+      "path": "social.ts",
+      "bytes": 11943,
+      "sha256": "0cda058661cace9fc60940ecc932722960cc560608be375b1c58ea47cd3857e7"
+    },
+    {
+      "path": "Start Taoagent.cmd",
+      "bytes": 254,
+      "sha256": "3db37b493a918d7282755490b98c9201fe1c692cb5b06c71097682adeab9334f"
+    },
+    {
+      "path": "Stop Taoagent.cmd",
+      "bytes": 315,
+      "sha256": "9d62975e400470109703c39cb775772427fa493492f4a70f83b7e7b6b1b40e37"
+    },
+    {
+      "path": "store.ts",
+      "bytes": 79284,
+      "sha256": "bca399cbce91a9536b468241d3aac802ba9fe3f9910893b7aeb0dd63302bba44"
+    },
+    {
+      "path": "Taoagent.exe",
+      "bytes": 5120,
+      "sha256": "8dd1a175feac01349687dd9d858f97b60c091d7042d6cee44d26bc5557ed9e38"
+    },
+    {
+      "path": "tests/agents.test.ts",
+      "bytes": 16026,
+      "sha256": "9aca358b65a16db20b604a7a6397e07f2754826ab16b9117a691dd864ac8c8cb"
+    },
+    {
+      "path": "tests/app.test.ts",
+      "bytes": 17127,
+      "sha256": "79167da7a4f7bc4ffa1dc8b94d1fe29093f125e9653a7d9e12a8b4cef54c413e"
+    },
+    {
+      "path": "tests/appearance.test.ts",
+      "bytes": 4475,
+      "sha256": "a0043a8ada904dd43e1f1caf06b9ba5bb17b2ef85676b71a3f4ea70d8e8acaf5"
+    },
+    {
+      "path": "tests/audit.test.ts",
+      "bytes": 9292,
+      "sha256": "2846bdf3691fc59bd7513c72252c7fe409276100d0f2a6adae6f58bfdbf8d1aa"
+    },
+    {
+      "path": "tests/autonomy.test.ts",
+      "bytes": 11684,
+      "sha256": "f57cc32c546ba223cf03102e6b4ca105752bbebee83332b5e1281bc2803d95fc"
+    },
+    {
+      "path": "tests/cli-bundle.test.mjs",
+      "bytes": 2729,
+      "sha256": "ddaae4bbff99694aa58aa84153623f6fc73ecbdd14b425d5f35e069820a6ffe6"
+    },
+    {
+      "path": "tests/client-races.test.ts",
+      "bytes": 6699,
+      "sha256": "6cd7da39059a073c2b8d8360946767735928b5e863a5b087e6ac35dc9370e058"
+    },
+    {
+      "path": "tests/collaboration-system.test.ts",
+      "bytes": 17119,
+      "sha256": "05c20500703c4e40f0e305338c58308b9f534078dac9245e4bb3c72c78b19af1"
+    },
+    {
+      "path": "tests/collective.test.ts",
+      "bytes": 16324,
+      "sha256": "b55857f9312b46f53849cbe99854f35ec65579b4e5c9e220c15776d00cd6bc70"
+    },
+    {
+      "path": "tests/communication.test.ts",
+      "bytes": 13591,
+      "sha256": "a4927f8c10b62e0f1f870e23151b0d338afa11e0a14e7d49ea4cad6117850261"
+    },
+    {
+      "path": "tests/concurrent-chat.test.ts",
+      "bytes": 21851,
+      "sha256": "090787d318f0c9f201475e167cdad24a3c9e29fa90bd9e705699663c53684884"
+    },
+    {
+      "path": "tests/continuity.test.ts",
+      "bytes": 13190,
+      "sha256": "5332cb96bafe40a4cd4aa40129862eea34998913a19903fe2672950a88a29ae1"
+    },
+    {
+      "path": "tests/conversation-flow.test.ts",
+      "bytes": 11093,
+      "sha256": "26867d19461fea98c291753a3ef90012633d758c558fee3c9ed36f0cfe88ad9e"
+    },
+    {
+      "path": "tests/coordination.test.ts",
+      "bytes": 13214,
+      "sha256": "f8adce704e142813b762a6ca53601644650028841a6e3ff360629dce5f1c06f3"
+    },
+    {
+      "path": "tests/detail-polish.test.ts",
+      "bytes": 8908,
+      "sha256": "fa61db6f513d539e1f9f55c5a0b3eddb8753cf1d0652565f473e9f6dcb82cea9"
+    },
+    {
+      "path": "tests/emergence.test.ts",
+      "bytes": 10201,
+      "sha256": "c9fcafd10eda7351b31941d10292de2fe9fa75f950ef8dcfd2500b45182e8105"
+    },
+    {
+      "path": "tests/evolution.test.ts",
+      "bytes": 16699,
+      "sha256": "78832043a63cf66c428f8b43b2ab8962be58e0c6b50cec0fd6d4f743de65f46f"
+    },
+    {
+      "path": "tests/group-lifecycle.test.ts",
+      "bytes": 13604,
+      "sha256": "7e871f6ce5101ce735b336acf66b499d9cfea03e33631a1734cad53c8cb04329"
+    },
+    {
+      "path": "tests/improvement-api.test.ts",
+      "bytes": 2247,
+      "sha256": "51eb4f32eac21a0633290358c23b94ece998fc40fc0a9e38b8f7f8d62741ac6d"
+    },
+    {
+      "path": "tests/interface-state.test.ts",
+      "bytes": 8287,
+      "sha256": "b21b11d4f39d65fd359573b913ab528d02deb4b9d1e2e83faae6b098c1c647ee"
+    },
+    {
+      "path": "tests/memory-turns.test.ts",
+      "bytes": 13043,
+      "sha256": "14e3f9e7965ab6787a0c1298c187b8d2a11572b5aa03fa8431207ab0f9a59e83"
+    },
+    {
+      "path": "tests/minimal-settings.test.ts",
+      "bytes": 2368,
+      "sha256": "51b6c45a54ebc9c32bcdff2619eabb8ef7f9de9fd82091987c7d3bdb53f71a0c"
+    },
+    {
+      "path": "tests/model-conflicts.test.ts",
+      "bytes": 4561,
+      "sha256": "14396694e68096a3a5f814541e02fad342dd28fbc6269ea919d3ea79626c647b"
+    },
+    {
+      "path": "tests/natural.test.ts",
+      "bytes": 14112,
+      "sha256": "41e7c411bd72202d376dbb3761afd7a767496c2896e41a9784f3d7e2fae7e567"
+    },
+    {
+      "path": "tests/queue.test.ts",
+      "bytes": 10918,
+      "sha256": "b3f9594b11fe35d8703ae31af0d1dc07885ae32bdc1e367c7bacd42800b6725d"
+    },
+    {
+      "path": "tests/reasoning.test.ts",
+      "bytes": 10635,
+      "sha256": "1659fb7a9fe478d03f49076da3d9c8633f717982cc1bcb7abdd6befb37bb6291"
+    },
+    {
+      "path": "tests/recovery.test.ts",
+      "bytes": 13731,
+      "sha256": "232022aa102780aa2d087f90153583c6f481811ea502d25be973cbc5c6996c13"
+    },
+    {
+      "path": "tests/self-review.test.ts",
+      "bytes": 10826,
+      "sha256": "2fd59912f7f0af65725fde013ac6e76c063aa606ba504ee093afb9ce55accf40"
+    },
+    {
+      "path": "tests/social.test.ts",
+      "bytes": 14167,
+      "sha256": "ee3ede89c683e5440081d8b143b4a8e91d15430af4a6994074ee1914bb75f9cf"
+    },
+    {
+      "path": "tests/source-paging.test.ts",
+      "bytes": 1734,
+      "sha256": "8642efcca1450dc30cac4a0c7b6b80386b07496fba03eea0c2ed9a3115d4b515"
+    },
+    {
+      "path": "tests/system-integrity.test.ts",
+      "bytes": 6046,
+      "sha256": "f93be46a4c605ee55e0aa9fef38cf616366ddffcc961cfebcedab4751f57bfd4"
+    },
+    {
+      "path": "tests/unified.test.ts",
+      "bytes": 7596,
+      "sha256": "53109f8d1cf896dcc192c1cfe92aea7fbd7daa5e7c504bb5c17cf7e9c47cb776"
+    },
+    {
+      "path": "tests/windows-release.test.mjs",
+      "bytes": 3477,
+      "sha256": "aa2315610f5404586db88f65e3ad21a3d048fc1c03915d2fbfc7954984c63823"
+    },
+    {
+      "path": "tests/work.test.ts",
+      "bytes": 10723,
+      "sha256": "42195d1c3dd8ef27ca85890d5342f83ce5228f9ebd8f85b3ec906dfe33605015"
+    },
+    {
+      "path": "tests/workspace-discovery.test.ts",
+      "bytes": 7673,
+      "sha256": "d40f416975c04840b43831a589b6b89c6a15d190af598cb7615f9fa9e847907b"
+    },
+    {
+      "path": "tests/workspace-sync.test.ts",
+      "bytes": 2123,
+      "sha256": "efd049b3bbc6ef34be7df863b7d9b13d6dd629fee2214759278e17799ec12833"
+    },
+    {
+      "path": "TOWN-GUIDE.md",
+      "bytes": 9149,
+      "sha256": "813dec5a4f18d2f5f22ed1378b81510aec7c45b6ac045fff3581c8795386e557"
+    },
+    {
+      "path": "VALIDATION-3.13.0.md",
+      "bytes": 2461,
+      "sha256": "c71d13f1789ced7cb638304c6887f49d26068da97720eb9b8f64ffd6a879b880"
+    },
+    {
+      "path": "VALIDATION-3.14.0.md",
+      "bytes": 3962,
+      "sha256": "1983ee9e77f32f9a2ec5b45f6f1f8a459e8f81048c465c7019e163cd48ec5ac6"
+    },
+    {
+      "path": "VALIDATION-4.0.0.md",
+      "bytes": 4547,
+      "sha256": "88b86c57a06dd9808f9378c91c0a5b5466b0a100c680a8d030160302e7ff9289"
+    },
+    {
+      "path": "VALIDATION-4.1.0.md",
+      "bytes": 4543,
+      "sha256": "bf94ffccdb2260d26578b9b37eda5c037dc6b82a4f5a0581830376525732e70f"
+    },
+    {
+      "path": "WINDOWS-README.md",
+      "bytes": 4987,
+      "sha256": "33a09f7630baea73609180ca9a071c79a0881312ed7be73bfa666c315c9b44df"
+    },
+    {
+      "path": "windows/Launcher.cs",
+      "bytes": 1603,
+      "sha256": "64846f672e0fd2c9546c52da00241341f7394e219360d9a736f13d785f7ccd6d"
+    },
+    {
+      "path": "windows/verify-package.mjs",
+      "bytes": 9439,
+      "sha256": "30b4067fdc564956196f8e0e9589742e997998b8e12872b335e307012d181859"
+    },
+    {
+      "path": "work.ts",
+      "bytes": 12643,
+      "sha256": "f920533677be17c4f19fb6c848d8ac70f9711a6d1d7dc166ba88675fbd3d3050"
+    },
+    {
+      "path": "workspace.ts",
+      "bytes": 5123,
+      "sha256": "77a14d89bee1dba3ea42403f637a66f695b64da247f0069dd48e9658f1da257e"
+    }
+  ]
+}

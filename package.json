@@ -1,0 +1,29 @@
+{
+  "name": "taoagent",
+  "version": "4.3.0",
+  "private": true,
+  "type": "module",
+  "description": "Bot 的独立日常、个人经历、共同讨论与真实协作",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "scripts": {
+    "start": "node release/server.mjs",
+    "dev": "node --experimental-strip-types --disable-warning=ExperimentalWarning app.ts",
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-concurrency=1 tests/*.test.*",
+    "lint:baseline": "node --check --experimental-strip-types queue.ts && node --check --experimental-strip-types workspace.ts && node --check --experimental-strip-types app.ts && node --check --experimental-strip-types work.ts && node --check --experimental-strip-types collaboration.ts && node --check --experimental-strip-types communication.ts && node --check --experimental-strip-types reasoning.ts && node --check --experimental-strip-types audience.ts && node --check --experimental-strip-types context.ts && node --check --experimental-strip-types opencode-go.ts && node --check --experimental-strip-types store.ts && node --check --experimental-strip-types models.ts && node --check --experimental-strip-types runtime.ts && node --check public/client.js && node --check --experimental-strip-types portable.ts && node --check --experimental-strip-types migrate.ts && node --check --experimental-strip-types pi.ts && node --check --experimental-strip-types execution.ts && node --check --experimental-strip-types evolution.ts && node --check --experimental-strip-types defaults.ts && node --check build.mjs && node --check launcher.mjs && node --check pack-windows.mjs && node --check windows/verify-package.mjs && node --check --experimental-strip-types social-state.ts && node --check --experimental-strip-types social.ts && node --check public/town.js && node --check --experimental-strip-types space.ts && node --check --experimental-strip-types roleplay.ts && node --check public/square.js && node --check --experimental-strip-types civilization.ts && node --check public/civilization.js && node --check public/city-entry.js && node --check public/city.bundle.js",
+    "pack:portable": "node --experimental-strip-types --disable-warning=ExperimentalWarning portable.ts",
+    "migrate": "node --experimental-strip-types --disable-warning=ExperimentalWarning migrate.ts",
+    "build": "node build.mjs",
+    "pack:windows": "node --experimental-strip-types --disable-warning=ExperimentalWarning pack-windows.mjs"
+  },
+  "dependencies": {
+    "@earendil-works/pi-agent-core": "1.3.0",
+    "@earendil-works/pi-ai": "1.3.0",
+    "@earendil-works/pi-mcp": "1.3.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "three": "^0.180.0"
+  }
+}

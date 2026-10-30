@@ -1,0 +1,350 @@
+{
+  "date": "2026-10-22",
+  "version": "3.7.0",
+  "tests": {
+    "passed": 130,
+    "failed": 0,
+    "addedRegression": 9,
+    "targetedInterfaceTests": 14,
+    "log": ".validation/ui-repair-3.7-tests.log"
+  },
+  "syntax": "passed",
+  "typescript": "Changed interface regression tests strict check passed; runtime TypeScript unchanged from prior strict application check.",
+  "bundleSHA256": "bb81725c7b749bd573b2b58ec7f8733bbe2fb986922ae30221170cb36e06f960",
+  "contacts": {
+    "roleKeywordRecommendations": true,
+    "measuredDirectedContacts": true,
+    "contactReasonAndReasoningReferences": true,
+    "noAccuracyOrTrustClaim": true
+  },
+  "publicReasoning": {
+    "immutableVersions": true,
+    "authorOnlyRevision": true,
+    "staleRevisionRejected": true,
+    "existingDependenciesOnly": true,
+    "challengeAndDependencyPropagation": true,
+    "sourceIsolation": true,
+    "idempotentReceipts": true,
+    "budgetedContext": true,
+    "completeHistoryPagination": true,
+    "hiddenChainOfThoughtExposed": false
+  },
+  "communication": {
+    "typedIntents": true,
+    "causalReplyAndTopicValidation": true,
+    "publicEvidenceOnly": true,
+    "exactDuplicateSuppression": true,
+    "preservesNewEvidenceAndCodeWhitespace": true,
+    "distinctReplyTargetsPreserved": true,
+    "openQuestionsTracked": true,
+    "userInterjectionPriority": true,
+    "durableEnvelopeRecovery": true,
+    "localHTTP": true,
+    "realModelQualityMeasured": false
+  },
+  "research": [
+    "https://arxiv.org/abs/2410.02506",
+    "https://aclanthology.org/2025.emnlp-main.623/",
+    "https://arxiv.org/abs/2305.14325"
+  ],
+  "browser": {
+    "verifiedThisRevision": true,
+    "syntheticDataOnly": true,
+    "realProviderCalledThisRevision": false,
+    "screenshots": [
+      ".validation/ui-3.7.0-confirm.jpg",
+      ".validation/ui-3.7.0-panels.jpg",
+      ".validation/ui-3.7.0-mobile-memory.jpg",
+      ".validation/ui-3.7.0-short-screen.jpg"
+    ],
+    "viewports": [
+      {
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "width": 390,
+        "height": 844
+      },
+      {
+        "width": 390,
+        "height": 560
+      }
+    ],
+    "faultInjection": {
+      "profileAndAgentDelayMs": 1500,
+      "profileSaveDelayMs": 1500,
+      "initialChatLoadHTTPStatus": 503,
+      "slowModelDelayMs": 2000,
+      "historyMessages": 115
+    },
+    "checks": [
+      "immediate settings loading and Escape cancellation",
+      "member profile loading cancellation",
+      "failed conversation load retries successfully",
+      "saving protects fields and close control",
+      "Escape cannot discard an in-flight save",
+      "model editor confirmation keeps edits on cancel",
+      "model editor confirmation discards on explicit accept",
+      "tool panel does not reduce chat height",
+      "Escape and outside click dismiss tool panel",
+      "member model and profile controls remain operable in floating panel",
+      "profile dismissal retains underlying panel",
+      "mention menu cleared on conversation switch",
+      "manual memory add",
+      "memory withdrawal cancel retains item",
+      "confirmed memory withdrawal and restore",
+      "background save round-trip separate from memory",
+      "115-message pagination",
+      "short viewport keeps model selection and input visible",
+      "mobile memory view without misleading fixed background save",
+      "pre-accept cancellation preserves draft",
+      "post-accept stop preserves message",
+      "resume finishes without duplicating accepted user message",
+      "empty input disables send and editing after stop enables it"
+    ],
+    "layout": {
+      "desktopChatHeightClosed": 380,
+      "desktopChatHeightOpen": 380,
+      "shortChatHeight": 291,
+      "shortPanelHeight": 167,
+      "shortInputBottom": 536.6042,
+      "shortViewportHeight": 560,
+      "horizontalOverflow": false
+    },
+    "slowModelWait": {
+      "shortToolWaitExpired": true,
+      "subsequentUIConfirmedComplete": true,
+      "duplicateUserMessages": 0
+    }
+  },
+  "previousBrowserChecks": {
+    "version": "3.0.1",
+    "passed": true,
+    "errors": [],
+    "checks": [
+      "concrete MCP target preview",
+      "token omitted",
+      "wrong instance approval rejected visibly",
+      "actual MCP failure displayed",
+      "390px mobile layout"
+    ]
+  },
+  "realOpenCodeGoVerified": true,
+  "portable": {
+    "passed": true,
+    "version": "3.7.0",
+    "bundledRuntime": "v24.19.0",
+    "withoutDevelopmentDependencies": true,
+    "streamingSpeakers": 3,
+    "directHandoffs": 2,
+    "sharedMemories": 3,
+    "correlatedReply": true,
+    "questionStatus": "responded",
+    "publicReasoningRestored": true,
+    "dependentNeedsReview": true,
+    "relationsVerified": true,
+    "naturalUnaddressedReply": true,
+    "silentAudience": true,
+    "independentModels": 2,
+    "agentBackgroundRestored": true,
+    "extraction": "Windows .NET System.IO.Compression.ZipFile",
+    "restoredSourcesMatch": true,
+    "comparedFiles": [
+      "app.ts",
+      "audience.ts",
+      "communication.ts",
+      "context.ts",
+      "defaults.ts",
+      "execution.ts",
+      "migrate.ts",
+      "models.ts",
+      "opencode-go.ts",
+      "pi.ts",
+      "portable.ts",
+      "reasoning.ts",
+      "runtime.ts",
+      "store.ts",
+      "public/client.js",
+      "public/index.html",
+      "public/style.css",
+      "package.json",
+      "package-lock.json",
+      "build.mjs",
+      "release/server.mjs",
+      "README.md",
+      "AUDIT.md",
+      "AGENTS.md",
+      "CLAUDE.md",
+      "tests/client-races.test.ts",
+      "tests/interface-state.test.ts"
+    ]
+  },
+  "naturalDiscussion": {
+    "unaddressedPeerCanJoin": true,
+    "silentAudienceHasNoPublishedReply": true,
+    "independentMemberModels": true,
+    "nextCallUsesUpdatedModel": true,
+    "userInterjectionPrecedence": true,
+    "retryWithoutReplayingCompletedSpeeches": true,
+    "boundedAudienceAndCalls": true,
+    "persistedObservations": true,
+    "listenerOutputAllowance": "min(1024, member maxOutputTokens)",
+    "formalTruncationNotSharedAsComplete": true
+  },
+  "profiles": {
+    "editablePresetRoles": 6,
+    "preservesCustomPromptsKeysModelsAndMemory": true,
+    "modelOnlyUpdatesRereadCurrentIdentityUnderLock": true,
+    "profileConflictsCheckedUnderLock": true,
+    "editReturnsToOriginGroup": true
+  },
+  "realProvider": {
+    "date": "2026-10-22",
+    "version": "3.3.1",
+    "realProvider": "opencode-go",
+    "publicSyntheticPayloadOnly": true,
+    "personalAgentPromptsSent": false,
+    "passed": true,
+    "modelCalls": 6,
+    "completedSpeeches": 3,
+    "spontaneousReplies": 2,
+    "silentChecks": 1,
+    "failures": [],
+    "qualityMeasured": false,
+    "credentialsCopied": false,
+    "report": "release/real-go-verification.json"
+  },
+  "realProviderVerificationNote": "Real OpenCode Go record retained from 3.3.1. This revision used local mock providers and synthetic data only.",
+  "ui": {
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "defaultFollowsSystem": true,
+    "localAppearancePreferencesOnly": true,
+    "editableStarterPrompts": true,
+    "safeBasicMarkdownTables": true,
+    "adaptiveNavigation": true,
+    "stableApprovalRendering": true,
+    "savePendingFeedback": true,
+    "offlineFeedback": true,
+    "noNewDependencies": true,
+    "authorAvatars": true,
+    "quoteToDraft": true,
+    "accurateDraftSaveFeedback": true,
+    "crossWindowConflictKeepsInput": true,
+    "readingSizeAndDensity": true,
+    "systemThemeOption": true,
+    "modelFiltering": true,
+    "groupMemberFiltering": true,
+    "selectedMemberValidation": true,
+    "stickyFormActions": true,
+    "coordinatorRestoredPerGroup": true,
+    "cancellableModalLoading": true,
+    "staleModalResponseRejected": true,
+    "retryableConversationLoading": true,
+    "capturedFormValuesBeforeDisable": true,
+    "saveControlsProtected": true,
+    "inAppDiscardConfirmation": true,
+    "nonShrinkingToolPopover": true,
+    "mentionDismissal": true,
+    "contextAndMemorySaveSeparated": true,
+    "staleContextAndHistoryRejected": true,
+    "memoryLoadFailureRestoresSelection": true,
+    "summaryBoundToOriginalChat": true,
+    "submitCanBeCancelled": true,
+    "shortViewportModelChoiceVisible": true
+  },
+  "previousUIVerification": {
+    "version": "3.5.0",
+    "browser": {
+      "verifiedThisRevision": true,
+      "syntheticDataOnly": true,
+      "realProviderCalledThisRevision": false,
+      "viewports": [
+        {
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "width": 390,
+          "height": 844
+        }
+      ],
+      "screenshots": [
+        ".validation/ui-3.5.0-chat.jpg",
+        ".validation/ui-3.5.0-appearance.jpg",
+        ".validation/ui-3.5.0-mobile.jpg"
+      ],
+      "consoleErrors": [],
+      "checks": [
+        "message avatars and author-specific copy/quote labels",
+        "quote appends complete content without replacing existing draft",
+        "quoted draft survives reload",
+        "successful draft save and clearing feedback",
+        "two-window conflict reports unsaved and retains input",
+        "reading size and density persist after reload; large message text is 17px",
+        "dark theme and send preference persist after reload",
+        "model filter by identifier and no-result notice",
+        "member filter retains checked hidden rows",
+        "group selection count and minimum-two save validation",
+        "group creation with filtered members",
+        "fixed save bar remains visible at 390px without horizontal overflow",
+        "cross-group coordinator restores original saved value after editing a different group"
+      ]
+    }
+  },
+  "reliability": {
+    "submissionSnapshot": true,
+    "preservesLaterTypingAndAutosave": true,
+    "preservesOtherChatDraft": true,
+    "pendingSubmissionDedup": true,
+    "toolOutputResetOnNavigation": true,
+    "globalProfileChecksUnderLock": true,
+    "originalProfileBackups": true,
+    "groupModelChecksUnderLock": true,
+    "groupModelAdvancesRevision": true,
+    "modelProbeAllowance": "min(1024, configured model maxOutputTokens)"
+  },
+  "previousVerification": {
+    "version": "3.6.0",
+    "tests": {
+      "passed": 121,
+      "failed": 0,
+      "addedRegression": 9,
+      "log": ".validation/system-3.6-tests.log",
+      "initialFullRun": {
+        "passed": 120,
+        "failed": 1,
+        "test": "three distinct agents exchange a proposal, counterexample and revision through live HTTP",
+        "targetedRerunPassed": 5,
+        "subsequentFullRunPassed": 121,
+        "rootCauseIdentified": false,
+        "diagnosticsAdded": true
+      }
+    },
+    "browser": {
+      "verifiedThisRevision": true,
+      "syntheticDataOnly": true,
+      "realProviderCalledThisRevision": false,
+      "screenshots": [
+        ".validation/system-3.6.0-browser.jpg"
+      ],
+      "checks": [
+        "stale group model choice rejected across two windows",
+        "conflict refresh restores current server model",
+        "ordinary send completes and clears only submitted input",
+        "HTTP streaming reply renders table and completes listener decisions"
+      ],
+      "expectedHTTPConflict": 409
+    }
+  },
+  "knownIssues": [
+    {
+      "sourceVersion": "3.6.0",
+      "issue": "One initial full-suite collaboration completion failure; root cause unconfirmed. Subsequent full suites passed.",
+      "resolved": false
+    }
+  ]
+}
