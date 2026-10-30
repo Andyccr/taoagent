@@ -725,6 +725,25 @@ export function createCity(container, roster, opts = {}) {
       hemi.intensity = nightOn ? 0.35 : 1.25; sun.intensity = nightOn ? 0.25 : 1.75;
       renderer.toneMappingExposure = nightOn ? 1.25 : 1;
       lamps.visible = nightOn; lanterns.visible = nightOn;
+      for (const w of city.wonders || []) {
+        w.group?.traverse((o) => {
+          if (!o.isMesh || !o.material) return;
+          const m = o.material;
+          if (!m.userData) m.userData = {};
+          if (m.userData._nightSaved == null) {
+            m.userData._nightSaved = { ei: m.emissiveIntensity || 0, er: m.emissive?.r, eg: m.emissive?.g, eb: m.emissive?.b };
+          }
+          if (nightOn) {
+            if (!m.emissive) m.emissive = new THREE.Color(0xffb35a);
+            else m.emissive.setHex(0xffc27a);
+            m.emissiveIntensity = Math.max(m.emissiveIntensity || 0, 0.35);
+          } else if (m.userData._nightSaved) {
+            const s = m.userData._nightSaved;
+            if (m.emissive && s.er != null) m.emissive.setRGB(s.er, s.eg, s.eb);
+            m.emissiveIntensity = s.ei;
+          }
+        });
+      }
       if (!lowPower) rebuildComposer(nightOn && (opts.quality === 'high'));
       for (const u of units.values()) applyWindows(u);
     }

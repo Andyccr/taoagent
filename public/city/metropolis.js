@@ -329,6 +329,22 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
     if (parts.glass) { const glass = new THREE.Mesh(parts.glass, cityMaterial('glass')); g.add(glass); meshes.push(glass); }
     const info = { wonder: true, id: w.id, name: parts.name || w.name, dept: '奇观 · ' + ({ chinese: '宫城', greek: '希腊学园', roman: '罗马工程区', modern: '现代都会' }[w.district] || ''), state: '', label: '' };
     for (const m of meshes) { m.userData.info = info; pickables.push(m); }
+    // Ceremonial trees / lantern posts around the plaza rim (instanced per wonder, cheap).
+    if (quality !== 'low') {
+      const rim = Math.max(w.w, w.d) * 0.48;
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2 + 0.2;
+        const lx = Math.cos(a) * rim, lz = Math.sin(a) * rim;
+        const tg = tree(i % 3);
+        if (tg) {
+          const tm = new THREE.Mesh(tg, solid);
+          tm.position.set(lx, 0, lz);
+          tm.scale.setScalar(1.1 + (i % 3) * 0.15);
+          tm.castShadow = quality === 'high';
+          g.add(tm);
+        }
+      }
+    }
     root.add(g);
     wonders.push({ id: w.id, name: info.name, group: g, height: parts.height || 20, radius: parts.radius || 20, x: w.x, z: w.z });
     stats.wonders.push({ id: w.id, name: info.name, triangles: Math.round(parts.solid.getAttribute('position').count / 3 + (parts.glass ? parts.glass.getAttribute('position').count / 3 : 0)) });
