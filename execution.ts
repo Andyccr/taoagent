@@ -109,7 +109,7 @@ export function workspacePath(store: Store,key: string,raw: string) {
 }
 async function processRun(command: string,args: string[],cwd: string,signal: AbortSignal,onOutput: (text: string)=>void,shell=false,timeoutMs=120000,env:NodeJS.ProcessEnv=process.env) {
   return await new Promise<{exitCode:number|null;output:string}>((resolve,reject)=>{
-    const child=spawn(command,args,{cwd,shell,env,windowsHide:true,stdio:['ignore','pipe','pipe']}), timer=setTimeout(()=>stop(),timeoutMs)
+    const child=spawn(command,args,{cwd,shell,env,windowsHide:true,detached:process.platform!=='win32',stdio:['ignore','pipe','pipe']}), timer=setTimeout(()=>stop(),timeoutMs)
     let output='',stopped=false
     function stop() {
       if(stopped)return
@@ -118,6 +118,9 @@ async function processRun(command: string,args: string[],cwd: string,signal: Abo
         const killer=spawn(path.join(process.env.SystemRoot||'C:\\Windows','System32','taskkill.exe'),['/pid',String(child.pid),'/t','/f'],{windowsHide:true,stdio:'ignore'})
         killer.once('error',()=>child.kill('SIGTERM'))
         killer.once('exit',code=>{if(code!==0)child.kill('SIGTERM')})
+      } else if(child.pid) {
+        // POSIX: the child leads its own process group, so stop the shell and its descendants together.
+        try{process.kill(-child.pid,'SIGTERM')}catch{child.kill('SIGTERM')}
       } else child.kill('SIGTERM')
     }
     signal.addEventListener('abort',stop,{once:true})
