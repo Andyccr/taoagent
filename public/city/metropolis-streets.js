@@ -12,7 +12,8 @@ export function buildStreets(ringRadii, avenueAngles, seed) {
     const r0 = ringRadii[r], r1 = ringRadii[r + 1];
     for (let i = 0; i < av.length; i++) {
       const a0 = av[i], a1 = i + 1 < av.length ? av[i + 1] : av[0] + 360;
-      const k = 1 + Math.floor(rnd() * 3);
+      const arc = rad(a1 - a0) * r0; // fewer cross streets in the short inner sectors
+      const k = Math.max(0, Math.round((0.5 + rnd() * 1.5) * arc / 70));
       for (let j = 0; j < k; j++) {
         const a = pickAngle(a0, a1, 4, rnd), endA = a + (rnd() - 0.5) * 6;
         const start = polar(r0 - 1.5, a), end = polar(r1 + 1.5, endA); // overshoot so streets meet the wobbly rings
@@ -24,7 +25,7 @@ export function buildStreets(ringRadii, avenueAngles, seed) {
         if (rnd() < 0.25) pts = pts.slice(0, Math.ceil(pts.length / 2));
         roads.push({ kind: 'street', w: 2.2, pts, id: `st${st++}` });
       }
-      for (let j = 0; j < 2; j++) {
+      for (let j = 0; j < (arc > 80 ? 2 : arc > 50 ? 1 : 0); j++) {
         const a = pickAngle(a0, a1, 3, rnd), L = 12 + rnd() * 13;
         const rot = (rnd() - 0.5) * 0.8, bend = (rnd() - 0.5) * 0.3;
         const s = polar(r0 - 1, a), th = rad(a);

@@ -39,7 +39,7 @@ export function canalLine(inner, outer) {
 export function ringLoop(r0, w) {
   const phase = rng('ring' + r0)() * 6.283;
   const radiusAt = (deg) =>
-    r0 + 2.2 * Math.sin(2 * rad(deg) + phase) + 1.3 * Math.sin(5 * rad(deg) + 2 * phase);
+    r0 + Math.min(0.03 * r0, 5) * Math.sin(2 * rad(deg) + phase) + Math.min(0.018 * r0, 3) * Math.sin(5 * rad(deg) + 2 * phase);
   const pts = [];
   for (let i = 0; i < 120; i++) {
     const p = polar(radiusAt(i * 3), i * 3);
@@ -54,7 +54,7 @@ export function avenueLine(deg, from, to, w, index) {
   const uz = Math.sin(rad(deg));
   const at = (r) => {
     const p = polar(r, deg);
-    const s = 6 * Math.sin(r / 37 + index) * (r / 200);
+    const s = 10 * Math.sin(r / 37 + index) * (r / 220);
     return [p.x + s * ux, p.z + s * uz];
   };
   const pts = [];

@@ -1,19 +1,18 @@
-// 帝国之城 metropolis plan: a pure, deterministic description of the city that surrounds the agent core.
-// No three.js here so Node tests can check it. Angles follow layout.js: degrees clockwise seen from above,
-// 0 = back (-z), 90 = right (+x), 180 = front (+z, camera side). polar(r, deg) -> { x, z }.
 import { polar, STYLE_ANGLE, ringRadius, PLOT } from './layout.js';
+import { rng, CANAL_HALF, canalRadius, canalLine, ringLoop, avenueLine } from './metropolis-roads.js';
+import { buildStreets, makeRoadIndex, distanceToRoads, nearestRoadPoint, pointSegmentDistance } from './metropolis-streets.js';
 
-export const CORE_R = ringRadius(3) + PLOT / 2 + 1;          // agent core (central hall + 3 rings of plots)
-export const CANAL = { inner: CORE_R + 2.5, outer: CORE_R + 7.5 }; // moat around the core
-export const RING_ROADS = [52, 72, 92, 112, 132, 152].map((r) => ({ r, w: 3 }));
-export const CITY_EDGE = 170;
+export const CORE_R = ringRadius(3) + PLOT / 2 + 1;
+export const CANAL = { inner: CORE_R + 2.5, outer: CORE_R + 7.5 };
 export const AVENUE_W = 5;
 export const AVENUES = [0, 45, 90, 135, 180, 225, 270, 315];
-export const LOT = 7;            // filler lot size (agent buildings are scaled to fit when they claim one)
-const LOT_SPACING = 8.4;
-const MARGIN = 0.8;
+export const LOT = 7;
+export const CITY_EDGE = 170;
+export const OUTER_EDGE = 262;
+export const COUNTRY_EDGE = 330;
+export const RING_ROADS = [52, 72, 92, 112, 132, 152, 182, 222].map((r) => ({ r, w: r >= 182 ? 4 : 3 }));
+export const HARBOUR = { from: 20, to: 70, shore: 256 };
 
-// Wonders: axis-aligned footprints w (x) by d (z) in world space; rotY is a multiple of 90 degrees.
 const WONDERS = [
   { id: 'palace', kind: 'palace', name: '紫宸宫', angle: 180, r: 92, w: 54, d: 70, rotY: Math.PI, district: 'chinese' },
   { id: 'pagoda', kind: 'pagoda', name: '万佛塔', angle: 145, r: 102, w: 28, d: 28, rotY: 0, district: 'chinese' },
@@ -33,14 +32,21 @@ const KINDS = {
 };
 const MIXED = [['stalls', 2], ['plaza', 1], ['garden', 2], ['home', 3]];
 const HOME = { chinese: 'siheyuan', greek: 'house', roman: 'insula', modern: 'residential' };
-export const CLAIMABLE = { chinese: ['siheyuan', 'house'], greek: ['house'], roman: ['insula', 'villa'], modern: ['office', 'residential'] };
+export const CLAIMABLE = {
+  chinese: ['siheyuan', 'house'],
+  greek: ['house'],
+  roman: ['insula', 'villa'],
+  modern: ['office', 'residential'],
+  outer: ['cottage', 'workshop', 'farmhouse'],
+};
 const COMMON = new Set(['garden', 'plaza', 'stalls']);
+const COMMON_KINDS = ['garden', 'plaza', 'stalls'];
+const STYLES = Object.keys(STYLE_ANGLE);
 
 export function hash(text) { let h = 2166136261; for (const ch of String(text)) { h ^= ch.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
 const angDist = (a, b) => { const d = Math.abs((((a - b) % 360) + 360) % 360); return Math.min(d, 360 - d); };
 function pick(list, seed) { const total = list.reduce((s, [, w]) => s + w, 0); let n = seed % total; for (const [k, w] of list) { if (n < w) return k; n -= w; } return list[0][0]; }
 
-// District of a direction: four style quarters with blended (mixed) zones around the diagonals.
 export function districtAt(angle) {
   const a = ((angle % 360) + 360) % 360;
   for (const b of [45, 135, 225, 315]) if (angDist(a, b) <= 10) return 'mixed';
@@ -56,47 +62,309 @@ export function circleHitsBox(x, z, r, b, margin = 0) {
   return Math.hypot(x - cx, z - cz) < r;
 }
 
+const NORM = (a) => ((a % 360) + 360) % 360;
+const inHarbour = (a) => { const n = NORM(a); return n >= HARBOUR.from && n <= HARBOUR.to; };
+const SIZE_RANGE = { inner: [5, 7.2], blend: [5.5, 8], suburb: [6, 7], industrial: [8, 9], harbour: [7, 8.5], country: [7, 9] };
+const RADIAL_STEP = { inner: 7, blend: 7.2, suburb: 8.5, industrial: 9.5, harbour: 8.5, country: 14 };
+const KEEP_PROB = { inner: 0.95, blend: 0.88, suburb: 0.6, industrial: 0.75, harbour: 0.8, country: 0.22 };
+
+function zoneAt(r, a) {
+  if (r < CITY_EDGE) return 'inner';
+  if (r >= 182 && r < 222) return 'blend';
+  if (r >= 222 && r < OUTER_EDGE) {
+    if (inHarbour(a)) return 'harbour';
+    const n = NORM(a);
+    if ((n >= 70 && n <= 120) || (n >= 290 && n <= 330)) return 'industrial';
+    return 'suburb';
+  }
+  if (r >= OUTER_EDGE && r < COUNTRY_EDGE) return inHarbour(a) ? null : 'country';
+  return null;
+}
+
+function weightedStyle(angle, R) {
+  if (R() < 0.25) return STYLES[Math.floor(R() * STYLES.length)];
+  const weights = STYLES.map((s) => [s, 1 / (1 + angDist(angle, STYLE_ANGLE[s]) / 40)]);
+  const total = weights.reduce((sum, [, w]) => sum + w, 0);
+  let n = R() * total;
+  for (const [s, w] of weights) { if (n < w) return s; n -= w; }
+  return STYLES[0];
+}
+
 let cached = null;
 export function computeMetropolis() {
   if (cached) return cached;
   const wonders = WONDERS.map(wonderBox);
-  const lots = [];
-  const bands = RING_ROADS.map((road, i) => [road.r + road.w / 2, i + 1 < RING_ROADS.length ? RING_ROADS[i + 1].r - RING_ROADS[i + 1].w / 2 : CITY_EDGE]);
-  const half = LOT / 2;
+  const canal = { ...CANAL, half: CANAL_HALF, pts: canalLine(CANAL.inner, CANAL.outer) };
+  const rings = RING_ROADS.map((x) => ringLoop(x.r, x.w));
+  const avenues = AVENUES.map((a, i) => avenueLine(a, CANAL.outer + 1, OUTER_EDGE, AVENUE_W, i));
+  const rawStreets = buildStreets(RING_ROADS.map((x) => x.r), AVENUES, 'empire-city');
+  const streets = [];
+  for (const road of rawStreets) {
+    let cut = road.pts.length;
+    for (let i = 0; i < road.pts.length; i++) {
+      const p = road.pts[i];
+      if (wonders.some((w) => circleHitsBox(p[0], p[1], 1, w, 1))) { cut = i; break; }
+    }
+    if (cut >= 2) streets.push({ ...road, pts: road.pts.slice(0, cut) });
+  }
+  const roads = [...rings, ...avenues, ...streets];
+  const index = makeRoadIndex(roads);
+
+  const distanceToLine = (pts, x, z) => {
+    let best = Infinity;
+    for (let i = 1; i < pts.length; i++) {
+      const d = pointSegmentDistance(x, z, pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1]);
+      if (d < best) best = d;
+    }
+    return best;
+  };
+
+  const boundaries = [CANAL.outer, ...RING_ROADS.map((x) => x.r), OUTER_EDGE, COUNTRY_EDGE];
+  const bands = boundaries.slice(0, -1).map((inner, i) => [inner, boundaries[i + 1]]);
+
+  const parks = [];
   bands.forEach(([inner, outer], band) => {
-    const rows = [inner + MARGIN + half, outer - MARGIN - half].filter((r, i, all) => i === 0 || r - all[0] >= LOT + 0.6);
-    rows.forEach((r, row) => {
-      for (let seg = 0; seg < AVENUES.length; seg++) {
-        const a0 = AVENUES[seg], clear = ((AVENUE_W / 2 + half + MARGIN) / r) * (180 / Math.PI);
-        const from = a0 + clear, to = a0 + 45 - clear, arc = ((to - from) * Math.PI / 180) * r;
-        const count = Math.max(0, Math.floor(arc / LOT_SPACING) + 1);
-        for (let k = 0; k < count; k++) {
-          const angle = count === 1 ? (from + to) / 2 : from + ((to - from) * k) / (count - 1);
-          const p = polar(r, angle);
-          if (wonders.some((w) => circleHitsBox(p.x, p.z, half * 1.15, w, 1.2))) continue;
-          const id = `b${band}r${row}s${seg}k${k}`;
-          const district = districtAt(angle);
-          const seed = hash(id);
-          let style = district, kind;
-          if (district === 'mixed') { const pair = neighbours(angle); style = pair[seed % 2]; kind = pick(MIXED, seed >>> 3); if (kind === 'home') kind = HOME[style]; }
-          else kind = pick(KINDS[district], seed >>> 3);
-          // Taller modern towers cluster around the supertall.
-          if (style === 'modern' && kind === 'towerMid' && band >= 1 && (seed & 3) === 0) kind = 'towerTall';
-          const common = COMMON.has(kind);
-          lots.push({ id, band, row, seg, angle, r, x: p.x, z: p.z, rotY: Math.atan2(-p.x, -p.z), size: LOT, district, style: common ? 'common' : style, kind, variant: seed % 3, claimable: !common && CLAIMABLE[style].includes(kind) });
-        }
+    for (let sector = 0; sector < 8; sector++) {
+      const pr = rng(`park${band}-${sector}`);
+      const count = Math.floor(pr() * 3);
+      for (let i = 0; i < count; i++) {
+        const rad = inner + 3 + pr() * Math.max(1, outer - inner - 6);
+        const ang = sector * 45 + 2 + pr() * 41;
+        const zone = zoneAt(rad, ang);
+        if (zone !== 'inner' && zone !== 'blend' && zone !== 'suburb') continue;
+        const p = polar(rad, ang);
+        parks.push({ band, x: p.x, z: p.z, r: 7 + pr() * 7, kind: ['park', 'plaza', 'market'][Math.floor(pr() * 3)], used: false });
       }
-    });
+    }
   });
-  const bridges = AVENUES.map((angle) => ({ angle, r: (CANAL.inner + CANAL.outer) / 2 }));
-  cached = Object.freeze({ coreR: CORE_R, canal: CANAL, ringRoads: RING_ROADS, avenues: AVENUES.map((angle) => ({ angle, w: AVENUE_W, from: CANAL.outer, to: CITY_EDGE + 2 })), bridges, lots, wonders, outerR: CITY_EDGE + 12 });
+
+  const lots = [];
+  const cells = new Map();
+  const cellKey = (x, z) => `${Math.floor(x / 16)},${Math.floor(z / 16)}`;
+  const addCell = (lot) => {
+    const key = cellKey(lot.x, lot.z);
+    const list = cells.get(key);
+    if (list) list.push(lot); else cells.set(key, [lot]);
+  };
+  const overlaps = (x, z, size) => {
+    const cx = Math.floor(x / 16), cz = Math.floor(z / 16);
+    for (let ix = cx - 1; ix <= cx + 1; ix++) for (let iz = cz - 1; iz <= cz + 1; iz++) {
+      const list = cells.get(`${ix},${iz}`);
+      if (!list) continue;
+      for (const lot of list) if (Math.hypot(x - lot.x, z - lot.z) < (size + lot.size) / 2 + 0.3) return true;
+    }
+    return false;
+  };
+  const counts = new Map();
+
+  bands.forEach(([inner, outer], band) => {
+    const R = rng('band' + band);
+    const midZone = zoneAt((inner + outer) / 2, 0);
+    const rowStep = midZone ? RADIAL_STEP[midZone] : 7;
+    const rows = Math.max(1, Math.floor((outer - inner - 2) / rowStep));
+    const innerRing = rings.find((ring) => ring.r === inner);
+    const outerRing = rings.find((ring) => ring.r === outer);
+    const innerAt = (a) => {
+      if (innerRing) return innerRing.radiusAt(a) + innerRing.w / 2;
+      if (inner === CANAL.outer) return canalRadius(a, CANAL.inner, CANAL.outer) + CANAL_HALF;
+      return inner;
+    };
+    const outerAt = (a) => (outerRing ? outerRing.radiusAt(a) - outerRing.w / 2 : outer);
+    const rr = (a, t) => {
+      const ri = innerAt(a), ro = outerAt(a);
+      return ri + (ro - ri) * (t + 0.5) / rows;
+    };
+
+    for (let t = 0; t < rows; t++) {
+      let a = 0;
+      while (a < 360) {
+        const baseA = a;
+        const rowR = rr(baseA, t);
+        const zone = zoneAt(rowR, baseA);
+        if (!zone) {
+          a += (6 / Math.max(rowR, 1)) * (180 / Math.PI);
+          continue;
+        }
+        const range = SIZE_RANGE[zone];
+        const size = range[0] + R() * (range[1] - range[0]);
+        const gap = zone === 'country' ? 6 + R() * 8 : zone === 'inner' ? 0.4 + R() * 1.0 : 0.6 + R() * 1.6;
+        const stepDeg = ((size + gap) / rowR) * (180 / Math.PI);
+        a += stepDeg;
+        const jr = rowR + (R() - 0.5) * 1.2;
+        const ja = baseA + (R() - 0.5) * stepDeg * 0.4;
+        const jp = polar(jr, ja);
+
+        let park = null;
+        for (const pk of parks) {
+          if (pk.band === band && Math.hypot(jp.x - pk.x, jp.z - pk.z) < pk.r) { park = pk; break; }
+        }
+        if (park && R() < 0.6) { park.used = true; continue; }
+        if (R() > KEEP_PROB[zone]) continue;
+
+        let harbourKind = null;
+        if (zone === 'harbour') {
+          harbourKind = 'warehouse';
+          if (jr >= HARBOUR.shore - 14 && jr <= HARBOUR.shore + 2) harbourKind = R() < 0.5 ? 'pier' : 'crane';
+        }
+
+        const centre = rr(ja, t);
+        const dir = jr < centre ? 1 : -1;
+        const attempts = [
+          { jr, ja, size },
+          { jr, ja, size: size * 0.85 },
+          { jr: jr + dir * 1.2, ja, size: size * 0.85 },
+        ];
+        let chosen = null;
+        for (const att of attempts) {
+          const p = polar(att.jr, att.ja);
+          const x = p.x, z = p.z;
+          const half = att.size / 2;
+          if (distanceToRoads(index, x, z) < half + 0.4) continue;
+          if (distanceToLine(canal.pts, x, z) < CANAL_HALF + half + 0.8) continue;
+          if (att.jr - half <= CANAL.outer + 0.5) continue;
+          if (wonders.some((w) => circleHitsBox(x, z, half * 1.1, w, 1.2))) continue;
+          if (inHarbour(att.ja)) {
+            if (harbourKind === 'pier' || harbourKind === 'crane') {
+              if (att.jr < HARBOUR.shore - 8 || att.jr > HARBOUR.shore + 2) continue;
+            } else if (att.jr + half >= HARBOUR.shore) continue;
+          }
+          if (overlaps(x, z, att.size)) continue;
+          chosen = { jr: att.jr, ja: att.ja, size: att.size, x, z };
+          break;
+        }
+        if (!chosen) continue;
+
+        const x = chosen.x, z = chosen.z;
+        const pjr = chosen.jr, pja = chosen.ja, psize = chosen.size;
+        const sector = Math.floor(NORM(pja) / 45);
+        const countKey = `${band}:${sector}`;
+        const k = counts.get(countKey) || 0;
+        counts.set(countKey, k + 1);
+        const id = `b${band}s${sector}n${k}`;
+        let style, kind, district;
+
+        if (park) {
+          style = 'common';
+          kind = COMMON_KINDS[Math.floor(R() * COMMON_KINDS.length)];
+          district = zone === 'inner' ? districtAt(pja) : zone;
+        } else if (zone === 'harbour') {
+          style = 'outer';
+          kind = harbourKind;
+          district = 'harbour';
+        } else if (zone === 'inner') {
+          district = districtAt(pja);
+          const seed = hash(id);
+          style = district;
+          if (district === 'mixed') {
+            const pair = neighbours(pja);
+            style = pair[seed % 2];
+            kind = pick(MIXED, seed >>> 3);
+            if (kind === 'home') kind = HOME[style];
+          } else kind = pick(KINDS[district], seed >>> 3);
+          if (style === 'modern' && kind === 'towerMid' && band >= 1 && (seed & 3) === 0) kind = 'towerTall';
+          if (COMMON.has(kind)) style = 'common';
+        } else if (zone === 'blend') {
+          district = 'blend';
+          style = weightedStyle(pja, R);
+          const roll = R();
+          if (roll < 0.35) { kind = 'workshop'; style = 'outer'; }
+          else if (roll < 0.65) kind = HOME[style];
+          else if (roll < 0.73) { kind = COMMON_KINDS[Math.floor(R() * COMMON_KINDS.length)]; style = 'common'; }
+          else if (roll < 0.80) { kind = 'towerMid'; style = 'modern'; }
+          else if (roll < 0.83) { kind = 'towerTall'; style = 'modern'; }
+          else kind = pick(KINDS[style], Math.floor(R() * 1000));
+        } else if (zone === 'industrial') {
+          district = 'industrial';
+          style = 'outer';
+          kind = ['warehouse', 'factory', 'silos', 'workshop'][Math.floor(R() * 4)];
+        } else if (zone === 'suburb') {
+          district = 'suburb';
+          const roll = R();
+          if (roll < 0.7) { kind = 'cottage'; style = 'outer'; }
+          else if (roll < 0.8) { kind = 'garden'; style = 'common'; }
+          else if (roll < 0.9) { kind = 'farmhouse'; style = 'outer'; }
+          else { style = neighbours(pja)[0]; kind = HOME[style]; }
+        } else {
+          district = 'country';
+          style = 'outer';
+          kind = R() < 0.55 ? 'farmhouse' : 'barn';
+        }
+
+        const rp = nearestRoadPoint(index, x, z);
+        let rotY;
+        if (kind === 'pier' || kind === 'crane') rotY = Math.atan2(x, z);
+        else if (rp) rotY = Math.atan2(rp.x - x, rp.z - z) + (R() - 0.5) * 0.24;
+        else rotY = Math.atan2(-x, -z);
+        const setback = R() * 1.2;
+        let scaleY;
+        if (style === 'modern' && (kind === 'towerMid' || kind === 'towerTall')) {
+          scaleY = Math.max(0.7, Math.min(1.6, 1.6 - Math.hypot(x, z + 84) / 150));
+        } else scaleY = 0.9 + R() * 0.2;
+        const spike = R() < 0.03;
+        if (spike) scaleY *= 1.5;
+
+        const lot = {
+          id, band, angle: pja, r: pjr, x, z, size: psize, rotY, setback, scaleY, spike, district, zone, style, kind,
+          variant: hash(id) % 3,
+          claimable: !COMMON.has(kind) && (CLAIMABLE[style] || []).includes(kind),
+        };
+        lots.push(lot);
+        addCell(lot);
+      }
+    }
+  });
+
+  const fields = [];
+  let fieldIndex = 0;
+  for (let fr = 268; fr <= 324; fr += 18) {
+    const FR = rng('field' + fr);
+    let a = 0;
+    while (a < 360) {
+      const stepDeg = ((20 + FR() * 10) / fr) * (180 / Math.PI);
+      const ja = a + stepDeg / 2;
+      a += stepDeg;
+      if (inHarbour(ja)) continue;
+      const p = polar(fr, ja);
+      const w = 10 + FR() * 10, d = 8 + FR() * 8;
+      const radius = Math.max(w, d) / 2;
+      if (distanceToRoads(index, p.x, p.z) < radius) continue;
+      let hit = false;
+      for (const lot of lots) {
+        if (Math.hypot(p.x - lot.x, p.z - lot.z) < radius + lot.size / 2) { hit = true; break; }
+      }
+      if (hit) continue;
+      fields.push({ id: `fd${fieldIndex}`, x: p.x, z: p.z, w, d, rotY: Math.atan2(-p.x, -p.z) + (FR() - 0.5) * 0.5, crop: fieldIndex % 4 });
+      fieldIndex++;
+    }
+  }
+
+  const bridges = AVENUES.map((angle) => {
+    const p = polar(canalRadius(angle, CANAL.inner, CANAL.outer), angle);
+    return { x: p.x, z: p.z, angle };
+  });
+
+  cached = Object.freeze({
+    coreR: CORE_R,
+    canal,
+    roads,
+    ringRoads: rings,
+    avenues,
+    streets,
+    bridges,
+    lots,
+    parks: parks.filter((p) => p.used).map((p, i) => ({ id: `pk${i}`, x: p.x, z: p.z, r: p.r, kind: p.kind })),
+    fields,
+    sea: HARBOUR,
+    wonders,
+    cityEdge: CITY_EDGE,
+    outerEdge: OUTER_EDGE,
+    outerR: COUNTRY_EDGE,
+  });
   return cached;
 }
 
 function compareKeys(a, b) { for (let i = 0; i < 3; i++) if (a[i] !== b[i]) return a[i] - b[i]; return a[3] < b[3] ? -1 : a[3] > b[3] ? 1 : 0; }
 
-// Deterministic claim of free filler lots for agents that no longer fit in the core rings:
-// same-style lots first, then inner bands, then nearest to the style's quarter, then lot id.
 export function assignClaims(bots, plan = computeMetropolis()) {
   const free = plan.lots.filter((l) => l.claimable);
   const taken = new Set();
