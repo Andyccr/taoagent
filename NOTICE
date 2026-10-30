@@ -1,6 +1,8 @@
-Taoagent is a fork of SwarmClaw, not an independent rewrite.
-Upstream: https://github.com/swarmclawai/swarmclaw
-Source revision: ed38ba5329c20e48c03b4a4028f4a76a1a75e2d1
-Copyright (c) 2026 SwarmClaw Contributors. MIT license retained in LICENSE.
-Taoagent governance additions and modifications: 2026 Taoagent contributors.
-Third-party dependencies retain their own licenses and identifiers.
+TaoAgent — Copyright (c) 2026 Andy Chen (Andyccr). All rights reserved.
+See LICENSE for terms (proprietary: no commercial use, no modification,
+no redistribution, attribution required).
+
+TaoAgent includes portions derived from SwarmClaw
+(https://github.com/swarmclawai/swarmclaw), used under the MIT license.
+That notice is retained in licenses/THIRD-PARTY-SwarmClaw-MIT.txt and covers
+only those upstream portions. Third-party dependencies keep their own licenses.

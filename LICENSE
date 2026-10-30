@@ -1,21 +1,32 @@
-MIT License
+TaoAgent Proprietary License
 
-Copyright (c) 2026 SwarmClaw Contributors
+Copyright (c) 2026 Andy Chen (GitHub: Andyccr). All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+TaoAgent, including its source code, design, documentation, assets and the
+Empire City (帝国之城) feature, is the exclusive property of Andy Chen
+("the Owner"). All rights not expressly granted here are reserved by the Owner.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. Viewing only. The source is made visible solely for viewing. No license
+   to use, copy, run, modify, merge, publish, distribute, sublicense or sell
+   the Software is granted, except with the Owner's prior written permission.
+2. No commercial use. Any commercial use, in whole or in part, is prohibited.
+3. No modification. Creating derivative works, forks with changes,
+   translations or adaptations is prohibited.
+4. No redistribution. Re-publishing, mirroring or distributing the Software
+   or any part of it is prohibited.
+5. Attribution. Any permitted use or reference must clearly credit
+   "TaoAgent by Andy Chen (Andyccr)" and link to
+   https://github.com/Andyccr/taoagent, and must keep this notice intact.
+6. Termination. Any breach terminates any permission immediately.
+7. No warranty. The Software is provided "AS IS", without warranty of any
+   kind. The Owner is not liable for any claim or damage arising from it.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Third-party components keep their own licenses. Portions derived from
+SwarmClaw are used under the MIT license, whose notice is kept in
+licenses/THIRD-PARTY-SwarmClaw-MIT.txt as that license requires. That notice
+covers only those upstream portions; it does not apply to TaoAgent as a whole
+or to the Owner's additions and modifications.
+
+中文摘要：TaoAgent 版权归 Andy Chen（Andyccr）所有，保留全部权利。未经书面许可，
+禁止商用、修改、再发布或用于任何用途；如获许可使用，必须署名
+「TaoAgent by Andy Chen (Andyccr)」。

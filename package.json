@@ -26,5 +26,6 @@
   "devDependencies": {
     "esbuild": "0.28.2",
     "three": "^0.180.0"
-  }
+  },
+  "license": "SEE LICENSE IN LICENSE"
 }
