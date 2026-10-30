@@ -7,12 +7,14 @@ export type CitizenActivity = 'idle' | 'working' | 'waiting' | 'delegating' | 'c
 const STALE_MS = 10 * 60 * 1000
 const COMPLETE_MS = 20 * 1000
 const HANDOFF_MS = 60 * 1000
+const EVENT_LIMIT = 60
+const EVENT_TURNS = 12
 const PRIORITY: CitizenActivity[] = ['waiting', 'error', 'stale', 'working', 'delegating', 'complete', 'unknown', 'idle']
 const TONE_COLORS = ['#c45c4a', '#3d6b8c', '#6b7c3a', '#8a6232']
 const KEYWORDS: Record<DistrictId, string[]> = {
   china: ['协调', '派工', '总经理', '编排', '统筹', 'orchestrat', 'coordinator', 'delegat'],
   rome: ['代码', '编程', '程序员', '调试', '测试', '实现', '工程', 'program', 'engineer', 'debug', 'implement'],
-  greece: ['研究', '资料', '论文', '知识', '证据', '推理', '文档', 'research', 'academ', 'library'],
+  greece: ['研究', '资料', '论文', '知识', '证据', '推理', '文档', '核验', '风险', '评审', '故事', '剧', '角色扮演', 'research', 'academ', 'library', 'story', 'review'],
   metro: ['数据', '监控', '通信', '指标', 'analytics', 'monitor', 'dashboard', 'metric'],
 }
 
@@ -62,6 +64,21 @@ export interface CivilizationSnapshot {
   tasks: { id: string; sessionId: string; title: string; assigneeId: string; fromAgentId: string; status: 'pending' | 'review' | 'complete'; at: string }[]
   tasksState: 'ok' | 'unavailable'
   handoffs: { id: string; fromAgentId: string; toAgentId: string; taskId: string; at: string }[]
+  /** Recent real events derived from turns, tasks and approvals (newest first). Never includes prompts, bodies or arguments. */
+  events: CityEvent[]
+  /** Teams are the existing group chats; members keep their own quarter, the team only groups them. */
+  teams: { id: string; name: string; memberIds: string[]; coordinatorId: string | null; updatedAt: string }[]
+  leadSource: 'coordinator' | 'main' | 'none'
+}
+
+export interface CityEvent {
+  id: string
+  at: string
+  kind: 'working' | 'complete' | 'error' | 'waiting' | 'handoff' | 'delivered'
+  agentId: string
+  toAgentId: string | null
+  sessionId: string
+  title: string | null
 }
 
 interface Signal { activity: CitizenActivity; freshness: 'fresh' | 'stale'; since: string | null; sessionId: string | null; taskId: string | null; taskTitle: string | null }
@@ -115,7 +132,12 @@ export function civilizationSnapshot(store: Store, now = Date.now(), runningIds:
   const groups = sessions.filter(session => session.kind === 'group')
   const coordinators = new Map<string, number>()
   for (const group of groups) if (group.coordinatorId && agents.some(agent => agent.id === group.coordinatorId)) coordinators.set(group.coordinatorId, (coordinators.get(group.coordinatorId) || 0) + 1)
-  const leadId = [...coordinators.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] || null
+  const coordinatorLead = [...coordinators.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] || null
+  // Without any group coordinator the built-in main assistant holds the central hall (it is the default agent of every direct chat).
+  const leadId = coordinatorLead || (agents.some(agent => agent.id === 'main') ? 'main' : null)
+  const leadSource: CivilizationSnapshot['leadSource'] = coordinatorLead ? 'coordinator' : leadId ? 'main' : 'none'
+  const events: CityEvent[] = []
+  const pushEvent = (event: CityEvent) => { if (Number.isFinite(Date.parse(event.at))) events.push(event) }
   const signals = new Map<string, Signal>()
   const tasks: CivilizationSnapshot['tasks'] = []
   const handoffs: CivilizationSnapshot['handoffs'] = []
@@ -134,6 +156,11 @@ export function civilizationSnapshot(store: Store, now = Date.now(), runningIds:
     try { turns = store.turns(session.id) } catch { turns = null }
     if (!turns) { for (const agentId of members) signals.set(agentId, consider(signals.get(agentId) || null, { activity: 'unknown', freshness: 'fresh', since: null, sessionId: session.id, taskId: null, taskTitle: null })); continue }
     for (const item of turns) if (item.usage?.usageReports && Number.isFinite(item.usage.measuredTotalTokens)) reportedTokens = (reportedTokens || 0) + (item.usage.measuredTotalTokens || 0)
+    for (const item of turns.slice(-EVENT_TURNS)) for (const speaker of item.speakers) {
+      if (!members.has(speaker.agentId)) continue
+      const kind = speaker.status === 'running' ? 'working' : speaker.status === 'complete' ? 'complete' : speaker.status === 'failed' && !quietFailure(speaker.error) ? 'error' : null
+      if (kind) pushEvent({ id: session.id + ':' + item.id + ':' + (speaker.eventId || speaker.agentId) + ':' + kind, at: kind === 'working' ? item.at : item.updatedAt, kind, agentId: speaker.agentId, toAgentId: null, sessionId: session.id, title: null })
+    }
     const turn = turns.at(-1)
     const age = turn ? now - Date.parse(turn.updatedAt) : Number.POSITIVE_INFINITY
     const heartbeat = live(store, session.id, running, heartbeats)
@@ -159,6 +186,7 @@ export function civilizationSnapshot(store: Store, now = Date.now(), runningIds:
     const actionFile = readList<{ id?: string; agentId?: string; status?: string; at?: string }>(store, 'chats', session.id, 'actions.json')
     if (!actionFile.ok) { for (const agentId of members) signals.set(agentId, consider(signals.get(agentId) || null, { activity: 'unknown', freshness: 'fresh', since: null, sessionId: session.id, taskId: null, taskTitle: null })) }
     for (const action of actionFile.ok ? actionFile.value : []) {
+      if (action.agentId && members.has(action.agentId) && action.at) pushEvent({ id: session.id + ':action:' + (action.id || action.at), at: action.at, kind: 'waiting', agentId: action.agentId, toAgentId: null, sessionId: session.id, title: null })
       if (action.status !== 'pending' || !action.agentId || !members.has(action.agentId)) continue
       waitingForUser++
       signals.set(action.agentId, consider(signals.get(action.agentId) || null, { activity: 'waiting', freshness: 'fresh', since: action.at || null, sessionId: session.id, taskId: null, taskTitle: null }))
@@ -170,6 +198,9 @@ export function civilizationSnapshot(store: Store, now = Date.now(), runningIds:
       const review = task.requireReview && task.status === 'complete' && task.review?.status === 'awaiting_review'
       const status = task.status === 'pending' ? 'pending' : review ? 'review' : 'complete'
       tasks.push({ id: task.id, sessionId: session.id, title: clip(task.title || task.id, 80), assigneeId: task.assigneeId, fromAgentId: task.fromAgentId, status, at: task.at })
+      if (task.fromAgentId && task.assigneeId && task.fromAgentId !== task.assigneeId) pushEvent({ id: session.id + ':task:' + task.id, at: task.at, kind: 'handoff', agentId: task.fromAgentId, toAgentId: task.assigneeId, sessionId: session.id, title: clip(task.title || task.id, 80) })
+      const delivered = task.status === 'complete' ? task.resultHistory?.at(-1)?.at : undefined
+      if (delivered && task.assigneeId) pushEvent({ id: session.id + ':task:' + task.id + ':done', at: delivered, kind: 'delivered', agentId: task.assigneeId, toAgentId: task.fromAgentId || null, sessionId: session.id, title: clip(task.title || task.id, 80) })
       const handed = Date.parse(task.at), recent = Number.isFinite(handed) && now - handed <= HANDOFF_MS
       if (recent && task.fromAgentId !== task.assigneeId && task.status === 'pending') {
         handoffs.push({ id: session.id + ':' + task.id, fromAgentId: task.fromAgentId, toAgentId: task.assigneeId, taskId: task.id, at: task.at })
@@ -190,6 +221,7 @@ export function civilizationSnapshot(store: Store, now = Date.now(), runningIds:
     return rows
   })
   const waitingTasks = tasks.filter(task => task.status !== 'complete').length
+  const known = new Set(citizens.map(item => item.id))
   return {
     generatedAt: new Date(now).toISOString(), source: 'live', llmCalls: 0, connected: true,
     usage: { subscription: 'Unavailable', remaining: 'Unavailable', reset: 'Unavailable', reportedTokens, reportedNote: reportedTokens === null ? 'Unavailable' : '模型已回报的 token，不是订阅剩余额度', activeAgents: citizens.length, runningTasks: citizens.filter(item => item.activity === 'working' && item.freshness === 'fresh').length, waitingTasks, waitingForUser, lastUpdate: new Date(now).toISOString() },
@@ -200,6 +232,9 @@ export function civilizationSnapshot(store: Store, now = Date.now(), runningIds:
       { id: 'metro', name: '现代都会', purpose: '数据、监测与通信', landmark: '数据塔' },
     ],
     citizens, buildings, tasks: tasks.filter(task => task.status !== 'complete').slice(0, 40), tasksState, handoffs,
+    events: events.filter(event => known.has(event.agentId)).sort((a, b) => Date.parse(b.at) - Date.parse(a.at) || a.id.localeCompare(b.id)).slice(0, EVENT_LIMIT),
+    teams: groups.map(group => ({ id: group.id, name: clip(group.title || group.id, 40), memberIds: store.groupMembers(group.id).filter(id => known.has(id)), coordinatorId: group.coordinatorId && known.has(group.coordinatorId) ? group.coordinatorId : null, updatedAt: group.updatedAt })).filter(team => team.memberIds.length).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
+    leadSource,
   }
 }
 
