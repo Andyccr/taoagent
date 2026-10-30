@@ -8,8 +8,10 @@ import { civilizationSnapshot, type CitizenView, type CivilizationSnapshot } fro
 import { createApp } from '../app.ts'
 // Browser modules are plain ESM JavaScript; their pure helpers run in Node without a DOM.
 import { visualState, rosterFrom } from '../public/city-entry.js'
-import { computeCity, PER_RING, CORE_RINGS } from '../public/city/layout.js'
-import { computeMetropolis, assignClaims, circleHitsBox, CANAL, RING_ROADS, AVENUES, AVENUE_W, LOT, CITY_EDGE } from '../public/city/metropolis-plan.js'
+import { computeCity, PER_RING, CORE_RINGS, STYLE_ANGLE } from '../public/city/layout.js'
+import { computeMetropolis, assignClaims, circleHitsBox, CANAL, CITY_EDGE, OUTER_EDGE, HARBOUR } from '../public/city/metropolis-plan.js'
+import { makeRoadIndex, distanceToRoads, pointSegmentDistance } from '../public/city/metropolis-streets.js'
+import { CANAL_HALF } from '../public/city/metropolis-roads.js'
 
 interface Plot { ring: number; angle: number; bot: { id: string } | null }
 interface Lot { id: string; x: number; z: number; r: number; angle: number; style: string; kind: string; district: string; claimable: boolean }
@@ -69,29 +71,98 @@ test('core layout keeps 18 plots in 3 rings and overflows deterministically into
   assert.equal((computeCity(make(25)) as Layout).unplaced.length, 7, 'without a claim function overflow is reported, not invented')
 })
 
-test('the metropolis is city-scale, collision free and anchored by wonders', () => {
-  const plan = computeMetropolis() as Plan
-  assert(plan.lots.length >= 600, 'hundreds of buildings: ' + plan.lots.length)
-  assert(plan.lots.filter(lot => lot.claimable).length >= 200)
-  assert.deepEqual([...new Set(plan.lots.map(lot => lot.district))].sort(), ['chinese', 'greek', 'mixed', 'modern', 'roman'])
-  assert(new Set(plan.lots.map(lot => lot.style + ':' + lot.kind)).size >= 20, 'many building types')
-  const kinds = new Set(plan.wonders.map(wonder => wonder.kind))
-  for (const kind of ['palace', 'pagoda', 'acropolis', 'colosseum', 'pantheon', 'arch', 'supertall', 'wall']) assert(kinds.has(kind), kind)
-  const half = LOT / 2
-  for (let i = 0; i < plan.lots.length; i++) {
-    const lot = plan.lots[i]
-    assert(lot.r - half > CANAL.outer && lot.r + half <= CITY_EDGE + 0.01, 'inside the city ring ' + lot.id)
-    for (const road of RING_ROADS) assert(Math.abs(lot.r - road.r) >= road.w / 2 + half - 0.01, 'off the ring roads ' + lot.id)
-    for (const avenue of AVENUES) { const d = Math.abs(((lot.angle - avenue + 540) % 360) - 180) * Math.PI / 180 * lot.r; assert(d >= AVENUE_W / 2 + half - 0.01, 'off the avenues ' + lot.id) }
-    for (const wonder of plan.wonders) assert(!circleHitsBox(lot.x, lot.z, half, wonder), lot.id + ' overlaps ' + wonder.id)
-    for (let j = i + 1; j < plan.lots.length; j++) { const other = plan.lots[j]; assert(Math.hypot(lot.x - other.x, lot.z - other.z) >= LOT, lot.id + ' overlaps ' + other.id) }
+test('the metropolis is an organic city with a mixed outer ring, collision free and anchored by wonders', () => {
+  const plan = computeMetropolis() as any
+  const lots = plan.lots as any[]
+  assert(lots.length >= 1200, 'hundreds of buildings: ' + lots.length)
+  assert(lots.filter((lot: any) => lot.claimable).length >= 450, 'plenty of claimable lots')
+  assert(lots.filter((lot: any) => lot.zone === 'inner').length >= 380, 'a dense inner city')
+  assert(lots.filter((lot: any) => lot.zone === 'blend').length >= 250, 'a mixed outer blend')
+
+  const zones = new Set(lots.map((lot: any) => lot.zone))
+  for (const zone of ['inner', 'blend', 'suburb', 'industrial', 'harbour', 'country']) assert(zones.has(zone), zone)
+  const innerDistricts = new Set(lots.filter((lot: any) => lot.zone === 'inner').map((lot: any) => lot.district))
+  assert.deepEqual([...innerDistricts].sort(), ['chinese', 'greek', 'mixed', 'modern', 'roman'])
+
+  const blend = lots.filter((lot: any) => lot.zone === 'blend')
+  const blendStyles = new Set(blend.filter((lot: any) => lot.style !== 'common').map((lot: any) => lot.style))
+  assert(blendStyles.size >= 4, 'the blend mixes styles: ' + [...blendStyles].join(','))
+  const gap = (a: number, b: number) => { const d = Math.abs((((a - b) % 360) + 360) % 360); return Math.min(d, 360 - d) }
+  const styleAngles = STYLE_ANGLE as Record<string, number>
+  const stray = blend.filter((lot: any) => {
+    let nearest = '', distance = Infinity
+    for (const style of Object.keys(styleAngles)) {
+      const d = gap(lot.angle, styleAngles[style])
+      if (d < distance) { distance = d; nearest = style }
+    }
+    return lot.style !== 'common' && lot.style !== nearest
+  }).length
+  assert(stray >= 30, 'the blend strays from the quarters: ' + stray)
+
+  const sizes = lots.map((lot: any) => lot.size)
+  assert(Math.max(...sizes) - Math.min(...sizes) >= 1.5, 'lot sizes are organic')
+  const offRadial = lots.filter((lot: any) => gap(lot.rotY * 180 / Math.PI, Math.atan2(-lot.x, -lot.z) * 180 / Math.PI) > 0.1 * 180 / Math.PI).length
+  assert(offRadial / lots.length >= 0.3, 'buildings face streets, not only the centre: ' + offRadial)
+  const firstBand = lots.filter((lot: any) => lot.zone === 'inner' && lot.band === 3)
+  assert(firstBand.length > 0)
+  assert(new Set(firstBand.map((lot: any) => Math.round(lot.r * 10) / 10)).size >= 20, 'the inner row is not a perfect circle')
+
+  const roads = makeRoadIndex(plan.roads)
+  const canalPoints = plan.canal.pts as number[][]
+  const canalDistance = (x: number, z: number) => {
+    let best = Infinity
+    for (let i = 0; i < canalPoints.length; i++) {
+      const a = canalPoints[i], b = canalPoints[(i + 1) % canalPoints.length]
+      const d = pointSegmentDistance(x, z, a[0], a[1], b[0], b[1])
+      if (d < best) best = d
+    }
+    return best
   }
+  const CELL = 16
+  const buckets = new Map<string, any[]>()
+  for (const lot of lots) {
+    const key = Math.floor(lot.x / CELL) + ':' + Math.floor(lot.z / CELL)
+    const bucket = buckets.get(key)
+    if (bucket) bucket.push(lot); else buckets.set(key, [lot])
+  }
+  for (const lot of lots) {
+    const half = lot.size / 2
+    assert(distanceToRoads(roads, lot.x, lot.z) >= half + 0.39, lot.id + ' is off the roads')
+    assert(canalDistance(lot.x, lot.z) >= CANAL_HALF + half + 0.79, lot.id + ' is off the canal')
+    for (const wonder of plan.wonders) assert(!circleHitsBox(lot.x, lot.z, half, wonder, 1.1), lot.id + ' overlaps ' + wonder.id)
+    const cx = Math.floor(lot.x / CELL), cz = Math.floor(lot.z / CELL)
+    for (let ix = cx - 1; ix <= cx + 1; ix++) for (let iz = cz - 1; iz <= cz + 1; iz++) {
+      const bucket = buckets.get(ix + ':' + iz)
+      if (!bucket) continue
+      for (const other of bucket) {
+        if (other === lot) continue
+        assert((lot.size + other.size) / 2 + 0.29 <= Math.hypot(lot.x - other.x, lot.z - other.z), lot.id + ' overlaps ' + other.id)
+      }
+    }
+  }
+
+  assert.equal(plan.wonders.length, 8)
+  assert.deepEqual(plan.wonders.map((wonder: any) => wonder.id).sort(), ['acropolis', 'arch', 'colosseum', 'pagoda', 'palace', 'pantheon', 'supertall', 'wall'])
   for (const a of plan.wonders) {
-    const cx = Math.max(a.x0, Math.min(0, a.x1)), cz = Math.max(a.z0, Math.min(0, a.z1))
-    assert(Math.hypot(cx, cz) > CANAL.outer, a.id + ' stays outside the canal')
+    assert(Math.hypot(a.x, a.z) > CANAL.outer, a.id + ' stays outside the canal')
     for (const b of plan.wonders) if (a !== b) assert(!(a.x0 < b.x1 && b.x0 < a.x1 && a.z0 < b.z1 && b.z0 < a.z1), a.id + ' overlaps ' + b.id)
   }
+  assert.equal(plan.cityEdge, CITY_EDGE)
+  assert.equal(plan.outerEdge, OUTER_EDGE)
+  assert.deepEqual(plan.sea, HARBOUR)
+  assert(plan.fields.length >= 40, 'farms surround the city: ' + plan.fields.length)
+  assert(plan.parks.length >= 10, 'parks dot the city: ' + plan.parks.length)
+
   assert.equal(computeMetropolis(), plan, 'the plan is computed once and is static')
+  assert.equal(new Set(lots.map((lot: any) => lot.id)).size, lots.length, 'lot ids are unique')
+  const bots = Array.from({ length: 30 }, (_, index) => ({ id: 'bot-' + String(index).padStart(2, '0'), style: ['chinese', 'greek', 'roman', 'modern'][index % 4] }))
+  const first = assignClaims(bots as any, plan)
+  const again = assignClaims(bots as any, plan)
+  const firstIds = bots.map(bot => first.get(bot.id)?.id)
+  const againIds = bots.map(bot => again.get(bot.id)?.id)
+  assert.deepEqual(firstIds, againIds, 'claims are deterministic')
+  assert.equal(new Set(firstIds).size, bots.length, 'every bot gets its own lot')
+  for (const bot of bots) { const lot = first.get(bot.id); assert(lot && lot.claimable, 'agents only claim claimable lots') }
 })
 
 test('snapshot events and teams are real, ordered and free of private text', () => {
