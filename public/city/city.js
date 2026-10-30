@@ -64,7 +64,7 @@ export function createCity(container, roster, opts = {}) {
   const plan = computeMetropolis();
   const layout = computeCity(roster, { claim: (bots) => assignClaims(bots, plan) });
   const R = layout.outerR;          // agent core
-  const CITY_R = plan.outerR;       // whole metropolis
+  const CITY_R = plan.outerEdge || plan.outerR; // framed city (countryside fades beyond)
   if (shadows) {
     sun.shadow.mapSize.set(2048, 2048);
     Object.assign(sun.shadow.camera, { left: -R - 4, right: R + 4, top: R + 4, bottom: -R - 4, near: 1, far: 160 });
@@ -495,6 +495,8 @@ export function createCity(container, roster, opts = {}) {
     setBots, handoff, select, focus, focusQuarter, focusWonder, resetCamera, setOptions, setVisible,
     wonders: () => city.wonders.map((w) => ({ id: w.id, name: w.name })),
     perf: () => ({ calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, geometries: renderer.info.memory.geometries, frameMs: +frameMs.toFixed(2), composer: !!composer, ...city.stats, lots: plan.lots.length, claimable: plan.lots.filter((l) => l.claimable).length }),
+    // Debug/screenshot helper: put the camera at an exact spot looking at a target.
+    view: (pos, target) => { tween = null; userMoved = true; camera.position.set(...pos); controls.target.set(...target); controls.maxDistance = 2000; controls.update(); },
     drawStats: () => {
       const by = {}; let total = 0, cast = 0;
       scene.traverseVisible((o) => { if (!o.isMesh && !o.isSprite && !o.isLine && !o.isPoints) return; total++; if (o.castShadow) cast++; let top = o; while (top.parent && top.parent !== scene) top = top.parent; const k = top.name || (top.type + (top.children.length > 8 ? ':' + top.uuid.slice(0, 4) : '')); by[k] = (by[k] || 0) + 1; });
