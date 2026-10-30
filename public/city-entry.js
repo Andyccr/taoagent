@@ -55,7 +55,8 @@ export function createCity(stage, hooks = {}) {
       lowPower: settings.quality === 'low' || (settings.quality !== 'high' && coarse),
       emperor: { name: language() === 'en' ? 'You' : '你', color: '#d9a520' },
       quarters: QUARTERS[language()],
-      onPick: (hit) => hooks.onPick?.(hit.type === 'agent' ? { type: 'agent', id: hit.id } : { type: 'reserved', id: 'reserved' }),
+      quality: settings.quality,
+      onPick: (hit) => hooks.onPick?.(hit.type === 'agent' ? { type: 'agent', id: hit.id } : hit.type === 'wonder' ? { type: 'wonder', id: hit.id, name: hit.name } : { type: 'reserved', id: 'reserved' }),
       onAdaptive: hooks.onAdaptive,
     })
     scene.setOptions(settings)
@@ -84,10 +85,19 @@ export function createCity(stage, hooks = {}) {
     setSnapshot(next) { snapshot = next; apply() },
     setSettings(next) { const rebuild = scene && (next.quality !== settings.quality || next.language !== settings.language); settings = { ...next }; if (rebuild) { key = ''; apply() } else scene?.setOptions(settings) },
     setVisible(next) { visible = !!next; scene?.setVisible(visible) },
-    select(ids) { selected = Array.isArray(ids) ? ids : ids ? [ids] : []; scene?.select(selected) },
+    select(ids) {
+      const next = Array.isArray(ids) ? ids : ids ? [ids] : []
+      const changed = next.join() !== selected.join()
+      selected = next; scene?.select(selected)
+      // A newly picked single agent is small in a city-scale view: glide to it once (polls re-select without moving).
+      if (changed && next.length === 1 && !followId) scene?.focus(next[0], 34)
+    },
     follow(id) { followId = id || null; if (followId) scene?.focus(followId); else scene?.resetCamera() },
-    focusDistrict(id) { followId = null; scene?.focusQuarter(id === 'overview' ? 'overview' : STYLE_OF[id] || id) },
+    focusDistrict(id) { followId = null; scene?.focusQuarter(id === 'overview' || id === 'core' ? id : STYLE_OF[id] || id) },
     resetCamera() { followId = null; scene?.resetCamera() },
+    focusWonder(id) { followId = null; return scene?.focusWonder(id) || false },
+    wonders() { return scene?.wonders() || [] },
+    perf() { return scene?.perf() || null },
     debug() { return scene?.debug() || null },
     dispose() { scene?.dispose(); scene = null },
   }
