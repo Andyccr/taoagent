@@ -709,7 +709,7 @@ export function createCity(container, roster, opts = {}) {
     const p = polar(92, STYLE_ANGLE[style]);
     glide(new THREE.Vector3(p.x, 0, p.z), 120);
   }
-  function focusWonder(id) { const w = city.wonders.find((x) => x.id === id); if (!w) return false; pendingFlash = new THREE.Vector3(w.x, 0.2, w.z); glide(new THREE.Vector3(w.x, Math.min(w.height, 60) * 0.35, w.z), Math.max(55, w.radius * 3.1, Math.min(w.height, 120) * 1.5)); return true; }
+  function focusWonder(id) { const w = city.wonders.find((x) => x.id === id); if (!w) return false; pendingFlash = new THREE.Vector3(w.x, 0.2, w.z); glide(new THREE.Vector3(w.x, Math.min(w.height, 60) * 0.35, w.z), Math.max(70, w.radius * 3.4, Math.min(w.height, 180) * 1.35)); return true; }
   function focusWonderByIndex(i) { const w = city.wonders[i]; if (!w) return false; pendingFlash = new THREE.Vector3(w.x, 0.2, w.z); return focusWonder(w.id); }
   function focusLead() { return layout.lead ? focus(layout.lead.id) : false; }
   function resetCamera() { userMoved = false; tween = null; stopTour(); fit(); }

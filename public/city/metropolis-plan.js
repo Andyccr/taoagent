@@ -14,14 +14,15 @@ export const RING_ROADS = [52, 72, 92, 112, 132, 152, 182, 222].map((r) => ({ r,
 export const HARBOUR = { from: 20, to: 70, shore: 256 };
 
 const WONDERS = [
-  { id: 'palace', kind: 'palace', name: '紫宸宫', angle: 180, r: 92, w: 54, d: 70, rotY: Math.PI, district: 'chinese' },
-  { id: 'pagoda', kind: 'pagoda', name: '万佛塔', angle: 145, r: 102, w: 28, d: 28, rotY: 0, district: 'chinese' },
-  { id: 'wall', kind: 'wall', name: '万里城关', angle: 180, r: 178, w: 88, d: 28, rotY: 0, district: 'chinese' },
-  { id: 'acropolis', kind: 'acropolis', name: '雅典卫城', angle: 270, r: 96, w: 50, d: 42, rotY: Math.PI / 2, district: 'greek' },
-  { id: 'colosseum', kind: 'colosseum', name: '大斗兽场', angle: 66, r: 94, w: 38, d: 32, rotY: 0, district: 'roman' },
-  { id: 'pantheon', kind: 'pantheon', name: '万神殿', angle: 113, r: 94, w: 46, d: 26, rotY: -Math.PI / 2, district: 'roman' },
-  { id: 'arch', kind: 'arch', name: '凯旋门', angle: 90, r: 62, w: 6, d: 16, rotY: Math.PI / 2, district: 'roman' },
-  { id: 'supertall', kind: 'supertall', name: '天穹塔', angle: 0, r: 84, w: 34, d: 34, rotY: 0, district: 'modern' },
+  // Larger ceremonial footprints (axis-aligned w×d); plazas clear lots via circleHitsBox.
+  { id: 'palace', kind: 'palace', name: '紫宸宫', angle: 180, r: 96, w: 92, d: 118, rotY: Math.PI, district: 'chinese' },
+  { id: 'pagoda', kind: 'pagoda', name: '万佛塔', angle: 148, r: 118, w: 42, d: 42, rotY: 0, district: 'chinese' },
+  { id: 'wall', kind: 'wall', name: '万里城关', angle: 180, r: 186, w: 110, d: 40, rotY: 0, district: 'chinese' },
+  { id: 'acropolis', kind: 'acropolis', name: '雅典卫城', angle: 270, r: 108, w: 78, d: 62, rotY: Math.PI / 2, district: 'greek' },
+  { id: 'colosseum', kind: 'colosseum', name: '大斗兽场', angle: 58, r: 108, w: 58, d: 48, rotY: 0, district: 'roman' },
+  { id: 'pantheon', kind: 'pantheon', name: '万神殿', angle: 120, r: 108, w: 62, d: 42, rotY: -Math.PI / 2, district: 'roman' },
+  { id: 'arch', kind: 'arch', name: '凯旋门', angle: 90, r: 68, w: 14, d: 28, rotY: Math.PI / 2, district: 'roman' },
+  { id: 'supertall', kind: 'supertall', name: '天穹塔', angle: 0, r: 88, w: 48, d: 48, rotY: 0, district: 'modern' },
 ];
 
 const KINDS = {
@@ -160,9 +161,9 @@ export function computeMetropolis() {
   bands.forEach(([inner, outer], band) => {
     const R = rng('band' + band);
     const midR = (inner + outer) / 2;
-    const dense = midR < 105;
+    const dense = midR < 125;
     const midZone = zoneAt(midR, 0);
-    const rowStep = dense ? 4.2 : (midZone ? RADIAL_STEP[midZone] : 7);
+    const rowStep = dense ? 3.6 : (midZone ? RADIAL_STEP[midZone] : 7);
     const rows = Math.max(1, Math.floor((outer - inner - 2) / rowStep));
     const innerRing = rings.find((ring) => ring.r === inner);
     const outerRing = rings.find((ring) => ring.r === outer);
@@ -187,7 +188,7 @@ export function computeMetropolis() {
           a += (6 / Math.max(rowR, 1)) * (180 / Math.PI);
           continue;
         }
-        const range = dense ? [4.2, 5.8] : SIZE_RANGE[zone];
+        const range = dense ? [3.8, 5.4] : SIZE_RANGE[zone];
         const size = range[0] + R() * (range[1] - range[0]);
         const gap = dense ? 0.25 + R() * 0.45 : (zone === 'country' ? 6 + R() * 8 : zone === 'inner' ? 0.4 + R() * 1.0 : 0.6 + R() * 1.6);
         const stepDeg = ((size + gap) / rowR) * (180 / Math.PI);
