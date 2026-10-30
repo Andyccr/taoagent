@@ -8,10 +8,15 @@ import { civilizationSnapshot, type CitizenView, type CivilizationSnapshot } fro
 import { createApp } from '../app.ts'
 // Browser modules are plain ESM JavaScript; their pure helpers run in Node without a DOM.
 import { visualState, rosterFrom } from '../public/city-entry.js'
-import { computeCity, PER_RING } from '../public/city/layout.js'
+import { computeCity, PER_RING, CORE_RINGS } from '../public/city/layout.js'
+import { computeMetropolis, assignClaims, circleHitsBox, CANAL, RING_ROADS, AVENUES, AVENUE_W, LOT, CITY_EDGE } from '../public/city/metropolis-plan.js'
 
 interface Plot { ring: number; angle: number; bot: { id: string } | null }
-interface Layout { lead: { id: string } | null; plots: Plot[]; rings: number }
+interface Lot { id: string; x: number; z: number; r: number; angle: number; style: string; kind: string; district: string; claimable: boolean }
+interface Claimed extends Lot { bot: { id: string; style: string } }
+interface Layout { lead: { id: string } | null; plots: Plot[]; rings: number; claimed: Claimed[]; unplaced: unknown[] }
+interface Wonder { id: string; kind: string; x0: number; x1: number; z0: number; z1: number }
+interface Plan { lots: Lot[]; wonders: Wonder[] }
 interface RosterEntry { id: string; name: string; style: string; lead: boolean; accessory: string }
 
 function home() { fs.mkdirSync('.test-tmp', { recursive: true }); return fs.mkdtempSync(path.resolve('.test-tmp', 'empire-')) }
@@ -38,22 +43,55 @@ test('the roster comes from snapshot citizens: style by quarter, one lead in the
   assert.deepEqual(rosterFrom({ citizens: [] } as unknown as CivilizationSnapshot), [])
 })
 
-test('layout gives each agent its own plot, keeps reserved plots and grows rings automatically', () => {
-  const make = (count: number) => [{ id: 'lead', style: 'chinese', lead: true }, ...Array.from({ length: count }, (_, index) => ({ id: 'agent-' + index, style: ['roman', 'greek', 'modern', 'chinese'][index % 4] }))]
-  for (const count of [0, 1, 5, 6, 11, 12, 30]) {
-    const layout = computeCity(make(count)) as Layout
+test('core layout keeps 18 plots in 3 rings and overflows deterministically into claimable city lots', () => {
+  const make = (count: number) => [{ id: 'lead', style: 'chinese', lead: true }, ...Array.from({ length: count }, (_, index) => ({ id: 'agent-' + String(index).padStart(2, '0'), style: ['roman', 'greek', 'modern', 'chinese'][index % 4] }))]
+  const claim = (bots: { id: string; style: string }[]) => assignClaims(bots)
+  for (const count of [0, 1, 5, 17, 18, 19, 30, 60]) {
+    const layout = computeCity(make(count), { claim }) as Layout
     const taken = layout.plots.filter(plot => plot.bot)
     assert.equal(layout.lead?.id, 'lead')
-    assert.equal(taken.length, count)
-    assert.equal(new Set(taken.map(plot => plot.bot?.id)).size, count)
-    const outer = layout.plots.filter(plot => plot.ring === layout.rings)
-    assert.equal(outer.length, PER_RING)
-    assert(outer.some(plot => !plot.bot), 'outer ring keeps a 待建 plot for the next agent')
-    assert(layout.rings >= 2)
+    assert.equal(layout.rings, CORE_RINGS)
+    assert.equal(layout.plots.length, CORE_RINGS * PER_RING)
+    assert.equal(taken.length, Math.min(count, 18))
+    assert.equal(layout.claimed.length, Math.max(0, count - 18))
+    const ids = [...taken.map(plot => plot.bot?.id), ...layout.claimed.map(plot => plot.bot.id)]
+    assert.equal(new Set(ids).size, count, 'every agent has exactly one building')
+    assert.equal(new Set(layout.claimed.map(plot => plot.id)).size, layout.claimed.length, 'no lot is claimed twice')
+    assert(layout.claimed.every(plot => plot.claimable), 'agents only claim claimable lots')
+    if (count < 18) assert(layout.plots.some(plot => !plot.bot), 'a 待建 plot stays free in the core')
   }
-  assert(((computeCity(make(30)) as Layout).rings) > ((computeCity(make(5)) as Layout).rings))
-  const roman = (computeCity(make(1)) as Layout).plots.find(plot => plot.bot?.id === 'agent-0')
-  assert.equal(roman?.angle, 90, 'roman agents prefer the Roman quarter')
+  const first = (computeCity(make(30), { claim }) as Layout).claimed.map(plot => plot.bot.id + '@' + plot.id)
+  const again = (computeCity(make(30), { claim }) as Layout).claimed.map(plot => plot.bot.id + '@' + plot.id)
+  assert.deepEqual(first, again, 'claims are deterministic')
+  const roman = (computeCity(make(30), { claim }) as Layout).claimed.find(plot => plot.bot.style === 'roman')
+  assert.equal(roman?.style, 'roman', 'claims prefer a lot of the agent\'s own style')
+  assert.equal((computeCity(make(1)) as Layout).plots.find(plot => plot.bot?.id === 'agent-00')?.angle, 90, 'roman agents prefer the Roman quarter')
+  assert.equal((computeCity(make(25)) as Layout).unplaced.length, 7, 'without a claim function overflow is reported, not invented')
+})
+
+test('the metropolis is city-scale, collision free and anchored by wonders', () => {
+  const plan = computeMetropolis() as Plan
+  assert(plan.lots.length >= 600, 'hundreds of buildings: ' + plan.lots.length)
+  assert(plan.lots.filter(lot => lot.claimable).length >= 200)
+  assert.deepEqual([...new Set(plan.lots.map(lot => lot.district))].sort(), ['chinese', 'greek', 'mixed', 'modern', 'roman'])
+  assert(new Set(plan.lots.map(lot => lot.style + ':' + lot.kind)).size >= 20, 'many building types')
+  const kinds = new Set(plan.wonders.map(wonder => wonder.kind))
+  for (const kind of ['palace', 'pagoda', 'acropolis', 'colosseum', 'pantheon', 'arch', 'supertall', 'wall']) assert(kinds.has(kind), kind)
+  const half = LOT / 2
+  for (let i = 0; i < plan.lots.length; i++) {
+    const lot = plan.lots[i]
+    assert(lot.r - half > CANAL.outer && lot.r + half <= CITY_EDGE + 0.01, 'inside the city ring ' + lot.id)
+    for (const road of RING_ROADS) assert(Math.abs(lot.r - road.r) >= road.w / 2 + half - 0.01, 'off the ring roads ' + lot.id)
+    for (const avenue of AVENUES) { const d = Math.abs(((lot.angle - avenue + 540) % 360) - 180) * Math.PI / 180 * lot.r; assert(d >= AVENUE_W / 2 + half - 0.01, 'off the avenues ' + lot.id) }
+    for (const wonder of plan.wonders) assert(!circleHitsBox(lot.x, lot.z, half, wonder), lot.id + ' overlaps ' + wonder.id)
+    for (let j = i + 1; j < plan.lots.length; j++) { const other = plan.lots[j]; assert(Math.hypot(lot.x - other.x, lot.z - other.z) >= LOT, lot.id + ' overlaps ' + other.id) }
+  }
+  for (const a of plan.wonders) {
+    const cx = Math.max(a.x0, Math.min(0, a.x1)), cz = Math.max(a.z0, Math.min(0, a.z1))
+    assert(Math.hypot(cx, cz) > CANAL.outer, a.id + ' stays outside the canal')
+    for (const b of plan.wonders) if (a !== b) assert(!(a.x0 < b.x1 && b.x0 < a.x1 && a.z0 < b.z1 && b.z0 < a.z1), a.id + ' overlaps ' + b.id)
+  }
+  assert.equal(computeMetropolis(), plan, 'the plan is computed once and is static')
 })
 
 test('snapshot events and teams are real, ordered and free of private text', () => {
