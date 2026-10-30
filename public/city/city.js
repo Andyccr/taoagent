@@ -14,6 +14,7 @@ import { buildModern, buildSkyline } from './styles-modern.js';
 import { buildGround, buildPlaza, buildStreet, buildReservedPlot, buildStele, buildTree, buildPine } from './decor.js';
 import { createSmoke, createFireworks } from './effects.js';
 import { buildMetropolis } from './metropolis.js';
+import { bakeStatic } from './bake.js';
 import { computeMetropolis, assignClaims, CANAL } from './metropolis-plan.js';
 import { buildCharacter, applyVisual } from './characters.js';
 import { CJK_FONT as CJK, textTexture } from './kit.js';
@@ -71,12 +72,14 @@ export function createCity(container, roster, opts = {}) {
   }
 
   // ---------- static city ----------
-  scene.add(buildGround({ radius: CITY_R + 90, shadows }));
-  scene.add(buildPlaza({ radius: PLAZA_R, shadows }));
+  // Static core decor is merged per material after building (bakeStatic) to save draw calls.
+  const decor = new THREE.Group(); decor.name = 'coreDecor'; scene.add(decor);
+  decor.add(buildGround({ radius: CITY_R + 90, shadows }));
+  decor.add(buildPlaza({ radius: PLAZA_R, shadows }));
   const roadOut = PLAZA_R + ROAD_W;
   for (const p of layout.plots) {
     const a = polar(roadOut - 0.2, p.angle), b = polar(p.r - PLOT / 2 + 0.3, p.angle);
-    scene.add(buildStreet({ from: a, to: b, width: 2.2 }));
+    decor.add(buildStreet({ from: a, to: b, width: 2.2 }));
   }
   // Roman aqueduct across the workshop quarter, between ring 1 and ring 2.
   {
@@ -85,15 +88,17 @@ export function createCity(container, roster, opts = {}) {
     const p = polar(mid, STYLE_ANGLE.roman);
     aq.position.set(p.x, 0, p.z);
     aq.rotation.y = Math.atan2(-p.x, -p.z);
-    scene.add(aq);
+    decor.add(aq);
   }
   // Trees flanking the outer streets and pines in the plaza corners.
   let seed = 1;
   for (let i = 0; i < 6; i++) for (const s of [-9, 9]) {
     const t = buildTree({ seed: seed++, shadows }); const p = polar(ringRadius(1) + 1, i * 60 + s);
-    t.position.set(p.x, 0, p.z); scene.add(t);
+    t.position.set(p.x, 0, p.z); decor.add(t);
   }
-  for (const ang of [135, 225]) { const t = buildPine({ seed: seed++, shadows }); const p = polar(PLAZA_R - 1.6, ang); t.position.set(p.x, 0, p.z); scene.add(t); }
+  for (const ang of [135, 225]) { const t = buildPine({ seed: seed++, shadows }); const p = polar(PLAZA_R - 1.6, ang); t.position.set(p.x, 0, p.z); decor.add(t); }
+
+  bakeStatic(decor);
 
   // Usage stele in the plaza (front-left of the hall, facing the camera side).
   const stele = buildStele({ shadows });
@@ -121,6 +126,7 @@ export function createCity(container, roster, opts = {}) {
   const units = new Map();
   const pickables = [];
   const tags = [];
+  let labelsOn = true, leadTag = null;
   const icons = [];
   function makeTag(name, color) {
     const short = String(name || '').split(' · ')[0].slice(0, 12);
@@ -150,6 +156,9 @@ export function createCity(container, roster, opts = {}) {
   function addUnit(def, b, group, walkPoint, angle) {
     scene.add(group);
     group.updateMatrixWorld(true);
+    // Merge the static parts of the building; the gate (toggled by state) stays separate. Shared materials keep lantern/window effects.
+    const baked = bakeStatic(group, { keep: [b.gate].filter(Boolean) });
+    if (baked.removed) b.meshes = [...baked.merged, ...b.meshes.filter((m) => m.parent)];
     const fig = makeFigure(def, def.accessory);
     const porch = group.localToWorld(b.porch.clone());
     fig.root.position.copy(porch);
@@ -176,7 +185,7 @@ export function createCity(container, roster, opts = {}) {
     const b = buildImperialHall({ color: layout.lead.color, shadows });
     b.group.scale.setScalar(HALL_SCALE);
     const foot = b.stairFoot ? b.stairFoot.clone().multiplyScalar(HALL_SCALE) : new THREE.Vector3(0, 0, 7);
-    addUnit(layout.lead, b, b.group, [polar(ROAD_MID, 180), { x: foot.x, z: foot.z + 0.4 }], 180);
+    leadTag = addUnit(layout.lead, b, b.group, [polar(ROAD_MID, 180), { x: foot.x, z: foot.z + 0.4 }], 180).fig.tag;
     // The Emperor at the top of the hall (decorative, not a bot).
     const emp = makeFigure({ id: 'emperor', name: emperorDef.name, color: emperorDef.color }, null, 2.45);
     const crown = buildCharacter({ name: '', color: emperorDef.color, accessory: 'crown' }, { shadows });
@@ -192,6 +201,7 @@ export function createCity(container, roster, opts = {}) {
     g.position.set(p.x, 0, p.z); g.rotation.y = p.rotY;
     if (!p.bot) {
       const lot = buildReservedPlot({ shadows, label: '待建' });
+      bakeStatic(lot);
       lot.traverse((o) => { if (o.isMesh) { o.userData.info = { reserved: true, name: '待建用地', dept: '新成员加入后自动建造', state: '', label: '' }; pickables.push(o); } });
       g.add(lot);
       scene.add(g);
@@ -421,6 +431,9 @@ export function createCity(container, roster, opts = {}) {
       if (camera.position.distanceTo(tween.pos) < 0.05) tween = null;
     }
     controls.update();
+    // In the far overview only the lead keeps its name tag so the core does not turn into a pile of labels.
+    const far = camera.position.distanceTo(controls.target) > 150;
+    for (const tg of tags) tg.visible = labelsOn && (!far || tg === leadTag);
     for (const u of units.values()) {
       if (u.state === 'working') {
         const ph = t * 5 + u.phase;
@@ -461,13 +474,13 @@ export function createCity(container, roster, opts = {}) {
     const p = polar(92, STYLE_ANGLE[style]);
     glide(new THREE.Vector3(p.x, 0, p.z), 120);
   }
-  function focusWonder(id) { const w = city.wonders.find((x) => x.id === id); if (!w) return false; glide(new THREE.Vector3(w.x, Math.min(w.height, 60) * 0.35, w.z), Math.max(50, w.radius * 2.4, Math.min(w.height, 120) * 1.5)); return true; }
+  function focusWonder(id) { const w = city.wonders.find((x) => x.id === id); if (!w) return false; glide(new THREE.Vector3(w.x, Math.min(w.height, 60) * 0.35, w.z), Math.max(55, w.radius * 3.1, Math.min(w.height, 120) * 1.5)); return true; }
   function resetCamera() { userMoved = false; tween = null; fit(); }
   function setOptions(o = {}) {
     if (o.speed !== undefined) speed = Math.min(3, Math.max(0.25, Number(o.speed) || 1));
     if (o.paused !== undefined) paused = !!o.paused;
     if (o.sensitivity !== undefined) controls.rotateSpeed = controls.zoomSpeed = Math.min(2.5, Math.max(0.4, Number(o.sensitivity) || 1));
-    if (o.labels !== undefined) for (const tg of tags) tg.visible = !!o.labels;
+    if (o.labels !== undefined) labelsOn = !!o.labels;
     if (o.citizens !== undefined) for (const u of units.values()) u.fig.root.visible = !!o.citizens;
     if (o.night !== undefined) {
       const night = !!o.night;
@@ -484,8 +497,8 @@ export function createCity(container, roster, opts = {}) {
     perf: () => ({ calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, geometries: renderer.info.memory.geometries, frameMs: +frameMs.toFixed(2), composer: !!composer, ...city.stats, lots: plan.lots.length, claimable: plan.lots.filter((l) => l.claimable).length }),
     drawStats: () => {
       const by = {}; let total = 0, cast = 0;
-      scene.traverseVisible((o) => { if (!o.isMesh && !o.isSprite && !o.isLine && !o.isPoints) return; total++; if (o.castShadow) cast++; let top = o; while (top.parent && top.parent !== scene) top = top.parent; const k = top.name || top.type; by[k] = (by[k] || 0) + 1; });
-      return { total, cast, by: Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 12) };
+      scene.traverseVisible((o) => { if (!o.isMesh && !o.isSprite && !o.isLine && !o.isPoints) return; total++; if (o.castShadow) cast++; let top = o; while (top.parent && top.parent !== scene) top = top.parent; const k = top.name || (top.type + (top.children.length > 8 ? ':' + top.uuid.slice(0, 4) : '')); by[k] = (by[k] || 0) + 1; });
+      return { total, cast, by: Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 30) };
     },
     setUsageLines: (lines) => stele.setLines(lines),
     setSimulation: () => {},
