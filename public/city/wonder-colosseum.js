@@ -135,11 +135,11 @@ export function buildColosseum() {
 
   for (let p = 0; p < 4; p++) {
     const th = p * Math.PI / 2;
-    const am = 11.5;
-    const bm = 9.0;
+    const am = 15.0;
+    const bm = 12.4;
     g.group({ x: am * Math.cos(th), y: 0, z: bm * Math.sin(th), ry: Math.atan2(Math.cos(th) / am, Math.sin(th) / bm) }, (g) => {
-      g.box(2.4, 3.3, 9.5, 0, 0, 0, VOID);
-      g.box(2.4, 0.12, 9.5, 0, 0, 0, DARK_STONE);
+      g.box(2.4, 3.3, 5.2, 0, 0, 0, VOID);
+      g.box(2.4, 0.12, 5.2, 0, 0, 0, DARK_STONE);
     });
   }
 

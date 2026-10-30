@@ -17,7 +17,7 @@ const MARGIN = 0.8;
 const WONDERS = [
   { id: 'palace', kind: 'palace', name: '紫宸宫', angle: 180, r: 92, w: 54, d: 70, rotY: Math.PI, district: 'chinese' },
   { id: 'pagoda', kind: 'pagoda', name: '万佛塔', angle: 145, r: 102, w: 28, d: 28, rotY: 0, district: 'chinese' },
-  { id: 'wall', kind: 'wall', name: '万里城关', angle: 180, r: 178, w: 82, d: 18, rotY: 0, district: 'chinese' },
+  { id: 'wall', kind: 'wall', name: '万里城关', angle: 180, r: 178, w: 88, d: 28, rotY: 0, district: 'chinese' },
   { id: 'acropolis', kind: 'acropolis', name: '雅典卫城', angle: 270, r: 96, w: 50, d: 42, rotY: Math.PI / 2, district: 'greek' },
   { id: 'colosseum', kind: 'colosseum', name: '大斗兽场', angle: 66, r: 94, w: 38, d: 32, rotY: 0, district: 'roman' },
   { id: 'pantheon', kind: 'pantheon', name: '万神殿', angle: 113, r: 94, w: 46, d: 26, rotY: -Math.PI / 2, district: 'roman' },
