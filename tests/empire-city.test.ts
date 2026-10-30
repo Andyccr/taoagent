@@ -76,7 +76,7 @@ test('the metropolis is an organic city with a mixed outer ring, collision free 
   const lots = plan.lots as any[]
   assert(lots.length >= 1200, 'hundreds of buildings: ' + lots.length)
   assert(lots.filter((lot: any) => lot.claimable).length >= 450, 'plenty of claimable lots')
-  assert(lots.filter((lot: any) => lot.zone === 'inner').length >= 380, 'a dense inner city')
+  assert(lots.filter((lot: any) => lot.zone === 'inner').length >= 550, 'a dense inner city')
   assert(lots.filter((lot: any) => lot.zone === 'blend').length >= 250, 'a mixed outer blend')
 
   const zones = new Set(lots.map((lot: any) => lot.zone))
@@ -127,7 +127,7 @@ test('the metropolis is an organic city with a mixed outer ring, collision free 
   }
   for (const lot of lots) {
     const half = lot.size / 2
-    assert(distanceToRoads(roads, lot.x, lot.z) >= half + 0.39, lot.id + ' is off the roads')
+    assert(distanceToRoads(roads, lot.x, lot.z) >= half + 0.19, lot.id + ' is off the roads')
     assert(canalDistance(lot.x, lot.z) >= CANAL_HALF + half + 0.79, lot.id + ' is off the canal')
     for (const wonder of plan.wonders) assert(!circleHitsBox(lot.x, lot.z, half, wonder, 1.1), lot.id + ' overlaps ' + wonder.id)
     const cx = Math.floor(lot.x / CELL), cz = Math.floor(lot.z / CELL)

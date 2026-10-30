@@ -4,7 +4,7 @@
 // - wonders are one merged mesh each (+ one glass mesh), built once per page and reused when the agent core rebuilds.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-import { cityMaterial } from './geo.js';
+import { cityMaterial, createGeo } from './geo.js';
 import { polar } from './layout.js';
 import { computeMetropolis, hash } from './metropolis-plan.js';
 import { CHINESE_FILLERS } from './fillers-chinese.js';
@@ -23,7 +23,7 @@ import { buildCityWall } from './wonder-wall.js';
 
 const FILLERS = { chinese: CHINESE_FILLERS, greek: GREEK_FILLERS, roman: ROMAN_FILLERS, modern: MODERN_FILLERS, common: COMMON_FILLERS, outer: OUTER_FILLERS };
 const WONDER_BUILDERS = { palace: buildPalace, pagoda: buildGreatPagoda, acropolis: buildAcropolis, colosseum: buildColosseum, pantheon: buildPantheon, arch: buildTriumphalArch, supertall: buildSupertall, wall: () => buildCityWall(72) };
-const GROUND = { chinese: '#c9c19f', greek: '#cfcab4', roman: '#c8b48e', modern: '#b9bcb6', mixed: '#c4c0a4' };
+const GROUND = { chinese: '#c9c19f', greek: '#cfcab4', roman: '#c8b48e', modern: '#b9bcb6', mixed: '#c4c0a4', blend: '#c9c3a6', harbour: '#b7c2b0', industrial: '#b5b0a4', suburb: '#b8bf98', country: '#a9b98a', farmland: '#a9b98a' };
 const PARK = { park: '#8fb36a', plaza: '#d6cdb6', market: '#cdbf9f' };
 const CROP = ['#c9b458', '#8fae5a', '#a7c46a', '#b98e4f'];
 
@@ -46,6 +46,28 @@ function wonderParts(kind) {
     wonderCache.set(kind, w);
   }
   return wonderCache.get(kind);
+}
+
+let bridgeRailGeo = null;
+function bridgeWithRail(span, width) {
+  if (bridgeRailGeo) return bridgeRailGeo;
+  const rails = createGeo();
+  const t = 0.18, h = 0.7, zEdge = width / 2 - t / 2;
+  for (const side of [-1, 1]) rails.box(span, h, t, 0, 0, side * zEdge, '#b9b2a2');
+  const railGeo = rails.build();
+  let deck = bridge(span, width);
+  if (!deck) { bridgeRailGeo = railGeo; return bridgeRailGeo; }
+  if (deck.index) deck = deck.toNonIndexed();
+  if (deck.getAttribute('uv')) deck.deleteAttribute('uv');
+  if (deck.getAttribute('uv1')) deck.deleteAttribute('uv1');
+  if (!deck.getAttribute('normal')) deck.computeVertexNormals();
+  if (!deck.getAttribute('color')) {
+    const n = deck.getAttribute('position').count;
+    const c = new Float32Array(n * 3).fill(1);
+    deck.setAttribute('color', new THREE.BufferAttribute(c, 3));
+  }
+  bridgeRailGeo = mergeGeometries([deck, railGeo]) || railGeo;
+  return bridgeRailGeo;
 }
 
 function polylineNormals(pts, closed = false) {
@@ -110,16 +132,7 @@ function staticGeometry() {
   const sea = new THREE.RingGeometry(plan.sea.shore, plan.outerR + 140, 48, 1,
     THREE.MathUtils.degToRad(90 - plan.sea.to), THREE.MathUtils.degToRad(plan.sea.to - plan.sea.from)).rotateX(-Math.PI / 2);
 
-  const districts = [];
-  for (const [angle, style] of [[0, 'modern'], [90, 'roman'], [180, 'chinese'], [270, 'greek']]) {
-    const g = new THREE.CircleGeometry(plan.cityEdge + 6, 24, THREE.MathUtils.degToRad(-angle + 90 - 45), Math.PI / 2).rotateX(-Math.PI / 2);
-    districts.push({ style, g });
-  }
-  const blend = new THREE.RingGeometry(plan.cityEdge + 6, 222, 96, 1).rotateX(-Math.PI / 2);
-  const outer = new THREE.RingGeometry(222, plan.outerEdge, 96, 1).rotateX(-Math.PI / 2);
-  const country = new THREE.RingGeometry(plan.outerEdge, plan.outerR + 140, 96, 1).rotateX(-Math.PI / 2);
-
-  sharedStatic = { roads, waterGeo, kerbs, sea, districts, blend, outer, country, bridge: bridge(canal.half * 2 + 1.5, 5.2), tree: tree(0), tree2: tree(1), tree3: tree(2) };
+  sharedStatic = { roads, waterGeo, kerbs, sea, bridge: bridgeWithRail(canal.half * 2 + 1.5, 5.2), tree: tree(0), tree2: tree(1), tree3: tree(2) };
   return sharedStatic;
 }
 
@@ -128,19 +141,47 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
   const plan = computeMetropolis();
   const root = new THREE.Group(); root.name = 'metropolis';
   const solid = cityMaterial('solid');
-  const stats = { fillers: 0, fillerKinds: new Set(), instancedMeshes: 0, trees: 0, wonders: [], parks: plan.parks.length, fields: plan.fields.length };
+  const stats = { fillers: 0, fillerKinds: new Set(), instancedMeshes: 0, trees: 0, wonders: [], parks: plan.parks.length, fields: plan.fields.length, chimneys: [], piers: [] };
   const st = staticGeometry();
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), sc = new THREE.Vector3(1, 1, 1), pos = new THREE.Vector3();
 
-  for (const d of st.districts) { const m = new THREE.Mesh(d.g, new THREE.MeshStandardMaterial({ color: GROUND[d.style], roughness: 1 })); m.position.y = 0.006; m.receiveShadow = quality !== 'low'; root.add(m); }
-  const blend = new THREE.Mesh(st.blend, new THREE.MeshStandardMaterial({ color: '#c9c3a6', roughness: 1 })); blend.position.y = 0.005; blend.receiveShadow = quality !== 'low'; root.add(blend);
-  const outer = new THREE.Mesh(st.outer, new THREE.MeshStandardMaterial({ color: '#b8bf98', roughness: 1 })); outer.position.y = 0.004; outer.receiveShadow = quality !== 'low'; root.add(outer);
-  const country = new THREE.Mesh(st.country, new THREE.MeshStandardMaterial({ color: '#a9b98a', roughness: 1 })); country.position.y = 0.003; country.receiveShadow = quality !== 'low'; root.add(country);
+  const base = new THREE.Mesh(new THREE.CircleGeometry(plan.outerR + 140, 64).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: '#aeb89a', roughness: 1 }));
+  base.position.y = 0.002; base.receiveShadow = quality !== 'low'; root.add(base);
+
+  const patchGroups = new Map();
+  const patches = plan.patches || [];
+  const capParks = patches.length > 1800;
+  let parkSeen = 0;
+  for (const patch of patches) {
+    const style = patch.style || patch.zone || patch.kind || patch.type || 'mixed';
+    const isPark = style === 'park' || patch.kind === 'park' || patch.zone === 'park';
+    if (capParks && isPark && (parkSeen++ % 2 === 1)) continue;
+    const pts = patch.pts || patch.points;
+    if (!pts || pts.length < 3) continue;
+    const color = GROUND[style] || GROUND.mixed;
+    if (!patchGroups.has(color)) patchGroups.set(color, []);
+    const shape = new THREE.Shape();
+    shape.moveTo(pts[0][0], -pts[0][1]);
+    for (let i = 1; i < pts.length; i++) shape.lineTo(pts[i][0], -pts[i][1]);
+    shape.closePath();
+    const g = new THREE.ShapeGeometry(shape);
+    g.rotateX(-Math.PI / 2);
+    g.deleteAttribute('uv');
+    patchGroups.get(color).push(g);
+  }
+  for (const [color, geos] of patchGroups) {
+    const merged = geos.length === 1 ? geos[0] : mergeGeometries(geos);
+    if (!merged) continue;
+    const mesh = new THREE.Mesh(merged, new THREE.MeshStandardMaterial({ color, roughness: 1 }));
+    mesh.position.y = 0.006;
+    mesh.receiveShadow = quality !== 'low';
+    root.add(mesh);
+  }
 
   const sea = new THREE.Mesh(st.sea, cityMaterial('water')); sea.position.y = 0.04; root.add(sea);
 
   for (const r of st.roads) { const m = new THREE.Mesh(r.geo, new THREE.MeshStandardMaterial({ color: r.color, roughness: 0.95 })); m.position.y = r.y; m.receiveShadow = quality !== 'low'; root.add(m); }
-  const water = new THREE.Mesh(st.waterGeo, cityMaterial('water')); water.position.y = 0.03; root.add(water);
+  const water = new THREE.Mesh(st.waterGeo, cityMaterial('water')); water.position.y = 0.03; root.userData.water = water; root.add(water);
   const edges = new THREE.Mesh(st.kerbs, new THREE.MeshStandardMaterial({ color: '#b9b2a2', roughness: 0.9 })); edges.position.y = 0.15; root.add(edges);
 
   // Bridges over the canal.
@@ -254,7 +295,7 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
   for (const w of plan.wonders) {
     const parts = wonderParts(w.kind); if (!parts || !parts.solid) continue;
     const g = new THREE.Group(); g.position.set(w.x, 0, w.z); g.rotation.y = w.rotY;
-    const base = new THREE.Mesh(new THREE.BoxGeometry(Math.abs(Math.sin(w.rotY)) > 0.5 ? w.d : w.w, 0.08, Math.abs(Math.sin(w.rotY)) > 0.5 ? w.w : w.d), pad); base.position.y = 0.04; base.receiveShadow = quality !== 'low'; g.add(base);
+    const base2 = new THREE.Mesh(new THREE.BoxGeometry(Math.abs(Math.sin(w.rotY)) > 0.5 ? w.d : w.w, 0.08, Math.abs(Math.sin(w.rotY)) > 0.5 ? w.w : w.d), pad); base2.position.y = 0.04; base2.receiveShadow = quality !== 'low'; g.add(base2);
     const body = new THREE.Mesh(parts.solid, solid); body.castShadow = quality === 'high'; body.receiveShadow = quality === 'high'; g.add(body);
     const meshes = [body];
     if (parts.glass) { const glass = new THREE.Mesh(parts.glass, cityMaterial('glass')); g.add(glass); meshes.push(glass); }
@@ -264,6 +305,14 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
     wonders.push({ id: w.id, name: info.name, group: g, height: parts.height || 20, radius: parts.radius || 20, x: w.x, z: w.z });
     stats.wonders.push({ id: w.id, name: info.name, triangles: Math.round(parts.solid.getAttribute('position').count / 3 + (parts.glass ? parts.glass.getAttribute('position').count / 3 : 0)) });
   }
+
+  if (quality !== 'low') {
+    for (const lot of plan.lots) {
+      if (lot.kind === 'factory' || lot.kind === 'silos') stats.chimneys.push({ x: lot.x, z: lot.z, kind: lot.kind });
+      if (lot.kind === 'pier' || (lot.style === 'harbour' && lot.kind === 'pier')) stats.piers.push({ x: lot.x, z: lot.z });
+    }
+  }
+
   scene.add(root);
   return { root, plan, wonders, stats: { ...stats, fillerKinds: [...stats.fillerKinds] } };
 }

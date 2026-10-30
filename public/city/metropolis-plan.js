@@ -159,8 +159,10 @@ export function computeMetropolis() {
 
   bands.forEach(([inner, outer], band) => {
     const R = rng('band' + band);
-    const midZone = zoneAt((inner + outer) / 2, 0);
-    const rowStep = midZone ? RADIAL_STEP[midZone] : 7;
+    const midR = (inner + outer) / 2;
+    const dense = midR < 105;
+    const midZone = zoneAt(midR, 0);
+    const rowStep = dense ? 4.2 : (midZone ? RADIAL_STEP[midZone] : 7);
     const rows = Math.max(1, Math.floor((outer - inner - 2) / rowStep));
     const innerRing = rings.find((ring) => ring.r === inner);
     const outerRing = rings.find((ring) => ring.r === outer);
@@ -185,9 +187,9 @@ export function computeMetropolis() {
           a += (6 / Math.max(rowR, 1)) * (180 / Math.PI);
           continue;
         }
-        const range = SIZE_RANGE[zone];
+        const range = dense ? [4.2, 5.8] : SIZE_RANGE[zone];
         const size = range[0] + R() * (range[1] - range[0]);
-        const gap = zone === 'country' ? 6 + R() * 8 : zone === 'inner' ? 0.4 + R() * 1.0 : 0.6 + R() * 1.6;
+        const gap = dense ? 0.25 + R() * 0.45 : (zone === 'country' ? 6 + R() * 8 : zone === 'inner' ? 0.4 + R() * 1.0 : 0.6 + R() * 1.6);
         const stepDeg = ((size + gap) / rowR) * (180 / Math.PI);
         a += stepDeg;
         const jr = rowR + (R() - 0.5) * 1.2;
@@ -199,7 +201,7 @@ export function computeMetropolis() {
           if (pk.band === band && Math.hypot(jp.x - pk.x, jp.z - pk.z) < pk.r) { park = pk; break; }
         }
         if (park && R() < 0.6) { park.used = true; continue; }
-        if (R() > KEEP_PROB[zone]) continue;
+        if (R() > (dense ? 0.99 : KEEP_PROB[zone])) continue;
 
         let harbourKind = null;
         if (zone === 'harbour') {
@@ -209,7 +211,14 @@ export function computeMetropolis() {
 
         const centre = rr(ja, t);
         const dir = jr < centre ? 1 : -1;
-        const attempts = [
+        const tang = 1.0 / Math.max(jr, 1) * (180 / Math.PI);
+        const attempts = dense ? [
+          { jr, ja, size },
+          { jr, ja: ja + tang, size },
+          { jr, ja: ja - tang, size },
+          { jr: jr + 1.0, ja, size },
+          { jr: jr - 1.0, ja, size },
+        ] : [
           { jr, ja, size },
           { jr, ja, size: size * 0.85 },
           { jr: jr + dir * 1.2, ja, size: size * 0.85 },
@@ -219,7 +228,7 @@ export function computeMetropolis() {
           const p = polar(att.jr, att.ja);
           const x = p.x, z = p.z;
           const half = att.size / 2;
-          if (distanceToRoads(index, x, z) < half + 0.4) continue;
+          if (distanceToRoads(index, x, z) < half + (dense ? 0.2 : 0.4)) continue;
           if (distanceToLine(canal.pts, x, z) < CANAL_HALF + half + 0.8) continue;
           if (att.jr - half <= CANAL.outer + 0.5) continue;
           if (wonders.some((w) => circleHitsBox(x, z, half * 1.1, w, 1.2))) continue;
@@ -343,7 +352,8 @@ export function computeMetropolis() {
     return { x: p.x, z: p.z, angle };
   });
 
-  cached = Object.freeze({
+  const usedParks = parks.filter((p) => p.used).map((p, i) => ({ id: `pk${i}`, x: p.x, z: p.z, r: p.r, kind: p.kind }));
+  const result = {
     coreR: CORE_R,
     canal,
     roads,
@@ -352,15 +362,53 @@ export function computeMetropolis() {
     streets,
     bridges,
     lots,
-    parks: parks.filter((p) => p.used).map((p, i) => ({ id: `pk${i}`, x: p.x, z: p.z, r: p.r, kind: p.kind })),
+    parks: usedParks,
     fields,
     sea: HARBOUR,
     wonders,
     cityEdge: CITY_EDGE,
     outerEdge: OUTER_EDGE,
     outerR: COUNTRY_EDGE,
-  });
+  };
+  result.patches = buildGroundPatches(result);
+  cached = Object.freeze(result);
   return cached;
+}
+
+export function buildGroundPatches(plan) {
+  const MAX = 2200;
+  const patches = [];
+  const vertices = (radius, seed) => {
+    const R = rng(`patch-${seed}`);
+    const n = 7 + Math.floor(R() * 3);
+    const pts = [];
+    for (let i = 0; i < n; i++) {
+      const ang = (i / n) * Math.PI * 2;
+      const rr = radius * (0.82 + R() * 0.36);
+      pts.push([Math.cos(ang) * rr, Math.sin(ang) * rr]);
+    }
+    return pts;
+  };
+  const lotStyle = (lot) => {
+    if (lot.zone === 'inner') return districtAt(lot.angle);
+    if (lot.zone === 'blend') return 'blend';
+    if (lot.zone === 'harbour') return 'harbour';
+    if (lot.zone === 'industrial') return 'industrial';
+    if (lot.zone === 'suburb') return 'suburb';
+    if (lot.zone === 'country') return 'country';
+    return lot.style || lot.zone;
+  };
+  for (const lot of plan.lots) {
+    if (patches.length >= MAX) break;
+    const pts = vertices(lot.size * 0.72, lot.id).map(([px, pz]) => [lot.x + px, lot.z + pz]);
+    patches.push({ zone: lot.zone, style: lotStyle(lot), pts });
+  }
+  for (const park of plan.parks) {
+    if (patches.length >= MAX) break;
+    const pts = vertices(park.r, park.id).map(([px, pz]) => [park.x + px, park.z + pz]);
+    patches.push({ zone: 'park', style: park.kind || 'park', pts });
+  }
+  return patches;
 }
 
 function compareKeys(a, b) { for (let i = 0; i < 3; i++) if (a[i] !== b[i]) return a[i] - b[i]; return a[3] < b[3] ? -1 : a[3] > b[3] ? 1 : 0; }
