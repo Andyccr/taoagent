@@ -68,7 +68,7 @@ export interface CivilizationSnapshot {
   events: CityEvent[]
   /** Teams are the existing group chats; members keep their own quarter, the team only groups them. */
   teams: { id: string; name: string; memberIds: string[]; coordinatorId: string | null; updatedAt: string }[]
-  leadSource: 'coordinator' | 'main' | 'none'
+  leadSource: 'configured' | 'main' | 'coordinator' | 'none'
 }
 
 export interface CityEvent {
@@ -118,6 +118,13 @@ function consider(current: Signal | null, next: Signal) {
   if (!current || rank(next.activity) < rank(current.activity)) return next
   return current
 }
+/** Optional user setting: home/empire-city.json {"leadAgentId": "<agent id>"}. Unreadable or empty means the default (main). */
+export function configuredLead(store: Store): string | null {
+  const text = store.text('empire-city.json')
+  if (!text.trim()) return null
+  try { const value: unknown = JSON.parse(text); const id = value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, unknown>).leadAgentId : null; return typeof id === 'string' && id.trim() ? id.trim() : null }
+  catch { return null }
+}
 function quietFailure(error?: string) { return !!error && /已暂停|中断|已被用户新要求取代/.test(error) }
 
 function memberIds(store: Store, session: Session) {
@@ -133,9 +140,12 @@ export function civilizationSnapshot(store: Store, now = Date.now(), runningIds:
   const coordinators = new Map<string, number>()
   for (const group of groups) if (group.coordinatorId && agents.some(agent => agent.id === group.coordinatorId)) coordinators.set(group.coordinatorId, (coordinators.get(group.coordinatorId) || 0) + 1)
   const coordinatorLead = [...coordinators.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] || null
-  // Without any group coordinator the built-in main assistant holds the central hall (it is the default agent of every direct chat).
-  const leadId = coordinatorLead || (agents.some(agent => agent.id === 'main') ? 'main' : null)
-  const leadSource: CivilizationSnapshot['leadSource'] = coordinatorLead ? 'coordinator' : leadId ? 'main' : 'none'
+  // The central hall belongs to the main assistant (it takes part in every group) unless home/empire-city.json names another
+  // active agent as leadAgentId. Only when neither exists does the most frequent group coordinator take the hall.
+  const configured = configuredLead(store)
+  const active = (id: string | null) => !!id && agents.some(agent => agent.id === id)
+  const leadId = active(configured) ? configured : active('main') ? 'main' : coordinatorLead
+  const leadSource: CivilizationSnapshot['leadSource'] = active(configured) ? 'configured' : leadId === 'main' ? 'main' : leadId ? 'coordinator' : 'none'
   const events: CityEvent[] = []
   const pushEvent = (event: CityEvent) => { if (Number.isFinite(Date.parse(event.at))) events.push(event) }
   const signals = new Map<string, Signal>()

@@ -202,10 +202,12 @@ export function buildSkyline(opts = {}) {
   const mastMat = new THREE.MeshStandardMaterial({ color: 0x7b8590, roughness: 0.7, metalness: 0.5 });
 
   for (let i = 0; i < count; i++) {
-    const angle = ((80 + rng() * 200) * Math.PI) / 180; // background arc only (behind and beside the city)
+    const deg = 115 + rng() * 130; // background arc only: towers beside the camera lean visibly on wide screens
+    const side = Math.abs(deg - 180) / 65; // 0 straight behind, 1 at the arc ends
+    const angle = (deg * Math.PI) / 180;
     const radius = innerR + span * Math.sqrt(rng());
     const t = span > 1e-4 ? (radius - innerR) / span : 0;
-    const H = Math.max(8, Math.min(34, 8 + t * 26 + (rng() - 0.5) * 3));
+    const H = Math.max(7, Math.min(34, 8 + t * 26 + (rng() - 0.5) * 3) * (1 - 0.45 * side));
     const w = 2.4 + rng() * 2.8;
     const d = 2.4 + rng() * 2.8;
 

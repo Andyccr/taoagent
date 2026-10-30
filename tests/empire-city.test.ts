@@ -73,10 +73,28 @@ test('snapshot events and teams are real, ordered and free of private text', () 
     assert.deepEqual(value.events.map(event => event.kind), ['error', 'waiting', 'delivered', 'handoff', 'complete'])
     const handoff = value.events.find(event => event.kind === 'handoff')
     assert.equal(handoff?.agentId, 'lead'); assert.equal(handoff?.toAgentId, 'coder'); assert.equal(handoff?.title, '公开任务')
-    assert.equal(value.leadSource, 'coordinator')
+    assert.equal(value.leadSource, 'main')
     assert.deepEqual(value.teams.map(team => [team.name, team.coordinatorId, team.memberIds.length]), [['工程组', 'lead', 3]])
     const encoded = JSON.stringify(value)
     for (const secret of ['SECRET_RULE', 'SECRET_PROMPT', 'SECRET_BODY', 'SECRET_ERROR', 'SECRET_TASK', 'SECRET_RESULT', 'SECRET_ARG']) assert.equal(encoded.includes(secret), false, secret)
+  } finally { fs.rmSync(root, { recursive: true, force: true }) }
+})
+
+test('lead: main by default, an explicit home/empire-city.json choice wins, invalid choices fall back to main', () => {
+  const root = home(), store = new Store(root)
+  try {
+    store.saveAgent({ id: 'lead', name: '统筹者', responsibilities: '协调' }, '', '')
+    store.saveAgent({ id: 'coder', name: '实现者', responsibilities: '代码实现' }, '', '')
+    store.saveGroup('工程组', ['main', 'lead', 'coder'], undefined, { coordinatorId: 'lead' })
+    const leadOf = () => { const value = civilizationSnapshot(store, Date.now(), []); return [value.leadSource, value.citizens.filter(item => item.lead).map(item => item.id)] }
+    assert.deepEqual(leadOf(), ['main', ['main']])
+    fs.writeFileSync(store.file('empire-city.json'), JSON.stringify({ leadAgentId: 'coder' }))
+    assert.deepEqual(leadOf(), ['configured', ['coder']])
+    fs.writeFileSync(store.file('empire-city.json'), JSON.stringify({ leadAgentId: 'nobody' }))
+    assert.deepEqual(leadOf(), ['main', ['main']], 'an unknown configured agent falls back to main')
+    fs.writeFileSync(store.file('empire-city.json'), 'NOT JSON')
+    assert.deepEqual(leadOf(), ['main', ['main']])
+    assert.throws(() => store.archiveAgent('main', '测试'), /主助手受保护/, 'main cannot leave, so it keeps the hall')
   } finally { fs.rmSync(root, { recursive: true, force: true }) }
 })
 
@@ -116,6 +134,10 @@ test('the live route reflects a real state change on the next poll and the page 
     assert.match(html, /帝国之城/)
     const ui = await (await fetch(base + '/civilization.js')).text()
     assert.match(ui, /回放/)
+    const icon = await fetch(base + '/favicon.ico')
+    assert.equal(icon.status, 200)
+    assert.match(icon.headers.get('content-type') || '', /image\/svg\+xml/)
+    assert.match(html, /rel="icon" href="\/favicon.svg"/)
     const bundle = await (await fetch(base + '/city.bundle.js')).text()
     assert.match(bundle, /待建/)
     assert.equal(/https?:\/\/(?!www\.w3\.org)[a-z0-9.-]+\.[a-z]{2,}\/[^\s'"]*\.(?:js|json|png|jpg|glb|gltf|woff2?)/i.test(bundle), false, 'the city loads no remote assets')

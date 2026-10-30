@@ -37,7 +37,7 @@ function groupDetails(input: Record<string, unknown>): Pick<Session, 'purpose' |
 export function createApp(home = path.join(ROOT, 'home'), options: {seed?: boolean} = {}) {
   const store = new Store(home)
   if(options.seed!==false)seedTeam(store)
-  const assets = new Map(['index.html', 'client.js', 'style.css', 'appearance-boot.js', 'town.js', 'town.css', 'product.css', 'square.js', 'civilization.js', 'civilization.css', 'city.bundle.js'].map(file => [file, fs.readFileSync(path.join(ROOT, 'public', file))]))
+  const assets = new Map(['index.html', 'client.js', 'style.css', 'appearance-boot.js', 'town.js', 'town.css', 'product.css', 'square.js', 'civilization.js', 'civilization.css', 'city.bundle.js', 'favicon.svg'].map(file => [file, fs.readFileSync(path.join(ROOT, 'public', file))]))
   const version = string(object(JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'))).version)
   const assetVersions = new Map([...assets].map(([name, bytes]) => [name, {etag: 'W/"' + crypto.createHash('sha256').update(bytes).digest('hex') + '"', gzip: gzipSync(bytes)}]))
   const startedAt = Date.now()
@@ -92,9 +92,9 @@ export function createApp(home = path.join(ROOT, 'home'), options: {seed?: boole
         const heartbeat=setInterval(()=>{if(res.destroyed||res.writableEnded)return;if(res.writableLength>262144){res.end();return}res.write(': keepalive\n\n')},15000);heartbeat.unref()
         res.once('close',()=>{clearInterval(heartbeat);listeners.delete(res);if(!listeners.size)subscribers.delete(key)});return
       }
-      if (method === 'GET' && (route === '/' || assets.has(route.slice(1)))) {
-        const file = route === '/' ? 'index.html' : route.slice(1)
-        const mime = file.endsWith('.html') ? 'text/html' : file.endsWith('.js') ? 'text/javascript' : 'text/css'
+      if (method === 'GET' && (route === '/' || route === '/favicon.ico' || assets.has(route.slice(1)))) {
+        const file = route === '/' ? 'index.html' : route === '/favicon.ico' ? 'favicon.svg' : route.slice(1)
+        const mime = file.endsWith('.html') ? 'text/html' : file.endsWith('.js') ? 'text/javascript' : file.endsWith('.svg') ? 'image/svg+xml' : 'text/css'
         const cached = assetVersions.get(file)!
         const compressed = /\bgzip\b(?!\s*;\s*q=0(?:\.0*)?(?:\s*[,;]|\s*$))/i.test(req.headers['accept-encoding'] || '')
         if (req.headers['if-none-match'] === cached.etag) { res.writeHead(304, {'ETag': cached.etag, 'Cache-Control': 'no-cache', 'Vary': 'Accept-Encoding'}); res.end(); return }
