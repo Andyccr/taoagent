@@ -44,7 +44,7 @@ export function rosterKey(roster) { return JSON.stringify(roster.map((b) => [b.i
 export function districtOfStyle(style) { return DISTRICT_OF[style] || null }
 
 export function createCity(stage, hooks = {}) {
-  let scene = null, key = '', settings = {}, snapshot = null, visible = true, selected = [], followId = null
+  let scene = null, key = '', settings = {}, snapshot = null, visible = true, selected = [], followId = null, minimapOn = false, minimapCanvas = null
   const animated = new Set()
   const coarse = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches
   const language = () => (settings.language === 'en' ? 'en' : 'zh')
@@ -62,6 +62,7 @@ export function createCity(stage, hooks = {}) {
     scene.setOptions(settings)
     scene.setVisible(visible)
     scene.select(selected)
+    if (minimapOn && minimapCanvas) { scene.bindMinimap?.(minimapCanvas); scene.setMinimap?.(true) }
     if (typeof window !== 'undefined') window.__empireCity = scene
   }
   function apply() {
@@ -70,6 +71,7 @@ export function createCity(stage, hooks = {}) {
     const next = rosterKey(roster) + '|' + (settings.quality || '') + '|' + language()
     if (next !== key) { key = next; build(roster) }
     const connected = snapshot.connected !== false
+    scene.setSnapshot?.(snapshot)
     scene.setBots(snapshot.citizens.map((citizen) => ({ id: citizen.id, state: visualState(citizen, connected), label: citizen.taskTitle || citizen.detail || '' })))
     scene.setUsageLines(connected ? USAGE[language()](snapshot.usage || {}) : [language() === 'en' ? 'Local service unreachable' : '本机服务未连接'])
     // Each real handoff walks once; replay snapshots carry their own ids.
@@ -96,6 +98,15 @@ export function createCity(stage, hooks = {}) {
     focusDistrict(id) { followId = null; scene?.focusQuarter(id === 'overview' || id === 'core' ? id : STYLE_OF[id] || id) },
     resetCamera() { followId = null; scene?.resetCamera() },
     focusWonder(id) { followId = null; return scene?.focusWonder(id) || false },
+    tourWonders() { scene?.tourWonders?.() },
+    tourAgents() { scene?.tourAgents?.() },
+    stopTour() { scene?.stopTour?.() },
+    setMinimap(on) { minimapOn = !!on; if (minimapOn && minimapCanvas) scene?.bindMinimap?.(minimapCanvas); scene?.setMinimap?.(minimapOn) },
+    bindMinimap(canvas) { minimapCanvas = canvas; if (minimapOn) scene?.bindMinimap?.(canvas) },
+    focusLead() { followId = null; scene?.focusLead?.() },
+    focusWonderByIndex(index) { followId = null; scene?.focusWonderByIndex?.(index) },
+    setShortcuts(on) { scene?.setShortcuts?.(on) },
+    view() { return scene?.view?.() },
     wonders() { return scene?.wonders() || [] },
     perf() { return scene?.perf() || null },
     debug() { return scene?.debug() || null },

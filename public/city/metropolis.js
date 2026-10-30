@@ -13,6 +13,7 @@ import { ROMAN_FILLERS } from './fillers-roman.js';
 import { MODERN_FILLERS } from './fillers-modern.js';
 import { COMMON_FILLERS, tree, bridge } from './fillers-common.js';
 import { OUTER_FILLERS } from './fillers-outer.js';
+import { antenna, chimneyPot, lampPost } from './detail-props.js';
 import { buildPalace } from './wonder-palace.js';
 import { buildGreatPagoda } from './wonder-pagoda.js';
 import { buildAcropolis } from './wonder-acropolis.js';
@@ -287,6 +288,33 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
       mine.forEach(([x, z, h], i) => { q.setFromAxisAngle(up, (h % 628) / 100); m4.compose(pos.set(x, 0, z), q, sc.setScalar(0.9 + (h % 30) / 100)); mesh.setMatrixAt(i, m4); });
       mesh.computeBoundingSphere(); root.add(mesh); stats.instancedMeshes++; stats.trees += mine.length;
     });
+  }
+
+  // Rooftop micro-props (instanced): antennas on modern/office, chimney pots on houses, a few street lamps.
+  if (quality !== 'low') {
+    const ants = [], pots = [], lamps = [];
+    for (const lot of plan.lots) {
+      if (claimedLots.has(lot.id)) continue;
+      const h = hash(lot.id + 'prop');
+      if ((lot.style === 'modern' || lot.kind === 'workshop' || lot.kind === 'factory') && (h & 3) === 0) ants.push(lot);
+      else if ((lot.kind === 'house' || lot.kind === 'siheyuan' || lot.kind === 'cottage' || lot.kind === 'farmhouse') && (h & 7) === 0) pots.push(lot);
+      if ((h % 37) === 0) lamps.push(lot);
+    }
+    const place = (list, geo, yLift) => {
+      if (!geo || !list.length) return;
+      const mesh = new THREE.InstancedMesh(geo, solid, list.length);
+      list.forEach((lot, i) => {
+        const hh = hash(lot.id + 'py');
+        q.setFromAxisAngle(up, lot.rotY + ((hh % 20) - 10) / 40);
+        const tall = (lot.scaleY || 1) * (lot.size / 7);
+        m4.compose(pos.set(lot.x, yLift * tall, lot.z), q, sc.setScalar(0.85 + (hh % 30) / 100));
+        mesh.setMatrixAt(i, m4);
+      });
+      mesh.computeBoundingSphere(); root.add(mesh); stats.instancedMeshes++;
+    };
+    place(ants, antenna(0), 8);
+    place(pots, chimneyPot(0), 5);
+    place(lamps, lampPost(0), 0);
   }
 
   // Wonders: district anchors, each on a paved pad that hides the roads under it.

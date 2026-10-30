@@ -6,6 +6,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { computeCity, approachRoute, PLAZA_R, ROAD_W, ROAD_MID, PLOT, polar, ringRadius, STYLE_ANGLE } from './layout.js';
 import { buildChinese, buildImperialHall } from './styles-chinese.js';
 import { buildGreek } from './styles-greek.js';
@@ -28,6 +29,7 @@ const HALL_SCALE = 0.8;
 const WALK = 4.2;           // messenger speed m/s
 const WIN_ON = new THREE.Color(0xffb84a);
 const LANTERN_ON = new THREE.Color(0xff7a2e);
+const NIGHT_WIN = new THREE.Color(0xffb35a);
 const GREY = new THREE.Color(0x9c9c9c);
 const TAG_PX = 24;
 
@@ -38,6 +40,7 @@ export function createCity(container, roster, opts = {}) {
   const onPick = typeof opts.onPick === 'function' ? opts.onPick : null;
   const onAdaptive = typeof opts.onAdaptive === 'function' ? opts.onAdaptive : null;
   const quarterNames = opts.quarters || {};
+  let nightOn = false;
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
   const dpr = () => Math.min(window.devicePixelRatio || 1, 2);
   renderer.setPixelRatio(dpr());
@@ -176,7 +179,7 @@ export function createCity(container, roster, opts = {}) {
     }
     const ring = new THREE.Mesh(new THREE.RingGeometry(1.35, 1.6, 48), new THREE.MeshBasicMaterial({ color: 0xffd34d, transparent: true, opacity: 0.95, depthWrite: false }));
     ring.rotation.x = -Math.PI / 2; ring.position.copy(porch).setY(porch.y + 0.05); ring.visible = false; scene.add(ring);
-    const u = { def, b, group, fig, porch, walkPoint, angle, smoke, halo, ring, state: undefined, label: '', phase: Math.random() * 6 };
+    const u = { def, b, group, fig, porch, walkPoint, angle, smoke, halo, ring, state: undefined, label: '', phase: Math.random() * 6, selected: false };
     for (const o of [...b.meshes, ...fig.pickables]) { o.userData.unit = u; pickables.push(o); }
     units.set(def.id, u);
     return u;
@@ -222,6 +225,78 @@ export function createCity(container, roster, opts = {}) {
   }
   const city = buildMetropolis(scene, { claimedLots: new Set((layout.claimed || []).map((p) => p.id)), quality: lowPower ? 'low' : opts.quality || 'medium', pickables });
 
+  // ---------- night street lamps + chinese lanterns ----------
+  const lamps = new THREE.Group(); lamps.name = 'lamps'; lamps.visible = false; scene.add(lamps);
+  {
+    const N = 40;
+    const geo = new THREE.SphereGeometry(0.18, 8, 8);
+    const mat = new THREE.MeshBasicMaterial({ color: 0xffc27a });
+    const inst = new THREE.InstancedMesh(geo, mat, N);
+    const d = new THREE.Object3D();
+    for (let i = 0; i < N; i++) {
+      const ring = i % 2 ? ROAD_MID : ringRadius(1);
+      const off = (((i * 7919) % 17) / 17 - 0.5);
+      const p = polar(ring + off, (i * 360) / N + (i % 2) * 4.5);
+      d.position.set(p.x, 0.9, p.z);
+      d.updateMatrix();
+      inst.setMatrixAt(i, d.matrix);
+    }
+    inst.instanceMatrix.needsUpdate = true;
+    lamps.add(inst);
+  }
+  const lanterns = new THREE.Group(); lanterns.name = 'lanterns'; lanterns.visible = false; scene.add(lanterns);
+  {
+    const centers = (plan.wonders || []).filter((w) => w.district === 'chinese');
+    const anchor = centers.length ? centers : [(() => { const p = polar(60, STYLE_ANGLE.chinese); return { x: p.x, z: p.z, radius: 8 }; })()];
+    const geo = new THREE.BoxGeometry(0.5, 0.7, 0.5);
+    const mat = new THREE.MeshBasicMaterial({ color: 0xff6a2e });
+    let hash = 13;
+    const rnd = () => ((hash = (hash * 16807) % 2147483647) / 2147483647);
+    for (let i = 0; i < 24; i++) {
+      const c = anchor[i % anchor.length];
+      const ang = rnd() * Math.PI * 2;
+      const rr = (c.radius || 6) * (0.35 + rnd() * 0.6) + 1.2;
+      const m = new THREE.Mesh(geo, mat);
+      m.position.set((c.x || 0) + Math.cos(ang) * rr, 0.85, (c.z || 0) + Math.sin(ang) * rr);
+      lanterns.add(m);
+    }
+  }
+
+  // ---------- ambient life (skipped on low power) ----------
+  function birdGeo() {
+    const l = new THREE.BoxGeometry(0.46, 0.03, 0.1); l.rotateZ(Math.PI / 6); l.translate(0.05, 0, 0);
+    const r = new THREE.BoxGeometry(0.46, 0.03, 0.1); r.rotateZ(-Math.PI / 6); r.translate(0.05, 0, 0);
+    return mergeGeometries([l, r]);
+  }
+  function boatGeo() {
+    const hull = new THREE.BoxGeometry(1.2, 0.18, 0.5);
+    const cabin = new THREE.BoxGeometry(0.42, 0.24, 0.34); cabin.translate(0, 0.21, 0);
+    return mergeGeometries([hull, cabin]);
+  }
+  let birds = null, birdDummy = null, boatMesh = null, boatDummy = null, birdsData = [], boatsData = [], chimneySmokes = [];
+  if (!lowPower) {
+    birdDummy = new THREE.Object3D();
+    boatDummy = new THREE.Object3D();
+    birds = new THREE.InstancedMesh(birdGeo(), new THREE.MeshBasicMaterial({ color: 0x3b434b }), 12);
+    birds.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    scene.add(birds);
+    for (let i = 0; i < 12; i++) birdsData.push({ r: CITY_R * 0.55 + (i % 5) * 7, ang: (i / 12) * Math.PI * 2, ph: i * 1.3 });
+    const piers = city.stats.piers || [];
+    const boatCount = piers.length || 6;
+    boatsData = piers.length ? piers.map((p) => ({ x: p.x ?? 0, z: p.z ?? 0 })) : Array.from({ length: boatCount }, (_, i) => { const p = polar(CANAL.outer - 2.5, (i * 360) / boatCount + 14); return { x: p.x, z: p.z }; });
+    boatMesh = new THREE.InstancedMesh(boatGeo(), new THREE.MeshBasicMaterial({ color: 0x7a5a3a }), boatCount);
+    boatMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    scene.add(boatMesh);
+    for (const ch of (city.stats.chimneys || []).slice(0, 20)) {
+      const sm = createSmoke();
+      sm.object.position.set(ch.x ?? 0, ch.roof ?? ch.roofY ?? 8, ch.z ?? 0);
+      sm.setActive(true);
+      scene.add(sm.object);
+      chimneySmokes.push(sm);
+    }
+  }
+  const water = (city.root && (city.root.userData.water || city.root.getObjectByName('water'))) || scene.getObjectByName('water');
+
   // ---------- state visuals ----------
   function setMatsGrey(u, grey) {
     for (const m of u.b.mats) {
@@ -230,13 +305,18 @@ export function createCity(container, roster, opts = {}) {
       if (grey) m.color.lerp(GREY, 0.8).multiplyScalar(0.85);
     }
   }
-  function apply(u, state, prev) {
-    const working = state === 'working';
+  function applyWindows(u) {
+    const working = u.state === 'working';
     for (const m of u.b.windowMats || []) {
       const o = m.userData.orig;
       if (working) { m.emissive.copy(WIN_ON); m.emissiveIntensity = 1.5; }
+      else if (nightOn) { m.emissive.copy(NIGHT_WIN); m.emissiveIntensity = 0.55; }
       else if (o) { m.emissive.copy(o.emissive); m.emissiveIntensity = o.emissiveIntensity; }
     }
+  }
+  function apply(u, state, prev) {
+    const working = state === 'working';
+    applyWindows(u);
     if (u.b.lanternMat) {
       const o = u.b.lanternMat.userData.orig;
       if (state === 'waiting') { u.b.lanternMat.emissive.copy(LANTERN_ON); u.b.lanternMat.emissiveIntensity = 2.2; }
@@ -317,7 +397,7 @@ export function createCity(container, roster, opts = {}) {
   controls.maxPolarAngle = Math.PI * 0.44; controls.minDistance = 12;
   controls.screenSpacePanning = true;
   let userMoved = false;
-  controls.addEventListener('start', () => { userMoved = true; tween = null; });
+  controls.addEventListener('start', () => { userMoved = true; tween = null; stopTour(); });
   let tween = null; // { pos, target } camera glide destination
   const framePts = [];
   for (let i = 0; i < 24; i++) { const p = polar(CITY_R - 6, i * 15); framePts.push(new THREE.Vector3(p.x, 0, p.z)); }
@@ -359,11 +439,115 @@ export function createCity(container, roster, opts = {}) {
   }
 
   let composer = null;
-  if (!lowPower) {
+  function rebuildComposer(want) {
+    if (composer) { composer.dispose?.(); composer = null; }
+    if (!want || lowPower) return;
     composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
-    composer.addPass(new UnrealBloomPass(new THREE.Vector2(1, 1), 0.28, 0.4, 0.88));
+    const bloom = new UnrealBloomPass(new THREE.Vector2(el.clientWidth || 1, el.clientHeight || 1), 0.22, 0.5, 0.82);
+    composer.addPass(bloom);
     composer.addPass(new OutputPass());
+    composer.setSize(el.clientWidth || 1, el.clientHeight || 1);
+  }
+  // Bloom is optional spectacle for night on high quality only (software GL often blacks out with bloom).
+  if (!lowPower && opts.quality === 'high' && opts.night) rebuildComposer(true);
+
+  // ---------- spectacle: wonder flash, tour, minimap ----------
+  const flashes = [];
+  let pendingFlash = null;
+  function flashAt(pos) {
+    const ring = new THREE.Mesh(new THREE.RingGeometry(1, 1.2, 48), new THREE.MeshBasicMaterial({ color: 0xffd34d, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false }));
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.copy(pos); if (ring.position.y < 0.2) ring.position.y = 0.2;
+    scene.add(ring);
+    flashes.push({ ring, t: 0 });
+  }
+  let tour = null;
+  function startTourLeg() {
+    if (!tour || !tour.way.length) return;
+    const wp = tour.way[tour.i];
+    tour.target = wp.pos.clone();
+    const dir = camera.position.clone().sub(controls.target);
+    if (dir.lengthSq() < 1e-6) dir.set(0, 0, 1); dir.normalize();
+    tour.camPos = wp.pos.clone().addScaledVector(dir, wp.dist);
+    tour.arriveFired = false;
+  }
+  function tourWonders() {
+    const way = city.wonders.map((w) => ({ pos: new THREE.Vector3(w.x, Math.min(w.height, 60) * 0.35, w.z), dist: Math.max(55, (w.radius || 8) * 3.1, Math.min(w.height || 20, 120) * 1.5) }));
+    if (!way.length) return;
+    tour = { way, i: 0, dwell: 0, paused: false, arriveFired: false };
+    userMoved = true; tween = null;
+    startTourLeg();
+  }
+  function tourAgents() {
+    const way = [...units.values()].map((u) => ({ pos: u.porch.clone().setY(1.5), dist: 34 }));
+    if (!way.length) return;
+    tour = { way, i: 0, dwell: 0, paused: false, arriveFired: false };
+    userMoved = true; tween = null;
+    startTourLeg();
+  }
+  function stopTour() { tour = null; }
+  let selected = new Set();
+  let minimapCanvas = null, minimapOn = false, minimapTick = 0;
+  function stateColor(s) {
+    if (s === 'working') return '#ffb84a';
+    if (s === 'waiting') return '#ff7a2e';
+    if (s === 'error') return '#e5484d';
+    if (s === 'completed') return '#46a758';
+    if (s === 'stale' || s === 'disconnected') return '#9c9c9c';
+    return null;
+  }
+  function drawMinimap() {
+    if (!minimapCanvas || !minimapOn) return;
+    const c = minimapCanvas;
+    const w = c.width || c.clientWidth, h = c.height || c.clientHeight;
+    if (!w || !h) return;
+    const g = c.getContext('2d'); if (!g) return;
+    const R = CITY_R;
+    const sx = (x) => (x / R * 0.5 + 0.5) * w;
+    const sy = (z) => (-z / R * 0.5 + 0.5) * h;
+    g.clearRect(0, 0, w, h);
+    g.fillStyle = '#c9d2d9'; g.fillRect(0, 0, w, h);
+    const zoneColors = { chinese: '#c65a48', greek: '#5b8def', roman: '#9b59b6', modern: '#16a085', core: '#e2d7b8', water: '#5b8db0' };
+    for (const lot of plan.lots || []) {
+      const zone = lot.district || lot.zone || 'core';
+      g.fillStyle = zoneColors[zone] || '#d8d0bd';
+      g.beginPath(); g.arc(sx(lot.x), sy(lot.z), 2.2, 0, Math.PI * 2); g.fill();
+    }
+    for (const [id, u] of units) {
+      g.fillStyle = stateColor(u.state) || u.def.color || '#333';
+      g.beginPath(); g.arc(sx(u.porch.x), sy(u.porch.z), 2.6, 0, Math.PI * 2); g.fill();
+      if (selected.has(id)) { g.strokeStyle = '#fff'; g.lineWidth = 1.5; g.stroke(); }
+    }
+    const tp = controls.target;
+    const dx = tp.x - camera.position.x, dz = tp.z - camera.position.z;
+    const a = Math.atan2(-dz, dx);
+    const len = Math.max(14, 0.16 * w);
+    g.save();
+    g.translate(sx(tp.x), sy(tp.z));
+    g.rotate(a);
+    g.fillStyle = 'rgba(255,255,255,0.3)';
+    g.beginPath(); g.moveTo(0, 0); g.lineTo(len, -len * 0.22); g.lineTo(len, len * 0.22); g.closePath(); g.fill();
+    g.restore();
+  }
+  function bindMinimap(canvas) {
+    minimapCanvas = canvas;
+    minimapOn = true;
+    if (!canvas) return;
+    canvas.addEventListener('click', (e) => {
+      const r = canvas.getBoundingClientRect();
+      const nx = (e.clientX - r.left) / r.width * 2 - 1;
+      const ny = (e.clientY - r.top) / r.height * 2 - 1;
+      const target = new THREE.Vector3(nx * CITY_R, 0.5, -ny * CITY_R);
+      glide(target, Math.max(40, camera.position.distanceTo(controls.target)));
+    });
+  }
+  function setMinimap(on) {
+    minimapOn = !!on;
+    if (minimapCanvas) {
+      const host = minimapCanvas.parentElement;
+      (host || minimapCanvas).style.display = minimapOn ? '' : 'none';
+    }
   }
 
   // ---------- tooltip ----------
@@ -428,7 +612,19 @@ export function createCity(container, roster, opts = {}) {
     if (tween) {
       const k = 1 - Math.pow(0.002, real);
       camera.position.lerp(tween.pos, k); controls.target.lerp(tween.target, k);
-      if (camera.position.distanceTo(tween.pos) < 0.05) tween = null;
+      const d = camera.position.distanceTo(tween.pos);
+      if (pendingFlash && d < 2) { flashAt(pendingFlash); pendingFlash = null; }
+      if (d < 0.05) tween = null;
+    }
+    if (tour && !tour.paused) {
+      const k = 1 - Math.pow(0.02, real);
+      camera.position.lerp(tour.camPos, k); controls.target.lerp(tour.target, k);
+      const d = camera.position.distanceTo(tour.camPos);
+      if (d < 2 && !tour.arriveFired) { tour.arriveFired = true; flashAt(tour.target.clone().setY(0.2)); tour.dwell = 2.8; }
+      if (tour.arriveFired) {
+        tour.dwell -= real;
+        if (tour.dwell <= 0) { tour.i = (tour.i + 1) % tour.way.length; startTourLeg(); }
+      }
     }
     controls.update();
     // In the far overview only the lead keeps its name tag so the core does not turn into a pile of labels.
@@ -440,12 +636,51 @@ export function createCity(container, roster, opts = {}) {
         u.fig.arms[0].rotation.x = -0.7 + Math.sin(ph) * 0.55;
         u.fig.arms[1].rotation.x = -0.4 - Math.sin(ph) * 0.25;
         u.fig.root.position.y = u.porch.y + Math.abs(Math.sin(ph)) * 0.05;
-        u.halo.scale.setScalar(1 + 0.12 * Math.sin(t * 2.4 + u.phase));
+        u.halo.scale.setScalar((u.selected ? 1.35 : 1) + 0.12 * Math.sin(t * 2.4 + u.phase));
       }
       u.smoke.update(dt);
     }
     updateMessengers(dt);
     fireworks.update(dt);
+    if (birds) {
+      for (let i = 0; i < birdsData.length; i++) {
+        const b = birdsData[i];
+        b.ang += dt * 0.15;
+        const y = 27 + Math.sin(t * 0.55 + b.ph) * 4 + (i % 3) * 2.5;
+        birdDummy.position.set(Math.cos(b.ang) * b.r, y, Math.sin(b.ang) * b.r);
+        birdDummy.rotation.y = Math.atan2(-Math.sin(b.ang), Math.cos(b.ang));
+        birdDummy.rotation.z = Math.sin(t * 1.7 + b.ph) * 0.3;
+        birdDummy.updateMatrix();
+        birds.setMatrixAt(i, birdDummy.matrix);
+      }
+      birds.instanceMatrix.needsUpdate = true;
+    }
+    if (boatMesh) {
+      for (let i = 0; i < boatsData.length; i++) {
+        const s = boatsData[i];
+        boatDummy.position.set(s.x, 0.42 + Math.sin(t * 0.9 + i * 1.7) * 0.08, s.z);
+        boatDummy.rotation.set(0, i * 0.7, Math.sin(t * 0.6 + i) * 0.06);
+        boatDummy.updateMatrix();
+        boatMesh.setMatrixAt(i, boatDummy.matrix);
+      }
+      boatMesh.instanceMatrix.needsUpdate = true;
+    }
+    for (const sm of chimneySmokes) sm.update(dt);
+    if (water && water.material) {
+      water.material.userData.t = (water.material.userData.t || 0) + dt;
+      const tt = water.material.userData.t;
+      if (water.material.map) water.material.map.offset.set(tt * 0.012, tt * 0.006);
+      else if (water.material.opacity !== undefined) water.material.opacity = 0.85 + 0.05 * Math.sin(tt * 2);
+    }
+    for (let i = flashes.length - 1; i >= 0; i--) {
+      const f = flashes[i];
+      f.t += dt;
+      const k = Math.min(1, f.t / 0.8);
+      f.ring.scale.setScalar(1 + 3 * k);
+      f.ring.material.opacity = 0.6 * (1 - k);
+      if (k >= 1) { scene.remove(f.ring); f.ring.geometry.dispose(); f.ring.material.dispose(); flashes.splice(i, 1); }
+    }
+    if (++minimapTick % 4 === 0) drawMinimap();
     renderer.info.reset();
     const t0 = performance.now();
     if (composer) composer.render(); else renderer.render(scene, camera);
@@ -454,14 +689,14 @@ export function createCity(container, roster, opts = {}) {
   frame();
 
   function glide(target, dist) {
+    if (tour) stopTour();
     const dir = camera.position.clone().sub(controls.target).normalize();
     tween = { target: target.clone(), pos: target.clone().addScaledVector(dir, dist) };
     userMoved = true;
   }
-  let selected = new Set();
   function select(ids) {
     selected = new Set((Array.isArray(ids) ? ids : [ids]).filter(Boolean));
-    for (const [id, u] of units) u.ring.visible = selected.has(id);
+    for (const [id, u] of units) { u.selected = selected.has(id); u.ring.visible = u.selected; u.ring.scale.setScalar(u.selected ? 1.15 : 1); }
   }
   function focus(id, distance = 26) {
     const u = units.get(id); if (!u) return false;
@@ -474,8 +709,10 @@ export function createCity(container, roster, opts = {}) {
     const p = polar(92, STYLE_ANGLE[style]);
     glide(new THREE.Vector3(p.x, 0, p.z), 120);
   }
-  function focusWonder(id) { const w = city.wonders.find((x) => x.id === id); if (!w) return false; glide(new THREE.Vector3(w.x, Math.min(w.height, 60) * 0.35, w.z), Math.max(55, w.radius * 3.1, Math.min(w.height, 120) * 1.5)); return true; }
-  function resetCamera() { userMoved = false; tween = null; fit(); }
+  function focusWonder(id) { const w = city.wonders.find((x) => x.id === id); if (!w) return false; pendingFlash = new THREE.Vector3(w.x, 0.2, w.z); glide(new THREE.Vector3(w.x, Math.min(w.height, 60) * 0.35, w.z), Math.max(55, w.radius * 3.1, Math.min(w.height, 120) * 1.5)); return true; }
+  function focusWonderByIndex(i) { const w = city.wonders[i]; if (!w) return false; pendingFlash = new THREE.Vector3(w.x, 0.2, w.z); return focusWonder(w.id); }
+  function focusLead() { return layout.lead ? focus(layout.lead.id) : false; }
+  function resetCamera() { userMoved = false; tween = null; stopTour(); fit(); }
   function setOptions(o = {}) {
     if (o.speed !== undefined) speed = Math.min(3, Math.max(0.25, Number(o.speed) || 1));
     if (o.paused !== undefined) paused = !!o.paused;
@@ -483,16 +720,21 @@ export function createCity(container, roster, opts = {}) {
     if (o.labels !== undefined) labelsOn = !!o.labels;
     if (o.citizens !== undefined) for (const u of units.values()) u.fig.root.visible = !!o.citizens;
     if (o.night !== undefined) {
-      const night = !!o.night;
-      scene.background.copy(night ? NIGHT_SKY : SKY); scene.fog.color.copy(night ? NIGHT_SKY : SKY);
-      hemi.intensity = night ? 0.35 : 1.25; sun.intensity = night ? 0.25 : 1.75;
-      renderer.toneMappingExposure = night ? 1.25 : 1;
+      nightOn = !!o.night;
+      scene.background.copy(nightOn ? NIGHT_SKY : SKY); scene.fog.color.copy(nightOn ? NIGHT_SKY : SKY);
+      hemi.intensity = nightOn ? 0.35 : 1.25; sun.intensity = nightOn ? 0.25 : 1.75;
+      renderer.toneMappingExposure = nightOn ? 1.25 : 1;
+      lamps.visible = nightOn; lanterns.visible = nightOn;
+      if (!lowPower) rebuildComposer(nightOn && (opts.quality === 'high'));
+      for (const u of units.values()) applyWindows(u);
     }
   }
   function setVisible(v) { visible = !!v; if (visible) clock.getDelta(); }
 
   return {
-    setBots, handoff, select, focus, focusQuarter, focusWonder, resetCamera, setOptions, setVisible,
+    setBots, handoff, select, focus, focusQuarter, focusWonder, focusWonderByIndex, focusLead, resetCamera, setOptions, setVisible,
+    tourWonders, tourAgents, stopTour, setMinimap, bindMinimap,
+    get tour() { return tour; },
     wonders: () => city.wonders.map((w) => ({ id: w.id, name: w.name })),
     perf: () => ({ calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, geometries: renderer.info.memory.geometries, frameMs: +frameMs.toFixed(2), composer: !!composer, ...city.stats, lots: plan.lots.length, claimable: plan.lots.filter((l) => l.claimable).length }),
     // Debug/screenshot helper: put the camera at an exact spot looking at a target.
