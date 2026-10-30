@@ -1,6 +1,6 @@
 {
   "name": "taoagent",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "private": true,
   "type": "module",
   "description": "Bot 的独立日常、个人经历、共同讨论与真实协作",

@@ -8,8 +8,8 @@ using System.Windows.Forms;
 [assembly: AssemblyDescription("Taoagent Windows Launcher")]
 [assembly: AssemblyCompany("Taoagent")]
 [assembly: AssemblyProduct("Taoagent")]
-[assembly: AssemblyVersion("4.3.0.0")]
-[assembly: AssemblyFileVersion("4.3.0.0")]
+[assembly: AssemblyVersion("4.4.0.0")]
+[assembly: AssemblyFileVersion("4.4.0.0")]
 internal static class Launcher {
     [STAThread]
     private static void Main() {

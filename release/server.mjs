@@ -89519,7 +89519,7 @@ import path2 from "node:path";
 import { fileURLToPath } from "node:url";
 var moduleRoot = path2.dirname(fileURLToPath(import.meta.url));
 var ROOT = path2.basename(moduleRoot) === "release" ? path2.dirname(moduleRoot) : moduleRoot;
-var sources = ["REAL-SQUARE-4.3.0.json", "VALIDATION-4.3.0.md", "REAL-ROLEPLAY-4.2.1.json", "roleplay.ts", "ROLEPLAY-GUIDE.md", "VALIDATION-4.2.1.md", "REAL-SPACE-4.2.0.json", "space.ts", "SPACE-DESIGN.md", "VALIDATION-4.2.0.md", "VALIDATION-4.1.0.md", "REAL-UNIFIED-4.1.0.json", "social-state.ts", "social.ts", "TOWN-GUIDE.md", "VALIDATION-4.0.0.md", "REAL-DAILY-4.0.0.json", "EMERGENT-GROUP-CHAT-DESIGN.md", "app.ts", "workspace.ts", "queue.ts", "work.ts", "collaboration.ts", "context.ts", "audience.ts", "communication.ts", "reasoning.ts", "COMMUNICATION.md", "COLLABORATION-RELEASE.md", "opencode-go.ts", "store.ts", "models.ts", "runtime.ts", "pi.ts", "execution.ts", "evolution.ts", "defaults.ts", "portable.ts", "migrate.ts", "build.mjs", "pack-windows.mjs", "launcher.mjs", "Taoagent.exe", "windows", "windows-release.json", "Start Taoagent.cmd", "Stop Taoagent.cmd", "Check Taoagent.cmd", "WINDOWS-README.md", "VALIDATION-3.14.0.md", "package.json", "package-lock.json", "README.md", "OPENBOT-OPTIMIZATION.md", "VALIDATION-3.13.0.md", "AUDIT.md", "AGENTS.md", "CLAUDE.md", "LICENSE", "NOTICE", "\u542F\u52A8 Taoagent.cmd", "\u542F\u52A8.sh", "public", "tests", "release", "runtime"];
+var sources = ["VALIDATION-4.4.0.md", "civilization.ts", "build-city.mjs", "docs", "REAL-SQUARE-4.3.0.json", "VALIDATION-4.3.0.md", "REAL-ROLEPLAY-4.2.1.json", "roleplay.ts", "ROLEPLAY-GUIDE.md", "VALIDATION-4.2.1.md", "REAL-SPACE-4.2.0.json", "space.ts", "SPACE-DESIGN.md", "VALIDATION-4.2.0.md", "VALIDATION-4.1.0.md", "REAL-UNIFIED-4.1.0.json", "social-state.ts", "social.ts", "TOWN-GUIDE.md", "VALIDATION-4.0.0.md", "REAL-DAILY-4.0.0.json", "EMERGENT-GROUP-CHAT-DESIGN.md", "app.ts", "workspace.ts", "queue.ts", "work.ts", "collaboration.ts", "context.ts", "audience.ts", "communication.ts", "reasoning.ts", "COMMUNICATION.md", "COLLABORATION-RELEASE.md", "opencode-go.ts", "store.ts", "models.ts", "runtime.ts", "pi.ts", "execution.ts", "evolution.ts", "defaults.ts", "portable.ts", "migrate.ts", "build.mjs", "pack-windows.mjs", "launcher.mjs", "Taoagent.exe", "windows", "windows-release.json", "Start Taoagent.cmd", "Stop Taoagent.cmd", "Check Taoagent.cmd", "WINDOWS-README.md", "VALIDATION-3.14.0.md", "package.json", "package-lock.json", "README.md", "OPENBOT-OPTIMIZATION.md", "VALIDATION-3.13.0.md", "AUDIT.md", "AGENTS.md", "CLAUDE.md", "LICENSE", "NOTICE", "\u542F\u52A8 Taoagent.cmd", "\u542F\u52A8.sh", "public", "tests", "release", "runtime"];
 var crcTable = Uint32Array.from({ length: 256 }, (_, value) => {
   let crc = value;
   for (let bit = 0; bit < 8; bit++) crc = crc >>> 1 ^ (crc & 1 ? 3988292384 : 0);
@@ -104520,6 +104520,17 @@ function consider(current, next) {
   if (!current || rank(next.activity) < rank(current.activity)) return next;
   return current;
 }
+function configuredLead(store) {
+  const text2 = store.text("empire-city.json");
+  if (!text2.trim()) return null;
+  try {
+    const value = JSON.parse(text2);
+    const id2 = value && typeof value === "object" && !Array.isArray(value) ? value.leadAgentId : null;
+    return typeof id2 === "string" && id2.trim() ? id2.trim() : null;
+  } catch {
+    return null;
+  }
+}
 function quietFailure(error) {
   return !!error && /已暂停|中断|已被用户新要求取代/.test(error);
 }
@@ -104535,8 +104546,10 @@ function civilizationSnapshot(store, now = Date.now(), runningIds = []) {
   const coordinators = /* @__PURE__ */ new Map();
   for (const group of groups) if (group.coordinatorId && agents.some((agent) => agent.id === group.coordinatorId)) coordinators.set(group.coordinatorId, (coordinators.get(group.coordinatorId) || 0) + 1);
   const coordinatorLead = [...coordinators.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] || null;
-  const leadId = coordinatorLead || (agents.some((agent) => agent.id === "main") ? "main" : null);
-  const leadSource = coordinatorLead ? "coordinator" : leadId ? "main" : "none";
+  const configured = configuredLead(store);
+  const active = (id2) => !!id2 && agents.some((agent) => agent.id === id2);
+  const leadId = active(configured) ? configured : active("main") ? "main" : coordinatorLead;
+  const leadSource = active(configured) ? "configured" : leadId === "main" ? "main" : leadId ? "coordinator" : "none";
   const events = [];
   const pushEvent = (event) => {
     if (Number.isFinite(Date.parse(event.at))) events.push(event);
@@ -104704,7 +104717,7 @@ function groupDetails(input) {
 function createApp(home = path10.join(ROOT, "home"), options = {}) {
   const store = new Store2(home);
   if (options.seed !== false) seedTeam(store);
-  const assets = new Map(["index.html", "client.js", "style.css", "appearance-boot.js", "town.js", "town.css", "product.css", "square.js", "civilization.js", "civilization.css", "city.bundle.js"].map((file) => [file, fs15.readFileSync(path10.join(ROOT, "public", file))]));
+  const assets = new Map(["index.html", "client.js", "style.css", "appearance-boot.js", "town.js", "town.css", "product.css", "square.js", "civilization.js", "civilization.css", "city.bundle.js", "favicon.svg"].map((file) => [file, fs15.readFileSync(path10.join(ROOT, "public", file))]));
   const version = string(object(JSON.parse(fs15.readFileSync(path10.join(ROOT, "package.json"), "utf8"))).version);
   const assetVersions = new Map([...assets].map(([name, bytes]) => [name, { etag: 'W/"' + crypto15.createHash("sha256").update(bytes).digest("hex") + '"', gzip: gzipSync(bytes) }]));
   const startedAt = Date.now();
@@ -104787,9 +104800,9 @@ function createApp(home = path10.join(ROOT, "home"), options = {}) {
         });
         return;
       }
-      if (method === "GET" && (route === "/" || assets.has(route.slice(1)))) {
-        const file = route === "/" ? "index.html" : route.slice(1);
-        const mime = file.endsWith(".html") ? "text/html" : file.endsWith(".js") ? "text/javascript" : "text/css";
+      if (method === "GET" && (route === "/" || route === "/favicon.ico" || assets.has(route.slice(1)))) {
+        const file = route === "/" ? "index.html" : route === "/favicon.ico" ? "favicon.svg" : route.slice(1);
+        const mime = file.endsWith(".html") ? "text/html" : file.endsWith(".js") ? "text/javascript" : file.endsWith(".svg") ? "image/svg+xml" : "text/css";
         const cached = assetVersions.get(file);
         const compressed = /\bgzip\b(?!\s*;\s*q=0(?:\.0*)?(?:\s*[,;]|\s*$))/i.test(req.headers["accept-encoding"] || "");
         if (req.headers["if-none-match"] === cached.etag) {
