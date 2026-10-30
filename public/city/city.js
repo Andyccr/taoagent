@@ -13,6 +13,8 @@ import { buildRoman, buildAqueduct } from './styles-roman.js';
 import { buildModern, buildSkyline } from './styles-modern.js';
 import { buildGround, buildPlaza, buildStreet, buildReservedPlot, buildStele, buildTree, buildPine } from './decor.js';
 import { createSmoke, createFireworks } from './effects.js';
+import { buildMetropolis } from './metropolis.js';
+import { computeMetropolis, assignClaims, CANAL } from './metropolis-plan.js';
 import { buildCharacter, applyVisual } from './characters.js';
 import { CJK_FONT as CJK, textTexture } from './kit.js';
 
@@ -43,6 +45,7 @@ export function createCity(container, roster, opts = {}) {
   renderer.shadowMap.enabled = shadows;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.domElement.className = 'civ-canvas';
+  renderer.info.autoReset = false;
   container.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
@@ -57,8 +60,10 @@ export function createCity(container, roster, opts = {}) {
   sun.castShadow = shadows;
   scene.add(sun, sun.target);
 
-  const layout = computeCity(roster);
-  const R = layout.outerR;
+  const plan = computeMetropolis();
+  const layout = computeCity(roster, { claim: (bots) => assignClaims(bots, plan) });
+  const R = layout.outerR;          // agent core
+  const CITY_R = plan.outerR;       // whole metropolis
   if (shadows) {
     sun.shadow.mapSize.set(2048, 2048);
     Object.assign(sun.shadow.camera, { left: -R - 4, right: R + 4, top: R + 4, bottom: -R - 4, near: 1, far: 160 });
@@ -66,15 +71,13 @@ export function createCity(container, roster, opts = {}) {
   }
 
   // ---------- static city ----------
-  scene.add(buildGround({ radius: R + 70, shadows }));
+  scene.add(buildGround({ radius: CITY_R + 90, shadows }));
   scene.add(buildPlaza({ radius: PLAZA_R, shadows }));
   const roadOut = PLAZA_R + ROAD_W;
   for (const p of layout.plots) {
     const a = polar(roadOut - 0.2, p.angle), b = polar(p.r - PLOT / 2 + 0.3, p.angle);
     scene.add(buildStreet({ from: a, to: b, width: 2.2 }));
   }
-  const sky = buildSkyline({ innerR: R + 14, outerR: R + 42, count: 46, seed: 7, shadows: false });
-  scene.add(sky);
   // Roman aqueduct across the workshop quarter, between ring 1 and ring 2.
   {
     const mid = (ringRadius(1) + ringRadius(2)) / 2 + 1.6;
@@ -104,9 +107,9 @@ export function createCity(container, roster, opts = {}) {
     if (!name || STYLE_ANGLE[style] === undefined) continue;
     const tex = textTexture([name], { w: 512, h: 128, fg: '#5b4a2e', font: 64 });
     const sign = new THREE.Mesh(new THREE.PlaneGeometry(8, 2), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false }));
-    const p = polar(R + 2.5, STYLE_ANGLE[style]);
-    sign.rotation.x = -Math.PI / 2; sign.rotation.z = -THREE.MathUtils.degToRad(STYLE_ANGLE[style]) + Math.PI;
-    if (Math.cos(THREE.MathUtils.degToRad(STYLE_ANGLE[style])) < 0) sign.rotation.z = 0;
+    const p = polar(CANAL.outer + 9, STYLE_ANGLE[style] + 22);
+    sign.scale.setScalar(1.8);
+    sign.rotation.x = -Math.PI / 2; sign.rotation.z = 0;
     sign.position.set(p.x, 0.06, p.z);
     scene.add(sign);
   }
@@ -198,6 +201,16 @@ export function createCity(container, roster, opts = {}) {
     g.add(b.group);
     addUnit(p.bot, b, g, approachRoute(p), p.angle);
   }
+  // Agents beyond the 18 core plots move into claimable city lots (filler skipped there, building scaled to the lot).
+  for (const p of layout.claimed || []) {
+    const g = new THREE.Group();
+    g.position.set(p.x, 0, p.z); g.rotation.y = p.rotY;
+    const b = buildForStyle(p.bot.style, { color: p.bot.color, shadows, variant: p.variant || 0 });
+    b.group.scale.setScalar(p.size / PLOT);
+    g.add(b.group);
+    addUnit(p.bot, b, g, approachRoute(p), p.angle);
+  }
+  const city = buildMetropolis(scene, { claimedLots: new Set((layout.claimed || []).map((p) => p.id)), quality: lowPower ? 'low' : opts.quality || 'medium', pickables });
 
   // ---------- state visuals ----------
   function setMatsGrey(u, grey) {
@@ -288,7 +301,7 @@ export function createCity(container, roster, opts = {}) {
   }
 
   // ---------- camera framing ----------
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.5, 600);
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.5, 2400);
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true; controls.dampingFactor = 0.08;
   controls.maxPolarAngle = Math.PI * 0.44; controls.minDistance = 12;
@@ -297,7 +310,8 @@ export function createCity(container, roster, opts = {}) {
   controls.addEventListener('start', () => { userMoved = true; tween = null; });
   let tween = null; // { pos, target } camera glide destination
   const framePts = [];
-  for (let i = 0; i < 24; i++) { const p = polar(R, i * 15); framePts.push(new THREE.Vector3(p.x, 0, p.z)); }
+  for (let i = 0; i < 24; i++) { const p = polar(CITY_R - 6, i * 15); framePts.push(new THREE.Vector3(p.x, 0, p.z)); }
+  for (const w of city.wonders) framePts.push(new THREE.Vector3(w.x, Math.min(w.height, 40), w.z));
   for (const u of units.values()) { const top = u.smoke.object.position; framePts.push(top.clone()); }
   function fit() {
     const aspect = camera.aspect;
@@ -357,13 +371,14 @@ export function createCity(container, roster, opts = {}) {
     if (!info) { tip.style.display = 'none'; renderer.domElement.style.cursor = ''; return null; }
     tip.innerHTML = '';
     const b = document.createElement('b'); b.textContent = info.name; tip.appendChild(b);
+    if (info.wonder) b.textContent = '奇观 · ' + info.name;
     const s = document.createElement('div'); s.style.color = '#666';
     s.textContent = [info.dept, info.state, info.label].filter(Boolean).join(' · '); tip.appendChild(s);
     tip.style.display = 'block';
     tip.style.left = Math.min(cx - r.left + 12, r.width - 200) + 'px';
     tip.style.top = Math.max(cy - r.top - 40, 4) + 'px';
     renderer.domElement.style.cursor = 'pointer';
-    return u ? { type: 'agent', id: u.def.id } : info.reserved ? { type: 'reserved' } : null;
+    return u ? { type: 'agent', id: u.def.id } : info.reserved ? { type: 'reserved' } : info.wonder ? { type: 'wonder', id: info.id, name: info.name } : null;
   }
   let downAt = null;
   const onMove = (e) => { if (e.pointerType === 'mouse' && !e.buttons) pick(e.clientX, e.clientY); };
@@ -391,6 +406,7 @@ export function createCity(container, roster, opts = {}) {
   const ro = new ResizeObserver(resize); ro.observe(container); resize();
 
   const clock = new THREE.Clock();
+  let frameMs = 0;
   let raf = 0, t = 0, speed = 1, paused = false, visible = true, slow = 0, sampled = 0;
   function frame() {
     raf = requestAnimationFrame(frame);
@@ -417,7 +433,10 @@ export function createCity(container, roster, opts = {}) {
     }
     updateMessengers(dt);
     fireworks.update(dt);
+    renderer.info.reset();
+    const t0 = performance.now();
     if (composer) composer.render(); else renderer.render(scene, camera);
+    frameMs = frameMs * 0.9 + (performance.now() - t0) * 0.1;
   }
   frame();
 
@@ -431,16 +450,18 @@ export function createCity(container, roster, opts = {}) {
     selected = new Set((Array.isArray(ids) ? ids : [ids]).filter(Boolean));
     for (const [id, u] of units) u.ring.visible = selected.has(id);
   }
-  function focus(id) {
+  function focus(id, distance = 26) {
     const u = units.get(id); if (!u) return false;
-    glide(u.porch.clone().setY(1.5), 26); return true;
+    glide(u.porch.clone().setY(1.5), distance); return true;
   }
   function focusQuarter(style) {
     if (style === 'overview') { resetCamera(); return; }
+    if (style === 'core') { glide(new THREE.Vector3(0, 2, 0), 78); return; }
     if (STYLE_ANGLE[style] === undefined) return;
-    const p = polar(style === 'chinese' ? 0 : (ringRadius(1) + ringRadius(Math.max(1, layout.rings - 1))) / 2, STYLE_ANGLE[style]);
-    glide(new THREE.Vector3(p.x, 0, p.z), style === 'chinese' ? 30 : 34);
+    const p = polar(92, STYLE_ANGLE[style]);
+    glide(new THREE.Vector3(p.x, 0, p.z), 120);
   }
+  function focusWonder(id) { const w = city.wonders.find((x) => x.id === id); if (!w) return false; glide(new THREE.Vector3(w.x, Math.min(w.height, 60) * 0.35, w.z), Math.max(50, w.radius * 2.4, Math.min(w.height, 120) * 1.5)); return true; }
   function resetCamera() { userMoved = false; tween = null; fit(); }
   function setOptions(o = {}) {
     if (o.speed !== undefined) speed = Math.min(3, Math.max(0.25, Number(o.speed) || 1));
@@ -458,7 +479,14 @@ export function createCity(container, roster, opts = {}) {
   function setVisible(v) { visible = !!v; if (visible) clock.getDelta(); }
 
   return {
-    setBots, handoff, select, focus, focusQuarter, resetCamera, setOptions, setVisible,
+    setBots, handoff, select, focus, focusQuarter, focusWonder, resetCamera, setOptions, setVisible,
+    wonders: () => city.wonders.map((w) => ({ id: w.id, name: w.name })),
+    perf: () => ({ calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, geometries: renderer.info.memory.geometries, frameMs: +frameMs.toFixed(2), composer: !!composer, ...city.stats, lots: plan.lots.length, claimable: plan.lots.filter((l) => l.claimable).length }),
+    drawStats: () => {
+      const by = {}; let total = 0, cast = 0;
+      scene.traverseVisible((o) => { if (!o.isMesh && !o.isSprite && !o.isLine && !o.isPoints) return; total++; if (o.castShadow) cast++; let top = o; while (top.parent && top.parent !== scene) top = top.parent; const k = top.name || top.type; by[k] = (by[k] || 0) + 1; });
+      return { total, cast, by: Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 12) };
+    },
     setUsageLines: (lines) => stele.setLines(lines),
     setSimulation: () => {},
     debug: () => ({

@@ -32,6 +32,7 @@ function makeRing(k) {
 // Walking route (world x,z points) from the plaza ring road out to the spot in front of a plot's door.
 export function approachRoute(p) {
   const pts = [polar(ROAD_MID, p.angle)];
+  if (p.lot) { pts.push(polar(p.r - p.size / 2 - 0.8, p.angle)); return pts; }
   const h = PLOT / 2 + 0.6;
   if (p.faceSouth) {
     const sx = p.x < -0.01 ? 1 : -1; // walk around the side nearer the central axis
@@ -43,42 +44,50 @@ export function approachRoute(p) {
   return pts;
 }
 
-export function computeCity(roster) {
+export const CORE_RINGS = 3;     // the agent core always has 3 rings (18 plots); later agents claim city lots
+
+// claim(bots) -> Map(botId -> lot) is injected by the metropolis plan (kept out of this file so the core layout stays tiny).
+export function computeCity(roster, opts = {}) {
   const lead = roster.find((b) => b.lead) || null;
   const others = roster.filter((b) => b !== lead);
-  const rings = [makeRing(1), makeRing(2)];
-  const plotAt = (ring, index) => {
-    while (rings.length < ring) rings.push(makeRing(rings.length + 1));
-    return rings[ring - 1][index];
-  };
+  const rings = Array.from({ length: CORE_RINGS }, (_, i) => makeRing(i + 1));
+  const plotAt = (ring, index) => (ring <= CORE_RINGS ? rings[ring - 1][index] : null);
   const pending = [];
   // 1) pinned slots first
   for (const b of others) {
     const s = b.slot;
-    if (s && Number.isInteger(s.ring) && s.ring >= 1 && Number.isInteger(s.index) && s.index >= 0 && s.index < PER_RING && !plotAt(s.ring, s.index).bot) plotAt(s.ring, s.index).bot = b;
+    const p = s && Number.isInteger(s.ring) && s.ring >= 1 && Number.isInteger(s.index) && s.index >= 0 && s.index < PER_RING ? plotAt(s.ring, s.index) : null;
+    if (p && !p.bot) p.bot = b;
     else pending.push(b);
   }
-  // 2) auto: lowest ring with a free plot, nearest the style's quarter
+  // 2) auto: lowest core ring with a free plot, nearest the style's quarter; the rest overflow into the city
+  const overflow = [];
   for (const b of pending) {
     const want = STYLE_ANGLE[b.style] ?? 0;
     let placed = false;
-    for (let k = 1; !placed; k++) {
-      const ring = k <= rings.length ? rings[k - 1] : (rings.push(makeRing(k)), rings[k - 1]);
+    for (const ring of rings) {
       const free = ring.filter((p) => !p.bot).sort((p, q) => angDist(p.angle, want) - angDist(q.angle, want) || p.index - q.index);
-      if (free.length) { free[0].bot = b; placed = true; }
+      if (free.length) { free[0].bot = b; placed = true; break; }
     }
+    if (!placed) overflow.push(b);
   }
-  // 3) always keep an outer ring with free (reserved) plots: when the outermost ring is full, extend.
-  while (rings[rings.length - 1].every((p) => p.bot)) rings.push(makeRing(rings.length + 1));
+  // 3) overflow agents claim free filler lots of the surrounding city (deterministic, see metropolis-plan.js)
+  const claims = overflow.length && typeof opts.claim === 'function' ? opts.claim(overflow) : new Map();
+  const claimed = [];
+  for (const b of overflow) {
+    const lot = claims.get(b.id);
+    if (lot) claimed.push({ ...lot, ring: 0, index: -1, faceSouth: false, bot: b, lot: true });
+  }
   // Style variants: n-th bot of a style (in roster order) gets variant n.
   const count = {};
   const plots = rings.flat();
   const byBot = new Map();
   for (const b of others) {
-    const p = plots.find((q) => q.bot === b);
+    const p = plots.find((q) => q.bot === b) || claimed.find((q) => q.bot === b);
+    if (!p) continue;
     p.variant = (count[b.style] = (count[b.style] ?? -1) + 1);
     byBot.set(b.id, p);
   }
-  const outerR = ringRadius(rings.length) + PLOT / 2 + 1;
-  return { lead, plots, rings: rings.length, outerR, byBot };
+  const outerR = ringRadius(CORE_RINGS) + PLOT / 2 + 1;
+  return { lead, plots, claimed, unplaced: overflow.filter((b) => !claims.get(b.id)), rings: rings.length, outerR, byBot };
 }
