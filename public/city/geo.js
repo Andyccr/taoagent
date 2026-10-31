@@ -9,6 +9,14 @@ import { createSurfaceTexture } from './textures.js';
 
 export { THREE };
 
+// Simplified builds (low preset): while active, parts smaller than `min` (bounding radius, metres) are dropped and
+// round shapes get at most `seg` segments, so the same builder code yields a much lighter model.
+let SIMPLE = null;
+export function buildSimplified(fn, { min = 0.55, seg = 6 } = {}) {
+  const prev = SIMPLE; SIMPLE = { min, seg };
+  try { return fn(); } finally { SIMPLE = prev; }
+}
+
 export function createGeo() {
   const parts = [];
   const stack = [new THREE.Matrix4()];
@@ -19,7 +27,7 @@ export function createGeo() {
   let tris = 0;
 
   // Generated builders sometimes pass a colour where a segment count belongs; clamp so a typo cannot explode the mesh.
-  const segs = (n, d, max = 48) => (Number.isFinite(n) && n >= 3 && n <= 256 ? Math.min(Math.round(n), max) : d);
+  const segs = (n, d, max = 48) => { const v = Number.isFinite(n) && n >= 3 && n <= 256 ? Math.min(Math.round(n), max) : d; return SIMPLE ? Math.min(v, SIMPLE.seg) : v; };
   function push(geometry, hex, x, y, z, rot = {}) {
     if (rot === null || typeof rot !== 'object') rot = {};
     let g = geometry.index ? geometry.toNonIndexed() : geometry;
@@ -32,6 +40,7 @@ export function createGeo() {
     q.setFromEuler(e);
     tmp.compose(new THREE.Vector3(x, y, z), q, new THREE.Vector3(rot.sx ?? 1, rot.sy ?? 1, rot.sz ?? 1));
     g.applyMatrix4(new THREE.Matrix4().multiplyMatrices(stack[stack.length - 1], tmp));
+    if (SIMPLE) { g.computeBoundingSphere(); if (g.boundingSphere.radius < SIMPLE.min) return g; }
     color.set(hex);
     const n = g.getAttribute('position').count;
     const c = new Float32Array(n * 3);

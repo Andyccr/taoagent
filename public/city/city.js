@@ -18,6 +18,27 @@ import { buildMetropolis } from './metropolis.js';
 import { heightAt, footprintHeight } from './metro-height.js';
 import { STREET_PROPS } from './street-props.js';
 import { DRESSING } from './dressing-props.js';
+
+// Highest ground under a square footprint (the level a terrace is built up to).
+function topHeight(x, z, size, rotY) {
+  const h = size / 2, c = Math.cos(rotY), s = Math.sin(rotY);
+  let m = heightAt(x, z);
+  for (const [a, b] of [[-h, -h], [h, -h], [-h, h], [h, h]]) m = Math.max(m, heightAt(x + a * c + b * s, z - a * s + b * c));
+  return m;
+}
+const terraceMat = new THREE.MeshStandardMaterial({ color: '#b9ad94', roughness: 0.95 });
+function terrace(size, drop) {
+  const t = new THREE.Group(), w = size * 1.06, depth = drop + 0.35;
+  const base = new THREE.Mesh(new THREE.BoxGeometry(w, depth, w), terraceMat); base.position.y = -depth / 2 + 0.02;
+  const cap = new THREE.Mesh(new THREE.BoxGeometry(w + 0.3, 0.12, w + 0.3), terraceMat); cap.position.y = -0.04;
+  t.add(base, cap);
+  for (let i = 0, n = Math.min(6, Math.ceil(drop / 0.22)); i < n; i++) {
+    const st = new THREE.Mesh(new THREE.BoxGeometry(size * 0.3, drop / n, 0.45), terraceMat);
+    st.position.set(0, -drop + (drop / n) * (i + 0.5), w / 2 + 0.22 + (n - 1 - i) * 0.45); t.add(st);
+  }
+  t.traverse((o) => { if (o.isMesh) o.castShadow = o.receiveShadow = true; });
+  return t;
+}
 import { bakeStatic } from './bake.js';
 import { computeMetropolis, assignClaims, CANAL } from './metropolis-plan.js';
 import { buildCharacter, applyVisual } from './characters.js';
@@ -285,7 +306,11 @@ export function createCity(container, roster, opts = {}) {
   // Agents beyond the 18 core plots move into claimable city lots (filler skipped there, building scaled to the lot).
   for (const p of layout.claimed || []) {
     const g = new THREE.Group();
-    g.position.set(p.x, footprintHeight(p.x, p.z, p.size, p.rotY), p.z); g.rotation.y = p.rotY;
+    // Level the plot on a small stone terrace: the building stands at the uphill corner's height and a plinth
+    // fills down to the lowest corner (with a step at the door), so nothing sinks into the slope.
+    const low = footprintHeight(p.x, p.z, p.size, p.rotY), top = topHeight(p.x, p.z, p.size, p.rotY);
+    g.position.set(p.x, top, p.z);
+    if (top - low > 0.12) g.add(terrace(p.size, top - low)); g.rotation.y = p.rotY;
     const b = buildForStyle(p.bot.style, { color: p.bot.color, shadows, variant: p.variant || 0 });
     b.group.scale.setScalar(p.size / PLOT);
     g.add(b.group);
@@ -873,7 +898,14 @@ export function createCity(container, roster, opts = {}) {
     drawStats: () => {
       const by = {}; let total = 0, cast = 0;
       scene.traverseVisible((o) => { if (!o.isMesh && !o.isSprite && !o.isLine && !o.isPoints) return; total++; if (o.castShadow) cast++; let top = o; while (top.parent && top.parent !== scene) top = top.parent; const k = top.name || (top.type + (top.children.length > 8 ? ':' + top.uuid.slice(0, 4) : '')); by[k] = (by[k] || 0) + 1; });
-      return { total, cast, by: Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 30) };
+      // Triangles of plain meshes by metropolis part (batched meshes are reported by their own LOD stats).
+      const tris = {};
+      for (const o of city.root.children) {
+        let n = 0;
+        o.traverseVisible((m) => { if (m.isMesh && !m.isBatchedMesh && m.geometry) { const g = m.geometry, c = (g.index ? g.index.count : g.getAttribute('position')?.count || 0) / 3; n += m.isInstancedMesh ? c * m.count : c; } });
+        if (n) { const k = o.name || o.type + ':' + (o.material?.color?.getHexString?.() || ''); tris[k] = (tris[k] || 0) + Math.round(n); }
+      }
+      return { total, cast, by: Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 30), tris: Object.entries(tris).sort((a, b) => b[1] - a[1]).slice(0, 25) };
     },
     setUsageLines: (lines) => stele.setLines(lines),
     setSimulation: () => {},

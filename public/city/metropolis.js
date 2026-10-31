@@ -4,7 +4,7 @@
 // - wonders are one merged mesh each (+ one glass mesh), built once per page and reused when the agent core rebuilds.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-import { cityMaterial, createGeo } from './geo.js';
+import { cityMaterial, createGeo, buildSimplified } from './geo.js';
 import { polar } from './layout.js';
 import { computeMetropolis, hash } from './metropolis-plan.js';
 import { CHINESE_FILLERS } from './fillers-chinese.js';
@@ -22,7 +22,7 @@ import { STREET_PROPS } from './street-props.js';
 import { antenna, chimneyPot } from './detail-props.js';
 import { createLodBatch, createBatchMaterial, treeProxyGeometry } from './metro-batch.js';
 import { scatterProps } from './metro-scatter.js';
-import { riverGeometry, wallGeometry, terrainGeometry, quayGeometry } from './metro-terrain.js';
+import { riverGeometry, wallGeometry, quayGeometry } from './metro-terrain.js';
 import { buildLife, buildNightLights } from './metro-life.js';
 import { createWaterMaterial, updateWater, disposeWater } from './metro-water.js';
 import { buildSky } from './metro-sky.js';
@@ -66,7 +66,8 @@ export const LOD = {
 const GROUND = { chinese: '#c9c19f', greek: '#cfcab4', roman: '#c8b48e', modern: '#b9bcb6', mixed: '#c4c0a4', blend: '#c9c3a6', harbour: '#b7c2b0', industrial: '#b5b0a4', suburb: '#b8bf98', country: '#a9b98a', farmland: '#a9b98a' };
 const DISTRICT_TINT = { roman: [1.05, 0.98, 0.9], greek: [1.03, 1.03, 1.03], chinese: [1.0, 0.96, 0.94], modern: [0.95, 0.98, 1.04], common: [1.02, 0.99, 0.95], outer: [1.02, 0.98, 0.9] };
 const PARK = { park: '#8fb36a', plaza: '#d6cdb6', market: '#cdbf9f' };
-const CROP = ['#c9b458', '#8fae5a', '#a7c46a', '#b98e4f'];
+const CROP = ['#c9b458', '#8fae5a', '#a7c46a', '#b98e4f', '#d2c07a', '#7f9a4e'];
+const YARD = ['#9fbd78', '#8a9a5a', '#a9c283', '#b9a684'];
 
 const fillerCache = new Map();
 function fillerGeometry(style, kind, variant) {
@@ -80,13 +81,19 @@ function fillerGeometry(style, kind, variant) {
   return fillerCache.get(key);
 }
 const wonderCache = new Map();
-function wonderParts(kind) {
-  if (!wonderCache.has(kind)) {
+// simple: the low preset's lighter model (same builder; ornament under ~1 m dropped, rounder parts coarser).
+function wonderParts(kind, simple = false) {
+  const key = kind + (simple ? ':low' : '');
+  if (!wonderCache.has(key)) {
     let w = null;
-    try { w = WONDER_BUILDERS[kind]?.() || null; } catch (error) { console.warn('wonder failed', kind, error); }
-    wonderCache.set(kind, w);
+    try {
+      const build = WONDER_BUILDERS[kind];
+      w = build ? (simple ? buildSimplified(build, { min: 1.5, seg: 6 }) : build()) || null : null;
+      if (w && w.glass && !w.glass.getAttribute('position')) w = { ...w, glass: null };
+    } catch (error) { console.warn('wonder failed', kind, error); }
+    wonderCache.set(key, w);
   }
-  return wonderCache.get(kind);
+  return wonderCache.get(key);
 }
 
 let bridgeRailGeo = null;
@@ -328,7 +335,7 @@ function staticGeometry() {
   const byKind = { ring: [], avenue: [], street: [], alley: [] };
   for (const road of plan.roads) {
     const a = road.pts[0], b = road.pts[road.pts.length - 1];
-    const closed = road.kind === 'ring' && (a[0] !== b[0] || a[1] !== b[1]);
+    const closed = road.kind === 'ring' && !road.arc && (a[0] !== b[0] || a[1] !== b[1]);
     (byKind[road.kind] || (byKind[road.kind] = [])).push(ribbon(road.pts, road.w, closed));
   }
   const merge = (gs) => gs && gs.length ? mergeGeometries(gs) : null;
@@ -338,7 +345,7 @@ function staticGeometry() {
   for (const road of plan.roads) {
     if (road.kind !== 'avenue' && road.kind !== 'ring') continue;
     const a = road.pts[0], b = road.pts[road.pts.length - 1];
-    const closed = road.kind === 'ring' && (a[0] !== b[0] || a[1] !== b[1]);
+    const closed = road.kind === 'ring' && !road.arc && (a[0] !== b[0] || a[1] !== b[1]);
     for (const side of [-1, 1]) walks.push(ribbon(offsetPolyline(road.pts, side * (road.w / 2 + 0.55), closed), 1.1, closed));
   }
   const pavement = merge(walks); if (pavement) roads.push({ geo: pavement, color: '#e3dccb', y: 0.04 });
@@ -354,13 +361,12 @@ function staticGeometry() {
 
   const sea = seaGeometry(plan), land = landGeometry(plan, sea);
   // Everything flat on the ground follows the terrain (split into short edges so it hugs the land grid).
-  for (const r of roads) r.geo = drape(r.geo, 0.05, 5);
+  for (const r of roads) r.geo = drape(r.geo, 0.05, 7);
   const crosswalks = crosswalkGeometry(plan);
   const wall = wallGeometry(plan); liftByTerrain(wall);
-  const terrain = terrainGeometry(plan); if (terrain.hills) liftByTerrain(terrain.hills);
   const rv = riverGeometry(plan), river = { water: rv.water, banks: drape(mergeGeometries([rv.quay, rv.path]), 0, 5) };
   // Sand along both natural coasts of the bay (half under the shallows, half up the beach).
-  const coasts = coastSides(plan), beach = drape(mergeGeometries(coasts.map((c) => ribbon(c, 30))), 0.06, 6);
+  const coasts = coastSides(plan), beach = drape(mergeGeometries(coasts.map((c) => ribbon(c, 30))), 0.06, 10);
   const patches = new Map();
   for (const patch of plan.patches || []) {
     const style = patch.style || patch.zone || patch.kind || patch.type || 'mixed';
@@ -386,10 +392,30 @@ function staticGeometry() {
     parkGeos.push(g);
   }
   const parks = parkGeos.length ? drape(mergeGeometries(parkGeos), 0.045, 5) : null;
+  const polyMesh = (items, colorOf, lift, edge) => {
+    const pos = [], col = [], c = new THREE.Color();
+    for (const it of items) {
+      colorOf(it, c);
+      const p = it.pts;
+      for (let i = 1; i < p.length - 1; i++) {
+        const a = p[0], b = p[i], d = p[i + 1], up = (b[1] - a[1]) * (d[0] - a[0]) - (b[0] - a[0]) * (d[1] - a[1]) > 0;
+        for (const v of up ? [a, b, d] : [a, d, b]) { pos.push(v[0], 0, v[1]); col.push(c.r, c.g, c.b); }
+      }
+    }
+    if (!pos.length) return null;
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+    const out = drape(g, lift, edge), P = out.getAttribute('position');
+    // Beyond ~650 m the land grid is coarse; lift far parcels a little more so the land never shows through.
+    for (let i = 0; i < P.count; i++) { const r = Math.hypot(P.getX(i), P.getZ(i)); if (r > 600) P.setY(i, P.getY(i) + (r - 600) * 0.004); }
+    return out;
+  };
+  const fields = polyMesh(plan.fields, (f, c) => { const k = 0.9 + (hash(f.id + 'b') % 20) / 100; c.set(CROP[f.crop % CROP.length]).multiplyScalar(k); }, 0.05, 16);
+  const yards = polyMesh(plan.yards || [], (y, c) => { const k = 0.92 + (hash(y.id + 'b') % 16) / 100; c.set(YARD[y.tone]).multiplyScalar(k); }, 0.04, 10);
 
   sharedStatic = {
-    roads, waterGeo, kerbs, sea, land, patches, parks, river, beach, coasts, crosswalks: crosswalks ? drape(crosswalks, 0.07, 4) : null, bridge: bridgeWithRail(canal.half * 2 + 1.5, 5.2),
-    riverBridge: bridge(plan.river.half * 2 + 2, 6.4), wall, terrain, quay: quayGeometry(plan),
+    roads, waterGeo, kerbs, sea, land, patches, parks, fields, yards, river, beach, coasts, crosswalks: crosswalks ? drape(crosswalks, 0.07, 4) : null, bridge: bridgeWithRail(canal.half * 2 + 1.5, 5.2),
+    riverBridge: bridge(plan.river.half * 2 + 2, 6.4), wall, quay: quayGeometry(plan),
     mountains: mountainRangeGeometry({ inner: 1120, outer: 2350, heightScale: 0.78, seaFrom: plan.sea.from, seaTo: plan.sea.to }),
   };
   return sharedStatic;
@@ -409,7 +435,8 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
   const base = new THREE.Mesh(quality === 'low' ? st.landCoarse : st.land, groundMaterial(quality === 'low'));
   base.position.y = 0.002; base.receiveShadow = quality !== 'low'; root.add(base);
 
-  for (const [color, geo] of st.patches) {
+  // Low skips the district ground tints and house yards (plain land), keeping fields, parks and roads.
+  if (quality !== 'low') for (const [color, geo] of st.patches) {
     const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color, roughness: 1, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -2 }));
     mesh.receiveShadow = quality !== 'low';
     root.add(mesh);
@@ -461,7 +488,7 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
     const s = lot.size / 7;
     q.setFromAxisAngle(up, lot.rotY);
     const fx = lot.x - Math.sin(lot.rotY) * lot.setback, fz = lot.z - Math.cos(lot.rotY) * lot.setback;
-    m4.compose(pos.set(fx, footprintHeight(fx, fz, lot.size, lot.rotY) - 0.05, fz), q, sc.set(s, lot.scaleY * s, s));
+    m4.compose(pos.set(fx, footprintHeight(fx, fz, lot.size, lot.rotY) - 0.05, fz), q, sc.set(s * (lot.fw || 1), lot.scaleY * s, s * (lot.fd || 1)));
     // Per-district palette, neighbourhood-scale drift (streets of warmer or paler houses) and per-house wear.
     const th = hash(lot.id + 'tint'), b = 0.9 + (th % 19) / 100, warm = ((th >>> 5) % 9 - 4) / 300;
     const pal = DISTRICT_TINT[lot.style] || DISTRICT_TINT.common;
@@ -476,19 +503,8 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
   // Parks: one merged vertex-coloured mesh draped over the land.
   if (st.parks) { const parks = new THREE.Mesh(st.parks, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -3 })); parks.receiveShadow = quality !== 'low'; root.add(parks); }
 
-  // Fields: one instanced flat box with per-instance crop colours.
-  if (plan.fields.length) {
-    const fields = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 0.08, 1), new THREE.MeshStandardMaterial({ roughness: 1 }), plan.fields.length);
-    plan.fields.forEach((f, i) => {
-      q.setFromAxisAngle(up, f.rotY);
-      m4.compose(pos.set(f.x, footprintHeight(f.x, f.z, Math.min(f.w, f.d), f.rotY) + 0.04, f.z), q, sc.set(f.w, 1, f.d));
-      fields.setMatrixAt(i, m4);
-      const ci = typeof f.crop === 'number' ? ((Math.floor(f.crop) % 4) + 4) % 4 : hash(String(f.crop)) % 4;
-      fields.setColorAt(i, new THREE.Color(CROP[ci]));
-    });
-    fields.instanceColor.needsUpdate = true;
-    fields.computeBoundingSphere(); fields.receiveShadow = quality !== 'low'; root.add(fields); stats.instancedMeshes++;
-  }
+  // Fields and house yards: irregular draped polygons with per-parcel colours (two static meshes).
+  for (const geo of quality === 'low' ? [st.fields] : [st.fields, st.yards]) if (geo) { const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -2 })); m.receiveShadow = quality !== 'low'; root.add(m); }
 
   // Street-level dressing (trees by district, lamps, stalls, signs, carts, moored boats, townsfolk) plus rooftop
   // micro-props, all in one distance-culled batch.
@@ -600,7 +616,7 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
   }
   const seaWall = new THREE.Mesh(st.quay, solid); seaWall.receiveShadow = quality !== 'low'; root.add(seaWall);
   const wall = new THREE.Mesh(st.wall, solid); wall.name = 'cityWall'; wall.castShadow = quality === 'high'; wall.receiveShadow = quality !== 'low'; root.add(wall);
-  if (st.terrain.hills) { const hills = new THREE.Mesh(st.terrain.hills, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, flatShading: true })); hills.name = 'hills'; root.add(hills); }
+  // (Countryside hills are part of the terrain height field now; no separate dome meshes.)
   // Distant mountain range: one smooth-shaded ring of ridged peaks, colours pre-hazed for aerial perspective.
   const peaks = new THREE.Mesh(st.mountains, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, metalness: 0, fog: false }));
   peaks.name = 'mountains'; peaks.matrixAutoUpdate = false; root.add(peaks);
@@ -628,7 +644,7 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
   };
   const wonders = [];
   for (const w of plan.wonders) {
-    const parts = wonderParts(w.kind); if (!parts || !parts.solid) continue;
+    const parts = wonderParts(w.kind, quality === 'low'); if (!parts || !parts.solid) continue;
     const g = new THREE.Group(); g.position.set(w.x, w.kind === 'lighthouse' || w.kind === 'colossus' ? 0 : heightAt(w.x, w.z), w.z); g.rotation.y = w.rotY;
     if (w.kind !== 'lighthouse' && w.kind !== 'colossus') {
     const base2 = new THREE.Mesh(new THREE.BoxGeometry(Math.abs(Math.sin(w.rotY)) > 0.5 ? w.d : w.w, 0.08, Math.abs(Math.sin(w.rotY)) > 0.5 ? w.w : w.d), pad); base2.scale.y = 30; base2.position.y = -1.1; base2.receiveShadow = quality !== 'low'; g.add(base2);
