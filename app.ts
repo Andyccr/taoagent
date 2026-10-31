@@ -363,7 +363,9 @@ export function createApp(home = path.join(ROOT, 'home'), options: {seed?: boole
         if (action === 'context' && method === 'PUT') {
           if (busy(key)) throw new HttpError(409, '生成中不能修改上下文')
           if (typeof input.expected === 'string' && input.expected !== store.text('chats', key, 'context.md')) throw new HttpError(409, '背景已在其他窗口更新，请先保留你的编辑再重新载入')
-          atomic(store.file('chats', key, 'context.md'), string(input.context)); send(res, { ok: true }); return
+          const contextText = string(input.context)
+          if (contextText.length > 200000) throw new HttpError(400, '摘要过长')
+          atomic(store.file('chats', key, 'context.md'), contextText); send(res, { ok: true }); return
         }
         if (action === 'stop' && method === 'POST') {
           if (!active.has(key) && store.isRunning(key)) throw new HttpError(409, '正在另一个应用实例运行，请到发起回复的窗口停止')

@@ -1,7 +1,7 @@
 import { cityConfig } from './components.ts'
 import {improvementSession,spendImprovement,evolvable} from './evolution.ts'
 import crypto from 'node:crypto'
-import { Store, HttpError, json, string, id, type Turn, type MemoryScope, type MemoryItem, runtimeLimits, watchMembers } from './store.ts'
+import { Store, HttpError, json, string, id, readJsonSafe, type Turn, type MemoryScope, type MemoryItem, runtimeLimits, watchMembers } from './store.ts'
 import { agentTools } from './models.ts'
 import { skills, readSkill, workInstructions } from './work.ts'
 import {type CollaborativeTask,taskSatisfied,discussionUpdates,publicMessage,collaborationHealth} from './collaboration.ts'
@@ -13,7 +13,7 @@ import { offerAudience,listenDecision,openDiscussion,discussionGuidance } from '
 import { recordLife, saveLifeAgenda, ownLife, lifeState, observeContribution, chargeLifeCall, touchLife, rememberLifeEpisode } from './social-state.ts'
 
 export interface Task extends CollaborativeTask {}
-export function tasks(store:Store,key:string):Task[]{return JSON.parse(store.text('chats',key,'tasks.json')||'[]') as Task[]}
+export function tasks(store:Store,key:string):Task[]{return readJsonSafe<Task[]>(store.file('chats',key,'tasks.json'),[])}
 function canonical(value:unknown):unknown{return Array.isArray(value)?value.map(canonical):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).sort(([a],[b])=>a.localeCompare(b)).map(([key,item])=>[key,canonical(item)])):value}
 function signature(value:unknown){return crypto.createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex').slice(0,24)}
 const schema=(name:string,description:string,properties:Record<string,unknown>,required:string[]=[]):ToolDefinition=>({name,description,parameters:{type:'object',properties,required,additionalProperties:false}})
@@ -137,7 +137,7 @@ export async function runConversation(store:Store,key:string,content:string,mode
     for(const [field,amount] of [['measuredInputTokens',value.input],['measuredOutputTokens',value.output],['measuredCacheReadTokens',value.cacheRead],['measuredCacheWriteTokens',value.cacheWrite],['measuredTotalTokens',value.totalTokens]] as const)usage[field]=(usage[field]||0)+Math.max(0,amount||0)
     usage.usageReports=(usage.usageReports||0)+1;store.saveTurn(key,turn)
   }
-  const receiptFile=store.file('chats',key,'tool-results',user.id+'.json'),receipts:Record<string,unknown>=JSON.parse(store.text('chats',key,'tool-results',user.id+'.json')||'{}')
+  const receiptFile=store.file('chats',key,'tool-results',user.id+'.json'),receipts=readJsonSafe<Record<string,unknown>>(receiptFile,{})
   // Older receipt arrays are retained as historical data; new event-scoped receipts use object keys.
   const cache:Record<string,unknown>=Array.isArray(receipts)?{}:receipts
   function ensureDelivery(entry:Turn['speakers'][number]){

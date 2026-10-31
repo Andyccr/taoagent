@@ -1,9 +1,9 @@
 import crypto from 'node:crypto'
-import { Store, HttpError, json, object, string } from './store.ts'
+import { Store, HttpError, json, object, string, readJsonSafe } from './store.ts'
 
 export const CITY_ROOM = 'city-public'
 export function cityConfig(store: Store) {
-  const raw = object(JSON.parse(store.text('empire-city.json') || '{}'))
+  const raw = object(readJsonSafe<Record<string,unknown>>(store.file('empire-city.json'),{}))
   const revision = crypto.createHash('sha256').update(JSON.stringify(raw)).digest('hex')
   return { name: string(raw.name, 'City · 共同生活'), description: string(raw.description, '所有 Bot 都生活在这里。观看真实动态，或进入城市聊天室。'), leadAgentId: string(raw.leadAgentId, 'main'), revision }
 }
@@ -15,7 +15,7 @@ function saveCityUnlocked(store: Store, input: Record<string, unknown>) {
   if (input.expected !== previous.revision) throw new HttpError(409, 'City 已更新，请重新读取后修改')
   if (typeof input.name !== 'string' || !input.name.trim() || input.name.length > 80 || typeof input.description !== 'string' || input.description.length > 6000 || typeof input.leadAgentId !== 'string') throw new HttpError(400, '请填写有效的 City 名称、介绍和主 Bot')
   store.requireActiveAgent(input.leadAgentId)
-  const raw = object(JSON.parse(store.text('empire-city.json') || '{}'))
+  const raw = object(readJsonSafe<Record<string,unknown>>(store.file('empire-city.json'),{}))
   json(store.file('empire-city.json'), { ...raw, name: input.name.trim(), description: input.description, leadAgentId: input.leadAgentId })
   return cityConfig(store)
 }

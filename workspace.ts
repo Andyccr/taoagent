@@ -29,8 +29,9 @@ export function workspaceConversations(store: Store, running: string[], sanitize
     const file = store.file('chats', session.id, 'messages.jsonl')
     const bytes = fs.existsSync(file) ? fs.statSync(file).size : 0
     const revision = session.updatedAt + ':' + bytes
-    const actions = JSON.parse(store.text('chats', session.id, 'actions.json') || '[]') as {status: string}[]
-    const latest = store.turns(session.id).at(-1)
+    let actions: {status: string}[] = [], latest: ReturnType<Store['turns']>[number] | undefined
+    try { actions = JSON.parse(store.text('chats', session.id, 'actions.json') || '[]') as {status: string}[] } catch { actions = [] }
+    try { latest = store.turns(session.id).at(-1) } catch { latest = undefined }
     const waiting = actions.filter(action => ['pending', 'uncertain'].includes(action.status)).length
     const working = running.includes(session.id)
     const failed = !working && latest?.speakers.some(speaker => speaker.status === 'failed')

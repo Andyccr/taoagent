@@ -77,7 +77,24 @@ export function atomic(file: string, content: string) {
   finally { if (fs.existsSync(tmp)) fs.unlinkSync(tmp) }
 }
 export function json(file: string, value: unknown) { atomic(file, JSON.stringify(value, null, 2) + '\n') }
-function read<T>(file: string): T { return JSON.parse(fs.readFileSync(file, 'utf8')) as T }
+const corruptCopies = new Set<string>()
+export function readJsonSafe<T>(file: string, fallback: T): T {
+  let text: string
+  try { text = fs.readFileSync(file, 'utf8') } catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') return fallback; throw error }
+  if (!text.trim()) return fallback
+  try { return JSON.parse(text) as T } catch {
+    const key = file + ':' + crypto.createHash('sha256').update(text).digest('hex')
+    if (!corruptCopies.has(key)) {
+      corruptCopies.add(key)
+      try { fs.copyFileSync(file, file + '.corrupt-' + Date.now()) } catch { /* keep the original */ }
+    }
+    return fallback
+  }
+}
+function read<T>(file: string, root?: string): T {
+  const text = fs.readFileSync(file, 'utf8')
+  try { return JSON.parse(text) as T } catch { throw new HttpError(500, '数据文件损坏：' + (root && file.startsWith(root + path.sep) ? path.relative(root, file) : path.basename(file))) }
+}
 
 export class Store {
   root: string
@@ -115,7 +132,7 @@ export class Store {
     if (fs.existsSync(lock)) {
       let live = true
       try {
-        const owner = read<{ pid: number }>(path.join(lock, 'owner.json'))
+        const owner = read<{ pid: number }>(path.join(lock, 'owner.json'), this.root)
         if (Number.isInteger(owner.pid) && owner.pid > 0) {
           try { process.kill(owner.pid, 0) } catch (error) { live = (error as NodeJS.ErrnoException).code !== 'ESRCH' }
         }
@@ -156,8 +173,8 @@ export class Store {
     const file = this.file(...parts)
     return fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : ''
   }
-  models(): Model[] { return read<Model[]>(this.file('models.json')) }
-  providerKeys(): Record<string, string> { return read<Record<string, string>>(this.file('provider-keys.json')) }
+  models(): Model[] { return read<Model[]>(this.file('models.json'), this.root) }
+  providerKeys(): Record<string, string> { return read<Record<string, string>>(this.file('provider-keys.json'), this.root) }
   withCredentials(model: Model): Model {
     if (model.provider !== 'opencode-go') return model
     if (!isGoUrl(model.baseUrl)) throw new HttpError(400, '共享的 OpenCode Go Key 只能用于官方 Go 地址')
@@ -177,7 +194,7 @@ export class Store {
       return this.saveModel({ id: key, name: `Go · ${profile.model}`, ...profile, provider: 'opencode-go', clearKey: true })
     })
   }
-  account(): Account { return read<Account>(this.file('account.json')) }
+  account(): Account { return read<Account>(this.file('account.json'), this.root) }
   saveAccount(modelId: string, expectedModelId?: string): Account {
     return this.withMemoryLock(this.file('account.json'), () => {
     if (expectedModelId !== undefined && this.account().defaultModelId !== expectedModelId) throw new HttpError(409, '账户默认模型已在其他窗口更改，请重新载入后选择')
@@ -227,7 +244,7 @@ export class Store {
     return model
   }
   agents(includeArchived = false): Agent[] {
-    return fs.readdirSync(this.file('agents')).filter(name => fs.existsSync(this.file('agents', name, 'agent.json'))).map(name => ({ ...read<Agent>(this.file('agents', name, 'agent.json')), legacy: fs.existsSync(this.file('agents', name, 'legacy.json')) })).filter(agent=>includeArchived||!agent.archivedAt)
+    return fs.readdirSync(this.file('agents')).filter(name => fs.existsSync(this.file('agents', name, 'agent.json'))).map(name => ({ ...read<Agent>(this.file('agents', name, 'agent.json'), this.root), legacy: fs.existsSync(this.file('agents', name, 'legacy.json')) })).filter(agent=>includeArchived||!agent.archivedAt)
   }
   agent(key: string): Agent {
     const agent = this.agents(true).find(a => a.id === id(key))
@@ -279,6 +296,7 @@ export class Store {
   saveProfile(input: Partial<Profile>, expected: Partial<Profile> = {}) {
     return this.withMemoryLock(this.file('MEMORY.md'), () => {
       const fields = [['profile','PROFILE.md'],['rules','RULES.md'],['memory','MEMORY.md']] as const
+      for (const [key] of fields) if (input[key] !== undefined && input[key]!.length > 200000) throw new HttpError(400,'个人信息、规则或记忆过长')
       for (const [key,file] of fields) if (expected[key] !== undefined && expected[key] !== this.text(file)) throw new HttpError(409,'个人信息或共享记忆已在其他窗口更新，你的编辑仍保留，请重新载入后对照')
       for (const [key,file] of fields) if (input[key] !== undefined && input[key] !== this.text(file)) {
         atomic(this.file('profile-history',`${crypto.randomUUID()}-${file}`),this.text(file))
@@ -314,12 +332,12 @@ export class Store {
   }
   sessions(includeArchived = false): Session[] {
     return fs.readdirSync(this.file('chats')).filter(name => fs.existsSync(this.file('chats', name, 'session.json')))
-      .map(name => read<Session>(this.file('chats', name, 'session.json'))).filter(session=>includeArchived||!session.archivedAt).sort((a,b) => b.updatedAt.localeCompare(a.updatedAt))
+      .map(name => read<Session>(this.file('chats', name, 'session.json'), this.root)).filter(session=>includeArchived||!session.archivedAt).sort((a,b) => b.updatedAt.localeCompare(a.updatedAt))
   }
   session(key: string): Session {
     const file = this.file('chats', id(key), 'session.json')
     if (!fs.existsSync(file)) throw new HttpError(404, '对话不存在')
-    const session=read<Session>(file)
+    const session=read<Session>(file, this.root)
     if(session.kind==='group'){
       const active=new Set(this.agents().map(agent=>agent.id)),members=(session.componentKind==='city'?[...active]:session.memberIds||[]).filter(member=>active.has(member))
       return {...session,memberIds:members,agentId:members[0]||session.agentId,coordinatorId:members.includes(session.coordinatorId||'')?session.coordinatorId:members[0]}
@@ -328,14 +346,14 @@ export class Store {
   }
   requireActiveSession(key:string) { const session=this.session(key);if(session.archivedAt)throw new HttpError(410,'此群聊已删除，请先恢复再继续');return session }
   groupVersion(key:string) {
-    const session=read<Session>(this.file('chats',id(key),'session.json'))
+    const session=read<Session>(this.file('chats',id(key),'session.json'), this.root)
     if(session.kind!=='group')throw new HttpError(400,'只能删除或恢复群聊')
     const {id:groupId,title,memberIds,modelId,purpose,memberRoles,replyMode,discussionMode,coordinatorId,runtimeLimits,archivedAt,lifecycleRevision}=session
     return crypto.createHash('sha256').update(JSON.stringify({id:groupId,title,memberIds,modelId,purpose,memberRoles,replyMode,discussionMode,coordinatorId,runtimeLimits,archivedAt,lifecycleRevision})).digest('hex')
   }
   archiveGroup(key:string,reason:string,actor='user',expected?:string) {
     return this.withMemoryLock(this.file('chats',id(key),'MEMORY.md'),()=>{
-      const session=read<Session>(this.file('chats',key,'session.json'))
+      const session=read<Session>(this.file('chats',key,'session.json'), this.root)
       if(session.kind!=='group')throw new HttpError(400,'只能删除群聊')
       if(session.archivedAt)return session
       if(expected&&expected!==this.groupVersion(key))throw new HttpError(409,'群名称、成员或设置已更改，请重新确认删除')
@@ -346,7 +364,7 @@ export class Store {
       json(this.file('chats',key,'session.json'),archived)
       const actionFile=this.file('chats',key,'actions.json')
       if(fs.existsSync(actionFile)){
-        const actions=read<{status:string;result?:unknown}[]>(actionFile)
+        const actions=read<{status:string;result?:unknown}[]>(actionFile, this.root)
         for(const action of actions)if(['pending','approved'].includes(action.status)){action.status='denied';action.result={error:'群聊已删除，旧审批已失效'}}
         json(actionFile,actions)
       }
@@ -356,7 +374,7 @@ export class Store {
   }
   restoreGroup(key:string) {
     return this.withMemoryLock(this.file('chats',id(key),'MEMORY.md'),()=>{
-      const session=read<Session>(this.file('chats',key,'session.json'))
+      const session=read<Session>(this.file('chats',key,'session.json'), this.root)
       if(session.kind!=='group')throw new HttpError(400,'只能恢复群聊')
       if(!session.archivedAt)return this.session(key)
       const {archivedAt,archivedBy,archiveReason,...retained}=session
@@ -539,7 +557,7 @@ export class Store {
   private recoverMemory(file: string) {
     const journal = path.join(path.dirname(file), 'memory-pending.json')
     if (!fs.existsSync(journal)) return
-    const pending = read<{ before: string; after: string; items: MemoryItem[] }>(journal)
+    const pending = read<{ before: string; after: string; items: MemoryItem[] }>(journal, this.root)
     const current = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : ''
     // Preserve intervening handwritten edits and both versions of the interrupted operation.
     if (current !== pending.before && current !== pending.after) {
@@ -598,7 +616,7 @@ export class Store {
   }
   private memoryItemsUnlocked(key: string, agentId: string, scope: MemoryScope): MemoryItem[] {
     const file = path.join(path.dirname(this.memoryFile(key, agentId, scope)), 'memory-items.json')
-    const text = this.memory(key, agentId, scope), items = fs.existsSync(file) ? read<MemoryItem[]>(file) : []
+    const text = this.memory(key, agentId, scope), items = fs.existsSync(file) ? read<MemoryItem[]>(file, this.root) : []
     // Markdown is authoritative, including edits made outside the app.
     return items.map(item => item.status === 'active' && !text.split('\n').includes('- ' + item.note) ? { ...item, status: 'forgotten' as const } : item)
   }
@@ -666,7 +684,7 @@ export class Store {
   }
   turns(key: string): Turn[] {
     this.session(key); const file = this.file('chats', key, 'turns.json')
-    return fs.existsSync(file) ? read<Turn[]>(file) : []
+    return fs.existsSync(file) ? read<Turn[]>(file, this.root) : []
   }
   saveTurn(key: string, turn: Turn) {
     turn.updatedAt = new Date().toISOString()
@@ -676,7 +694,7 @@ export class Store {
     const dir = this.file('chats', id(key), '.run-lock')
     if (!fs.existsSync(dir)) return false
     try {
-      const owner = read<{ pid: number }>(path.join(dir, 'owner.json'))
+      const owner = read<{ pid: number }>(path.join(dir, 'owner.json'), this.root)
       if (!Number.isInteger(owner.pid) || owner.pid <= 0) return true
       try { process.kill(owner.pid, 0); return true } catch (error) { return (error as NodeJS.ErrnoException).code !== 'ESRCH' }
     } catch { try { return Date.now() - fs.statSync(dir).mtimeMs < 30000 } catch { return false } }
@@ -692,7 +710,7 @@ export class Store {
     const token = crypto.randomUUID()
     try { json(ownerFile, { pid: process.pid, token, at: new Date().toISOString() }) }
     catch (error) { fs.rmdirSync(dir); throw error }
-    return () => { if (fs.existsSync(ownerFile) && read<{ token: string }>(ownerFile).token === token) { fs.unlinkSync(ownerFile); fs.rmdirSync(dir) } }
+    return () => { if (fs.existsSync(ownerFile) && read<{ token: string }>(ownerFile, this.root).token === token) { fs.unlinkSync(ownerFile); fs.rmdirSync(dir) } }
   }
   searchHistory(key: string, query: string, limit = 12): Message[] {
     const terms = query.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean)
@@ -702,7 +720,7 @@ export class Store {
   }
   summary(key: string): Summary | undefined {
     this.session(key); const file = this.file('chats', key, 'summary.json')
-    return fs.existsSync(file) ? read<Summary>(file) : undefined
+    return fs.existsSync(file) ? read<Summary>(file, this.root) : undefined
   }
   summaryMemory(key: string): string {
     const session = this.session(key)
@@ -759,7 +777,7 @@ export class Store {
   }
   messages(key: string): Message[] {
     this.session(key)
-    return this.text('chats', id(key), 'messages.jsonl').split('\n').filter(Boolean).map(line => JSON.parse(line) as Message)
+    return this.text('chats', id(key), 'messages.jsonl').split('\n').filter(Boolean).flatMap(line => { try { return [JSON.parse(line) as Message] } catch { return [] } })
   }
   append(key: string, role: Message['role'], content: string, status: Message['status'] = 'complete', extra: Pick<Message, 'agentId' | 'agentName' | 'kind' | 'turnId' | 'phase' | 'contextMessageIds' | 'concurrentMessageIds' | 'replyToMessageId' | 'responseIntent'> = {}, messageId?: string) {
     return this.withMemoryLock(this.file('chats',id(key),'MEMORY.md'),()=>{

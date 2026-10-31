@@ -5,7 +5,7 @@ import crypto from 'node:crypto'
 import { spawn } from 'node:child_process'
 import { pathToFileURL } from 'node:url'
 import { McpClient, StdioTransport, StreamableHttpTransport } from '@earendil-works/pi-mcp'
-import { Store, HttpError, json, atomic, string, object, id, runtimeLimits } from './store.ts'
+import { Store, HttpError, json, atomic, string, object, id, readJsonSafe, runtimeLimits } from './store.ts'
 import { readSource, evolve, evolutionHistory, readEvolutionEvidence, rollbackEvolution, automaticCandidate, improvementSession } from './evolution.ts'
 
 export interface Action { id: string; agentId: string; name: string; args: Record<string,unknown>; preview?: {name:string;version:string;notice:string}; sessionRevision?:string; automaticSessionId?:string; target?: Omit<Integration,'token'>; status: 'pending'|'approved'|'running'|'complete'|'failed'|'denied'|'uncertain'; at: string; result?: unknown }
@@ -40,14 +40,14 @@ function saveAction(store:Store,key:string,action:Action){
   if(index<0)latest.push(action);else latest[index]=action
   json(store.file('chats',key,'actions.json'),latest)
 }
-export function actions(store: Store,key: string): Action[] { return JSON.parse(store.text('chats',key,'actions.json') || '[]') as Action[] }
+export function actions(store: Store,key: string): Action[] { return readJsonSafe<Action[]>(store.file('chats',key,'actions.json'),[]) }
 export function decide(store: Store,key: string,actionId: string,approve: boolean) {
   const all = actions(store,key), action = all.find(item=>item.id===actionId)
   if (!action || !['pending','uncertain'].includes(action.status)) throw new HttpError(409,'此操作已处理，请刷新')
   action.status=approve?'approved':'denied'; saveAction(store,key,action); waiters.get(store.root+':'+key+':'+action.id)?.()
   return action
 }
-export function integrations(store: Store): Integration[] { return JSON.parse(store.text('integrations.json') || '[]') as Integration[] }
+export function integrations(store: Store): Integration[] { return readJsonSafe<Integration[]>(store.file('integrations.json'),[]) }
 export function saveIntegrations(store: Store,value: unknown) {
   if (!Array.isArray(value) || value.length>20) throw new HttpError(400,'最多配置 20 个 MCP 服务')
   const old=integrations(store)
@@ -265,8 +265,8 @@ export async function executeExternal(store: Store,key: string,agentId: string,t
       if(!server||!current||crypto.createHash('sha256').update(JSON.stringify(canonical(current))).digest('hex')!==serverVersion)throw new HttpError(409,'MCP 配置在审批期间已变化，未执行，请按新配置重新申请')
       const transport=server.url?new StreamableHttpTransport({url:server.url,headers:server.token?{Authorization:'Bearer '+server.token}:{}}):new StdioTransport({command:server.command!,args:server.args||[]})
       const client=new McpClient({name:'taoagent',version:'3.0.0',roots:[{uri:pathToFileURL(workspace(store,key)).href,name:'workspace'}]})
-      const abort=()=>{void client.close()};signal.addEventListener('abort',abort,{once:true})
-      try {if(signal.aborted)throw new HttpError(499,'已暂停');await client.connect(transport);result=args.tool?await client.callTool(string(args.tool),args.arguments===undefined?{}:object(args.arguments),{signal}):await client.listTools({signal})}finally{signal.removeEventListener('abort',abort);await client.close()}
+      const abort=()=>{client.close().catch(()=>{})};signal.addEventListener('abort',abort,{once:true})
+      try {if(signal.aborted)throw new HttpError(499,'已暂停');await client.connect(transport);result=args.tool?await client.callTool(string(args.tool),args.arguments===undefined?{}:object(args.arguments),{signal}):await client.listTools({signal})}finally{signal.removeEventListener('abort',abort);await client.close().catch(()=>{})}
     } else throw new HttpError(400,'工具不存在')
     action.result=JSON.parse(sanitize(JSON.stringify(result)));action.status=toolFailed(result)?'failed':'complete';saveAction(store,key,action);event({type:'approval',action});return action.result
   }catch(error){action.status=signal.aborted || error instanceof HttpError&&error.status===408 ?'uncertain':'failed';action.result={error:error instanceof HttpError?error.message:'执行失败，不能确认成功'};saveAction(store,key,action);event({type:'approval',action});throw error}finally{try{releaseDurable?.()}finally{release()}}

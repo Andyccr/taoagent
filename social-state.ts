@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import crypto from 'node:crypto'
-import { Store, HttpError, json, string, id, type Turn } from './store.ts'
+import { Store, HttpError, json, string, id, readJsonSafe, componentKind, type Turn } from './store.ts'
 
 export interface LifeEntry { id:string; at:string; agentId:string; kind:'observation'|'reflection'|'contribution'|'intention'|'episode'; importance?:number; lastAccess?:string; episodeId?:string; participants?:string[]; text:string; sourceIds:string[]; supersedes?:string }
 export interface LifeMember { agentId:string; interests:string; attention:string; stance:string; lastAt?:string; readIds:string[] }
@@ -13,9 +13,9 @@ const localRuns=new Set<string>()
 export function lifeRunOwned(runId:string,owned?:boolean){if(owned===true)localRuns.add(runId);if(owned===false)localRuns.delete(runId);return localRuns.has(runId)}
 function requireGroup(store:Store,key:string){const session=store.requireActiveSession(key);if(session.kind!=='group')throw new HttpError(400,'日常空间需要群聊');return session}
 export function lifeState(store:Store,key:string):LifeState {
-  requireGroup(store,key);const text=store.text('chats',key,'social','state.json')
-  if(text)return JSON.parse(text) as LifeState
-  return {version:1,revision:'new',policy:{...lifeDefaults},members:[],entries:[],agendas:[],agendaHistory:[],runs:[],daily:{},nextAt:new Date().toISOString(),cursor:0,pauseReason:''}
+  requireGroup(store,key)
+  const fallback:LifeState={version:1,revision:'new',policy:{...lifeDefaults},members:[],entries:[],agendas:[],agendaHistory:[],runs:[],daily:{},nextAt:new Date().toISOString(),cursor:0,pauseReason:''}
+  return readJsonSafe<LifeState>(store.file('chats',key,'social','state.json'),fallback)
 }
 export function changeLife<T>(store:Store,key:string,operation:(state:LifeState)=>T):T {
   requireGroup(store,key);const directory=store.file('chats',id(key),'social');fs.mkdirSync(directory,{recursive:true})
