@@ -144,6 +144,8 @@ function toast(message) {
 function handle(fn) { return event => {
   const form = event?.type === 'submit' ? event.target : null
   if (form) { event.preventDefault(); if (form.dataset.saving) return; form.dataset.saving = 'true' }
+  const clicked = !form && event?.currentTarget?.tagName === 'BUTTON' ? event.currentTarget : null
+  if (clicked) clicked.disabled = true
   const dialog = form?.closest('dialog'), controls = form ? [...(dialog || form).querySelectorAll('input,textarea,select,button')].map(control=>({control,disabled:control.disabled})) : []
   const buttons = form ? [...form.querySelectorAll('[type="submit"]')].map(button => ({button,text:button.textContent})) : []
   if (dialog) dialog.dataset.saving = 'true'
@@ -151,6 +153,7 @@ function handle(fn) { return event => {
   Promise.resolve().then(() => { const result = fn(event); controls.forEach(({control})=>{control.disabled=true}); buttons.forEach(({button})=>{button.textContent='处理中…'}); return result }).catch(error => toast(error.message)).finally(()=>{
     if(form){delete form.dataset.saving;form.removeAttribute('aria-busy')}
     if(dialog)delete dialog.dataset.saving
+    if(clicked)clicked.disabled=false
     controls.forEach(({control,disabled})=>{control.disabled=disabled}); buttons.forEach(({button,text})=>{button.textContent=text})
     if(dialog?.id==='work-hub')syncWorkActions()
   })

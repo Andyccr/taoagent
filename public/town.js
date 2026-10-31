@@ -4,7 +4,7 @@ import {mountSquare} from '/square.js'
 const q=selector=>document.querySelector(selector)
 const el=(tag,text,className)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(className)node.className=className;return node}
 const button=(label,action,className)=>{const node=el('button',label,className);node.type='button';node.onclick=()=>Promise.resolve(action()).catch(showError);return node}
-const date=value=>value?new Date(value).toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',timeZone:snapshot?.policy?.timezone}):'尚未开始'
+const date=value=>{if(!value)return'尚未开始';const options={month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'};try{return new Date(value).toLocaleString('zh-CN',{...options,timeZone:snapshot?.policy?.timezone})}catch{return new Date(value).toLocaleString('zh-CN',options)}}
 const labels={episode:'会话经历',running:'正在活动',complete:'已完成',failed:'失败并暂停',interrupted:'已中断',reflect:'独立思考',share:'主动交流',investigate:'独立推进工作',wait:'等待结果',pass:'安静旁听',observation:'观察',reflection:'认识与反思',contribution:'公开贡献',intention:'兴趣与意图',open:'探索中',waiting:'等待条件',done:'已完成'}
 let catalog={spaces:[],agents:[]},currentId='',snapshot=null,generation=0,lastFocus=null,view,content,statusNode,spaceSelect,tab='overview',editing=false,brief=null,graphMember='',graphSelection='',workFilter='all'
 async function api(url,method='GET',data){const response=await fetch(url,{method,signal:AbortSignal.timeout(30000),...(data===undefined?{}:{headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})});let value;try{value=await response.json()}catch{throw Error('服务没有返回有效结果，请重新载入')}if(!response.ok)throw Error(value.error||'操作失败');return value}
@@ -43,7 +43,7 @@ function render(){
   if(tab==='overview')renderOverview()
   if(tab==='graph')renderGraph()
   if(tab==='work')renderBoard()
-  if(tab==='daily')renderOverview()
+  if(tab==='daily')renderDaily()
   if(tab==='members')renderMembers()
   if(tab==='memory')renderMemory()
   if(tab==='agendas')renderAgendas()

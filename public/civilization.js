@@ -13,8 +13,8 @@ const copy = {
 }
 const q = selector => document.querySelector(selector)
 const node = (tag, className, text) => { const element = document.createElement(tag); if (className) element.className = className; if (text) element.textContent = text; return element }
-let chatPreview, cityTitle='', view, stage, banner, statusNode, usageNode, rosterNode, taskNode, detailNode, presetNode, settingsNode, teamNode, eventNode, searchNode, searchToggle, searchInput, filterSelect, legendNode, minimapButton, minimapCanvas, tourWondersBtn, tourAgentsBtn, hintNode, replayTimer = 0, replaying = false, offline = false
-let city, real = null, shown = null, sim = false, settings = loadSettings(), selection = null, poll = 0, simTimer = 0, previousHash = '', finger = '', rosterQuery = '', rosterFilter = 'all', minimapOn = false, activeTour = null
+let chatPreview, cityTitle='', view, stage, banner, statusNode, usageNode, rosterNode, taskNode, detailNode, presetNode, settingsNode, teamNode, eventNode, searchNode, searchToggle, searchInput, filterSelect, legendNode, minimapButton, minimapCanvas, tourWondersBtn, tourAgentsBtn, hintNode, replayTimer = 0, replayTimeouts = [], replayGeneration = 0, replaying = false, offline = false
+let city, real = null, shown = null, sim = false, settings = loadSettings(), selection = null, poll = 0, simTimer = 0, refreshToken = 0, previousHash = '', finger = '', rosterQuery = '', rosterFilter = 'all', minimapOn = false, activeTour = null
 
 function loadSettings() {
   try {
@@ -70,20 +70,21 @@ function nameOf(id) { return (real || shown)?.citizens.find(citizen => citizen.i
 function eventLine(event) { const text = t(); return clock(event.at) + ' · ' + nameOf(event.agentId) + ' ' + (text.eventKind[event.kind] || event.kind) + (event.toAgentId && event.kind === 'handoff' ? ' → ' + nameOf(event.toAgentId) : '') + (event.title ? ' · ' + event.title : '') }
 // Replay walks through recorded events oldest-first; every frame is labelled 'replay' and real data returns afterwards.
 const REPLAY_STATE = { working: 'working', complete: 'complete', error: 'error', waiting: 'waiting', handoff: 'delegating', delivered: 'complete' }
-function stopReplay(restore) { clearInterval(replayTimer); replayTimer = 0; replaying = false; q('#civ-replay')?.setAttribute('aria-pressed', 'false'); finger = ''; if (restore && real) publish(real) }
+function stopReplay(restore) { clearInterval(replayTimer); replayTimer = 0; replayGeneration++; for (const id of replayTimeouts) clearTimeout(id); replayTimeouts = []; replaying = false; q('#civ-replay')?.setAttribute('aria-pressed', 'false'); finger = ''; if (restore && real) publish(real) }
 function startReplay() {
   if (!real) return
   if (sim) setSim(false)
   const events = [...(real.events || [])].reverse()
   if (!events.length) { statusNode.textContent = t().noEvents; return }
-  stopReplay(false); replaying = true; q('#civ-replay')?.setAttribute('aria-pressed', 'true')
+  stopReplay(false); replaying = true; const generation = replayGeneration; q('#civ-replay')?.setAttribute('aria-pressed', 'true')
   const base = real, states = new Map(base.citizens.map(citizen => [citizen.id, 'idle']))
   let index = 0
   const step = () => {
+    if (generation !== replayGeneration) return
     if (index >= events.length) { stopReplay(true); return }
     const event = events[index++]
     states.set(event.agentId, REPLAY_STATE[event.kind] || 'idle')
-    if (event.kind === 'delivered' || event.kind === 'complete') setTimeout(() => { if (replaying && states.get(event.agentId) === 'complete') states.set(event.agentId, 'idle') }, 900)
+    if (event.kind === 'delivered' || event.kind === 'complete') replayTimeouts.push(setTimeout(() => { if (generation === replayGeneration && replaying && states.get(event.agentId) === 'complete') states.set(event.agentId, 'idle') }, 900))
     const citizens = base.citizens.map(citizen => ({ ...citizen, activity: states.get(citizen.id) || 'idle', freshness: 'fresh', taskTitle: citizen.id === event.agentId ? event.title : null }))
     const handoffs = event.kind === 'handoff' && event.toAgentId ? [{ id: 'replay:' + event.id + ':' + index, fromAgentId: event.agentId, toAgentId: event.toAgentId, taskId: '', at: event.at }] : []
     publish({ ...base, source: 'replay', replayAt: event.at, citizens, handoffs, tasks: [], tasksState: 'ok' })
@@ -91,7 +92,7 @@ function startReplay() {
   step(); replayTimer = setInterval(step, Math.max(400, 1400 / (settings.speed || 1)))
 }
 async function loadLive() {
-  const response = await fetch('/api/civilization', { headers: { Accept: 'application/json' } })
+  const response = await fetch('/api/civilization', { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(15000) })
   if (!response.ok) throw new Error('Unavailable')
   const body = await response.json()
   if (body.source !== 'live' || body.llmCalls !== 0 || !Array.isArray(body.citizens)) throw new Error('Unavailable')
@@ -187,7 +188,7 @@ function renderDetail() {
     city?.select(citizen.id)
     return
   }
-  const ids = selection.type === 'building' ? shown.buildings.find(item => item.id === selection.id)?.agentIds || [] : shown.citizens.filter(item => item.district === selection.id).map(item => item.id)
+  const ids = selection.type === 'building' ? (shown.buildings||[]).find(item => item.id === selection.id)?.agentIds || [] : shown.citizens.filter(item => item.district === selection.id).map(item => item.id)
   detailNode.append(node('strong', '', selection.type === 'building' ? text.building : text.district[selection.id] || text.district))
   if (!ids.length) detailNode.append(node('p', 'civ-note', text.empty))
   for (const id of ids) { const citizen = shown.citizens.find(item => item.id === id); if (citizen) detailNode.append(button(citizen.name + ' · ' + citizen.detail, () => choose({ type: 'agent', id }))) }
@@ -204,7 +205,7 @@ function paintSettings() {
 function field(label, control) { const row = node('label'); row.append(node('span', '', label), control); return row }
 function check(label, value, change) { const row = node('label'), input = node('input'); input.type = 'checkbox'; input.checked = value; input.onchange = () => change(input.checked); row.append(node('span', '', label), input); return row }
 function range(value, min, max, step, change) { const input = node('input'); input.type = 'range'; input.min = String(min); input.max = String(max); input.step = String(step); input.value = String(value); input.oninput = () => change(Number(input.value)); return input }
-function button(text, action) { const element = node('button', '', text); element.type = 'button'; element.onclick = action; return element }
+function button(text, action) { const element = node('button', '', text); element.type = 'button'; element.onclick = () => Promise.resolve(action()).catch(error => { statusNode.textContent = error.message || '操作失败'; statusNode.classList.add('error') }); return element }
 function update(patch) { settings = { ...settings, ...patch }; saveSettings(); city?.setSettings(settings); finger = ''; paintChrome(); if (patch.language) paintSettings(); render() }
 function choose(next) { selection = next; finger = ''; if (next?.type === 'district') city?.focusDistrict(next.id); if (shown) render(); else renderDetail() }
 function paintLegend() {
@@ -263,7 +264,7 @@ function onKeydown(event) {
   if (key === 'f' || key === 'F') { stopTour(); city?.focusLead(); event.preventDefault(); return }
   if (key === 'Escape') { stopTour(); city?.resetCamera(); return }
   if (key === 'n' || key === 'N') { update({ night: !settings.night }); return }
-  if (key === 'm' || key === 'M') { toggleMinimap(); return }
+  if (key === 'm' || key === 'M') { toggleMinimap().catch(error => { statusNode.textContent = error.message || '操作失败'; statusNode.classList.add('error') }); return }
   if (key >= '1' && key <= '8') { stopTour(); city?.focusWonderByIndex(Number(key) - 1); return }
 }
 function paintChrome() {
@@ -281,9 +282,12 @@ function paintChrome() {
 function publish(snapshot) { shown = snapshot; if (city) city.setSnapshot(present(snapshot)); render() }
 function startSim() { clearInterval(simTimer); if (!real) return; publish(simulate(real, Date.now())); simTimer = setInterval(() => { if (real && sim && !view.hidden && !document.hidden) publish(simulate(real, Date.now())) }, 400) }
 async function refresh() {
+  const token = ++refreshToken
   const body = await loadLive()
+  if (token !== refreshToken) return
   real = body
   offline = false
+  if (view.hidden) return
   if (replaying) { render(); return }
   if (sim) { if (!simTimer) startSim(); else render() }
   else publish(body)
@@ -343,11 +347,12 @@ async function refreshCityText(){
   const response=await fetch('/api/city');if(!response.ok)return
   const value=await response.json();cityTitle=value.config.name
   q('#civ-title').textContent=cityTitle
-  const fingerprint=JSON.stringify(value.messages)
+  const messages=value.messages||[]
+  const fingerprint=JSON.stringify(messages)
   if(chatPreview.dataset.fingerprint===fingerprint)return
   chatPreview.dataset.fingerprint=fingerprint;chatPreview.replaceChildren()
-  if(!value.messages.length)chatPreview.append(node('p','civ-note','还没有城市聊天。进入聊天室，与居民开始交流。'))
-  for(const message of value.messages.slice(-6)){const item=node('article');item.append(node('strong','',message.agentName||(message.role==='user'?'你':'Bot')),node('p','',message.content));chatPreview.append(item)}
+  if(!messages.length)chatPreview.append(node('p','civ-note','还没有城市聊天。进入聊天室，与居民开始交流。'))
+  for(const message of messages.slice(-6)){const item=node('article');item.append(node('strong','',message.agentName||(message.role==='user'?'你':'Bot')),node('p','',message.content));chatPreview.append(item)}
 }
 function init() {
   view = node('section', 'civ-view')
