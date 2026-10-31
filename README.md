@@ -239,7 +239,7 @@ tests/         回归测试
 package-lock.json  固定依赖版本
 ```
 
-源码开发需 Node 22.19+，执行 `npm ci --registry=https://registry.npmjs.org`，再执行 `npm test`、`npm run lint:baseline` 和 `npm run build`。Windows 也可使用 `runtime/node.exe` 调用本机 npm-cli。Pi Core / AI / MCP 固定 1.3.0；程序启动不需要 node_modules。版权归 Andy Chen（Andyccr）所有，保留全部权利，禁止商用、修改与再发布，详见 LICENSE；上游组件的第三方声明见 NOTICE 与 licenses/。
+源码开发需 Node 22.19+，执行 `npm ci --registry=https://registry.npmjs.org`，再执行 `npm test`、`npm run lint:baseline` 和 `npm run build`。Windows 也可使用 `runtime/node.exe` 调用本机 npm-cli。Pi Core / AI / MCP 固定 1.3.0；程序启动不需要 node_modules。版权归 Andy Chen（Andyccr）所有，保留全部权利，禁止商用、修改与再发布，详见 LICENSE。
 
 OpenCode Go 的协议、端点与会话头参照[官方 Go 文档](https://opencode.ai/v2/docs/console/go/)；Pi 集成参照[官方配置说明](https://opencode.ai/v2/docs/console/harnesses/pi/)。Taoagent 发送自己的 User-Agent 和每个 Bot 固定的会话 ID，不冒充其他客户端。
 

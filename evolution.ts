@@ -128,7 +128,7 @@ export async function evolve(store:Store,args:Record<string,unknown>,signal:Abor
     if(fingerprint(root)!==baseline)throw new HttpError(409,'验证期间程序文件已变化，请重新生成候选版本')
     // Persist the recovery journal before touching installed files.
     const outputs:Record<string,string>={...Object.fromEntries(changes.map(c=>[c.path,c.content]))}
-    for(const name of ['server.mjs','server.mjs.LEGAL.txt','build.json','THIRD-PARTY-NOTICES.txt']){
+    for(const name of ['server.mjs','build.json']){
       const relative='release/'+name
       originals[relative]=fs.readFileSync(path.join(root,relative),'utf8')
       outputs[relative]=fs.readFileSync(path.join(candidate,relative),'utf8')
@@ -204,7 +204,7 @@ export function rollbackEvolution(store:Store,runId:string,root=ROOT) {
     const record=JSON.parse(fs.readFileSync(file,'utf8')) as {status:string;originals:Record<string,string>;outputs:Record<string,string>}
     if(record.status!=='applied')throw new HttpError(409,'只能回滚已成功应用的版本')
     for(const [name,output] of Object.entries(record.outputs)){
-      if(!evolvable.includes(name)&&!['public/city.bundle.js','windows-release.json','release/server.mjs','release/server.mjs.LEGAL.txt','release/build.json','release/THIRD-PARTY-NOTICES.txt'].includes(name))throw new HttpError(400,'无效恢复路径')
+      if(!evolvable.includes(name)&&!['public/city.bundle.js','windows-release.json','release/server.mjs','release/build.json'].includes(name))throw new HttpError(400,'无效恢复路径')
       let current=root
       for(const part of name.split('/')){current=path.join(current,part);if(fs.lstatSync(current).isSymbolicLink())throw new HttpError(400,'恢复路径不能为链接')}
       if(fs.readFileSync(current,'utf8')!==output)throw new HttpError(409,'版本之后已有修改，不能覆盖：'+name)
@@ -261,7 +261,7 @@ export function recoverEvolution(store:Store,runId:string,root=ROOT){
   const file=store.file('evolution',id(runId),'record.json')
   const record=JSON.parse(fs.readFileSync(file,'utf8')) as {status:string;originals:Record<string,string>;outputs?:Record<string,string>}
   if(!['applying','recovering','validating','applied','rolled_back'].includes(record.status))throw new HttpError(409,'此版本不需要恢复')
-  const allowed=[...evolvable,'public/city.bundle.js','windows-release.json','release/server.mjs','release/server.mjs.LEGAL.txt','release/build.json','release/THIRD-PARTY-NOTICES.txt']
+  const allowed=[...evolvable,'public/city.bundle.js','windows-release.json','release/server.mjs','release/build.json']
   for(const [name,original] of Object.entries(record.originals)){
     if(!allowed.includes(name))throw new HttpError(400,'无效恢复路径')
     const target=path.join(root,name);if(fs.lstatSync(target).isSymbolicLink())throw new HttpError(400,'恢复路径不能为链接')

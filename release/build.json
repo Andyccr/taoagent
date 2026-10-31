@@ -2,7 +2,7 @@
   "version": "4.6.0",
   "nodeMinimum": "22.19.0",
   "pi": "1.3.0",
-  "builtAt": "2026-10-31T01:40:53.898Z",
+  "builtAt": "2026-10-31T01:43:25.217Z",
   "dependencies": [
     "node_modules/typebox",
     "node_modules/@earendil-works/pi-ai",

@@ -1,8 +1,3 @@
 TaoAgent — Copyright (c) 2026 Andy Chen (Andyccr). All rights reserved.
 See LICENSE for terms (proprietary: no commercial use, no modification,
 no redistribution, attribution required).
-
-TaoAgent includes portions derived from SwarmClaw
-(https://github.com/swarmclawai/swarmclaw), used under the MIT license.
-That notice is retained in licenses/THIRD-PARTY-SwarmClaw-MIT.txt and covers
-only those upstream portions. Third-party dependencies keep their own licenses.

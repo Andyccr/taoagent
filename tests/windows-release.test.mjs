@@ -24,7 +24,7 @@ test('Windows launcher integrity check rejects tampered program files without ex
   try{
     write(root,'launcher.mjs',fs.readFileSync(new URL('../launcher.mjs',import.meta.url)))
     write(root,'package.json',JSON.stringify({version:'3.14.0'}));write(root,'release/build.json',JSON.stringify({version:'3.14.0'}))
-    for(const name of ['release/server.mjs','public/index.html','public/client.js','public/style.css','public/appearance-boot.js','runtime/node.exe','runtime/LICENSE.txt','release/THIRD-PARTY-NOTICES.txt'])write(root,name,'fixture')
+    for(const name of ['release/server.mjs','public/index.html','public/client.js','public/style.css','public/appearance-boot.js','runtime/node.exe'])write(root,name,'fixture')
     const manifest={files:[{path:'public/client.js',sha256:crypto.createHash('sha256').update('fixture').digest('hex')}]};write(root,'windows-release.json',JSON.stringify(manifest))
     const clean=spawnSync(process.execPath,[path.join(root,'launcher.mjs'),'--check'],{encoding:'utf8',windowsHide:true});assert.equal(clean.status,0,clean.stderr);assert(JSON.parse(clean.stdout).verified)
     write(root,'public/client.js','changed-program');const tampered=spawnSync(process.execPath,[path.join(root,'launcher.mjs'),'--check'],{encoding:'utf8',windowsHide:true});assert.equal(tampered.status,1);assert(tampered.stderr.includes('integrity mismatch'))

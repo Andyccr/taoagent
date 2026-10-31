@@ -15,7 +15,7 @@ function check(){
   const [major,minor]=process.versions.node.split('.').map(Number)
   if(major<22||major===22&&minor<19)throw new Error('Node.js 22.19 or newer is required. Use the bundled runtime.')
   if(meta.version!==build.version)throw new Error('Program and release versions differ. Extract the complete Windows package into a new folder.')
-  for(const name of ['release/server.mjs','public/index.html','public/client.js','public/style.css','public/appearance-boot.js','runtime/node.exe','runtime/LICENSE.txt','release/THIRD-PARTY-NOTICES.txt'])if(!fs.statSync(path.join(root,name)).isFile())throw new Error('Missing file: '+name)
+  for(const name of ['release/server.mjs','public/index.html','public/client.js','public/style.css','public/appearance-boot.js','runtime/node.exe'])if(!fs.statSync(path.join(root,name)).isFile())throw new Error('Missing file: '+name)
   return meta
 }
 function verifyDistribution(){

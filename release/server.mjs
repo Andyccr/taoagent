@@ -89584,7 +89584,7 @@ function portableZip(home, root = ROOT, sourceOnly = false) {
     const stat4 = fs3.lstatSync(file);
     if (stat4.isSymbolicLink()) throw new Error("\u4FBF\u643A\u5305\u4E0D\u5141\u8BB8\u7B26\u53F7\u94FE\u63A5\uFF1A" + name);
     if (stat4.isDirectory() && path2.basename(file) === ".launcher-lock") return;
-    if (name.startsWith("release/") && stat4.isFile() && !["server.mjs", "server.mjs.LEGAL.txt", "build.json", "THIRD-PARTY-NOTICES.txt", "PI-LICENSE"].includes(path2.basename(file))) return;
+    if (name.startsWith("release/") && stat4.isFile() && !["server.mjs", "build.json"].includes(path2.basename(file))) return;
     if (stat4.isDirectory() && ["node_modules", ".git", ".next", "__pycache__", ".pytest_cache"].includes(path2.basename(file))) return;
     if ([".run-lock", ".memory-lock", ".tool-lock", ".queue-lock", ".work-lock", ".social-lock"].includes(path2.basename(file)) && stat4.isDirectory()) {
       let active = Date.now() - stat4.mtimeMs < 3e4;
@@ -89839,7 +89839,7 @@ async function evolve(store, args, signal, verify, root = ROOT) {
     check();
     if (fingerprint(root) !== baseline) throw new HttpError(409, "\u9A8C\u8BC1\u671F\u95F4\u7A0B\u5E8F\u6587\u4EF6\u5DF2\u53D8\u5316\uFF0C\u8BF7\u91CD\u65B0\u751F\u6210\u5019\u9009\u7248\u672C");
     const outputs = { ...Object.fromEntries(changes.map((c) => [c.path, c.content])) };
-    for (const name of ["server.mjs", "server.mjs.LEGAL.txt", "build.json", "THIRD-PARTY-NOTICES.txt"]) {
+    for (const name of ["server.mjs", "build.json"]) {
       const relative = "release/" + name;
       originals[relative] = fs4.readFileSync(path3.join(root, relative), "utf8");
       outputs[relative] = fs4.readFileSync(path3.join(candidate, relative), "utf8");
@@ -89924,7 +89924,7 @@ function rollbackEvolution(store, runId, root = ROOT) {
     const record = JSON.parse(fs4.readFileSync(file, "utf8"));
     if (record.status !== "applied") throw new HttpError(409, "\u53EA\u80FD\u56DE\u6EDA\u5DF2\u6210\u529F\u5E94\u7528\u7684\u7248\u672C");
     for (const [name, output] of Object.entries(record.outputs)) {
-      if (!evolvable.includes(name) && !["public/city.bundle.js", "windows-release.json", "release/server.mjs", "release/server.mjs.LEGAL.txt", "release/build.json", "release/THIRD-PARTY-NOTICES.txt"].includes(name)) throw new HttpError(400, "\u65E0\u6548\u6062\u590D\u8DEF\u5F84");
+      if (!evolvable.includes(name) && !["public/city.bundle.js", "windows-release.json", "release/server.mjs", "release/build.json"].includes(name)) throw new HttpError(400, "\u65E0\u6548\u6062\u590D\u8DEF\u5F84");
       let current = root;
       for (const part of name.split("/")) {
         current = path3.join(current, part);
@@ -90007,7 +90007,7 @@ function recoverEvolution(store, runId, root = ROOT) {
   const file = store.file("evolution", id(runId), "record.json");
   const record = JSON.parse(fs4.readFileSync(file, "utf8"));
   if (!["applying", "recovering", "validating", "applied", "rolled_back"].includes(record.status)) throw new HttpError(409, "\u6B64\u7248\u672C\u4E0D\u9700\u8981\u6062\u590D");
-  const allowed = [...evolvable, "public/city.bundle.js", "windows-release.json", "release/server.mjs", "release/server.mjs.LEGAL.txt", "release/build.json", "release/THIRD-PARTY-NOTICES.txt"];
+  const allowed = [...evolvable, "public/city.bundle.js", "windows-release.json", "release/server.mjs", "release/build.json"];
   for (const [name, original] of Object.entries(record.originals)) {
     if (!allowed.includes(name)) throw new HttpError(400, "\u65E0\u6548\u6062\u590D\u8DEF\u5F84");
     const target = path3.join(root, name);
@@ -105521,4 +105521,3 @@ if (process.argv[1] && path10.resolve(process.argv[1]) === fileURLToPath2(import
 export {
   createApp
 };
-/*! For license information please see server.mjs.LEGAL.txt */

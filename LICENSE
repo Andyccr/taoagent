@@ -21,12 +21,6 @@ Empire City (帝国之城) feature, is the exclusive property of Andy Chen
 7. No warranty. The Software is provided "AS IS", without warranty of any
    kind. The Owner is not liable for any claim or damage arising from it.
 
-Third-party components keep their own licenses. Portions derived from
-SwarmClaw are used under the MIT license, whose notice is kept in
-licenses/THIRD-PARTY-SwarmClaw-MIT.txt as that license requires. That notice
-covers only those upstream portions; it does not apply to TaoAgent as a whole
-or to the Owner's additions and modifications.
-
 中文摘要：TaoAgent 版权归 Andy Chen（Andyccr）所有，保留全部权利。未经书面许可，
 禁止商用、修改、再发布或用于任何用途；如获许可使用，必须署名
 「TaoAgent by Andy Chen (Andyccr)」。

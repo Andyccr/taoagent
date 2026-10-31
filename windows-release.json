@@ -466,24 +466,9 @@
       "sha256": "a900d72960e3894f64e9931f31a8be0ef05bdb981ab21a5c5e3b0e0fe786e6d2"
     },
     {
-      "path": "release/PI-LICENSE",
-      "bytes": 1089,
-      "sha256": "1bcbe9200876d3a558807adfd6cedc3f35632fda17d4f29f8bc81fe1f4a23005"
-    },
-    {
       "path": "release/server.mjs",
       "bytes": 4482014,
       "sha256": "c174f64194ca979f5f58faa9875692a9eb90bca30f410f69b4158e2daff88786"
-    },
-    {
-      "path": "release/server.mjs.LEGAL.txt",
-      "bytes": 1032,
-      "sha256": "a7056cd777cf91d23cc3c3e913837b85f2afb9a9bfb268ed247a1f455de3edd9"
-    },
-    {
-      "path": "release/THIRD-PARTY-NOTICES.txt",
-      "bytes": 117506,
-      "sha256": "ccdcb49e7fac4095a121cbe39e7e3993e6bf3761e3cfed528d0e1f445004f413"
     },
     {
       "path": "ROLEPLAY-GUIDE.md",
@@ -499,11 +484,6 @@
       "path": "runtime.ts",
       "bytes": 59864,
       "sha256": "6bc65e6060c8d53cb35935fcf0f510c23a9cf7d1ab7d2919ad67a1fa4d47f377"
-    },
-    {
-      "path": "runtime/LICENSE.txt",
-      "bytes": 160552,
-      "sha256": "d9c4eeda951d6d08f4aa1316b61aafcf67e6da5f79b18f8edeb56fa6abdc038c"
     },
     {
       "path": "runtime/node.exe",

@@ -21,7 +21,7 @@ export function portableZip(home: string, root = ROOT, sourceOnly = false): Buff
     const stat = fs.lstatSync(file)
     if (stat.isSymbolicLink()) throw new Error('便携包不允许符号链接：' + name)
     if (stat.isDirectory() && path.basename(file) === '.launcher-lock') return
-    if (name.startsWith('release/') && stat.isFile() && !['server.mjs','server.mjs.LEGAL.txt','build.json','THIRD-PARTY-NOTICES.txt','PI-LICENSE'].includes(path.basename(file))) return
+    if (name.startsWith('release/') && stat.isFile() && !['server.mjs','build.json'].includes(path.basename(file))) return
     if(stat.isDirectory()&&['node_modules','.git','.next','__pycache__','.pytest_cache'].includes(path.basename(file)))return
     if (['.run-lock', '.memory-lock', '.tool-lock', '.queue-lock', '.work-lock', '.social-lock'].includes(path.basename(file)) && stat.isDirectory()) {
       let active = Date.now() - stat.mtimeMs < 30000

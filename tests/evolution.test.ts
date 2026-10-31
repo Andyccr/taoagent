@@ -10,7 +10,7 @@ import { executeExternal, actions, decide } from '../execution.ts'
 function fixture(){
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'tao-evolution-')),store=new Store(path.join(root,'home'))
   atomic(path.join(root,'context.ts'),'export const version = 1\n')
-  for(const name of ['server.mjs','server.mjs.LEGAL.txt','build.json','THIRD-PARTY-NOTICES.txt'])atomic(path.join(root,'release',name),'old')
+  for(const name of ['server.mjs','build.json'])atomic(path.join(root,'release',name),'old')
   atomic(path.join(root,'tests/check.test.ts'),'// trusted acceptance fixture')
   const change=()=>({path:'context.ts',content:'export const version = 2\n',sha256:readSource('context.ts',root).sha256})
   return {root,store,change,signal:new AbortController().signal,clean:()=>fs.rmSync(root,{recursive:true,force:true})}
