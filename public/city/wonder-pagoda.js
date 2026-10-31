@@ -68,6 +68,20 @@ export function buildGreatPagoda() {
       geo.box(1.4, bodyH, 1.4, cp * sx, y, cp * sz, RED_DARK);
     }
 
+    // Balcony railing around the storey.
+    const bh = half + 0.55;
+    const railH2 = 0.9;
+    for (let s = -bh + 1.2; s <= bh - 1.2; s += 2.8) {
+      geo.box(0.22, railH2, 0.22, s, y, -bh, RED_DARK);
+      geo.box(0.22, railH2, 0.22, s, y, bh, RED_DARK);
+      geo.box(0.22, railH2, 0.22, -bh, y, s, RED_DARK);
+      geo.box(0.22, railH2, 0.22, bh, y, s, RED_DARK);
+    }
+    geo.box(bh * 2 + 0.22, 0.16, 0.24, 0, y + railH2 - 0.16, -bh, WOOD);
+    geo.box(bh * 2 + 0.22, 0.16, 0.24, 0, y + railH2 - 0.16, bh, WOOD);
+    geo.box(0.24, 0.16, bh * 2 + 0.22, -bh, y + railH2 - 0.16, 0, WOOD);
+    geo.box(0.24, 0.16, bh * 2 + 0.22, bh, y + railH2 - 0.16, 0, WOOD);
+
     // Door on the front (+z) side at ground storey; windows on the others.
     for (let side = 0; side < 4; side++) {
       const ry = side * (Math.PI / 2);
@@ -97,13 +111,26 @@ export function buildGreatPagoda() {
       geo.box(0.7, 0.6, 0.7, brk, y + bodyH - 0.6, s, RED_DARK);
     }
 
+    // Second bracket row tucked closer to the body.
+    const brk2 = half + 0.15;
+    for (let s = -half; s <= half; s += half * 0.32) {
+      if (Math.abs(s) > half - 0.3) continue;
+      geo.box(0.45, 0.35, 0.45, s, y + bodyH - 0.95, -brk2, GOLD_DARK);
+      geo.box(0.45, 0.35, 0.45, s, y + bodyH - 0.95, brk2, GOLD_DARK);
+      geo.box(0.45, 0.35, 0.45, -brk2, y + bodyH - 0.95, s, GOLD_DARK);
+      geo.box(0.45, 0.35, 0.45, brk2, y + bodyH - 0.95, s, GOLD_DARK);
+    }
+
     // Flared hip roof.
     geo.hip(hw + 1.6, hw + 1.6, roofH, 0, y + bodyH, 0, i % 2 ? ROOF : ROOF_RIM, 0.7);
 
     // Gold ornaments on the upturned eave corners.
     const eh = half + 1.3;
     for (const [sx, sz] of [[1, 1], [1, -1], [-1, 1], [-1, -1]]) {
-      geo.sphere(0.5, eh * sx, y + bodyH + roofH * 0.55, eh * sz, GOLD, 6);
+      const cy = y + bodyH + roofH * 0.55;
+      geo.sphere(0.5, eh * sx, cy, eh * sz, GOLD, 6);
+      geo.cone(0.26, 1.0, eh * sx, cy + 0.3, eh * sz, GOLD, 6);
+      geo.cone(0.18, 0.4, eh * sx, cy - 0.7, eh * sz, GOLD_DARK, 6);
     }
 
     y += bodyH + roofH * 0.85;
@@ -118,6 +145,16 @@ export function buildGreatPagoda() {
   }
   geo.cyl(0.12, 0.35, 6, 0, top + 4.4, 0, GOLD, 8);
   geo.cone(0.8, 2.4, 0, top + 10.4, 0, GOLD, 10);
+
+  // Tiered gilded spire above the top roof.
+  for (let i = 0; i < 5; i++) {
+    const sy = top + 12.8 + i * 1.3;
+    const sr = 1.45 - i * 0.22;
+    geo.cyl(sr * 0.72, sr, 0.5, 0, sy, 0, i % 2 ? GOLD_DARK : GOLD, 8);
+    geo.ring(sr * 1.12, 0.14, 0, sy + 0.55, 0, GOLD, 10);
+  }
+  geo.cone(0.55, 2.6, 0, top + 19.5, 0, GOLD, 8);
+  geo.sphere(0.55, 0, top + 22.3, 0, GOLD, 8);
 
   // --- Ceremonial plaza: lanterns at terrace corners, incense burner on the front. ---
   const lanternPost = (x, z) => {

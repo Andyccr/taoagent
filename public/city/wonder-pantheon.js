@@ -61,7 +61,16 @@ export function buildPantheon() {
     g.ring(rr, 0.18, 0, yy, 0, RIB, 48);
   }
 
+  // Stepped coffer hints between the main dome ribs.
+  for (const t of [0.18, 0.46, 0.54, 0.76, 0.84, 1.05, 1.14, 1.34, 1.55]) {
+    const rr = R * Math.sin(t);
+    const yy = DOME_Y + R * Math.cos(t);
+    g.ring(rr, 0.13, 0, yy, 0, RIB, 20);
+  }
+
+  g.ring(3.1, 0.3, 0, DOME_Y + R - 0.4, 0, CORNICE, 24);
   g.ring(2.3, 0.45, 0, DOME_Y + R - 0.15, 0, OCULUS, 32);
+  g.ring(1.75, 0.22, 0, DOME_Y + R - 0.02, 0, RIB, 24);
   g.cyl(2.2, 2.2, 0.6, 0, DOME_Y + R - 1.1, 0, 0x3b3f40, 32);
 
   g.box(24.5, FLOOR, 9.0, 0, 0, 15.0, BLOCK);
@@ -74,9 +83,16 @@ export function buildPantheon() {
   for (const x of colX) {
     g.group({ x, z: 18.0 }, () => {
       g.box(1.7, 0.5, 1.7, 0, FLOOR, 0, GRANITE);
+      g.cyl(0.98, 0.9, 0.3, 0, FLOOR + 0.5, 0, CORNICE, 8);
       g.cyl(0.72, 0.9, 16.0, 0, FLOOR + 0.5, 0, BLOCK, 12);
+      for (let f = 0; f < 8; f++) {
+        const fa = (f / 8) * Math.PI * 2;
+        g.box(0.16, 15.5, 0.15, Math.sin(fa) * 0.78, FLOOR + 0.75, Math.cos(fa) * 0.78, DRUM_DARK, { ry: fa });
+      }
+      g.cyl(0.86, 0.76, 0.35, 0, FLOOR + 16.15, 0, CORNICE, 8);
       g.cyl(0.95, 0.72, 0.7, 0, FLOOR + 16.5, 0, CORNICE, 12);
       g.box(1.6, 0.5, 1.6, 0, FLOOR + 17.2, 0, CORNICE);
+      g.box(1.8, 0.22, 1.8, 0, FLOOR + 17.45, 0, CORNICE);
     });
   }
 
@@ -85,6 +101,22 @@ export function buildPantheon() {
   g.box(25.2, 1.4, 0.5, 0, 21.4, 19.4, BLOCK);
   g.box(25.8, 0.5, 8.8, 0, 22.7, 15.5, CORNICE);
   g.gable(25.2, 4.4, 8.2, 0, 22.7, 15.5, DRUM);
+
+  // Entablature frieze with dentils across the portico front.
+  g.box(24.6, 0.72, 0.18, 0, 20.68, 19.75, BLOCK);
+  for (let x = -11.4; x <= 11.4; x += 1.2) {
+    g.box(0.38, 0.5, 0.24, x, 20.72, 19.82, CORNICE);
+  }
+
+  // Shallow stepped relief following the pediment slope.
+  const pedA = Math.atan2(4.1, 4.4);
+  const pedNy = Math.sin(pedA);
+  const pedNz = Math.cos(pedA);
+  for (let i = 0; i < 5; i++) {
+    const py = 23.0 + i * 0.8;
+    const pz = 15.5 + 4.1 * (1 - (py - 22.7) / 4.4) + pedNz * 0.16;
+    g.box(14 - i * 3, 0.55, 0.32, 0, py + pedNy * 0.16 - 0.275, pz, i % 2 ? CORNICE : BLOCK, { rx: -pedA });
+  }
 
   g.box(5.2, 10.5, 0.6, 0, FLOOR, 17.1, BRONZE);
   g.box(6.4, 0.7, 0.9, 0, FLOOR + 10.5, 17.1, CORNICE);

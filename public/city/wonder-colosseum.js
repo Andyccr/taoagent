@@ -62,6 +62,19 @@ export function buildColosseum() {
 
         g.box(ds * 1.06, CH, WALL_D + 0.6, 0, top, -WALL_D / 2 + 0.2, TRAV_HI);
 
+        // Engaged half-column on the pier, capital size grows Doric to Corinthian.
+        const capW = t === 0 ? 0.5 : t === 1 ? 0.6 : 0.72;
+        const capH = t === 0 ? 0.22 : t === 1 ? 0.3 : 0.4;
+        const cx2 = ds / 2 - pierW / 2;
+        const cy0 = y0 + 0.16;
+        const shaftH = TIER_H - CH - 0.52 - capH;
+        g.box(0.52, 0.16, 0.5, cx2, y0 + 0.02, 0.14, TRAV_HI);
+        g.cyl(0.2, 0.24, shaftH, cx2, cy0, 0.14, TRAV_HI, 6);
+        g.box(capW, capH, 0.52, cx2, cy0 + shaftH + 0.04, 0.14, t === 2 ? TRAV_BASE : TRAV_HI);
+
+        // Projecting cornice band above each tier.
+        g.box(ds * 1.08, 0.2, WALL_D + 1.0, 0, y0 + TIER_H - 0.1, -WALL_D / 2 + 0.1, TRAV_HI);
+
         if (gate && t === 0) {
           g.box(ow * 1.04, spring * 0.9, 7.5, 0, 0.02, -WALL_D - 3.75, VOID);
           g.box(ow * 0.42, 0.5, 0.55, 0, spring * 0.9, -WALL_D - 0.1, TRAV_HI);
@@ -81,6 +94,17 @@ export function buildColosseum() {
 
       for (let c = -1; c <= 1; c += 2) {
         g.box(0.24, 0.55, 0.55, c * ds * 0.26, ay + aw - 0.55, 0.1, TRAV_BASE);
+      }
+
+      // Lower attic corbels and short mast posts between the tall masts.
+      for (let c = -1; c <= 1; c += 2) {
+        g.box(0.28, 0.65, 0.5, c * ds * 0.3, ay + aw - 1.05, 0.12, TRAV_BASE);
+      }
+      if (i % 6 === 3) {
+        const my2 = ay + aw + ach;
+        g.cyl(0.045, 0.07, 2.4, 0, my2, -0.2, MAST, 5);
+        g.cone(0.11, 0.7, 0, my2 + 2.4, -0.2, TRAV_HI, 5);
+        g.box(0.3, 0.36, 0.035, 0.15, my2 + 1.9, -0.2, FLAG);
       }
 
       if (i % 3 === 0) {
