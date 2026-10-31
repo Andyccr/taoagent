@@ -29,7 +29,7 @@ export function watchMembers(store:Store,key:string,listener:()=>void){const ide
 export type ComponentKind = 'emergent' | 'chat' | 'task' | 'city'
 function existingKind(store: Store, key?: string) { return key ? store.session(key).componentKind : undefined }
 export function componentKind(session: Session): ComponentKind { return session.componentKind || (session.discussionMode === 'directed' || session.replyMode !== 'collective' ? 'task' : 'emergent') }
-export interface Session { componentKind?: ComponentKind; id: string; title: string; agentId: string; modelId: string; kind?: 'direct' | 'group' | 'consult'; spaceKind?: 'solo'|'social'; memberIds?: string[]; createdAt: string; updatedAt: string; originSessionId?: string; purpose?: string; memberRoles?: Record<string, string>; replyMode?: 'round' | 'coordinated' | 'collective'; discussionMode?: 'open'|'directed'|'brainstorm'; coordinatorId?: string; runtimeLimits?: RuntimeLimits; archivedAt?:string; archivedBy?:string; archiveReason?:string; lifecycleRevision?:string }
+export interface Session { componentKind?: ComponentKind; id: string; title: string; agentId: string; modelId: string; kind?: 'direct' | 'group' | 'consult'; spaceKind?: 'solo'|'social'; memberIds?: string[]; createdAt: string; updatedAt: string; originSessionId?: string; formedBy?: string; purpose?: string; memberRoles?: Record<string, string>; replyMode?: 'round' | 'coordinated' | 'collective'; discussionMode?: 'open'|'directed'|'brainstorm'; coordinatorId?: string; runtimeLimits?: RuntimeLimits; archivedAt?:string; archivedBy?:string; archiveReason?:string; lifecycleRevision?:string }
 export type DiscussionPhase = 'discuss' | 'review' | 'synthesis'
 export interface Message { id: string; role: 'user' | 'assistant'; content: string; at: string; agentId?: string; agentName?: string; kind?: 'activity'; status?: 'complete' | 'interrupted'; turnId?: string; phase?: DiscussionPhase; contextMessageIds?: string[]; concurrentMessageIds?: string[]; replyToMessageId?:string; responseIntent?:MessageIntent }
 export interface PromptMessage { role: 'system' | 'user' | 'assistant'; content: string }
@@ -410,11 +410,11 @@ export class Store {
     json(this.file('chats', session.id, 'session.json'), session)
     return session
   }
-  saveGroup(name: string, memberIds: string[], key?: string, details: Pick<Session, 'purpose' | 'memberRoles' | 'replyMode' | 'coordinatorId' | 'discussionMode' | 'runtimeLimits' | 'spaceKind' | 'componentKind'> = {}, creationId?: string, expected?: string): Session {
+  saveGroup(name: string, memberIds: string[], key?: string, details: Pick<Session, 'purpose' | 'memberRoles' | 'replyMode' | 'coordinatorId' | 'discussionMode' | 'runtimeLimits' | 'spaceKind' | 'componentKind' | 'originSessionId' | 'formedBy'> = {}, creationId?: string, expected?: string): Session {
     const targetId = id(key || creationId || crypto.randomUUID())
     return this.withMemoryLock(this.file('chats', targetId, 'MEMORY.md'), () => this.saveGroupUnlocked(name, memberIds, key, details, targetId, expected))
   }
-  private saveGroupUnlocked(name: string, memberIds: string[], key: string | undefined, details: Pick<Session, 'purpose' | 'memberRoles' | 'replyMode' | 'coordinatorId' | 'discussionMode' | 'runtimeLimits' | 'spaceKind' | 'componentKind'>, creationId: string, expected?: string): Session {
+  private saveGroupUnlocked(name: string, memberIds: string[], key: string | undefined, details: Pick<Session, 'purpose' | 'memberRoles' | 'replyMode' | 'coordinatorId' | 'discussionMode' | 'runtimeLimits' | 'spaceKind' | 'componentKind' | 'originSessionId' | 'formedBy'>, creationId: string, expected?: string): Session {
     const members = [...new Set(memberIds)]
     if (name.length > 80) throw new HttpError(400, '群名称最多80个字符')
     const city=(details.componentKind??existingKind(this,key))==='city'
@@ -440,7 +440,7 @@ export class Store {
     if (purpose.length > 6000 || Object.values(memberRoles).some(role => typeof role !== 'string' || role.length > 1000)) throw new HttpError(400, '群目标或成员职责过长')
     if (!['round', 'coordinated', 'collective'].includes(replyMode)) throw new HttpError(400, '未知的群协作模式')
     if (!members.includes(coordinatorId)) throw new HttpError(400, '负责人必须在本群')
-    const group: Session = {componentKind:kind, spaceKind:details.spaceKind??existing?.spaceKind, id: existing?.id || (creationId ? id(creationId) : crypto.randomUUID()), title: name.trim()||(discussionMode==='brainstorm'?'头脑风暴':'随便聊聊'), kind: 'group', agentId: members[0], memberIds: members, modelId: existing?.modelId || '', createdAt: existing?.createdAt || now, updatedAt: now, purpose, memberRoles, replyMode, discussionMode, coordinatorId, runtimeLimits:runtimeLimits(details.runtimeLimits??existing?.runtimeLimits),...(existing?.lifecycleRevision?{lifecycleRevision:existing.lifecycleRevision}:{}) }
+    const group: Session = {componentKind:kind, spaceKind:details.spaceKind??existing?.spaceKind, id: existing?.id || (creationId ? id(creationId) : crypto.randomUUID()), title: name.trim()||(discussionMode==='brainstorm'?'头脑风暴':'随便聊聊'), kind: 'group', agentId: members[0], memberIds: members, modelId: existing?.modelId || '', createdAt: existing?.createdAt || now, updatedAt: now, originSessionId: existing ? existing.originSessionId : details.originSessionId, formedBy: existing ? existing.formedBy : details.formedBy, purpose, memberRoles, replyMode, discussionMode, coordinatorId, runtimeLimits:runtimeLimits(details.runtimeLimits??existing?.runtimeLimits),...(existing?.lifecycleRevision?{lifecycleRevision:existing.lifecycleRevision}:{}) }
     json(this.file('chats', group.id, 'session.json'), group)
     if (existing) for (const turn of this.turns(group.id)) {
       let changed = false
