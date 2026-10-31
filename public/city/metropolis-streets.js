@@ -42,6 +42,8 @@ export function buildStreets(ringRadii, avenueAngles, seed) {
   return roads;
 }
 const P = (p) => (Array.isArray(p) ? { x: p[0], z: p[1] } : p);
+// Numeric cell keys (no string building in the hot lookups below).
+const cellKey = (ix, iz) => (ix + 32768) * 65536 + (iz + 32768);
 export function makeRoadIndex(roads, cell = 20) {
   const map = new Map();
   for (const road of roads) for (let i = 1; i < road.pts.length; i++) {
@@ -52,7 +54,7 @@ export function makeRoadIndex(roads, cell = 20) {
     const z1 = Math.floor((Math.max(a.z, b.z) + half) / cell);
     const seg = { ax: a.x, az: a.z, bx: b.x, bz: b.z, half };
     for (let ix = x0; ix <= x1; ix++) for (let iz = z0; iz <= z1; iz++) {
-      const key = `${ix},${iz}`, list = map.get(key);
+      const key = cellKey(ix, iz), list = map.get(key);
       if (list) list.push(seg); else map.set(key, [seg]);
     }
   }
@@ -74,10 +76,13 @@ export function distanceToRoads(index, x, z, reach = 12) {
   const z0 = Math.floor((z - reach) / cell), z1 = Math.floor((z + reach) / cell);
   let best = Infinity;
   for (let ix = x0; ix <= x1; ix++) for (let iz = z0; iz <= z1; iz++) {
-    const segs = map.get(`${ix},${iz}`);
+    const segs = map.get(cellKey(ix, iz));
     if (!segs) continue;
-    for (const s of segs) {
-      const d = segInfo(x, z, s.ax, s.az, s.bx, s.bz).d - s.half;
+    for (let i = 0; i < segs.length; i++) {
+      const s = segs[i], dx = s.bx - s.ax, dz = s.bz - s.az, l2 = dx * dx + dz * dz;
+      let t = l2 ? ((x - s.ax) * dx + (z - s.az) * dz) / l2 : 0;
+      t = t < 0 ? 0 : t > 1 ? 1 : t;
+      const d = Math.hypot(x - (s.ax + t * dx), z - (s.az + t * dz)) - s.half;
       if (d < best) best = d;
     }
   }
@@ -89,7 +94,7 @@ export function nearestRoadPoint(index, x, z, reach = 14) {
   const z0 = Math.floor((z - reach) / cell), z1 = Math.floor((z + reach) / cell);
   let best = null;
   for (let ix = x0; ix <= x1; ix++) for (let iz = z0; iz <= z1; iz++) {
-    const segs = map.get(`${ix},${iz}`);
+    const segs = map.get(cellKey(ix, iz));
     if (!segs) continue;
     for (const s of segs) {
       const p = segInfo(x, z, s.ax, s.az, s.bx, s.bz);

@@ -1,6 +1,6 @@
 import { polar, STYLE_ANGLE, ringRadius, PLOT } from './layout.js';
 import { rng, CANAL_HALF, canalRadius, canalLine, ringLoop, avenueLine } from './metropolis-roads.js';
-import { buildStreets, makeRoadIndex, distanceToRoads, nearestRoadPoint, pointSegmentDistance } from './metropolis-streets.js';
+import { buildStreets, makeRoadIndex, distanceToRoads, nearestRoadPoint } from './metropolis-streets.js';
 
 export const CORE_R = ringRadius(3) + PLOT / 2 + 1;
 export const CANAL = { inner: CORE_R + 2.5, outer: CORE_R + 7.5 };
@@ -124,18 +124,13 @@ function weightedStyle(angle, R) {
 let cached = null;
 export function computeMetropolis() {
   if (cached) return cached;
-  const distanceToLine = (pts, x, z) => {
-    let best = Infinity;
-    for (let i = 1; i < pts.length; i++) {
-      const d = pointSegmentDistance(x, z, pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1]);
-      if (d < best) best = d;
-    }
-    return best;
-  };
   const wonders = WONDERS.map(wonderBox);
   const canal = { ...CANAL, half: CANAL_HALF, pts: canalLine(CANAL.inner, CANAL.outer) };
   const river = { half: RIVER_HALF, legs: RIVER_LEGS.map((leg) => ({ id: leg.id, pts: riverLine(leg) })) };
-  const riverDistance = (x, z) => { let best = Infinity; for (const leg of river.legs) best = Math.min(best, distanceToLine(leg.pts, x, z)); return best; };
+  // Grid-indexed distance to the river / canal centre lines (exact within `reach`, Infinity beyond).
+  const riverIdx = makeRoadIndex(river.legs.map((leg) => ({ pts: leg.pts, w: 0 })));
+  const canalIdx = makeRoadIndex([{ pts: canal.pts, w: 0 }]);
+  const riverDistance = (x, z, reach = 100) => distanceToRoads(riverIdx, x, z, reach);
   const rings = RING_ROADS.map((x) => ringLoop(x.r, x.w));
   const avenues = AVENUES.map((a, i) => avenueLine(a, CANAL.outer + 1, OUTER_EDGE, AVENUE_W, i));
   const rawStreets = buildStreets(RING_ROADS.map((x) => x.r), AVENUES, 'empire-city');
@@ -173,7 +168,7 @@ export function computeMetropolis() {
 
   const lots = [];
   const cells = new Map();
-  const cellKey = (x, z) => `${Math.floor(x / 16)},${Math.floor(z / 16)}`;
+  const cellKey = (x, z) => (Math.floor(x / 16) + 4096) * 8192 + Math.floor(z / 16) + 4096;
   const addCell = (lot) => {
     const key = cellKey(lot.x, lot.z);
     const list = cells.get(key);
@@ -182,7 +177,7 @@ export function computeMetropolis() {
   const overlaps = (x, z, size) => {
     const cx = Math.floor(x / 16), cz = Math.floor(z / 16);
     for (let ix = cx - 1; ix <= cx + 1; ix++) for (let iz = cz - 1; iz <= cz + 1; iz++) {
-      const list = cells.get(`${ix},${iz}`);
+      const list = cells.get((ix + 4096) * 8192 + iz + 4096);
       if (!list) continue;
       for (const lot of list) if (Math.hypot(x - lot.x, z - lot.z) < (size + lot.size) / 2 + 0.3) return true;
     }
@@ -262,8 +257,8 @@ export function computeMetropolis() {
           const x = p.x, z = p.z;
           const half = att.size / 2;
           if (distanceToRoads(index, x, z) < half + (dense ? 0.2 : 0.4)) continue;
-          if (distanceToLine(canal.pts, x, z) < CANAL_HALF + half + 0.8) continue;
-          if (riverDistance(x, z) < RIVER_HALF + half + 2.2) continue;
+          if (distanceToRoads(canalIdx, x, z, 16) < CANAL_HALF + half + 0.8) continue;
+          if (riverDistance(x, z, 20) < RIVER_HALF + half + 2.2) continue;
           if (att.jr - half <= CANAL.outer + 0.5) continue;
           if (Math.abs(att.jr - WALL_R) < half + 3) continue;
           if (wonders.some((w) => circleHitsBox(x, z, half * 1.1, w, 1.2))) continue;
