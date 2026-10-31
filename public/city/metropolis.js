@@ -11,9 +11,19 @@ import { CHINESE_FILLERS } from './fillers-chinese.js';
 import { GREEK_FILLERS } from './fillers-greek.js';
 import { ROMAN_FILLERS } from './fillers-roman.js';
 import { MODERN_FILLERS } from './fillers-modern.js';
-import { COMMON_FILLERS, tree, bridge } from './fillers-common.js';
+import { COMMON_FILLERS, bridge } from './fillers-common.js';
 import { OUTER_FILLERS } from './fillers-outer.js';
-import { antenna, awning, bench, chimneyPot, lampPost, planter } from './detail-props.js';
+import { CHINESE_EXTRA } from './fillers-chinese-extra.js';
+import { GREEK_EXTRA } from './fillers-greek-extra.js';
+import { ROMAN_EXTRA } from './fillers-roman-extra.js';
+import { MODERN_EXTRA } from './fillers-modern-extra.js';
+import { COMMON_EXTRA } from './fillers-common-extra.js';
+import { STREET_PROPS } from './street-props.js';
+import { antenna, chimneyPot } from './detail-props.js';
+import { createLodBatch, treeProxyGeometry } from './metro-batch.js';
+import { scatterProps } from './metro-scatter.js';
+import { riverGeometry, wallGeometry, terrainGeometry } from './metro-terrain.js';
+import { buildLife, buildNightLights } from './metro-life.js';
 import { buildPalace } from './wonder-palace.js';
 import { buildGreatPagoda } from './wonder-pagoda.js';
 import { buildAcropolis } from './wonder-acropolis.js';
@@ -21,9 +31,30 @@ import { buildColosseum } from './wonder-colosseum.js';
 import { buildPantheon, buildTriumphalArch } from './wonder-pantheon.js';
 import { buildSupertall } from './wonder-supertall.js';
 import { buildCityWall } from './wonder-wall.js';
+import { buildGreatAqueduct } from './wonder-aqueduct.js';
+import { buildTempleOfHeaven } from './wonder-temple-heaven.js';
+import { buildSkylineTowers } from './wonder-skyline.js';
+import { buildLighthouse } from './wonder-lighthouse.js';
 
-const FILLERS = { chinese: CHINESE_FILLERS, greek: GREEK_FILLERS, roman: ROMAN_FILLERS, modern: MODERN_FILLERS, common: COMMON_FILLERS, outer: OUTER_FILLERS };
-const WONDER_BUILDERS = { palace: buildPalace, pagoda: buildGreatPagoda, acropolis: buildAcropolis, colosseum: buildColosseum, pantheon: buildPantheon, arch: buildTriumphalArch, supertall: buildSupertall, wall: () => buildCityWall(100) };
+const FILLERS = {
+  chinese: { ...CHINESE_FILLERS, ...CHINESE_EXTRA },
+  greek: { ...GREEK_FILLERS, ...GREEK_EXTRA },
+  roman: { ...ROMAN_FILLERS, ...ROMAN_EXTRA },
+  modern: { ...MODERN_FILLERS, ...MODERN_EXTRA },
+  common: { ...COMMON_FILLERS, ...COMMON_EXTRA },
+  outer: { ...OUTER_FILLERS, ...COMMON_EXTRA },
+};
+const WONDER_BUILDERS = {
+  palace: buildPalace, pagoda: buildGreatPagoda, acropolis: buildAcropolis, colosseum: buildColosseum, pantheon: buildPantheon, arch: buildTriumphalArch, supertall: buildSupertall, wall: () => buildCityWall(100),
+  aqueduct: buildGreatAqueduct, heaven: buildTempleOfHeaven, skyline: buildSkylineTowers, lighthouse: buildLighthouse,
+};
+// Per-quality distances (metres from the camera): near = full filler model (proxy beyond), cull = filler hidden,
+// trees = full tree model (canopy stand-in beyond, hidden past treeCull), props / people = dressing hidden beyond.
+export const LOD = {
+  low: { near: 150, cull: 1500, trees: 120, treeCull: 700, props: 0, people: 0 },
+  medium: { near: 250, cull: 2200, trees: 280, treeCull: 1500, props: 150, people: 110 },
+  high: { near: 400, cull: 2800, trees: 440, treeCull: 2200, props: 230, people: 170 },
+};
 const GROUND = { chinese: '#c9c19f', greek: '#cfcab4', roman: '#c8b48e', modern: '#b9bcb6', mixed: '#c4c0a4', blend: '#c9c3a6', harbour: '#b7c2b0', industrial: '#b5b0a4', suburb: '#b8bf98', country: '#a9b98a', farmland: '#a9b98a' };
 const PARK = { park: '#8fb36a', plaza: '#d6cdb6', market: '#cdbf9f' };
 const CROP = ['#c9b458', '#8fae5a', '#a7c46a', '#b98e4f'];
@@ -56,6 +87,7 @@ function bridgeWithRail(span, width) {
   const t = 0.18, h = 0.7, zEdge = width / 2 - t / 2;
   for (const side of [-1, 1]) rails.box(span, h, t, 0, 0, side * zEdge, '#b9b2a2');
   const railGeo = rails.build();
+  if (railGeo.getAttribute('uv')) railGeo.deleteAttribute('uv');
   let deck = bridge(span, width);
   if (!deck) { bridgeRailGeo = railGeo; return bridgeRailGeo; }
   if (deck.index) deck = deck.toNonIndexed();
@@ -181,10 +213,13 @@ function staticGeometry() {
   const waterGeo = ribbon(canalPts, canal.half * 2, true);
   const kerbs = mergeGeometries([-1, 1].map((side) => ribbon(offsetPolyline(canalPts, side * canal.half, true), 0.7, true)));
 
-  const sea = new THREE.RingGeometry(plan.sea.shore, plan.outerR + 140, 48, 1,
+  const sea = new THREE.RingGeometry(plan.sea.shore, plan.outerR + 900, 64, 1,
     THREE.MathUtils.degToRad(90 - plan.sea.to), THREE.MathUtils.degToRad(plan.sea.to - plan.sea.from)).rotateX(-Math.PI / 2);
 
-  sharedStatic = { roads, waterGeo, kerbs, sea, crosswalks: crosswalkGeometry(plan), bridge: bridgeWithRail(canal.half * 2 + 1.5, 5.2), tree: tree(0), tree2: tree(1), tree3: tree(2) };
+  sharedStatic = {
+    roads, waterGeo, kerbs, sea, crosswalks: crosswalkGeometry(plan), bridge: bridgeWithRail(canal.half * 2 + 1.5, 5.2),
+    riverBridge: bridge(plan.river.half * 2 + 2, 6.4), wall: wallGeometry(plan), terrain: terrainGeometry(plan),
+  };
   return sharedStatic;
 }
 
@@ -193,11 +228,12 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
   const plan = computeMetropolis();
   const root = new THREE.Group(); root.name = 'metropolis';
   const solid = cityMaterial('solid');
-  const stats = { fillers: 0, fillerKinds: new Set(), instancedMeshes: 0, trees: 0, wonders: [], parks: plan.parks.length, fields: plan.fields.length, chimneys: [], piers: [] };
+  const stats = { fillers: 0, fillerKinds: new Set(), instancedMeshes: 0, trees: 0, props: 0, movers: 0, wonders: [], parks: plan.parks.length, fields: plan.fields.length, chimneys: [], piers: [] };
+  const batches = [];
   const st = staticGeometry();
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), sc = new THREE.Vector3(1, 1, 1), pos = new THREE.Vector3();
 
-  const base = new THREE.Mesh(new THREE.CircleGeometry(plan.outerR + 140, 64).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: '#aeb89a', roughness: 1 }));
+  const base = new THREE.Mesh(new THREE.CircleGeometry(plan.outerR + 1100, 96).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: '#aeb89a', roughness: 1 }));
   base.position.y = 0.002; base.receiveShadow = quality !== 'low'; root.add(base);
 
   const patchGroups = new Map();
@@ -239,37 +275,26 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
 
   // Bridges over the canal.
   const bridges = new THREE.InstancedMesh(st.bridge, solid, plan.bridges.length);
-  plan.bridges.forEach((b, i) => { q.setFromAxisAngle(up, -b.angle); m4.compose(pos.set(b.x, 0, b.z), q, sc.set(1, 1, 1)); bridges.setMatrixAt(i, m4); });
+  plan.bridges.forEach((b, i) => { q.setFromAxisAngle(up, Math.PI - THREE.MathUtils.degToRad(b.angle)); m4.compose(pos.set(b.x, 0, b.z), q, sc.set(1, 1, 1)); bridges.setMatrixAt(i, m4); });
   bridges.computeBoundingSphere(); root.add(bridges); stats.instancedMeshes++;
 
-  // Fillers grouped by quarter+ring (finer frustum culling) and kind/variant (one geometry each).
-  const groups = new Map();
+  // Fillers: one distance-LOD BatchedMesh for every unclaimed lot (near: full model, far: two-tone proxy).
+  const lod = LOD[quality] || LOD.medium;
+  const fillers = createLodBatch(solid, { name: 'fillers', castShadow: quality === 'high', receiveShadow: quality !== 'low' });
+  const tint = new THREE.Color();
   for (const lot of plan.lots) {
     if (claimedLots.has(lot.id)) continue;
-    const quarter = Math.floor((((lot.angle + 45) % 360) + 360) % 360 / 90);
-    const key = quarter + (Math.hypot(lot.x, lot.z) < 175 ? 'in' : 'out') + '|' + lot.style + '|' + lot.kind + '|' + lot.variant;
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key).push(lot);
+    const handle = fillers.geometry(lot.style + ':' + lot.kind + ':' + lot.variant, () => fillerGeometry(lot.style, lot.kind, lot.variant), true);
+    if (!handle) continue;
+    const s = lot.size / 7;
+    q.setFromAxisAngle(up, lot.rotY);
+    m4.compose(pos.set(lot.x - Math.sin(lot.rotY) * lot.setback, 0, lot.z - Math.cos(lot.rotY) * lot.setback), q, sc.set(s, lot.scaleY * s, s));
+    const th = hash(lot.id + 'tint'), b = 0.92 + (th % 17) / 100, warm = ((th >>> 5) % 9 - 4) / 500;
+    fillers.instance(handle, m4, tint.setRGB(b + warm, b, b - warm), lod.cull, lod.near);
+    stats.fillers++; stats.fillerKinds.add(lot.style + ':' + lot.kind);
   }
-  for (const [key, lots] of groups) {
-    const [, style, kind, variant] = key.split('|');
-    const geo = fillerGeometry(style, kind, Number(variant));
-    if (!geo) continue;
-    const mesh = new THREE.InstancedMesh(geo, solid, lots.length);
-    const tint = new THREE.Color();
-    lots.forEach((lot, i) => {
-      const s = lot.size / 7;
-      q.setFromAxisAngle(up, lot.rotY);
-      m4.compose(pos.set(lot.x - Math.sin(lot.rotY) * lot.setback, 0, lot.z - Math.cos(lot.rotY) * lot.setback), q, sc.set(s, lot.scaleY * s, s));
-      mesh.setMatrixAt(i, m4);
-      const th = hash(lot.id + 'tint'), base = 0.92 + (th % 17) / 100, warm = ((th >>> 5) % 9 - 4) / 500;
-      mesh.setColorAt(i, tint.setRGB(base + warm, base, base - warm));
-    });
-    mesh.instanceColor.needsUpdate = true;
-    mesh.computeBoundingSphere();
-    mesh.userData.info = { name: '空置建筑', dept: lots[0].claimable ? '可分配给新成员' : '装饰建筑', state: '', label: '' };
-    root.add(mesh); stats.instancedMeshes++; stats.fillers += lots.length; stats.fillerKinds.add(style + ':' + kind);
-  }
+  const fillerMesh = fillers.finish();
+  if (fillerMesh) { fillerMesh.userData.info = { name: '空置建筑', dept: '可分配给新成员', state: '', label: '' }; root.add(fillerMesh); batches.push(fillerMesh); stats.instancedMeshes++; }
 
   // Parks: one merged vertex-coloured mesh.
   const parkGeos = [];
@@ -301,110 +326,57 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
     fields.computeBoundingSphere(); fields.receiveShadow = quality !== 'low'; root.add(fields); stats.instancedMeshes++;
   }
 
-  // Street trees along avenues plus park trees (skipped on low quality).
-  if (quality !== 'low') {
-    const spots = [];
-    for (const road of plan.roads) {
-      if (road.kind !== 'avenue') continue;
-      const pts = road.pts, off = road.w / 2 + 0.9;
-      let carry = 4;
-      for (let s = 0; s < pts.length - 1; s++) {
-        const [x0, z0] = pts[s], [x1, z1] = pts[s + 1];
-        const dx = x1 - x0, dz = z1 - z0, len = Math.hypot(dx, dz);
-        if (!len) continue;
-        const nx = -dz / len, nz = dx / len;
-        let d = carry;
-        while (d < len) {
-          const t = d / len, x = x0 + dx * t, z = z0 + dz * t;
-          for (const side of [-1, 1]) {
-            const tx = x + nx * off * side, tz = z + nz * off * side;
-            if (plan.wonders.some((w) => tx > w.x0 - 1 && tx < w.x1 + 1 && tz > w.z0 - 1 && tz < w.z1 + 1)) continue;
-            if (plan.lots.some((l) => (l.x - tx) ** 2 + (l.z - tz) ** 2 < 9)) continue;
-            spots.push([tx, tz, hash(road.kind + ':' + s + ':' + Math.round(d) + ':' + side)]);
-          }
-          d += 7;
-        }
-        carry = d - len;
-      }
-    }
-    for (const p of plan.parks) {
-      const count = 2 + hash(p.x + ':' + p.z + ':n') % 5;
-      for (let i = 0; i < count; i++) {
-        const a = (hash(p.x + ':' + p.z + ':a' + i) % 628) / 100;
-        const rr = p.r * (0.2 + (hash(p.x + ':' + p.z + ':r' + i) % 65) / 100);
-        const tx = p.x + Math.cos(a) * rr, tz = p.z + Math.sin(a) * rr;
-        if (plan.wonders.some((w) => tx > w.x0 - 1 && tx < w.x1 + 1 && tz > w.z0 - 1 && tz < w.z1 + 1)) continue;
-        spots.push([tx, tz, hash(p.x + ':' + p.z + ':h' + i)]);
-      }
-    }
-    const kinds = [st.tree, st.tree2, st.tree3];
-    kinds.forEach((g, k) => {
-      const mine = spots.filter((s) => s[2] % 3 === k); if (!g || !mine.length) return;
-      const mesh = new THREE.InstancedMesh(g, solid, mine.length);
-      mine.forEach(([x, z, h], i) => { q.setFromAxisAngle(up, (h % 628) / 100); m4.compose(pos.set(x, 0, z), q, sc.setScalar(0.9 + (h % 30) / 100)); mesh.setMatrixAt(i, m4); });
-      mesh.computeBoundingSphere(); root.add(mesh); stats.instancedMeshes++; stats.trees += mine.length;
-    });
+  // Street-level dressing (trees by district, lamps, stalls, signs, carts, moored boats, townsfolk) plus rooftop
+  // micro-props, all in one distance-culled batch.
+  const props = createLodBatch(solid, { name: 'props', castShadow: false, receiveShadow: false });
+  const placed = scatterProps(plan, { claimedLots, quality });
+  const range = { tree: lod.treeCull, prop: lod.props, boat: lod.props * 1.6, people: lod.people };
+  for (const p of placed) {
+    const lim = range[p.cls];
+    if (!lim) continue;
+    const tree = p.cls === 'tree';
+    const handle = props.geometry('sp:' + p.kind + ':' + p.variant, () => STREET_PROPS[p.kind]?.(p.variant), tree ? treeProxyGeometry : false);
+    q.setFromAxisAngle(up, p.rotY);
+    m4.compose(pos.set(p.x, 0, p.z), q, sc.setScalar(p.scale || 1));
+    props.instance(handle, m4, null, lim, tree ? lod.trees : Infinity);
+    if (p.cls === 'tree') stats.trees++; else stats.props++;
   }
-
-  // Micro-props (instanced): rooftop antennas/chimneys, street lamps and street-front benches, planters and awnings.
-  if (quality !== 'low') {
-    const ants = [], pots = [], lamps = [], benches = [], planters = [], awnings = [];
-    const FRONT = { house: 2.5, siheyuan: 3.5, market: 3.5, stalls: 3.0, plaza: 3.2 };
-    const frontSpot = (lot, kind) => {
-      const hh = hash(lot.id + 'p' + kind), half = lot.size / 2;
-      const face = (FRONT[lot.kind] || 2.5) * (lot.size / 7) - lot.setback;
-      const scale = kind === 'awning' ? 0.78 + (hh % 9) / 100 : kind === 'bench' ? 0.9 + (hh % 7) / 50 : 0.68 + (hh % 7) / 50;
-      const reach = (kind === 'awning' ? 1.22 : kind === 'planter' ? 0.65 : 0.3) * scale;
-      const off = kind === 'awning' ? face + 0.05 : Math.min(half - 0.5, Math.max(face + reach + 0.15, half - 1.8));
-      return off >= face + 0.02 && off + reach <= half ? { hh, off, scale } : null;
-    };
+  if (lod.props) {
+    const roofs = [['antenna', antenna, 8], ['chimney', chimneyPot, 5]];
     for (const lot of plan.lots) {
       if (claimedLots.has(lot.id)) continue;
       const h = hash(lot.id + 'prop');
-      if ((lot.style === 'modern' || lot.kind === 'workshop' || lot.kind === 'factory') && (h & 3) === 0) ants.push(lot);
-      else if ((lot.kind === 'house' || lot.kind === 'siheyuan' || lot.kind === 'cottage' || lot.kind === 'farmhouse') && (h & 7) === 0) pots.push(lot);
-      if ((h % 19) === 0) lamps.push(lot);
-      const front = lot.kind === 'house' || lot.kind === 'siheyuan' || lot.kind === 'plaza' || lot.kind === 'market' || lot.kind === 'stalls';
-      if (!front) continue;
-      if ((hash(lot.id + 'bench') % 6) === 0 && frontSpot(lot, 'bench')) benches.push(lot);
-      if ((hash(lot.id + 'planter') % 5) === 0 && frontSpot(lot, 'planter')) planters.push(lot);
-      if ((lot.kind === 'house' || lot.kind === 'market' || lot.kind === 'stalls') && (hash(lot.id + 'awning') % 7) === 0 && frontSpot(lot, 'awning')) awnings.push(lot);
+      const which = (lot.style === 'modern' || lot.kind === 'workshop' || lot.kind === 'factory') && (h & 3) === 0 ? roofs[0]
+        : (lot.kind === 'house' || lot.kind === 'siheyuan' || lot.kind === 'cottage' || lot.kind === 'farmhouse') && (h & 7) === 0 ? roofs[1] : null;
+      if (!which) continue;
+      const handle = props.geometry('roof:' + which[0], () => which[1](0));
+      const hh = hash(lot.id + 'py'), tall = (lot.scaleY || 1) * (lot.size / 7);
+      q.setFromAxisAngle(up, lot.rotY + ((hh % 20) - 10) / 40);
+      m4.compose(pos.set(lot.x, which[2] * tall, lot.z), q, sc.setScalar(0.85 + (hh % 30) / 100));
+      props.instance(handle, m4, null, lod.props);
     }
-    const place = (list, geo, yLift) => {
-      if (!geo || !list.length) return;
-      const mesh = new THREE.InstancedMesh(geo, solid, list.length);
-      list.forEach((lot, i) => {
-        const hh = hash(lot.id + 'py');
-        q.setFromAxisAngle(up, lot.rotY + ((hh % 20) - 10) / 40);
-        const tall = (lot.scaleY || 1) * (lot.size / 7);
-        m4.compose(pos.set(lot.x, yLift * tall, lot.z), q, sc.setScalar(0.85 + (hh % 30) / 100));
-        mesh.setMatrixAt(i, m4);
-      });
-      mesh.computeBoundingSphere(); root.add(mesh); stats.instancedMeshes++;
-    };
-    const placeFront = (list, geo, kind) => {
-      if (!geo || !list.length) return;
-      const mesh = new THREE.InstancedMesh(geo, solid, list.length);
-      list.forEach((lot, i) => {
-        const spot = frontSpot(lot, kind);
-        if (!spot) return;
-        const { hh, off, scale } = spot;
-        const fx = Math.sin(lot.rotY), fz = Math.cos(lot.rotY);
-        const tx = Math.cos(lot.rotY), tz = -Math.sin(lot.rotY);
-        const lateral = kind === 'awning' ? 0 : (kind === 'bench' ? 0.85 : -0.85) + ((hh % 9) - 4) / 20;
-        q.setFromAxisAngle(up, lot.rotY + (kind === 'awning' ? 0 : ((hh % 14) - 7) / 60));
-        m4.compose(pos.set(lot.x + fx * off + tx * lateral, 0, lot.z + fz * off + tz * lateral), q, sc.setScalar(scale));
-        mesh.setMatrixAt(i, m4);
-      });
-      mesh.computeBoundingSphere(); root.add(mesh); stats.instancedMeshes++;
-    };
-    place(ants, antenna(0), 8);
-    place(pots, chimneyPot(0), 5);
-    place(lamps, lampPost(0), 0);
-    placeFront(benches, bench(0), 'bench');
-    placeFront(planters, planter(0), 'planter');
-    placeFront(awnings, awning(0), 'awning');
   }
+  const propMesh = props.finish();
+  if (propMesh) { root.add(propMesh); batches.push(propMesh); stats.instancedMeshes++; }
+
+  // River, quays and towpaths; city wall with gates; hills and mountains.
+  const river = riverGeometry(plan);
+  const riverWater = new THREE.Mesh(river.water, cityMaterial('water')); riverWater.position.y = 0.035; root.add(riverWater);
+  const quay = new THREE.Mesh(mergeGeometries([river.quay, river.path]), new THREE.MeshStandardMaterial({ color: '#bdb39f', roughness: 0.95 })); quay.receiveShadow = quality !== 'low'; root.add(quay);
+  if (plan.riverBridges.length) {
+    const rb = new THREE.InstancedMesh(st.riverBridge, solid, plan.riverBridges.length);
+    plan.riverBridges.forEach((b, i) => { q.setFromAxisAngle(up, b.rotY); m4.compose(pos.set(b.x, 0, b.z), q, sc.set(b.w / 6.4, 1, 1)); rb.setMatrixAt(i, m4); });
+    rb.computeBoundingSphere(); root.add(rb); stats.instancedMeshes++;
+  }
+  const wall = new THREE.Mesh(st.wall, solid); wall.name = 'cityWall'; wall.castShadow = quality === 'high'; wall.receiveShadow = quality !== 'low'; root.add(wall);
+  if (st.terrain.hills) { const hills = new THREE.Mesh(st.terrain.hills, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, flatShading: true })); hills.name = 'hills'; root.add(hills); }
+  if (st.terrain.mountains) { const range = new THREE.Mesh(st.terrain.mountains, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, flatShading: true, fog: false })); range.name = 'mountains'; root.add(range); }
+
+  // Ambient life and night lights.
+  const life = buildLife(plan, solid, { quality });
+  if (life) { root.add(life); stats.movers = life.userData.life.count; }
+  const night = buildNightLights(plan, placed, claimedLots);
+  root.add(night);
 
   // Wonders: district anchors, each on a paved pad that hides the roads under it.
   const pad = new THREE.MeshStandardMaterial({ color: '#d6cdb6', roughness: 0.95 });
@@ -412,28 +384,14 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
   for (const w of plan.wonders) {
     const parts = wonderParts(w.kind); if (!parts || !parts.solid) continue;
     const g = new THREE.Group(); g.position.set(w.x, 0, w.z); g.rotation.y = w.rotY;
+    if (w.kind !== 'lighthouse') {
     const base2 = new THREE.Mesh(new THREE.BoxGeometry(Math.abs(Math.sin(w.rotY)) > 0.5 ? w.d : w.w, 0.08, Math.abs(Math.sin(w.rotY)) > 0.5 ? w.w : w.d), pad); base2.position.y = 0.04; base2.receiveShadow = quality !== 'low'; g.add(base2);
+    }
     const body = new THREE.Mesh(parts.solid, solid); body.castShadow = quality === 'high'; body.receiveShadow = quality === 'high'; g.add(body);
     const meshes = [body];
     if (parts.glass) { const glass = new THREE.Mesh(parts.glass, cityMaterial('glass')); g.add(glass); meshes.push(glass); }
-    const info = { wonder: true, id: w.id, name: parts.name || w.name, dept: '奇观 · ' + ({ chinese: '宫城', greek: '希腊学园', roman: '罗马工程区', modern: '现代都会' }[w.district] || ''), state: '', label: '' };
+    const info = { wonder: true, id: w.id, name: parts.name || w.name, dept: '奇观 · ' + ({ chinese: '宫城', greek: '希腊学园', roman: '罗马工程区', modern: '现代都会', harbour: '港口' }[w.district] || ''), state: '', label: '' };
     for (const m of meshes) { m.userData.info = info; pickables.push(m); }
-    // Ceremonial trees / lantern posts around the plaza rim (instanced per wonder, cheap).
-    if (quality !== 'low') {
-      const rim = Math.max(w.w, w.d) * 0.48;
-      for (let i = 0; i < 8; i++) {
-        const a = (i / 8) * Math.PI * 2 + 0.2;
-        const lx = Math.cos(a) * rim, lz = Math.sin(a) * rim;
-        const tg = tree(i % 3);
-        if (tg) {
-          const tm = new THREE.Mesh(tg, solid);
-          tm.position.set(lx, 0, lz);
-          tm.scale.setScalar(1.1 + (i % 3) * 0.15);
-          tm.castShadow = quality === 'high';
-          g.add(tm);
-        }
-      }
-    }
     root.add(g);
     wonders.push({ id: w.id, name: info.name, group: g, height: parts.height || 20, radius: parts.radius || 20, x: w.x, z: w.z });
     stats.wonders.push({ id: w.id, name: info.name, triangles: Math.round(parts.solid.getAttribute('position').count / 3 + (parts.glass ? parts.glass.getAttribute('position').count / 3 : 0)) });
@@ -447,5 +405,13 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
   }
 
   scene.add(root);
-  return { root, plan, wonders, stats: { ...stats, fillerKinds: [...stats.fillerKinds] } };
+  // Per frame: refresh LOD/culling of the batches (only does work when the camera moved) and animate life.
+  let lodScale = 1;
+  function update(camera, dt) {
+    for (const b of batches) { b.userData.lod.setScale(lodScale); b.userData.lod.update(camera); }
+    if (life) life.userData.life.update(dt, camera);
+  }
+  function setNight(on) { night.visible = !!on; }
+  function lodStats() { return Object.fromEntries(batches.map((b) => [b.name, b.userData.lod.stats()])); }
+  return { root, plan, wonders, update, setNight, lodStats, setLodScale: (k) => { lodScale = k; }, stats: { ...stats, fillerKinds: [...stats.fillerKinds] } };
 }

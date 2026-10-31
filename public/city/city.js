@@ -88,7 +88,7 @@ export function createCity(container, roster, opts = {}) {
 
   const plan = computeMetropolis();
   const layout = computeCity(roster, { claim: (bots) => assignClaims(bots, plan) });
-  const CITY_R = plan.outerEdge || plan.outerR; // framed city (countryside fades beyond)
+  const CITY_R = (plan.wallR || plan.outerEdge || plan.outerR) + 10; // framed walled city (suburbs, farmland and hills fade beyond)
   if (shadows) {
     sun.shadow.mapSize.set(2048, 2048);
     const sc = CITY_R + 16;
@@ -413,7 +413,7 @@ export function createCity(container, roster, opts = {}) {
   }
 
   // ---------- camera framing ----------
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.5, 2400);
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.5, 3200);
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true; controls.dampingFactor = 0.08;
   controls.maxPolarAngle = Math.PI * 0.44; controls.minDistance = 12;
@@ -440,7 +440,7 @@ export function createCity(container, roster, opts = {}) {
     };
     let dist = 60;
     for (let it = 0; it < 4; it++) {
-      let lo = 10, hi = 600;
+      let lo = 10, hi = 1600;
       for (let k = 0; k < 40; k++) {
         const mid = (lo + hi) / 2, bb = project(mid);
         const sx = (bb.x1 - bb.x0) / (box.x1 - box.x0), sy = (bb.y1 - bb.y0) / (box.y1 - box.y0);
@@ -519,23 +519,47 @@ export function createCity(container, roster, opts = {}) {
     if (s === 'stale' || s === 'disconnected') return '#9c9c9c';
     return null;
   }
+  const MAP_R = (plan.outerEdge || CITY_R) + 20;
+  let minimapBase = null;
   function drawMinimap() {
     if (!minimapCanvas || !minimapOn) return;
     const c = minimapCanvas;
     const w = c.width || c.clientWidth, h = c.height || c.clientHeight;
     if (!w || !h) return;
     const g = c.getContext('2d'); if (!g) return;
-    const R = CITY_R;
+    const R = MAP_R;
     const sx = (x) => (x / R * 0.5 + 0.5) * w;
     const sy = (z) => (-z / R * 0.5 + 0.5) * h;
-    g.clearRect(0, 0, w, h);
-    g.fillStyle = '#c9d2d9'; g.fillRect(0, 0, w, h);
-    const zoneColors = { chinese: '#c65a48', greek: '#5b8def', roman: '#9b59b6', modern: '#16a085', core: '#e2d7b8', water: '#5b8db0' };
-    for (const lot of plan.lots || []) {
-      const zone = lot.district || lot.zone || 'core';
-      g.fillStyle = zoneColors[zone] || '#d8d0bd';
-      g.beginPath(); g.arc(sx(lot.x), sy(lot.z), 2.2, 0, Math.PI * 2); g.fill();
+    // The static map (lots, river, wall, wonders) is painted once per canvas size and then blitted.
+    if (!minimapBase || minimapBase.width !== w || minimapBase.height !== h) {
+      minimapBase = document.createElement('canvas'); minimapBase.width = w; minimapBase.height = h;
+      const b = minimapBase.getContext('2d');
+      b.fillStyle = '#c9d2d9'; b.fillRect(0, 0, w, h);
+      const k = w / (2 * R);
+      if (plan.sea) {
+        b.fillStyle = '#7fa7c2'; b.beginPath();
+        const a0 = THREE.MathUtils.degToRad(plan.sea.from), a1 = THREE.MathUtils.degToRad(plan.sea.to);
+        b.moveTo(sx(plan.sea.shore * Math.sin(a0)), sy(-plan.sea.shore * Math.cos(a0)));
+        for (let i = 0; i <= 16; i++) { const a = a0 + (a1 - a0) * i / 16; b.lineTo(sx(R * 1.5 * Math.sin(a)), sy(-R * 1.5 * Math.cos(a))); }
+        b.lineTo(sx(plan.sea.shore * Math.sin(a1)), sy(-plan.sea.shore * Math.cos(a1))); b.closePath(); b.fill();
+      }
+      const zoneColors = { chinese: '#c65a48', greek: '#5b8def', roman: '#9b59b6', modern: '#16a085', mixed: '#c49a6c', blend: '#b9a58a', suburb: '#a7b48a', industrial: '#9a948a', harbour: '#8ea3ae', country: '#b5bf8f', core: '#e2d7b8' };
+      const dot = Math.max(1.2, 3.2 * k);
+      for (const lot of plan.lots || []) {
+        b.fillStyle = zoneColors[lot.district] || zoneColors[lot.zone] || '#d8d0bd';
+        b.fillRect(sx(lot.x) - dot / 2, sy(lot.z) - dot / 2, dot, dot);
+      }
+      b.strokeStyle = '#5b8db0'; b.lineCap = 'round';
+      for (const leg of plan.river?.legs || []) {
+        b.lineWidth = Math.max(1.5, plan.river.half * 2 * k); b.beginPath();
+        leg.pts.forEach(([x, z], i) => (i ? b.lineTo(sx(x), sy(z)) : b.moveTo(sx(x), sy(z)))); b.stroke();
+      }
+      if (plan.wallR) { b.strokeStyle = '#6f675c'; b.lineWidth = Math.max(1, 3 * k); b.beginPath(); b.arc(sx(0), sy(0), plan.wallR * k, 0, Math.PI * 2); b.stroke(); }
+      b.fillStyle = '#d9a520';
+      for (const wd of plan.wonders || []) b.fillRect(sx(wd.x) - 2.5, sy(wd.z) - 2.5, 5, 5);
     }
+    g.clearRect(0, 0, w, h);
+    g.drawImage(minimapBase, 0, 0);
     for (const [id, u] of units) {
       g.fillStyle = stateColor(u.state) || u.def.color || '#333';
       g.beginPath(); g.arc(sx(u.porch.x), sy(u.porch.z), 2.6, 0, Math.PI * 2); g.fill();
@@ -560,16 +584,14 @@ export function createCity(container, roster, opts = {}) {
       const r = canvas.getBoundingClientRect();
       const nx = (e.clientX - r.left) / r.width * 2 - 1;
       const ny = (e.clientY - r.top) / r.height * 2 - 1;
-      const target = new THREE.Vector3(nx * CITY_R, 0.5, -ny * CITY_R);
+      const target = new THREE.Vector3(nx * MAP_R, 0.5, -ny * MAP_R);
       glide(target, Math.max(40, camera.position.distanceTo(controls.target)));
     });
   }
   function setMinimap(on) {
     minimapOn = !!on;
-    if (minimapCanvas) {
-      const host = minimapCanvas.parentElement;
-      (host || minimapCanvas).style.display = minimapOn ? '' : 'none';
-    }
+    // Only the minimap canvas itself is toggled: its parent is the whole City stage.
+    if (minimapCanvas) minimapCanvas.style.display = minimapOn ? '' : 'none';
   }
 
   // ---------- tooltip ----------
@@ -649,6 +671,8 @@ export function createCity(container, roster, opts = {}) {
       }
     }
     controls.update();
+    // Fog follows the viewing distance: close views stay crisp and far hills/mountains fade into the horizon.
+    { const camD = camera.position.distanceTo(controls.target); scene.fog.near = Math.max(170, camD * 0.95); scene.fog.far = Math.max(780, camD * 2.35); }
     // In the far overview only the lead keeps its name tag so the core does not turn into a pile of labels.
     const far = camera.position.distanceTo(controls.target) > 150;
     for (const tg of tags) tg.visible = labelsOn && (!far || tg === leadTag);
@@ -705,14 +729,16 @@ export function createCity(container, roster, opts = {}) {
     if (++minimapTick % 4 === 0) drawMinimap();
     renderer.info.reset();
     const t0 = performance.now();
+    camera.updateMatrixWorld();
+    city.update(camera, dt);
     if (composer) composer.render(); else renderer.render(scene, camera);
     frameMs = frameMs * 0.9 + (performance.now() - t0) * 0.1;
   }
   frame();
 
-  function glide(target, dist) {
+  function glide(target, dist, fromDir = null) {
     if (tour) stopTour();
-    const dir = camera.position.clone().sub(controls.target).normalize();
+    const dir = fromDir ? fromDir.clone().normalize() : camera.position.clone().sub(controls.target).normalize();
     tween = { target: target.clone(), pos: target.clone().addScaledVector(dir, dist) };
     userMoved = true;
   }
@@ -731,7 +757,16 @@ export function createCity(container, roster, opts = {}) {
     const p = polar(92, STYLE_ANGLE[style]);
     glide(new THREE.Vector3(p.x, 0, p.z), 120);
   }
-  function focusWonder(id) { const w = city.wonders.find((x) => x.id === id); if (!w) return false; pendingFlash = new THREE.Vector3(w.x, 0.2, w.z); glide(new THREE.Vector3(w.x, Math.min(w.height, 60) * 0.35, w.z), Math.max(70, w.radius * 3.4, Math.min(w.height, 180) * 1.35)); return true; }
+  // Wonders are viewed from their outer side looking back towards the centre, so the city forms the backdrop.
+  function focusWonder(id) {
+    const w = city.wonders.find((x) => x.id === id); if (!w) return false;
+    pendingFlash = new THREE.Vector3(w.x, 0.2, w.z);
+    const out = new THREE.Vector3(w.x, 0, w.z); if (out.lengthSq() < 1) out.set(0, 0, 1); out.normalize();
+    const side = new THREE.Vector3(-out.z, 0, out.x).multiplyScalar(0.45);
+    const dir = out.add(side).normalize().multiplyScalar(Math.cos(0.5)).setY(Math.sin(0.5));
+    glide(new THREE.Vector3(w.x, Math.min(w.height, 60) * 0.35, w.z), Math.min(240, Math.max(70, w.radius * 3.4, Math.min(w.height, 180) * 1.35)), dir);
+    return true;
+  }
   function focusWonderByIndex(i) { const w = city.wonders[i]; if (!w) return false; pendingFlash = new THREE.Vector3(w.x, 0.2, w.z); return focusWonder(w.id); }
   function focusLead() { return layout.lead ? focus(layout.lead.id) : false; }
   function resetCamera() { userMoved = false; tween = null; stopTour(); fit(); }
@@ -753,7 +788,7 @@ export function createCity(container, roster, opts = {}) {
       fill.color.set(nightOn ? '#6f8fc4' : '#a6c8ff');
       fill.intensity = nightOn ? 0.22 : 0.35;
       renderer.toneMappingExposure = nightOn ? 1.32 : 1.05;
-      lamps.visible = nightOn; lanterns.visible = nightOn;
+      lamps.visible = nightOn; lanterns.visible = nightOn; city.setNight(nightOn);
       // Wonders share city-wide materials, so night floodlighting swaps in per-wonder clones instead of editing the shared ones.
       for (const w of city.wonders || []) {
         w.group?.traverse((o) => {
@@ -781,9 +816,13 @@ export function createCity(container, roster, opts = {}) {
     tourWonders, tourAgents, stopTour, setMinimap, bindMinimap,
     get tour() { return tour; },
     wonders: () => city.wonders.map((w) => ({ id: w.id, name: w.name })),
-    perf: () => ({ calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, geometries: renderer.info.memory.geometries, frameMs: +frameMs.toFixed(2), composer: !!composer, ...city.stats, lots: plan.lots.length, claimable: plan.lots.filter((l) => l.claimable).length }),
+    perf: () => ({ calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, geometries: renderer.info.memory.geometries, frameMs: +frameMs.toFixed(2), composer: !!composer, lod: city.lodStats(), ...city.stats, lots: plan.lots.length, claimable: plan.lots.filter((l) => l.claimable).length }),
     // Debug/screenshot helper: put the camera at an exact spot looking at a target.
-    view: (pos, target) => { tween = null; userMoved = true; camera.position.set(...pos); controls.target.set(...target); controls.maxDistance = 2000; controls.update(); },
+    view: (pos, target) => {
+      tween = null; userMoved = true; camera.position.set(...pos); controls.target.set(...target); controls.maxDistance = 2000; controls.update();
+      const dist = camera.position.distanceTo(controls.target); scene.fog.near = Math.max(90, dist * 0.95); scene.fog.far = Math.max(340, dist * 2.35);
+    },
+    setLodScale: (k) => city.setLodScale(Number(k) || 1),
     drawStats: () => {
       const by = {}; let total = 0, cast = 0;
       scene.traverseVisible((o) => { if (!o.isMesh && !o.isSprite && !o.isLine && !o.isPoints) return; total++; if (o.castShadow) cast++; let top = o; while (top.parent && top.parent !== scene) top = top.parent; const k = top.name || (top.type + (top.children.length > 8 ? ':' + top.uuid.slice(0, 4) : '')); by[k] = (by[k] || 0) + 1; });
