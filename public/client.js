@@ -1584,7 +1584,7 @@ function watchQueueEvents(key){
 window.addEventListener('pagehide',()=>{queueEvents?.close();queueEvents=null;queueEventsThread=''})
 window.addEventListener('pageshow',()=>{if(current)watchQueueEvents(current.id)})
 
-$('#space-town').onclick=()=>current?.kind==='group'&&componentType(current)==='task'?openConversationControl('#work-panel').catch(error=>toast(error.message)):window.dispatchEvent(new CustomEvent('tao-town-open',{detail:{id:current?.kind==='group'?current.id:undefined,tab:'overview'}}))
+$('#space-town').onclick=()=>current?.kind==='group'&&componentType(current)==='task'?Promise.resolve().then(()=>openConversationControl('#work-panel')).catch(error=>toast(error.message)):window.dispatchEvent(new CustomEvent('tao-town-open',{detail:{id:current?.kind==='group'?current.id:undefined,tab:'overview'}}))
 $('#space-chat').onclick=()=>$('#prompt').focus()
 $('#space-memory-open').onclick=()=>window.dispatchEvent(new CustomEvent('tao-town-open',{detail:{id:current?.id,tab:'memory'}}))
 $('#town-open').onclick=()=>window.dispatchEvent(new CustomEvent('tao-town-open',{detail:{id:current?.kind==='group'?current.id:undefined}}))
