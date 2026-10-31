@@ -92,6 +92,18 @@ export function fileSignature(file: string): string {
   try { const stat = fs.statSync(file, { bigint: true }); return `${stat.ino}:${stat.size}:${stat.mtimeNs}:${stat.ctimeNs}` }
   catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') return ''; throw error }
 }
+// Append-only files (JSONL histories, audit logs) keep the atomic-rename guarantee without decoding and
+// re-encoding the whole file: the kernel copies the current bytes to the temp file, the new line is appended,
+// and only a complete temp file replaces the original.
+export function appendAtomic(file: string, content: string) {
+  fs.mkdirSync(path.dirname(file), { recursive: true })
+  const tmp = file + '.' + crypto.randomUUID() + '.tmp'
+  try {
+    try { fs.copyFileSync(file, tmp) } catch (error) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error }
+    fs.appendFileSync(tmp, content, { mode: 0o600 })
+    fs.renameSync(tmp, file)
+  } finally { if (fs.existsSync(tmp)) fs.unlinkSync(tmp) }
+}
 export function json(file: string, value: unknown) { atomic(file, JSON.stringify(value, null, 2) + '\n') }
 const corruptCopies = new Set<string>()
 export function readJsonSafe<T>(file: string, fallback: T): T {
@@ -628,7 +640,7 @@ export class Store {
     atomic(file, next)
     const auditFile = path.join(path.dirname(file), 'memory-events.jsonl')
     const event = { at: new Date().toISOString(), sourceSessionId: key, sourceMessageId: sourceId, agentId, scope, operation: append ? 'append' : 'edit' }
-    atomic(auditFile, (fs.existsSync(auditFile) ? fs.readFileSync(auditFile, 'utf8') : '') + JSON.stringify(event) + '\n')
+    appendAtomic(auditFile, JSON.stringify(event) + '\n')
     return true
   }
   memoryItems(key: string, agentId: string, scope: MemoryScope): MemoryItem[] {
@@ -816,10 +828,13 @@ export class Store {
     const session = this.session(key)
     if(session.archivedAt&&status!=='interrupted')throw new HttpError(410,'群聊已删除，停止发布新消息')
     const at = new Date().toISOString()
-    // Rewrite the small tail via atomic rename: a crash cannot leave a half JSON line.
+    // Append through a complete temp copy and atomic rename: a crash cannot leave a half JSON line.
     const file = this.file('chats', id(key), 'messages.jsonl')
     const message: Message = { id: messageId ? id(messageId) : crypto.randomUUID(), role, content, at, status, ...extra }
-    atomic(file, this.text('chats', key, 'messages.jsonl') + JSON.stringify(message) + '\n')
+    const before = fileSignature(file), cached = this.messageCache.get(file)
+    appendAtomic(file, JSON.stringify(message) + '\n')
+    // Extend a current cache entry instead of reparsing the whole history on the next read.
+    if (cached && before && cached.signature === before) this.messageCache.set(file, { signature: fileSignature(file), messages: [...cached.messages, { ...message }] })
     // Persist the stored record, not the active-member view, so archived members return when restored.
     const stored = this.storedSession(key)
     stored.updatedAt = at

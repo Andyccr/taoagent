@@ -40,3 +40,20 @@ test('redaction picks up a credential saved after earlier redactions', () => {
     assert.ok(!redact(store, 'x cache-go-shared-secret').includes('cache-go-shared-secret'))
   } finally { fs.rmSync(root, { recursive: true, force: true }) }
 })
+
+test('appends keep complete JSONL lines, extend the cached history and leave no temp files', () => {
+  const root = temp()
+  try {
+    const store = new Store(root)
+    store.saveAgent({ id: 'peer', name: 'Peer', modelId: '' }, 'r', '')
+    const session = store.saveGroup('append', ['main', 'peer']), file = store.file('chats', session.id, 'messages.jsonl')
+    for (let index = 0; index < 5; index++) store.append(session.id, 'user', 'line ' + index)
+    assert.equal(store.messages(session.id).length, 5)
+    const appended = store.append(session.id, 'user', 'line 5')
+    appended.content = 'changed by caller'
+    assert.deepEqual(store.messages(session.id).map(message => message.content).slice(-2), ['line 4', 'line 5'])
+    assert.deepEqual(new Store(root).messages(session.id).map(message => message.content), store.messages(session.id).map(message => message.content))
+    assert.ok(fs.readFileSync(file, 'utf8').split('\n').slice(0, -1).every(line => JSON.parse(line)))
+    assert.deepEqual(fs.readdirSync(path.dirname(file)).filter(name => name.endsWith('.tmp')), [])
+  } finally { fs.rmSync(root, { recursive: true, force: true }) }
+})
