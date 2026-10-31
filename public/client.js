@@ -234,6 +234,41 @@ const seenApprovals = new Set()
 const expandedActionChats = new Set()
 function visibleActions(actions,expanded=false){return expanded?actions:actions.filter((action,index)=>!['complete','failed','denied'].includes(action.status)||index>=actions.length-12)}
 function appendReceipt(parent,text,label){const preview=document.createElement('pre');preview.textContent=text.length>12000?text.slice(0,12000)+'\n\n[仅显示前12000字符，可展开完整内容]':text;parent.append(preview);if(text.length>12000){const expand=document.createElement('button');expand.textContent=`查看完整${label}（${text.length} 字符）`;expand.onclick=()=>{preview.textContent=text;expand.remove()};parent.append(expand)}}
+async function taskRequest(key,task,row,payload){
+  const controls=[...row.querySelectorAll('button,select')].map(control=>({control,disabled:control.disabled}));controls.forEach(({control})=>{control.disabled=true})
+  try{await api(`/api/chats/${key}/tasks/${task.id}`,'POST',{...payload,expectedStatus:task.status});const box=$('#work-items');delete box.dataset.fingerprint;await refreshWork()}
+  catch(error){toast(error.message);controls.forEach(({control,disabled})=>{control.disabled=disabled||isBusy()})}
+}
+function appendTaskControls(row,task,key){
+  const actions=document.createElement('div');actions.className='task-actions'
+  const busy=isBusy(),guard=busy?'本轮协作结束后可修改':''
+  const button=(label,run)=>{const control=document.createElement('button');control.type='button';control.textContent=label;control.disabled=busy;if(guard)control.title=guard;control.onclick=()=>{if(!busy)run()};actions.append(control);return control}
+  if(task.status==='pending'){
+    const select=document.createElement('select');select.setAttribute('aria-label','改派给');select.disabled=busy;if(guard)select.title=guard
+    for(const id of current.memberIds||[])if(id!==task.assigneeId)select.add(new Option(agentName(id),id))
+    actions.append(select)
+    const reassign=button('改派',()=>{if(select.value)return taskRequest(key,task,row,{action:'reassign',assigneeId:select.value})})
+    if(!select.options.length)reassign.disabled=true
+    button('取消',()=>{const reason=prompt('取消原因（可留空）');if(reason===null)return;return taskRequest(key,task,row,{action:'cancel',reason})})
+  }else if(task.status==='cancelled'){
+    button('恢复',()=>taskRequest(key,task,row,{action:'reopen'}))
+  }else if(task.review?.status==='awaiting_review'){
+    button('验收通过',()=>{const reason=prompt('验收依据（可留空）');if(reason===null)return;return taskRequest(key,task,row,{action:'review',decision:'accepted',reason})})
+    button('要求返工',()=>{const reason=prompt('返工原因');if(reason===null)return;return taskRequest(key,task,row,{action:'review',decision:'changes_requested',reason})})
+  }
+  if(actions.childElementCount)row.append(actions)
+}
+function appendTaskCreateForm(box,key){
+  const form=document.createElement('form');form.className='task-create';form.setAttribute('aria-label','新建任务')
+  const title=document.createElement('input');title.name='title';title.maxLength=200;title.required=true;title.placeholder='任务标题'
+  const assignee=document.createElement('select');assignee.name='assigneeId';assignee.setAttribute('aria-label','负责人');for(const id of current.memberIds||[])assignee.add(new Option(agentName(id),id))
+  const criteria=document.createElement('input');criteria.name='acceptanceCriteria';criteria.maxLength=2000;criteria.placeholder='验收标准（可选）'
+  const label=document.createElement('label');label.className='check';const review=document.createElement('input');review.type='checkbox';review.name='requireReview';label.append(review,document.createTextNode('需要验收'))
+  const submit=document.createElement('button');submit.type='submit';submit.textContent='新建任务';submit.disabled=isBusy();if(isBusy())submit.title='本轮协作结束后可修改'
+  form.append(title,assignee,criteria,label,submit)
+  form.onsubmit=handle(async()=>{const data={title:title.value.trim(),assigneeId:assignee.value,requireReview:review.checked},acceptanceCriteria=criteria.value.trim();if(acceptanceCriteria)data.acceptanceCriteria=acceptanceCriteria;await api(`/api/chats/${key}/tasks`,'POST',data);const box=$('#work-items');delete box.dataset.fingerprint;await refreshWork()})
+  box.append(form)
+}
 async function refreshWork(){
   if(!current||workLoading.has(current.id))return
   const key=current.id;workLoading.add(key)
@@ -241,9 +276,9 @@ async function refreshWork(){
     const [actions,tasks]=await Promise.all([api(`/api/chats/${key}/actions`),api(`/api/chats/${key}/tasks`)])
     if(current?.id!==key)return
     inspectorWork={key,actions,tasks};renderInspector()
-    const expanded=expandedActionChats.has(key),box=$('#work-items'), fingerprint=JSON.stringify([key,actions,tasks,expanded,state.agents.map(agent=>[agent.id,agent.name])]);if(box.dataset.fingerprint===fingerprint)return;box.dataset.fingerprint=fingerprint;box.replaceChildren();$('#work-panel').hidden=false;if(!actions.length&&!tasks.length){const empty=document.createElement('p');empty.className='help';empty.textContent='当前没有待处理任务或审批。';box.append(empty)}
-    syncAttention(actions); $('#work-count').textContent=`${tasks.filter(task=>task.status!=='complete'||task.requireReview&&task.review?.status!=='accepted').length} 待办 · ${actions.filter(action=>['pending','uncertain'].includes(action.status)).length} 待审批`
-    for(const task of tasks){const row=document.createElement('div'),title=document.createElement('p');title.textContent=`${task.review?.status==='awaiting_review'?'待验收':task.review?.status==='changes_requested'?'待返工':task.status==='complete'?'✓':'○'} ${task.title} · ${agentName(task.assigneeId)}`;row.append(title);if(task.acceptanceCriteria){const criteria=document.createElement('p');criteria.textContent='验收标准：'+task.acceptanceCriteria;row.append(criteria)}if(task.review?.reason){const reason=document.createElement('p');reason.textContent='验收意见：'+task.review.reason;row.append(reason)}if(task.result)appendReceipt(row,task.result,'任务结果');box.append(row)}
+    const taskGroup=current.kind==='group'&&componentType(current)==='task',expanded=expandedActionChats.has(key),box=$('#work-items'), fingerprint=JSON.stringify([key,taskGroup,isBusy(),current.memberIds,actions,tasks,expanded,state.agents.map(agent=>[agent.id,agent.name])]);if(box.dataset.fingerprint===fingerprint)return;box.dataset.fingerprint=fingerprint;box.replaceChildren();$('#work-panel').hidden=false;if(taskGroup)appendTaskCreateForm(box,key);if(!actions.length&&!tasks.length){const empty=document.createElement('p');empty.className='help';empty.textContent='当前没有待处理任务或审批。';box.append(empty)}
+    syncAttention(actions);const pendingTasks=tasks.filter(task=>task.status!=='cancelled'&&(task.status!=='complete'||task.requireReview&&task.review?.status!=='accepted')); $('#work-count').textContent=`${pendingTasks.length} 待办 · ${actions.filter(action=>['pending','uncertain'].includes(action.status)).length} 待审批`
+    for(const task of tasks){const row=document.createElement('div'),title=document.createElement('p');title.textContent=`${task.status==='cancelled'?'已取消':task.review?.status==='awaiting_review'?'待验收':task.review?.status==='changes_requested'?'待返工':task.status==='complete'?'✓':'○'} ${task.title} · ${agentName(task.assigneeId)}`;row.append(title);if(task.status==='cancelled'){const cancelled=document.createElement('p');cancelled.className='help';cancelled.textContent='已取消'+(task.cancelledReason?'：'+task.cancelledReason:'');row.append(cancelled)}if(task.acceptanceCriteria){const criteria=document.createElement('p');criteria.textContent='验收标准：'+task.acceptanceCriteria;row.append(criteria)}if(task.review?.reason){const reason=document.createElement('p');reason.textContent='验收意见：'+task.review.reason;row.append(reason)}if(task.result)appendReceipt(row,task.result,'任务结果');if(taskGroup)appendTaskControls(row,task,key);box.append(row)}
     for(const action of visibleActions(actions,expanded)){
       const row=document.createElement('div');row.className='approval';const title=document.createElement('strong');title.textContent=`${agentName(action.agentId)} · ${action.name} · ${{pending:'等待批准',approved:'已批准',running:'执行中',complete:'已执行',failed:'失败',denied:'已拒绝',uncertain:'执行结果不确定，重试可能重复副作用'}[action.status]}`
       const args=document.createElement('pre');args.textContent=JSON.stringify(action.preview?{operation:action.preview,arguments:action.args}:action.target?{arguments:action.args,server:action.target}:action.args,null,2);row.append(title,args)
