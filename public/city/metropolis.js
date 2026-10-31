@@ -242,7 +242,7 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
   const st = staticGeometry();
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), sc = new THREE.Vector3(1, 1, 1), pos = new THREE.Vector3();
 
-  const base = new THREE.Mesh(new THREE.CircleGeometry(plan.outerR + 1100, 96).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: '#aeb89a', roughness: 1 }));
+  const base = new THREE.Mesh(new THREE.CircleGeometry(plan.outerR + 1100, 96).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: '#aeb89a', roughness: 1, polygonOffset: true, polygonOffsetFactor: 2, polygonOffsetUnits: 8 }));
   base.position.y = 0.002; base.receiveShadow = quality !== 'low'; root.add(base);
 
   const patchGroups = new Map();
