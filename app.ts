@@ -36,6 +36,12 @@ function groupDetails(input: Record<string, unknown>): Pick<Session, 'purpose' |
   return { ...(input.componentKind===undefined?{}:{componentKind:input.componentKind as import('./store.ts').ComponentKind}), ...(input.runtimeLimits===undefined?{}:{runtimeLimits:runtimeLimits(input.runtimeLimits)}), ...(input.purpose === undefined ? {} : { purpose: string(input.purpose) }), ...(roles ? { memberRoles: roles as Record<string, string> } : {}), ...(mode ? { replyMode: mode } : {}), ...(input.discussionMode===undefined?{}:{discussionMode:input.discussionMode as 'open'|'directed'|'brainstorm'}), ...(input.coordinatorId === undefined ? {} : { coordinatorId: string(input.coordinatorId) }) }
 }
 
+export function logFailure(store: Store, where: string, error: unknown) {
+  let text = error instanceof Error ? error.stack || error.message : String(error)
+  try { text = redact(store, text) } catch { text = error instanceof Error ? error.name : 'error' }
+  console.error(`[${new Date().toISOString()}] ${where}: ${text}`)
+}
+
 export function createApp(home = path.join(ROOT, 'home'), options: {seed?: boolean} = {}) {
   const store = new Store(home)
   if(options.seed!==false)seedTeam(store)
@@ -412,6 +418,8 @@ export function createApp(home = path.join(ROOT, 'home'), options: {seed?: boole
       }
       throw new HttpError(404, '路径不存在')
     } catch (error) {
+      // Unexpected failures were previously invisible; keep a redacted trace in the local console.
+      if (!(error instanceof HttpError) || error.status >= 500) logFailure(store, (req.method || 'GET') + ' ' + (req.url || '/').split('?')[0], error)
       if (!res.headersSent) send(res, { error: error instanceof HttpError ? error.message : '读取或写入失败，请检查数据格式与目录权限' }, error instanceof HttpError ? error.status : 500)
       else res.end()
     }
@@ -431,6 +439,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   })
   app.server.on('listening',()=>{const address=app.server.address(),actualPort=address&&typeof address==='object'?address.port:port,url=`http://127.0.0.1:${actualPort}`,version=string(object(JSON.parse(fs.readFileSync(path.join(ROOT,'package.json'),'utf8'))).version);console.log(`Taoagent ${version} · Pi → ${url}\n数据 → ${app.store.root}\n关闭此窗口或 Ctrl+C 退出。`);if(process.env.TAOAGENT_LAUNCHER==='1')console.log('TAOAGENT_READY '+JSON.stringify({port:actualPort}));if(process.platform==='win32'&&!process.env.TAOAGENT_NO_OPEN){const browser=spawn('explorer.exe',[url],{windowsHide:true,stdio:'ignore'});browser.on('error',()=>{});browser.unref()}})
   app.server.listen(port, '127.0.0.1')
+  process.on('unhandledRejection',reason=>logFailure(app.store,'unhandled rejection',reason))
   const shutdown=()=>{for(const controller of app.active.values())controller.abort();app.server.close();setTimeout(()=>process.exit(0),2500).unref()}
   process.once('SIGINT',shutdown);process.once('SIGTERM',shutdown);if(process.platform==='win32')process.once('SIGBREAK',shutdown)
 }

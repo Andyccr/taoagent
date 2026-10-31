@@ -67,3 +67,21 @@ test('a shell command that ignores SIGTERM is force-stopped and releases the ext
     assert.equal(fs.existsSync(store.file('.tool-lock')), false)
   } finally { fs.rmSync(root, { recursive: true, force: true }) }
 })
+
+test('unexpected server failures are logged locally with credentials redacted, expected 4xx errors are not', async () => {
+  const { createApp } = await import('../app.ts')
+  const { root } = fixture(), app = createApp(root, { seed: false }), logged: string[] = [], original = console.error
+  console.error = (...values: unknown[]) => { logged.push(values.join(' ')) }
+  try {
+    app.store.saveModel({ name: 'm', model: 'm', baseUrl: 'http://127.0.0.1:1', apiKey: 'stability-secret-key' })
+    app.server.listen(0, '127.0.0.1'); await new Promise(resolve => app.server.once('listening', resolve))
+    const address = app.server.address(), base = `http://127.0.0.1:${typeof address === 'object' && address ? address.port : 0}`
+    assert.equal((await fetch(base + '/api/nothing')).status, 404)
+    assert.equal(logged.length, 0)
+    fs.writeFileSync(app.store.file('account.json'), '{ broken stability-secret-key')
+    assert.equal((await fetch(base + '/api/state')).status, 500)
+    assert.equal(logged.length, 1)
+    assert.match(logged[0], /GET \/api\/state/)
+    assert.ok(!logged[0].includes('stability-secret-key'))
+  } finally { console.error = original; app.server.closeAllConnections(); app.server.close(); fs.rmSync(root, { recursive: true, force: true }) }
+})
