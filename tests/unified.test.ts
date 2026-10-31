@@ -6,7 +6,7 @@ import vm from 'node:vm'
 import {Store,type Model,type Turn} from '../store.ts'
 import {lifeState,changeLife,recordLife,saveLifeMember,lifeContext,touchLife,rememberLifeEpisode,unifiedMemory,saveLifePolicy,observeContribution} from '../social-state.ts'
 
-function fixture(){fs.mkdirSync('.test-tmp',{recursive:true});const root=fs.mkdtempSync(path.resolve('.test-tmp','unified-')),store=new Store(root);store.saveAgent({id:'peer',name:'伙伴'},'独立判断','PRIVATE_NOTE');const group=store.saveGroup('统一空间',['main','peer'],undefined,{replyMode:'collective'});return {root,store,key:group.id}}
+function fixture(){fs.mkdirSync('.test-tmp',{recursive:true});const root=fs.mkdtempSync(path.resolve('.test-tmp','unified-')),store=new Store(root);store.saveAgent({id:'peer',name:'伙伴'},'独立判断','PRIVATE_NOTE');const group=store.saveGroup('统一空间',['main','peer'],undefined,{replyMode:'collective',discussionMode:'open'});return {root,store,key:group.id}}
 test('large read cursors and oversized memories never erase independent identity or smaller relevant experiences',()=>{
   const f=fixture()
   try{

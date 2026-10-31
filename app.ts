@@ -9,7 +9,7 @@ import { workspaceConversations, searchWorkspace } from './workspace.ts'
 import { enqueueMessage, changeQueue, queueSnapshot, queueSummary, pauseQueue, createQueueScheduler } from './queue.ts'
 import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
-import { Store, HttpError, object, string, id, atomic, json, type Session, runtimeLimits } from './store.ts'
+import { Store, HttpError, object, string, id, atomic, json, componentKind, type Session, runtimeLimits } from './store.ts'
 import { runConversation, steerConversation, tasks } from './runtime.ts'
 import { actions, decide, integrations, saveIntegrations, redact, createRedactor } from './execution.ts'
 import { seedTeam } from './defaults.ts'
@@ -123,11 +123,11 @@ export function createApp(home = path.join(ROOT, 'home'), options: {seed?: boole
       if(route==='/api/city'&&method==='PUT'){send(res,saveCity(store,input));return}
       if(route==='/api/city/room'&&method==='POST'){send(res,cityRoom(store));return}
       if(route==='/api/town'&&method==='GET'){
-        send(res,{spaces:store.sessions().filter(item=>item.kind==='group'&&!item.archivedAt&&item.componentKind!=='chat'&&item.componentKind!=='task').map(item=>({id:item.id,title:item.title,memberIds:store.groupMembers(item.id),adopted:!!store.text('chats',item.id,'social','state.json'),enabled:lifeState(store,item.id).policy.enabled,running:busy(item.id)})),agents:store.agents().filter(item=>!item.archivedAt).map(item=>({id:item.id,name:item.name,background:item.background,responsibilities:item.responsibilities}))});return
+        send(res,{spaces:store.sessions().filter(item=>item.kind==='group'&&!item.archivedAt&&componentKind(item)==='emergent').map(item=>({id:item.id,title:item.title,memberIds:store.groupMembers(item.id),adopted:!!store.text('chats',item.id,'social','state.json'),enabled:lifeState(store,item.id).policy.enabled,running:busy(item.id)})),agents:store.agents().filter(item=>!item.archivedAt).map(item=>({id:item.id,name:item.name,background:item.background,responsibilities:item.responsibilities}))});return
       }
       if(route==='/api/town/create'&&method==='POST'){
         if(!Array.isArray(input.memberIds)||!input.memberIds.length||input.memberIds.some(value=>typeof value!=='string'))throw new HttpError(400,'请选择至少一位成员')
-        const group=store.saveGroup(string(input.name)||'日常广场',input.memberIds as string[],undefined,{replyMode:'collective',discussionMode:'open',spaceKind:input.memberIds.length===1?'solo':'social',purpose:string(input.purpose)})
+        const group=store.saveGroup(string(input.name)||'日常广场',input.memberIds as string[],undefined,{replyMode:'collective',discussionMode:'open',componentKind:'emergent',spaceKind:input.memberIds.length===1?'solo':'social',purpose:string(input.purpose)})
         saveLifePolicy(store,group.id,{expected:'new',enabled:false});send(res,{id:group.id});return
       }
       const townRoute=route.match(/^\/api\/town\/([a-zA-Z0-9_-]+)(?:\/(policy|member|agenda|note|life|wake|pause|memory|brief))?$/)

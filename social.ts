@@ -1,5 +1,5 @@
 import crypto from 'node:crypto'
-import { Store, HttpError, json, type PromptMessage } from './store.ts'
+import { Store, HttpError, json, componentKind, type PromptMessage } from './store.ts'
 import { piText } from './pi.ts'
 import { runConversation } from './runtime.ts'
 import { changeLife, lifeState, lifeDay, quietLife, lifeRunOwned, chargeLifeCall, finishLifeRun, recordLife, lifeTurnUsage, touchLife, type LifeRun, type LifeState } from './social-state.ts'
@@ -37,7 +37,12 @@ export function createLifeScheduler(store:Store,active:Map<string,AbortControlle
       const groups=store.sessions().filter(item=>item.kind==='group'&&!item.archivedAt&&(!requestedKey||item.id===requestedKey))
       for(const session of groups){
         const key=session.id;if(active.has(key)||store.isRunning(key)||!canRun(key))continue
-        if(session.componentKind==='chat')continue
+        const kind=componentKind(session)
+        if(kind!=='emergent'&&kind!=='city'){
+          const disabled=lifeState(store,key)
+          if(disabled.policy.enabled)changeLife(store,key,latest=>{latest.policy.enabled=false;latest.pauseReason='已转为任务组或纯聊天，自主日常已停止'})
+          continue
+        }
         const state=lifeState(store,key)
         // Recovered operations are never replayed automatically.
         const abandoned=state.runs.find(run=>run.status==='running'&&(!alive(run.pid)||run.pid===process.pid&&!lifeRunOwned(run.id)))

@@ -11,7 +11,7 @@ import {createApp} from '../app.ts'
 import {runConversation} from '../runtime.ts'
 import {portableZip} from '../portable.ts'
 
-function fixture(){fs.mkdirSync('.test-tmp',{recursive:true});const root=fs.mkdtempSync(path.resolve('.test-tmp','social-')),store=new Store(root);store.saveAgent({id:'peer',name:'伙伴'},'独立判断','PRIVATE_PEER_MEMORY');const group=store.saveGroup('共同生活',['main','peer'],undefined,{replyMode:'collective'});return {root,store,key:group.id}}
+function fixture(){fs.mkdirSync('.test-tmp',{recursive:true});const root=fs.mkdtempSync(path.resolve('.test-tmp','social-')),store=new Store(root);store.saveAgent({id:'peer',name:'伙伴'},'独立判断','PRIVATE_PEER_MEMORY');const group=store.saveGroup('共同生活',['main','peer'],undefined,{replyMode:'collective',discussionMode:'open'});return {root,store,key:group.id}}
 function enable(store:Store,key:string,extra:Record<string,unknown>={}){saveLifePolicy(store,key,{expected:lifeState(store,key).revision,enabled:true,quietStart:0,quietEnd:0,...extra})}
 async function listen(server:http.Server){server.listen(0,'127.0.0.1');await once(server,'listening');const address=server.address();assert(address&&typeof address==='object');return 'http://127.0.0.1:'+address.port}
 async function close(server:http.Server){server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()))}
