@@ -1,10 +1,10 @@
 import { cityConfig } from './components.ts'
 import {improvementSession,spendImprovement,evolvable} from './evolution.ts'
 import crypto from 'node:crypto'
-import { Store, HttpError, json, string, id, readJsonSafe, type Turn, type MemoryScope, type MemoryItem, runtimeLimits, watchMembers } from './store.ts'
+import { Store, HttpError, json, string, id, readJsonSafe, componentKind, type Turn, type MemoryScope, type MemoryItem, runtimeLimits, watchMembers } from './store.ts'
 import { agentTools } from './models.ts'
 import { skills, readSkill, workInstructions } from './work.ts'
-import {type CollaborativeTask,taskSatisfied,discussionUpdates,publicMessage,collaborationHealth} from './collaboration.ts'
+import {type CollaborativeTask,taskSatisfied,taskResolved,discussionUpdates,publicMessage,collaborationHealth} from './collaboration.ts'
 import { runPi, piText, type ToolDefinition, type ProviderUsage } from './pi.ts'
 import { executeExternal } from './execution.ts'
 import { envelope, duplicateDelivery, discussionView, intentLabels, intents, relationshipView, recommendAgents } from './communication.ts'
@@ -14,6 +14,57 @@ import { recordLife, saveLifeAgenda, ownLife, lifeState, observeContribution, ch
 
 export interface Task extends CollaborativeTask {}
 export function tasks(store:Store,key:string):Task[]{return readJsonSafe<Task[]>(store.file('chats',key,'tasks.json'),[])}
+export function userTaskAction(store:Store,key:string,input:Record<string,unknown>){
+  const session=store.session(key)
+  if(session.kind!=='group'||componentKind(session)!=='task')throw new HttpError(400,'请选择工作组')
+  const action=string(input.action),all=tasks(store,key),now=()=>new Date().toISOString()
+  if(action==='create'){
+    const title=string(input.title).trim(),assigneeId=string(input.assigneeId)
+    if(!title||title.length>200)throw new HttpError(400,'任务标题应为1–200字符')
+    if(!assigneeId||!store.groupMembers(key).includes(assigneeId))throw new HttpError(400,'请选择工作组内的成员')
+    const description=string(input.description).trim(),acceptanceCriteria=string(input.acceptanceCriteria).trim()
+    if(description.length>4000)throw new HttpError(400,'任务说明最多4000字符')
+    if(acceptanceCriteria.length>2000)throw new HttpError(400,'验收标准最多2000字符')
+    if(input.requireReview!==undefined&&typeof input.requireReview!=='boolean')throw new HttpError(400,'请选择是否需要验收')
+    const task:Task={id:crypto.randomUUID(),title,fromAgentId:'user',assigneeId,...(description?{description}:{}),...(acceptanceCriteria?{acceptanceCriteria}:{}),requireReview:input.requireReview===true,status:'pending',at:now(),assignmentHistory:[]}
+    all.push(task);json(store.file('chats',key,'tasks.json'),all);return {task,tasks:all}
+  }
+  if(!['cancel','reopen','reassign','review'].includes(action))throw new HttpError(400,'未知任务操作')
+  const taskId=string(input.taskId)
+  if(!taskId)throw new HttpError(400,'请选择任务')
+  const task=all.find(item=>item.id===taskId)
+  if(!task)throw new HttpError(404,'任务不存在')
+  if(typeof input.expectedStatus!=='string'||input.expectedStatus!==task.status)throw new HttpError(409,'任务已被更新，请刷新')
+  if(action==='cancel'){
+    if(task.status!=='pending')throw new HttpError(409,'只有待执行任务可以取消')
+    const reason=string(input.reason).trim()
+    if(reason.length>500)throw new HttpError(400,'取消原因最多500字符')
+    task.status='cancelled'
+    if(reason)task.cancelledReason=reason
+    else delete task.cancelledReason
+  }else if(action==='reopen'){
+    if(task.status!=='cancelled')throw new HttpError(409,'只有已取消任务可以重新打开')
+    task.status='pending';delete task.cancelledReason
+  }else if(action==='reassign'){
+    if(task.status!=='pending')throw new HttpError(409,'只有待执行任务可以调整负责人')
+    const assigneeId=string(input.assigneeId),reason=string(input.reason).trim()
+    if(!assigneeId||!store.groupMembers(key).includes(assigneeId))throw new HttpError(400,'请选择工作组内的成员')
+    if(assigneeId===task.assigneeId)throw new HttpError(400,'请选择另一位成员')
+    if(reason.length>2000)throw new HttpError(400,'交接原因最多2000字符')
+    task.assignmentHistory||=[];task.assignmentHistory.push({assigneeId:task.assigneeId,reason,at:now()});task.assigneeId=assigneeId
+  }else if(action==='review'){
+    if(task.review?.status!=='awaiting_review')throw new HttpError(409,'此任务不在等待验收状态')
+    const decision=string(input.decision),reason=string(input.reason).trim()
+    if(decision!=='accepted'&&decision!=='changes_requested')throw new HttpError(400,'请选择验收结论')
+    if(reason.length>3000)throw new HttpError(400,'验收依据最多3000字符')
+    if(decision==='changes_requested'){
+      task.resultHistory||=[];task.resultHistory.push({result:task.result||'',at:now(),review:task.review});task.status='pending';delete task.result
+    }
+    task.review={status:decision,reviewerId:'user',reason,at:now()}
+  }else throw new HttpError(400,'未知任务操作')
+  json(store.file('chats',key,'tasks.json'),all)
+  return {task,tasks:all}
+}
 function canonical(value:unknown):unknown{return Array.isArray(value)?value.map(canonical):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).sort(([a],[b])=>a.localeCompare(b)).map(([key,item])=>[key,canonical(item)])):value}
 function signature(value:unknown){return crypto.createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex').slice(0,24)}
 const schema=(name:string,description:string,properties:Record<string,unknown>,required:string[]=[]):ToolDefinition=>({name,description,parameters:{type:'object',properties,required,additionalProperties:false}})
@@ -303,7 +354,8 @@ export async function runConversation(store:Store,key:string,content:string,mode
           }else if(name==='complete_task'){
             const all=tasks(store,key),target=all.find(item=>item.id===string(args.taskId));if(!target||target.assigneeId!==agent.id)throw new HttpError(403,'只能完成分配给自己的任务')
             const body=string(args.result).trim();if(!body||body.length>10000)throw new HttpError(400,'结果应为1–10000字符')
-            if(target.dependsOnTaskIds?.some(dependency=>!all.some(item=>item.id===dependency&&taskSatisfied(item))))throw new HttpError(409,'任务依赖尚未完成')
+            if(target.status==='cancelled')throw new HttpError(409,'任务已取消')
+            if(target.dependsOnTaskIds?.some(dependency=>!all.some(item=>item.id===dependency&&taskResolved(item))))throw new HttpError(409,'任务依赖尚未完成')
             if(target.status!=='complete'){result=enqueue(agent.id,target.fromAgentId,`任务 ${target.id} 已提交结果：${body}${target.requireReview?'\n请按验收标准独立检查，用review_task接受或要求返工；提交不等于验收。':''}`,task);target.status='complete';target.result=body;if(target.requireReview)target.review={status:'awaiting_review',at:new Date().toISOString()};json(store.file('chats',key,'tasks.json'),all)}
             result=target;event({type:'tasks',tasks:all})
           }else if(name==='review_task'){
@@ -397,7 +449,9 @@ export async function runConversation(store:Store,key:string,content:string,mode
       if(signal.aborted||fatal){await Promise.all(running.values());throw fatal||new HttpError(499,'已暂停')}
       for(const task of turn.speakers){
         if(running.size>=parallelism)break
-        if(task.status==='pending'&&!running.has(task.agentId)&&!task.dependsOnTaskIds?.some(dependency=>!tasks(store,key).some(item=>item.id===dependency&&taskSatisfied(item))))launch(task.agentId,taskSignal=>runTask(task,taskSignal))
+        const all=tasks(store,key)
+        if(task.status==='pending'&&task.taskId&&all.some(item=>item.id===task.taskId&&item.status==='cancelled')){task.status='skipped';task.error='任务已由用户取消';store.saveTurn(key,turn);continue}
+        if(task.status==='pending'&&!running.has(task.agentId)&&!task.dependsOnTaskIds?.some(dependency=>!all.some(item=>item.id===dependency&&taskResolved(item))))launch(task.agentId,taskSignal=>runTask(task,taskSignal))
       }
       for(const observation of turn.observations||[]){
         if(running.size>=parallelism)break

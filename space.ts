@@ -1,7 +1,7 @@
 import crypto from 'node:crypto'
-import {Store,HttpError} from './store.ts'
+import {Store,HttpError,readJsonSafe} from './store.ts'
 import {lifeState} from './social-state.ts'
-import {type CollaborativeTask,taskSatisfied} from './collaboration.ts'
+import {type CollaborativeTask,taskSatisfied,taskResolved} from './collaboration.ts'
 import {actions} from './execution.ts'
 import {queueSummary} from './queue.ts'
 
@@ -12,10 +12,10 @@ export function spaceBrief(store:Store,key:string) {
   const memberIds=store.groupMembers(key),state=lifeState(store,key)
   const messages=store.messages(key).filter(item=>item.status==='complete'&&!item.kind)
   const messageIds=new Set(messages.map(item=>item.id))
-  const allTasks=JSON.parse(store.text('chats',key,'tasks.json')||'[]') as CollaborativeTask[]
+  const allTasks=readJsonSafe<CollaborativeTask[]>(store.file('chats',key,'tasks.json'),[])
   const work=allTasks.map(task=>{
-    const blockedBy=(task.dependsOnTaskIds||[]).filter(id=>!allTasks.some(other=>other.id===id&&taskSatisfied(other)))
-    const stage=taskSatisfied(task)?'done':task.review?.status==='awaiting_review'?'review':blockedBy.length?'blocked':'ready'
+    const blockedBy=(task.dependsOnTaskIds||[]).filter(id=>!allTasks.some(other=>other.id===id&&taskResolved(other)))
+    const stage=task.status==='cancelled'?'cancelled':taskSatisfied(task)?'done':task.review?.status==='awaiting_review'?'review':blockedBy.length?'blocked':'ready'
     return {id:task.id,title:task.title,description:task.description||'',assigneeId:task.assigneeId,assigneeActive:memberIds.includes(task.assigneeId),stage,blockedBy,acceptanceCriteria:task.acceptanceCriteria||'',result:task.result||'',review:task.review,at:task.at}
   })
   const pending=actions(store,key).filter(item=>item.status==='pending'||item.status==='uncertain').map(item=>({id:item.id,agentId:item.agentId,name:item.name,status:item.status,at:item.at}))

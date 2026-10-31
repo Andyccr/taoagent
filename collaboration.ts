@@ -2,12 +2,14 @@ import {Store,HttpError,string,type Turn,type Message} from './store.ts'
 import {discussionView} from './communication.ts'
 
 export interface CollaborativeTask {
-  id:string;title:string;fromAgentId:string;assigneeId:string;status:'pending'|'complete';result?:string;dependsOnTaskIds?:string[];at:string
+  id:string;title:string;fromAgentId:string;assigneeId:string;status:'pending'|'complete'|'cancelled';result?:string;dependsOnTaskIds?:string[];at:string
   description?:string;acceptanceCriteria?:string;requireReview?:boolean;review?:{status:'awaiting_review'|'accepted'|'changes_requested';reviewerId?:string;reason?:string;at:string}
   resultHistory?:{result:string;at:string;review?:CollaborativeTask['review']}[]
   assignmentHistory?:{assigneeId:string;reason:string;at:string}[]
+  cancelledReason?:string
 }
 export function taskSatisfied(task:CollaborativeTask) {return task.status==='complete'&&(!task.requireReview||task.review?.status==='accepted')}
+export function taskResolved(task:CollaborativeTask) {return taskSatisfied(task)||task.status==='cancelled'}
 export function discussionUpdates(store:Store,key:string,turn:Turn,seen:Set<string>,afterId:string|undefined,budget:number) {
   const all=store.messages(key).filter(message=>message.status==='complete'&&!message.kind)
   const index=afterId?all.findIndex(message=>message.id===afterId):-1
@@ -35,7 +37,7 @@ export function collaborationHealth(store:Store,key:string,turn:Turn|undefined,t
   const discussion=turn?discussionView(turn):undefined
   return {
     turnId:turn?.id,openQuestions:discussion?.questions.filter(item=>item.status==='open')||[],
-    pendingTasks:tasks.filter(task=>!taskSatisfied(task)).map(task=>({id:task.id,title:task.title,assigneeId:task.assigneeId,assigneeActive:store.groupMembers(key).includes(task.assigneeId),status:task.status,review:task.review,blockedBy:(task.dependsOnTaskIds||[]).filter(source=>!tasks.some(item=>item.id===source&&taskSatisfied(item)))})),
+    pendingTasks:tasks.filter(task=>!taskResolved(task)).map(task=>({id:task.id,title:task.title,assigneeId:task.assigneeId,assigneeActive:store.groupMembers(key).includes(task.assigneeId),status:task.status,review:task.review,blockedBy:(task.dependsOnTaskIds||[]).filter(source=>!tasks.some(item=>item.id===source&&taskResolved(item)))})),
     contributors:[...new Set(store.messages(key).filter(message=>message.turnId===turn?.id&&message.status==='complete'&&!message.kind&&message.agentId).map(message=>message.agentId))],
     notice:'发言人数和往返次数不代表涌现。验收通过表示任务要求得到独立检查，事实正确性仍取决于证据。',
   }

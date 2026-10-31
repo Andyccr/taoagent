@@ -10,7 +10,7 @@ import { enqueueMessage, changeQueue, queueSnapshot, queueSummary, pauseQueue, c
 import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { Store, HttpError, object, string, id, atomic, json, componentKind, type Session, runtimeLimits } from './store.ts'
-import { runConversation, steerConversation, tasks } from './runtime.ts'
+import { runConversation, steerConversation, tasks, userTaskAction } from './runtime.ts'
 import { actions, decide, integrations, saveIntegrations, redact, createRedactor } from './execution.ts'
 import { seedTeam } from './defaults.ts'
 import { streamModel } from './models.ts'
@@ -283,6 +283,13 @@ export function createApp(home = path.join(ROOT, 'home'), options: {seed?: boole
         if (busy(groupMatch[1])) throw new HttpError(409, '请等本轮群聊结束后修改成员')
         if (!Array.isArray(input.memberIds) || input.memberIds.some(value => typeof value !== 'string')) throw new HttpError(400, '请选择群成员')
         send(res, store.saveGroup(string(input.name), input.memberIds as string[], groupMatch[1], groupDetails(input), undefined, typeof input.expected === 'string' ? input.expected : undefined)); return
+      }
+      const userTasks=route.match(/^\/api\/chats\/([a-zA-Z0-9_-]+)\/tasks(?:\/([a-zA-Z0-9_-]+))?$/)
+      if(userTasks&&method==='POST'){
+        const key=userTasks[1],taskId=userTasks[2]
+        if(busy(key))throw new HttpError(409,'请等本轮协作结束后再修改任务')
+        const result=userTaskAction(store,key,taskId?{...input,taskId}:{...input,action:input.action===undefined?'create':input.action})
+        publish(key,{type:'tasks',tasks:result.tasks});send(res,result);return
       }
       const match = route.match(/^\/api\/chats\/([a-zA-Z0-9_-]+)(?:\/(chat|retry|stop|steer|actions|tasks|context|memory|memory-item|search|message|summarize|preferences|communication|reasoning|relations|improvement))?$/)
       if (match) {
