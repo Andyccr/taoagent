@@ -35,6 +35,12 @@ test('sidebar layout has a single owned search/filter area and a bounded scrolli
  const client=fs.readFileSync(new URL('../public/client.js',import.meta.url),'utf8');assert(!client.includes("replaceWith($('#workspace-open'))"));assert(!town.includes('village-utilities'));assert(css.includes('grid-template-rows:auto minmax(0,1fr) auto'));assert(css.includes('overscroll-behavior:contain'))
 })
 
+test('formed groups expose their founder and origin space, and are searchable by founder name',()=>{
+ const state={agents:[{id:'main',name:'助手'},{id:'designer',name:'设计师'}],groups:[{id:'g1',title:'灵感空间',componentKind:'emergent',memberIds:['main','designer']},{id:'f1',title:'深夜研究',componentKind:'emergent',memberIds:['designer'],originSessionId:'g1',formedBy:'main'}],navigation:{pinned:[]},conversations:[]}
+ const view=buildSidebarSections(state),item=view.sections.flatMap(section=>section.items).find(entry=>entry.id==='f1')
+ assert.deepEqual(item?.origin,{formedBy:'助手',fromTitle:'灵感空间'})
+ assert(keys(buildSidebarSections(state,{search:'助手'})).includes('group:f1'))
+})
 test('roster sections stay open until folded, and quick tabs only match their own filter',()=>{
  const section={id:'agent',items:Array.from({length:25},(_,i)=>({id:'bot-'+i,type:'agent'}))}
  assert.equal(sidebarSectionExpanded(section),true)

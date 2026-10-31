@@ -7,6 +7,7 @@ export function buildSidebarSections(state, filters = {}, statusOf = () => ({sta
   const pinned = new Set(state.navigation?.pinned || [])
   const conversations = new Map((state.conversations || []).map(item => [item.target.type+':'+item.target.id,item]))
   const names = new Map(state.agents.map(agent => [agent.id,agent.name]))
+  const groupTitles = new Map(state.groups.map(group => [group.id,group.title]))
   const entries = [
     ...state.agents.map(agent => ({...agent,type:'agent',kind:'agent',label:agent.name,legacy:!!agent.legacy})),
     ...state.groups.map(group => ({...group,type:'group',kind:sidebarComponentType(group),label:group.title})),
@@ -14,13 +15,13 @@ export function buildSidebarSections(state, filters = {}, statusOf = () => ({sta
     const key=item.type+':'+item.id
     const info=statusOf(item.type,item.id)
     const conversation=conversations.get(key)
-    return {...item,key,pinned:pinned.has(key),info,preview:conversation?.preview||'',previewAuthor:conversation?.previewAuthor||'',previewTruncated:!!conversation?.previewTruncated,updated:conversation?.previewAt||conversation?.updatedAt||item.updatedAt||''}
+    return {...item,key,pinned:pinned.has(key),info,preview:conversation?.preview||'',previewAuthor:conversation?.previewAuthor||'',previewTruncated:!!conversation?.previewTruncated,updated:conversation?.previewAt||conversation?.updatedAt||item.updatedAt||'',...(item.type==='group'&&item.formedBy?{origin:{formedBy:names.get(item.formedBy)||item.formedBy,fromTitle:groupTitles.get(item.originSessionId)||''}}:{})}
   })
   const words=(filters.search||'').trim().toLocaleLowerCase().split(/\s+/u).filter(Boolean)
   const matching=entries.filter(item=>{
     if(filters.kind&&filters.kind!=='all'&&(filters.kind==='group'?!['emergent','chat','city'].includes(item.kind):item.kind!==filters.kind))return false
     if(filters.status&&filters.status!=='all'&&(filters.status==='pinned'?!item.pinned:item.info.status!==filters.status))return false
-    const text=[item.label,item.id,item.responsibilities,sidebarLabels[item.kind],...(item.memberIds||[]),...(item.memberIds||[]).map(id=>names.get(id)||id)].join(' ').toLocaleLowerCase()
+    const text=[item.label,item.id,item.responsibilities,sidebarLabels[item.kind],item.origin?.formedBy,item.origin?.fromTitle,...(item.memberIds||[]),...(item.memberIds||[]).map(id=>names.get(id)||id)].join(' ').toLocaleLowerCase()
     return words.every(word=>text.includes(word))
   })
   const ranks={waiting:0,failed:1,running:2,queued:3,unread:4,idle:5}

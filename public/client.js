@@ -457,7 +457,9 @@ function renderContacts() {
       const meta=document.createElement('span');meta.className='contact-entry-meta';const kind=document.createElement('span');kind.className='contact-kind';kind.textContent=item.type==='agent'?'独立 Bot':componentNames[item.kind];meta.append(kind)
       const status=document.createElement('span');status.className='contact-status';status.textContent=item.info.label||(item.type==='group'?item.memberIds.length+' 位成员':'独立记忆');meta.append(status)
       if(item.info.status!=='idle')button.dataset.status=item.info.status
-      copy.append(heading,preview,meta);button.append(avatar,copy);button.onclick=handle(()=>{if(target?.type===item.type&&target.id===item.id){window.dispatchEvent(new Event('tao-roster-open'));if(/^#(town|civilization|empire-city)/.test(location.hash))history.replaceState(null,'',`#${item.type}=${encodeURIComponent(item.id)}`);if(mobileLayout.matches)sidebar(false);return}return openTarget({type:item.type,id:item.id})})
+      copy.append(heading,preview,meta)
+      if(item.origin){const origin=document.createElement('span');origin.className='contact-origin';origin.textContent='由 '+item.origin.formedBy+' 发起'+(item.origin.fromTitle?' · 来自 '+item.origin.fromTitle:'');copy.append(origin)}
+      button.append(avatar,copy);button.onclick=handle(()=>{if(target?.type===item.type&&target.id===item.id){window.dispatchEvent(new Event('tao-roster-open'));if(/^#(town|civilization|empire-city)/.test(location.hash))history.replaceState(null,'',`#${item.type}=${encodeURIComponent(item.id)}`);if(mobileLayout.matches)sidebar(false);return}return openTarget({type:item.type,id:item.id})})
       const pin=document.createElement('button');pin.type='button';pin.className='contact-pin';pin.textContent=item.pinned?'◆':'◇';pin.setAttribute('aria-pressed',String(item.pinned));pin.title=(item.pinned?'取消置顶':'置顶')+'「'+item.label+'」';pin.setAttribute('aria-label',pin.title)
       pin.onclick=handle(async event=>{event.stopPropagation();state.navigation=await api('/api/navigation','POST',{targetKey:item.key,pinned:!item.pinned,expectedPinned:item.pinned});const nextSection=item.pinned?(item.legacy?'legacy':item.kind):'pinned';sidebarClosedGroups.delete(nextSection);sidebarOpenedGroups.add(nextSection);preference('sidebarExpandedGroups',JSON.stringify([...sidebarOpenedGroups]));preference('sidebarGroups',JSON.stringify([...sidebarClosedGroups]));renderContacts();const row=[...list.querySelectorAll('[data-contact-key]')].find(node=>node.dataset.contactKey===item.key);if(!item.pinned)list.scrollTop=0;else row?.scrollIntoView({block:'nearest'});row?.querySelector('.contact-pin')?.focus({preventScroll:true});toast(item.pinned?'已取消置顶':'已放入置顶区')})
       row.append(button,pin);items.append(row)
@@ -514,6 +516,7 @@ function renderHeader() {
   if(group&&(current.discussionMode==='brainstorm'||!current.purpose?.trim()))$('#welcome-description').textContent=current.discussionMode==='brainstorm'?'没有主题也能开始。从一个观察、一段联想或有趣的问题出发，让想法碰撞。':'不用先准备主题，随便聊聊也可以。伙伴们会沿着具体想法自然接话。'
   if(group&&componentType(current)==='task')$('#welcome-description').textContent='描述目标、交付物和约束，由负责人协调 Bot 推进工作；工具操作由你审批。'
   if(current.componentKind==='chat')$('#welcome-description').textContent='轻松的文字聊天室。每位 Bot 各回复一次，或用 @ 选择成员；不执行工具和派工。'
+  if(group&&componentType(current)==='emergent'&&current.formedBy){const fromTitle=state.groups.find(item=>item.id===current.originSessionId)?.title;$('#welcome-description').textContent=agentName(current.formedBy)+' 在「'+(fromTitle||'原来的空间')+'」的日常中发起了这个涌现群聊'}
   const inherited = state.models.find(model => model.id === state.account.defaultModelId)?.name || '尚未配置'
   options($('#model'), state.models, group ? current.modelId || '' : agent?.modelId || '', group ? '按各 Agent 的模型设置' : `账户默认 · ${inherited}`)
   $('#model').setAttribute('aria-label', group ? '群聊本轮使用的模型' : '此 Agent 使用的模型')
@@ -831,7 +834,7 @@ async function sendMessage(retryTurnId = '') {
       if (item.type === 'agent_removed') { state.agents=state.agents.filter(agent=>agent.id!==item.agentId);renderContacts();refresh().catch(error=>toast(error.message)) }
       if (item.type === 'components_updated') { refresh().catch(error=>toast(error.message)) }
       if (item.type === 'group_removed') { refresh().catch(error=>toast(error.message)) }
-      if (item.type === 'group_created') { state.groups.push(item.group); renderContacts(); if (visible && item.message) message(item.message) }
+      if (item.type === 'group_created') { const index=state.groups.findIndex(group=>group.id===item.group.id);if(index<0)state.groups.push(item.group);else state.groups[index]=item.group;renderContacts();if(item.group.formedBy)toast(agentName(item.group.formedBy)+' 发起了新的涌现群聊「'+item.group.title+'」');if (visible && item.message) message(item.message) }
       if (['memory_updated', 'collaboration','reasoning_updated'].includes(item.type) && visible) { message(item.message); scrollIfNear() }
       if (item.type === 'warning' && visible) message(item.message)
       if (item.type === 'done') { ended = true; sendingIds.delete(submission); if (item.duplicate) toast('这条消息已收到，正在载入已保存的结果') }

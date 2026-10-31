@@ -75,3 +75,6 @@ body.navigation-collapsed #sidebar.sidebar-shell{display:none}
 
 /* Keep the absolutely positioned pin under the pointer while pressed. */
 #sidebar .contact-pin:active:not(:disabled){transform:translateY(-50%)}
+
+/* Founder and source space for groups formed by a bot. */
+#sidebar .contact-origin{font-size:10px;line-height:1.4;color:var(--accent);overflow-wrap:anywhere;white-space:normal}
