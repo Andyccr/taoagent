@@ -26,7 +26,7 @@ function sample(path, s, out) {
 }
 
 export function buildLife(plan, material, { quality = 'medium' } = {}) {
-  const budget = { low: 0, medium: 220, high: 420 }[quality] ?? 220;
+  const budget = { low: 0, medium: 340, high: 640 }[quality] ?? 340;
   if (!budget) return null;
   const kinds = ['car', 'bus', 'handcart', 'oxcart', 'person', 'sampan', 'sailboat', 'barge', 'ferry', 'galley'];
   const geos = {};

@@ -93,7 +93,7 @@ function heightAt(x, z, t, deg, seed, massifs, seaFrom, seaTo) {
   return h * mask - 1.5 - 4 * (1 - mask);
 }
 
-export function mountainRangeGeometry({ inner = 1050, outer = 2300, seaFrom = 20, seaTo = 70, seed = 7 } = {}) {
+export function mountainRangeGeometry({ inner = 1050, outer = 2300, seaFrom = 20, seaTo = 70, seed = 7, heightScale = 1 } = {}) {
   const N = 300, ROWS = 26;
   const massifs = buildMassifs(seed, seaFrom, seaTo);
   const positions = new Float32Array(N * ROWS * 3);
@@ -108,7 +108,7 @@ export function mountainRangeGeometry({ inner = 1050, outer = 2300, seaFrom = 20
       const y = heightAt(x, z, t, deg, seed, massifs, seaFrom, seaTo);
       const o = (j * N + i) * 3;
       positions[o] = x;
-      positions[o + 1] = y;
+      positions[o + 1] = y * heightScale;
       positions[o + 2] = z;
     }
   }
@@ -144,7 +144,7 @@ export function mountainRangeGeometry({ inner = 1050, outer = 2300, seaFrom = 20
   const rock = new THREE.Color();
 
   for (let i = 0; i < pos.count; i++) {
-    const x = pos.getX(i), h = pos.getY(i), z = pos.getZ(i);
+    const x = pos.getX(i), h = pos.getY(i) / heightScale, z = pos.getZ(i);
     const ny = nor.getY(i);
     const jitter = valueNoise(x / 34, z / 34, seed + 311);
     const snowLine = 235 + (jitter - 0.5) * 50;
@@ -171,7 +171,7 @@ export function mountainRangeGeometry({ inner = 1050, outer = 2300, seaFrom = 20
     }
 
     const tt = clamp((Math.hypot(x, z) - inner) / (outer - inner), 0, 1);
-    const hazeAmt = (0.3 + 0.42 * tt) * (1 - snowMix * 0.18);
+    const hazeAmt = (0.38 + 0.4 * tt) * (1 - snowMix * 0.18);
     c.lerp(haze, hazeAmt);
 
     const o = i * 3;

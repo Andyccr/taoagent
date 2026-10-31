@@ -249,6 +249,34 @@ float gNoise( vec2 p ) { vec2 i = floor( p ), f = fract( p ); vec2 u = f * f * (
   return m;
 }
 
+// Paving: setts / flagstones laid in staggered courses in world space, mortar joints and per-stone tone,
+// faded out with distance so far roads stay calm. size = stone length in metres.
+function pavedMaterial(color, size) {
+  const m = new THREE.MeshStandardMaterial({ color, roughness: 0.95 });
+  m.customProgramCacheKey = () => 'city-paved-v1';
+  m.onBeforeCompile = (sh) => {
+    sh.uniforms.uStone = { value: size };
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vPaveW;')
+      .replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\n  vPaveW = ( modelMatrix * vec4( transformed, 1.0 ) ).xyz;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>
+varying vec3 vPaveW;
+uniform float uStone;
+float pHash( vec2 p ) { return fract( sin( dot( p, vec2( 41.3, 289.1 ) ) ) * 43758.5453 ); }`)
+      .replace('#include <color_fragment>', `#include <color_fragment>
+  {
+    vec2 p = vPaveW.xz / vec2( uStone, uStone * 0.62 );
+    float row = floor( p.y );
+    p.x += row * 0.5;
+    vec2 f = fract( p ), w = fwidth( p );
+    float e = min( min( f.x, 1.0 - f.x ) / max( w.x, 1e-4 ), min( f.y, 1.0 - f.y ) / max( w.y, 1e-4 ) );
+    float joint = 1.0 - smoothstep( 0.6, 1.6, e );
+    float fade = ( 1.0 - smoothstep( 25.0, 110.0, length( vViewPosition ) ) ) * clamp( 1.6 - max( w.x, w.y ) * 2.0, 0.0, 1.0 );
+    diffuseColor.rgb *= 1.0 - fade * ( 0.16 * joint - 0.07 * ( pHash( floor( p ) ) - 0.5 ) );
+  }`);
+  };
+  return m;
+}
+
 function staticGeometry() {
   if (sharedStatic) return sharedStatic;
   const plan = computeMetropolis();
@@ -284,7 +312,7 @@ function staticGeometry() {
   sharedStatic = {
     roads, waterGeo, kerbs, sea, land, crosswalks: crosswalkGeometry(plan), bridge: bridgeWithRail(canal.half * 2 + 1.5, 5.2),
     riverBridge: bridge(plan.river.half * 2 + 2, 6.4), wall: wallGeometry(plan), terrain: terrainGeometry(plan), quay: quayGeometry(plan),
-    mountains: mountainRangeGeometry({ inner: 1050, outer: 2300, seaFrom: plan.sea.from, seaTo: plan.sea.to }),
+    mountains: mountainRangeGeometry({ inner: 1120, outer: 2350, heightScale: 0.78, seaFrom: plan.sea.from, seaTo: plan.sea.to }),
   };
   return sharedStatic;
 }
@@ -336,7 +364,7 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
   const seaMat = createWaterMaterial({ color: '#3f7896', deep: '#1f4c66', opacity: 0.96, scale: 2.2 });
   const sea = new THREE.Mesh(st.sea, seaMat); sea.position.y = 0.04; root.add(sea);
 
-  for (const r of st.roads) { const m = new THREE.Mesh(r.geo, new THREE.MeshStandardMaterial({ color: r.color, roughness: 0.95 })); m.position.y = r.y; m.receiveShadow = quality !== 'low'; root.add(m); }
+  for (const r of st.roads) { const m = new THREE.Mesh(r.geo, pavedMaterial(r.color, r.y >= 0.04 ? 0.38 : r.y > 0.022 ? 0.55 : 1.15)); m.position.y = r.y; m.receiveShadow = quality !== 'low'; root.add(m); }
   if (st.crosswalks) { const m = new THREE.Mesh(st.crosswalks, new THREE.MeshStandardMaterial({ color: '#eae6da', roughness: 0.9 })); m.position.y = 0.045; m.receiveShadow = quality !== 'low'; root.add(m); }
   const water = new THREE.Mesh(st.waterGeo, waterMat); water.position.y = 0.03; root.userData.water = water; root.add(water);
   const edges = new THREE.Mesh(st.kerbs, new THREE.MeshStandardMaterial({ color: '#b9b2a2', roughness: 0.9 })); edges.position.y = 0.15; root.add(edges);
