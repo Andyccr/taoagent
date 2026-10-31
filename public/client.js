@@ -15,6 +15,7 @@ let state = { models: [], account: {}, agents: [], groups: [], running: [] }
 let inspectorWork=null,inspectorTab='overview',inspectorFingerprint='',inspectorReturnFocus=null
 let current = null, target = null, loadVersion = 0, toastTimer, stateFingerprint = ''
 const drafts = new Map(), pending = new Set(), streams = new Map()
+let renderedSignature = ''
 const groupRecipients = new Map(), sendingIds = new Map()
 const submittingThreads = new Set()
 const submissionControllers = new Map()
@@ -592,6 +593,7 @@ function attachReplyReference(wrapper,item){
   wrapper.querySelector('.body').before(button)
 }
 function message(item) {
+  renderedSignature = '' // Any node added outside a full render forces the next refresh to rebuild the list.
   if (item.kind === 'activity') {
     const note = document.createElement(item.content.length > 160 ? 'details' : 'div'); note.className = 'activity'
     if (note.tagName === 'DETAILS') { const title = document.createElement('summary'); title.textContent = item.content.split('\n')[0].slice(0, 150); const text = document.createElement('p'); text.textContent = item.content; note.append(title, text) } else note.textContent = item.content
@@ -621,6 +623,7 @@ function message(item) {
   quote.onclick = () => { const input = $('#prompt'), text = body.dataset.raw || body.textContent; input.value = (input.value ? input.value + '\n\n' : '') + '> ' + author + '：\n' + text.split('\n').map(line => '> ' + line).join('\n') + '\n\n'; input.dispatchEvent(new Event('input')); input.focus(); input.setSelectionRange(input.value.length,input.value.length) }; actions.append(quote); wrapper.append(actions)
   $('#messages').append(wrapper); return body
 }
+function messageSignature(value) { return value.id + '|' + value.hasOlder + '|' + [...(streams.get(value.id)?.keys() || [])].join(',') + '|' + value.messages.map(item => item.id + ':' + (item.status || '') + ':' + (item.content || '').length).join(',') }
 async function loadCurrent(forceScroll = true) {
   if (!target) return
   const version = ++loadVersion, selected = { ...target }
@@ -640,15 +643,22 @@ async function loadCurrent(forceScroll = true) {
     value.messages = [...current.messages.filter(message => !newIds.has(message.id)), ...value.messages]
     if (current.messages.length) value.hasOlder = current.hasOlder && value.hasOlder
   }
-  current = value; if(typeof refreshWork==='function')refreshWork().catch(()=>{});acknowledgeConversation(value); watchQueueEvents(value.id); $('#messages').replaceChildren(); $('#welcome').hidden = value.messages.length > 0
+  // History is append-only: when a background refresh brings no new or changed messages, keep the rendered
+  // list so text selection, expanded blocks and scroll position survive the 4-second reconciliation.
+  const rendered = messageSignature(value), unchanged = !forceScroll && current?.id === value.id && rendered === renderedSignature && $('#messages').childElementCount > 0
+  current = value; if(typeof refreshWork==='function')refreshWork().catch(()=>{});acknowledgeConversation(value); watchQueueEvents(value.id); $('#welcome').hidden = value.messages.length > 0
   $('#older-messages').hidden = !value.hasOlder
-  for (const item of value.messages) message(item)
-  for (const streaming of streams.get(value.id)?.values() || []) paintStream(value.id,streaming)
+  if (!unchanged) {
+    $('#messages').replaceChildren()
+    for (const item of value.messages) message(item)
+    for (const streaming of streams.get(value.id)?.values() || []) paintStream(value.id,streaming)
+    renderedSignature = rendered
+  }
   renderContacts(); renderHeader(); if (!value.messages.length) $('#conversation').scrollTop = 0; else if (forceScroll || stickToBottom) scrollIfNear(true); else $('#conversation').scrollTop = scrollTop
 }
 async function openTarget(next) {
   if (target) { drafts.set(targetKey(target), $('#prompt').value); flushDraft().catch(() => {}) }
-  target = next; if(typeof window!=='undefined')window.dispatchEvent(new CustomEvent('tao-target-changed',{detail:next}));current = null; followLatest = true; controls(); $('#messages').replaceChildren(); $('#welcome').hidden = false
+  target = next; if(typeof window!=='undefined')window.dispatchEvent(new CustomEvent('tao-target-changed',{detail:next}));current = null; followLatest = true; controls(); $('#messages').replaceChildren(); renderedSignature = ''; $('#welcome').hidden = false
   $('#tool-output').textContent = ''; $('#tool-output').hidden = true; $('#work-items').replaceChildren(); delete $('#work-items').dataset.fingerprint; $('#work-panel').hidden = true; $('#work-panel').open = false; $('#member-models').hidden = true
   $('#mention-list').hidden = true; $('#mention-list').replaceChildren()
   $('#welcome').hidden=true;$('#conversation').setAttribute('aria-busy','true'); syncAttention([])
@@ -678,7 +688,7 @@ $('#older-messages').onclick = handle(async () => {
     const value = await api(`/api/chats/${chat.id}?before=${chat.messages[0].id}`)
     if (current?.id !== chat.id) return
     const view = $('#conversation'), height = view.scrollHeight, top = view.scrollTop
-    const previous = [...$('#messages').childNodes]; $('#messages').replaceChildren()
+    const previous = [...$('#messages').childNodes]; $('#messages').replaceChildren(); renderedSignature = ''
     for (const item of value.messages) message(item)
     $('#messages').append(...previous); chat.messages.unshift(...value.messages); chat.hasOlder = value.hasOlder; button.hidden = !value.hasOlder
     view.scrollTop = top + view.scrollHeight - height
