@@ -223,8 +223,9 @@ function landGeometry(sea) {
 }
 
 // Open land: a gentle patchwork of meadow, crop and woodland tones by world position (no texture, fades with distance).
-function groundMaterial() {
+function groundMaterial(plain = false) {
   const m = new THREE.MeshStandardMaterial({ color: '#aeb89a', roughness: 1, polygonOffset: true, polygonOffsetFactor: 2, polygonOffsetUnits: 8 });
+  if (plain) return m;
   m.customProgramCacheKey = () => 'city-ground-v1';
   m.onBeforeCompile = (sh) => {
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vGroundW;')
@@ -251,8 +252,9 @@ float gNoise( vec2 p ) { vec2 i = floor( p ), f = fract( p ); vec2 u = f * f * (
 
 // Paving: setts / flagstones laid in staggered courses in world space, mortar joints and per-stone tone,
 // faded out with distance so far roads stay calm. size = stone length in metres.
-function pavedMaterial(color, size) {
+function pavedMaterial(color, size, plain = false) {
   const m = new THREE.MeshStandardMaterial({ color, roughness: 0.95 });
+  if (plain) return m;
   m.customProgramCacheKey = () => 'city-paved-v1';
   m.onBeforeCompile = (sh) => {
     sh.uniforms.uStone = { value: size };
@@ -327,7 +329,7 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
   const st = staticGeometry();
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), sc = new THREE.Vector3(1, 1, 1), pos = new THREE.Vector3();
 
-  const base = new THREE.Mesh(st.land, groundMaterial());
+  const base = new THREE.Mesh(st.land, groundMaterial(quality === 'low'));
   base.position.y = 0.002; base.receiveShadow = quality !== 'low'; root.add(base);
 
   const patchGroups = new Map();
@@ -360,11 +362,13 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
     root.add(mesh);
   }
 
-  const waterMat = createWaterMaterial({ color: '#4f86a3', deep: '#2d5f7a', opacity: 0.9 });
-  const seaMat = createWaterMaterial({ color: '#3f7896', deep: '#1f4c66', opacity: 0.96, scale: 2.2 });
+  // Low keeps the plain shared materials (no procedural ground, paving, facades or animated water).
+  const plain = quality === 'low';
+  const waterMat = plain ? cityMaterial('water') : createWaterMaterial({ color: '#4f86a3', deep: '#2d5f7a', opacity: 0.9 });
+  const seaMat = plain ? cityMaterial('water') : createWaterMaterial({ color: '#3f7896', deep: '#1f4c66', opacity: 0.96, scale: 2.2 });
   const sea = new THREE.Mesh(st.sea, seaMat); sea.position.y = 0.04; root.add(sea);
 
-  for (const r of st.roads) { const m = new THREE.Mesh(r.geo, pavedMaterial(r.color, r.y >= 0.04 ? 0.38 : r.y > 0.022 ? 0.55 : 1.15)); m.position.y = r.y; m.receiveShadow = quality !== 'low'; root.add(m); }
+  for (const r of st.roads) { const m = new THREE.Mesh(r.geo, pavedMaterial(r.color, r.y >= 0.04 ? 0.38 : r.y > 0.022 ? 0.55 : 1.15, quality === 'low')); m.position.y = r.y; m.receiveShadow = quality !== 'low'; root.add(m); }
   if (st.crosswalks) { const m = new THREE.Mesh(st.crosswalks, new THREE.MeshStandardMaterial({ color: '#eae6da', roughness: 0.9 })); m.position.y = 0.045; m.receiveShadow = quality !== 'low'; root.add(m); }
   const water = new THREE.Mesh(st.waterGeo, waterMat); water.position.y = 0.03; root.userData.water = water; root.add(water);
   const edges = new THREE.Mesh(st.kerbs, new THREE.MeshStandardMaterial({ color: '#b9b2a2', roughness: 0.9 })); edges.position.y = 0.15; root.add(edges);
@@ -376,7 +380,7 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
 
   // Fillers: one distance-LOD BatchedMesh for every unclaimed lot (near: full model, far: two-tone proxy).
   const lod = LOD[quality] || LOD.medium;
-  const fillerMat = createBatchMaterial(solid, { detail: true }), propMat = createBatchMaterial(solid);
+  const fillerMat = createBatchMaterial(solid, { detail: quality !== 'low' }), propMat = createBatchMaterial(solid);
   const fillers = createLodBatch(fillerMat, { name: 'fillers', castShadow: quality === 'high', receiveShadow: quality !== 'low', surface: 'detail' });
   const tint = new THREE.Color();
   for (const lot of plan.lots) {
@@ -523,7 +527,7 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
   }
   // Free everything this build created on the GPU (shared geometry/material caches stay for the next build).
   function dispose() {
-    const keep = new Set([solid, cityMaterial('glass')]);
+    const keep = new Set([solid, cityMaterial('glass'), cityMaterial('water')]);
     const shared = new Set(Object.values(st).flatMap((v) => (v && v.isBufferGeometry ? [v] : v && typeof v === 'object' ? Object.values(v).filter((x) => x && x.isBufferGeometry) : [])));
     for (const r of st.roads) shared.add(r.geo);
     root.traverse((o) => {
