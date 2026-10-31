@@ -89,9 +89,10 @@ function vnoise(x, z, seed) {
 function breakRing(ring, riverDistance) {
   if (ring.r < 112 || ring.r === 292) return [ring];
   const R = rng('gap' + ring.r), gaps = [];
-  const n = 1 + Math.floor(R() * (ring.r >= 176 ? 3 : 2));
+  const country = ring.r > WALL_R + 10; // outer lanes break more often and more widely
+  const n = country ? 3 + Math.floor(R() * 3) : 1 + Math.floor(R() * (ring.r >= 176 ? 3 : 2));
   for (let k = 0; k < n * 4 && gaps.length < n; k++) {
-    const c = R() * 360, half = 4 + R() * 6;
+    const c = R() * 360, half = country ? 6 + R() * 9 : 4 + R() * 6;
     if (AVENUES.some((a) => angDist(a, c) < half + 6) || gaps.some((g) => angDist(g[0], c) < g[1] + half + 20)) continue;
     const p = polar(ring.radiusAt(c), c);
     if (riverDistance(p.x, p.z, 80) < 40) continue;

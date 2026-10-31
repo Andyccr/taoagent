@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { cityMaterial, createGeo, buildSimplified } from './geo.js';
 import { polar } from './layout.js';
-import { computeMetropolis, hash } from './metropolis-plan.js';
+import { computeMetropolis, hash, WALL_R } from './metropolis-plan.js';
 import { CHINESE_FILLERS } from './fillers-chinese.js';
 import { GREEK_FILLERS } from './fillers-greek.js';
 import { ROMAN_FILLERS } from './fillers-roman.js';
@@ -336,7 +336,9 @@ function staticGeometry() {
   for (const road of plan.roads) {
     const a = road.pts[0], b = road.pts[road.pts.length - 1];
     const closed = road.kind === 'ring' && !road.arc && (a[0] !== b[0] || a[1] !== b[1]);
-    (byKind[road.kind] || (byKind[road.kind] = [])).push(ribbon(road.pts, road.w, closed));
+    // Rings beyond the wall read as dusty country lanes rather than paved boulevards, so the rings fade out of the aerial view.
+    const kind = road.kind === 'ring' && road.r > WALL_R + 10 ? 'lane' : road.kind;
+    (byKind[kind] || (byKind[kind] = [])).push(ribbon(road.pts, road.w, closed));
   }
   const merge = (gs) => gs && gs.length ? mergeGeometries(gs) : null;
   const roads = [];
@@ -344,6 +346,7 @@ function staticGeometry() {
   const walks = [];
   for (const road of plan.roads) {
     if (road.kind !== 'avenue' && road.kind !== 'ring') continue;
+    if (road.kind === 'ring' && road.r > WALL_R + 10) continue;
     const a = road.pts[0], b = road.pts[road.pts.length - 1];
     const closed = road.kind === 'ring' && !road.arc && (a[0] !== b[0] || a[1] !== b[1]);
     for (const side of [-1, 1]) walks.push(ribbon(offsetPolyline(road.pts, side * (road.w / 2 + 0.55), closed), 1.1, closed));
@@ -353,6 +356,7 @@ function staticGeometry() {
   if (main) roads.push({ geo: main, color: '#d8d0bc', y: 0.02 });
   const street = merge(byKind.street); if (street) roads.push({ geo: street, color: '#cfc5ae', y: 0.025 });
   const alley = merge(byKind.alley); if (alley) roads.push({ geo: alley, color: '#c4b99f', y: 0.03 });
+  const lane = merge(byKind.lane); if (lane) roads.push({ geo: lane, color: '#b3a684', y: 0.028 });
 
   const canal = plan.canal, cp = canal.pts, last = cp[cp.length - 1];
   const canalPts = cp.length > 2 && cp[0][0] === last[0] && cp[0][1] === last[1] ? cp.slice(0, -1) : cp;
