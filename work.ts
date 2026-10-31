@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import crypto from 'node:crypto'
-import { Store, HttpError, id, json, object, string, type Turn } from './store.ts'
+import { Store, HttpError, id, json, string, staleLockDirectory, type Turn } from './store.ts'
 import { tasks, runConversation } from './runtime.ts'
 import { actions } from './execution.ts'
 import { taskSatisfied } from './collaboration.ts'
@@ -16,15 +16,8 @@ function unfinished(turn: Turn) { return turn.speakers.some(speaker => speaker.s
 function locked<T>(store: Store, operation: () => T): T {
   const directory = store.file('.work-lock'), owner = store.file('.work-lock', 'owner.json')
   if (fs.existsSync(directory)) {
-    let stale = false
-    try {
-      const record = object(JSON.parse(fs.readFileSync(owner, 'utf8')))
-      if (Number.isSafeInteger(record.pid) && Number(record.pid) > 0) {
-        try { process.kill(Number(record.pid), 0) } catch (error) { stale = (error as NodeJS.ErrnoException).code === 'ESRCH' }
-      }
-    } catch { /* Incomplete locks stay protected. */ }
-    if (!stale) throw new HttpError(409, '工作库正在更新，请稍后重试')
-    fs.unlinkSync(owner); fs.rmdirSync(directory)
+    if (!staleLockDirectory(directory, owner)) throw new HttpError(409, '工作库正在更新，请稍后重试')
+    if (fs.existsSync(owner)) fs.unlinkSync(owner); fs.rmdirSync(directory)
   }
   try { fs.mkdirSync(directory) } catch { throw new HttpError(409, '工作库正在更新，请稍后重试') }
   try { json(owner, { pid: process.pid }); return operation() }
@@ -114,7 +107,8 @@ export function createRoutineScheduler(store: Store, active: Map<string, AbortCo
       const claimed = locked(store, () => {
         const data = read(store)
         let changed = false
-        for(const routine of data.routines.filter(item=>item.enabled&&store.session(item.sessionId).archivedAt)){
+        // A routine whose conversation was archived or is missing pauses alone instead of failing every tick.
+        for(const routine of data.routines.filter(item=>item.enabled&&(!fs.existsSync(store.file('chats',id(item.sessionId),'session.json'))||store.session(item.sessionId).archivedAt))){
           routine.enabled=false;routine.pauseReason='目标群聊已删除，恢复后需手动启用';routine.revision=crypto.randomUUID();changed=true
         }
         for (const run of data.runs.filter(run => run.status === 'running')) {

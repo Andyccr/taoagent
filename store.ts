@@ -76,6 +76,22 @@ export function atomic(file: string, content: string) {
   try { fs.writeFileSync(tmp, content, { mode: 0o600 }); fs.renameSync(tmp, file) }
   finally { if (fs.existsSync(tmp)) fs.unlinkSync(tmp) }
 }
+// A lock directory whose owner process is gone, or whose owner record was never written (crash between
+// mkdir and the owner write) and has not been touched for 30 seconds, may be taken over.
+export function staleLockDirectory(directory: string, ownerFile: string): boolean {
+  try {
+    const owner = JSON.parse(fs.readFileSync(ownerFile, 'utf8')) as { pid?: unknown }
+    if (!Number.isSafeInteger(owner.pid) || Number(owner.pid) <= 0) return false
+    try { process.kill(Number(owner.pid), 0); return false } catch (error) { return (error as NodeJS.ErrnoException).code === 'ESRCH' }
+  } catch {
+    try { return Date.now() - fs.statSync(directory).mtimeMs > 30000 } catch { return false }
+  }
+}
+// Cheap change detector for files that are only ever replaced through atomic rename. Empty string: file missing.
+export function fileSignature(file: string): string {
+  try { const stat = fs.statSync(file, { bigint: true }); return `${stat.ino}:${stat.size}:${stat.mtimeNs}:${stat.ctimeNs}` }
+  catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') return ''; throw error }
+}
 export function json(file: string, value: unknown) { atomic(file, JSON.stringify(value, null, 2) + '\n') }
 const corruptCopies = new Set<string>()
 export function readJsonSafe<T>(file: string, fallback: T): T {
@@ -775,9 +791,21 @@ export class Store {
       return true
     })
   }
+  // Parsed histories are reused while the file identity (inode, size, mtime, ctime) is unchanged.
+  // Every write goes through atomic rename, so any change, including one from another local instance, invalidates the entry.
+  private messageCache = new Map<string, { signature: string; messages: Message[] }>()
   messages(key: string): Message[] {
     this.session(key)
-    return this.text('chats', id(key), 'messages.jsonl').split('\n').filter(Boolean).flatMap(line => { try { return [JSON.parse(line) as Message] } catch { return [] } })
+    const file = this.file('chats', id(key), 'messages.jsonl'), signature = fileSignature(file)
+    if (!signature) { this.messageCache.delete(file); return [] }
+    let cached = this.messageCache.get(file)
+    if (cached?.signature !== signature) {
+      const messages = fs.readFileSync(file, 'utf8').split('\n').filter(Boolean).flatMap(line => { try { return [JSON.parse(line) as Message] } catch { return [] } })
+      cached = { signature, messages }
+      this.messageCache.delete(file); this.messageCache.set(file, cached)
+      if (this.messageCache.size > 24) this.messageCache.delete(this.messageCache.keys().next().value as string)
+    } else { this.messageCache.delete(file); this.messageCache.set(file, cached) }
+    return cached.messages.map(message => ({ ...message }))
   }
   append(key: string, role: Message['role'], content: string, status: Message['status'] = 'complete', extra: Pick<Message, 'agentId' | 'agentName' | 'kind' | 'turnId' | 'phase' | 'contextMessageIds' | 'concurrentMessageIds' | 'replyToMessageId' | 'responseIntent'> = {}, messageId?: string) {
     return this.withMemoryLock(this.file('chats',id(key),'MEMORY.md'),()=>{

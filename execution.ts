@@ -5,7 +5,7 @@ import crypto from 'node:crypto'
 import { spawn } from 'node:child_process'
 import { pathToFileURL } from 'node:url'
 import { McpClient, StdioTransport, StreamableHttpTransport } from '@earendil-works/pi-mcp'
-import { Store, HttpError, json, atomic, string, object, id, readJsonSafe, runtimeLimits } from './store.ts'
+import { Store, HttpError, json, atomic, string, object, id, readJsonSafe, runtimeLimits, fileSignature, staleLockDirectory } from './store.ts'
 import { readSource, evolve, evolutionHistory, readEvolutionEvidence, rollbackEvolution, automaticCandidate, improvementSession } from './evolution.ts'
 
 export interface Action { id: string; agentId: string; name: string; args: Record<string,unknown>; preview?: {name:string;version:string;notice:string}; sessionRevision?:string; automaticSessionId?:string; target?: Omit<Integration,'token'>; status: 'pending'|'approved'|'running'|'complete'|'failed'|'denied'|'uncertain'; at: string; result?: unknown }
@@ -26,10 +26,8 @@ async function effectLock(key:string,signal:AbortSignal){
 function durableEffectLock(store:Store){
   const directory=store.file('.tool-lock'),owner=path.join(directory,'owner.json')
   if(fs.existsSync(directory)){
-    let stale=false
-    try{const record=JSON.parse(fs.readFileSync(owner,'utf8')) as {pid:number};if(Number.isSafeInteger(record.pid)&&record.pid>0){try{process.kill(record.pid,0)}catch(error){stale=(error as NodeJS.ErrnoException).code==='ESRCH'}}}catch{/* An incomplete lock remains protected. */}
-    if(!stale)throw new HttpError(409,'另一个服务正在执行外部操作，请完成后重试；尚未执行本操作')
-    fs.unlinkSync(owner);fs.rmdirSync(directory)
+    if(!staleLockDirectory(directory,owner))throw new HttpError(409,'另一个服务正在执行外部操作，请完成后重试；尚未执行本操作')
+    if(fs.existsSync(owner))fs.unlinkSync(owner);fs.rmdirSync(directory)
   }
   try{fs.mkdirSync(directory)}catch{throw new HttpError(409,'另一个服务已取得外部操作锁，请稍后重试')}
   try{json(owner,{pid:process.pid})}catch(error){fs.rmdirSync(directory);throw error}
@@ -77,7 +75,14 @@ function redactText(value:string,secrets:string[]) {
   for(const match of merged){output+=value.slice(cursor,match.start)+'[已隐藏凭据]';cursor=match.end}
   return output+value.slice(cursor)
 }
+// Redaction runs for every streamed chunk; reread credential files only when one of them changes.
+const credentialCache=new Map<string,{signature:string;values:string[]}>()
 function credentialValues(store: Store) {
+  const signature=['models.json','provider-keys.json','integrations.json'].map(name=>fileSignature(store.file(name))).join('|'),cached=credentialCache.get(store.root)
+  if(cached?.signature===signature)return [...cached.values]
+  const values=readCredentialValues(store);credentialCache.set(store.root,{signature,values});return [...values]
+}
+function readCredentialValues(store: Store) {
   return [...new Set([...store.models().map(model=>model.apiKey),...Object.values(store.providerKeys()),...integrations(store).map(item=>item.token||'')].filter(secret=>secret.length>=6))].sort((a,b)=>b.length-a.length)
 }
 // Hold enough trailing characters to recognize credentials split across output chunks.
@@ -111,7 +116,7 @@ export function workspacePath(store: Store,key: string,raw: string) {
 async function processRun(command: string,args: string[],cwd: string,signal: AbortSignal,onOutput: (text: string)=>void,shell=false,timeoutMs=120000,env:NodeJS.ProcessEnv=process.env) {
   return await new Promise<{exitCode:number|null;output:string}>((resolve,reject)=>{
     const child=spawn(command,args,{cwd,shell,env,windowsHide:true,detached:process.platform!=='win32',stdio:['ignore','pipe','pipe']}), timer=setTimeout(()=>stop(),timeoutMs)
-    let output='',stopped=false
+    let output='',stopped=false,forceKill:ReturnType<typeof setTimeout>|undefined
     function stop() {
       if(stopped)return
       stopped=true
@@ -122,10 +127,12 @@ async function processRun(command: string,args: string[],cwd: string,signal: Abo
       } else if(child.pid) {
         // POSIX: the child leads its own process group, so stop the shell and its descendants together.
         try{process.kill(-child.pid,'SIGTERM')}catch{child.kill('SIGTERM')}
+        // A command that ignores SIGTERM must not hold the external-operation lock forever.
+        const pid=child.pid;forceKill=setTimeout(()=>{try{process.kill(-pid,'SIGKILL')}catch{try{child.kill('SIGKILL')}catch{/* already gone */}}},5000);forceKill.unref()
       } else child.kill('SIGTERM')
     }
     signal.addEventListener('abort',stop,{once:true})
-    const cleanup=()=>{clearTimeout(timer);signal.removeEventListener('abort',stop)}
+    const cleanup=()=>{clearTimeout(timer);clearTimeout(forceKill);signal.removeEventListener('abort',stop)}
     child.stdout.setEncoding('utf8');child.stderr.setEncoding('utf8')
     const receive=(text: string)=>{output+=text;if(output.length>256000){output=output.slice(0,256000);stop()} onOutput(text)}
     child.stdout.on('data',receive);child.stderr.on('data',receive)
