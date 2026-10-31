@@ -53,12 +53,14 @@ function makeRawHeight(plan) {
   const canal = makeRoadIndex([{ pts: plan.canal.pts, w: 0 }]);
   const outline = seaOutline(plan);
   const coast = makeRoadIndex([{ pts: [...outline, outline[0]], w: 0 }]);
-  const { from, to } = plan.sea;
+  const { from, to } = plan.sea, hills = plan.hills || [];
   const norm = (a) => ((a % 360) + 360) % 360;
   const raw = (x, z) => {
     const r = Math.hypot(x, z);
     const rise = smooth(70, 330, r) * 13 + smooth(300, 950, r) * 13;
     let h = rise * (0.35 + 0.85 * fbm(x / 260 + 3.7, z / 260 - 1.9)) + (fbm(x / 70, z / 70) - 0.5) * 3.2 * smooth(70, 220, r);
+    // Rounded hills in the countryside (soft gaussian swells instead of separate dome meshes).
+    for (const hl of hills) { const d2 = ((x - hl.x) ** 2 + (z - hl.z) ** 2) / (hl.r * hl.r); if (d2 < 9) h += hl.h * 0.75 * Math.exp(-d2 * 1.4); }
     h *= smooth(plan.river.half + 5, plan.river.half + 85, distanceToRoads(river, x, z, 100));
     h *= smooth(plan.canal.half + 3, plan.canal.half + 26, distanceToRoads(canal, x, z, 30));
     // Coast: land falls to the sea; beaches dip just under the waterline except behind the harbour sea wall.

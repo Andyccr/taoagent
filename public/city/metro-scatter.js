@@ -204,15 +204,26 @@ export function scatterProps(plan, { claimedLots = new Set(), quality = 'medium'
     }
   }
 
-  // 7. Farmland: haystacks and poplar windbreaks.
+  // 7. Farmland: haystacks and poplar windbreaks along some hedgerows.
+  const fieldCells = new Map();
   for (const f of plan.fields) {
+    const k = Math.floor(f.x / 32) + ':' + Math.floor(f.z / 32);
+    (fieldCells.get(k) || fieldCells.set(k, []).get(k)).push(f);
     const h = hash(f.id);
-    if (h % 3 === 0 && free(f.x, f.z, 0.2, 1)) push('haystack', f.x + 2, f.z - 1, f.rotY, 1, 'prop', h % 3);
-    if (h % 2 === 0) for (let k = -2; k <= 2; k++) {
-      const x = f.x + Math.cos(f.rotY) * (f.w / 2 + 1.5) + Math.sin(f.rotY) * k * 3.2, z = f.z - Math.sin(f.rotY) * (f.w / 2 + 1.5) + Math.cos(f.rotY) * k * 3.2;
-      if (free(x, z, 0.4, 0.5)) push('poplar', x, z, k, 1, 'tree', (h + k) & 1);
+    if (h % 4 === 0 && free(f.x, f.z, 0.2, 1)) push('haystack', f.x + 2, f.z - 1, f.rotY, 1, 'prop', h % 3);
+    if (h % 5 === 0 && f.pts) {
+      const [a0, a1] = [f.pts[h % 4], f.pts[(h + 1) % 4]], len = Math.hypot(a1[0] - a0[0], a1[1] - a0[1]);
+      for (let t = 2; t < len - 1; t += 3.4) {
+        const x = a0[0] + (a1[0] - a0[0]) * (t / len), z = a0[1] + (a1[1] - a0[1]) * (t / len);
+        if (free(x, z, 0.4, 0.5)) push(h % 3 ? 'poplar' : 'cypress', x, z, t, 0.9 + (t % 3) / 10, 'tree', (h + t) & 1);
+      }
     }
   }
+  const inField = (x, z) => {
+    const cx = Math.floor(x / 32), cz = Math.floor(z / 32);
+    for (let i = cx - 1; i <= cx + 1; i++) for (let j = cz - 1; j <= cz + 1; j++) for (const f of fieldCells.get(i + ':' + j) || []) if (Math.hypot(f.x - x, f.z - z) < Math.max(f.w, f.d) * 0.5) return true;
+    return false;
+  };
   // 8. Groves and orchards on open land outside the walls, thinning out into the countryside.
   const GR = (n) => { let h = hash('grove' + n); return () => ((h = Math.imul(h ^ (h >>> 15), 2246822519) >>> 0) / 4294967296); };
   const gr = GR(quality);
@@ -223,7 +234,7 @@ export function scatterProps(plan, { claimedLots = new Set(), quality = 'medium'
     if (inHarbour(plan, a) && r > plan.sea.shore - 6) continue;
     const clump = Math.sin(jx * 0.021 + 1.3) * Math.cos(jz * 0.017 - 0.7) + Math.sin((jx + jz) * 0.011);
     if (clump < 0.2 || gr() > 0.8) continue;
-    if (plan.fields.some((f) => Math.abs(f.x - jx) < f.w / 2 + 1.5 && Math.abs(f.z - jz) < f.d / 2 + 1.5)) continue;
+    if (inField(jx, jz)) continue;
     if (!free(jx, jz, 1.2, 1.2)) continue;
     const h = hash(Math.round(jx) + ':' + Math.round(jz) + 'g');
     const orchard = r > plan.outerEdge && h % 3 === 0;

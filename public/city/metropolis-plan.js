@@ -75,6 +75,40 @@ const STYLES = Object.keys(STYLE_ANGLE);
 
 export function hash(text) { let h = 2166136261; for (const ch of String(text)) { h ^= ch.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
 const angDist = (a, b) => { const d = Math.abs((((a - b) % 360) + 360) % 360); return Math.min(d, 360 - d); };
+const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+// Smooth value noise in [0, 1] (deterministic, used for village clustering and the field lattice warp).
+function vnoise(x, z, seed) {
+  const h = (i, j) => (hash(i + ',' + j + ',' + seed) % 10007) / 10007;
+  const i = Math.floor(x), j = Math.floor(z);
+  let u = x - i, v = z - j; u = u * u * (3 - 2 * u); v = v * v * (3 - 2 * v);
+  const a = h(i, j), b = h(i + 1, j), c = h(i, j + 1), d = h(i + 1, j + 1);
+  return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+}
+// Outer ring roads are broken into arcs (a few gaps of 8-20 degrees away from avenues and the river) so the
+// concentric pattern stops reading from the air; the inner rings, and the road just outside the wall, stay whole.
+function breakRing(ring, riverDistance) {
+  if (ring.r < 112 || ring.r === 292) return [ring];
+  const R = rng('gap' + ring.r), gaps = [];
+  const n = 1 + Math.floor(R() * (ring.r >= 176 ? 3 : 2));
+  for (let k = 0; k < n * 4 && gaps.length < n; k++) {
+    const c = R() * 360, half = 4 + R() * 6;
+    if (AVENUES.some((a) => angDist(a, c) < half + 6) || gaps.some((g) => angDist(g[0], c) < g[1] + half + 20)) continue;
+    const p = polar(ring.radiusAt(c), c);
+    if (riverDistance(p.x, p.z, 80) < 40) continue;
+    gaps.push([c, half]);
+  }
+  if (!gaps.length) return [ring];
+  const open = ring.pts.slice(0, -1).map((pt, i) => ({ pt, a: i * 3, cut: gaps.some(([c, h]) => angDist(c, i * 3) < h) }));
+  const start = open.findIndex((o) => o.cut);
+  const arcs = [];
+  let cur = [];
+  for (let k = 1; k <= open.length; k++) {
+    const o = open[(start + k) % open.length];
+    if (o.cut) { if (cur.length >= 3) arcs.push(cur); cur = []; } else cur.push(o.pt);
+  }
+  if (cur.length >= 3) arcs.push(cur);
+  return arcs.map((pts, i) => ({ ...ring, id: 'ring' + ring.r + 'a' + i, pts, arc: true }));
+}
 function pick(list, seed) { const total = list.reduce((s, [, w]) => s + w, 0); let n = seed % total; for (const [k, w] of list) { if (n < w) return k; n -= w; } return list[0][0]; }
 
 // Mixed seams between the quarters widen with distance from the centre, so the outer city blends the four styles.
@@ -145,8 +179,17 @@ export function computeMetropolis() {
     }
     if (cut >= 2) streets.push({ ...road, pts: road.pts.slice(0, cut) });
   }
-  const roads = [...rings, ...avenues, ...streets];
+  const ringArcs = rings.flatMap((ring) => breakRing(ring, riverDistance));
+  const roads = [...ringArcs, ...avenues, ...streets];
   const index = makeRoadIndex(roads);
+  const avenueIdx = makeRoadIndex(avenues);
+  // Villages and hamlets: a clustering field (two octaves of noise, raised along the avenues) that decides where
+  // the suburbs and the countryside build densely and where they open out into gardens and fields.
+  const villageAt = (x, z) => 0.65 * vnoise(x / 85, z / 85, 1) + 0.35 * vnoise(x / 31, z / 31, 2) + (distanceToRoads(avenueIdx, x, z, 30) < 22 ? 0.16 : 0);
+  const keepProb = (zone, r, x, z) => zone === 'inner' ? 0.975 - 0.07 * smooth(150, 276, r)
+    : zone === 'blend' ? 0.94 - 0.2 * smooth(300, 366, r)
+      : zone === 'suburb' ? 0.05 + 0.9 * smooth(0.36, 0.58, villageAt(x, z))
+        : zone === 'country' ? 0.02 + 0.85 * smooth(0.48, 0.66, villageAt(x, z)) : KEEP_PROB[zone];
 
 
   const boundaries = [CANAL.outer, ...RING_ROADS.map((x) => x.r), OUTER_EDGE, COUNTRY_EDGE];
@@ -219,7 +262,7 @@ export function computeMetropolis() {
         }
         const range = dense ? [3.8, 5.4] : SIZE_RANGE[zone];
         const size = range[0] + R() * (range[1] - range[0]);
-        const gap = dense ? 0.25 + R() * 0.45 : (zone === 'country' ? 6 + R() * 8 : zone === 'inner' ? 0.4 + R() * 1.0 : 0.6 + R() * 1.6);
+        const gap = dense ? 0.25 + R() * 0.45 : (zone === 'country' ? 3 + R() * 6 : zone === 'inner' ? 0.3 + R() * (0.8 + 1.4 * smooth(150, 276, rowR)) : 0.6 + R() * 1.6);
         const stepDeg = ((size + gap) / rowR) * (180 / Math.PI);
         a += stepDeg;
         const jr = rowR + (R() - 0.5) * 1.2;
@@ -231,7 +274,7 @@ export function computeMetropolis() {
           if (pk.band === band && Math.hypot(jp.x - pk.x, jp.z - pk.z) < pk.r) { park = pk; break; }
         }
         if (park && R() < 0.6) { park.used = true; continue; }
-        if (R() > (dense ? 0.99 : KEEP_PROB[zone])) continue;
+        if (R() > (dense ? 0.99 : keepProb(zone, jr, jp.x, jp.z))) continue;
 
         let harbourKind = null;
         if (zone === 'harbour') {
@@ -355,6 +398,9 @@ export function computeMetropolis() {
         const lot = {
           id, band, angle: pja, r: pjr, x, z, size: psize, rotY, setback, scaleY, spike, district, zone, style, kind,
           variant: hash(id) % 3,
+          // Frontage width and depth factors: lots are not all square (dense core keeps nearly full plots).
+          fw: zone === 'inner' ? 0.92 + (hash(id + 'fw') % 9) / 100 : 0.8 + (hash(id + 'fw') % 21) / 100,
+          fd: zone === 'inner' ? 0.84 + (hash(id + 'fd') % 17) / 100 : 0.76 + (hash(id + 'fd') % 25) / 100,
           claimable: !COMMON.has(kind) && (CLAIMABLE[style] || []).includes(kind),
         };
         lots.push(lot);
@@ -363,27 +409,44 @@ export function computeMetropolis() {
     }
   });
 
+  // Farmland: a warped, jittered lattice whose cells become irregular fields that share hedgerows (no two
+  // overlap), turning slowly with the land; fields avoid the river, the sea and the farmsteads.
   const fields = [];
-  let fieldIndex = 0;
-  for (let fr = 466; fr <= 572; fr += 17) {
-    const FR = rng('field' + fr);
-    let a = 0;
-    while (a < 360) {
-      const stepDeg = ((20 + FR() * 10) / fr) * (180 / Math.PI);
-      const ja = a + stepDeg / 2;
-      a += stepDeg;
-      if (inHarbour(ja)) continue;
-      const p = polar(fr, ja);
-      const w = 10 + FR() * 10, d = 8 + FR() * 8;
-      const radius = Math.max(w, d) / 2;
-      if (distanceToRoads(index, p.x, p.z) < radius) continue;
-      if (riverDistance(p.x, p.z) < RIVER_HALF + radius + 1) continue;
-      let hit = false;
-      for (const lot of lots) {
-        if (Math.hypot(p.x - lot.x, p.z - lot.z) < radius + lot.size / 2) { hit = true; break; }
-      }
-      if (hit) continue;
-      fields.push({ id: `fd${fieldIndex}`, x: p.x, z: p.z, w, d, rotY: Math.atan2(-p.x, -p.z) + (FR() - 0.5) * 0.5, crop: fieldIndex % 4 });
+  {
+    const CELL = 26, LIM = 880, N = Math.ceil(LIM / CELL) + 1, FR = rng('fields');
+    const lot16 = new Map();
+    for (const lot of lots) if (lot.r > 400) { const k = Math.floor(lot.x / 32) + ':' + Math.floor(lot.z / 32); (lot16.get(k) || lot16.set(k, []).get(k)).push(lot); }
+    const lotNear = (x, z, m) => {
+      const cx = Math.floor(x / 32), cz = Math.floor(z / 32);
+      for (let i = cx - 1; i <= cx + 1; i++) for (let j = cz - 1; j <= cz + 1; j++) for (const l of lot16.get(i + ':' + j) || []) if (Math.hypot(l.x - x, l.z - z) < m + l.size * 0.7) return true;
+      return false;
+    };
+    const V = new Map();
+    const vert = (i, j) => {
+      const key = i + ':' + j;
+      if (V.has(key)) return V.get(key);
+      const x0 = i * CELL, z0 = j * CELL, h = hash('fv' + key);
+      const jx = ((h % 1000) / 1000 - 0.5) * CELL * 0.55, jz = (((h >>> 10) % 1000) / 1000 - 0.5) * CELL * 0.55;
+      const th = (vnoise(x0 / 260, z0 / 260, 9) - 0.5) * 1.6;
+      const c = Math.cos(th), sn = Math.sin(th), x = x0 + jx, z = z0 + jz;
+      const v = [x * c - z * sn, x * sn + z * c];
+      V.set(key, v);
+      return v;
+    };
+    let fieldIndex = 0;
+    for (let i = -N; i < N; i++) for (let j = -N; j < N; j++) {
+      const q = [vert(i, j), vert(i + 1, j), vert(i + 1, j + 1), vert(i, j + 1)];
+      const cx = (q[0][0] + q[1][0] + q[2][0] + q[3][0]) / 4, cz = (q[0][1] + q[1][1] + q[2][1] + q[3][1]) / 4, r = Math.hypot(cx, cz);
+      if (r < OUTER_EDGE + 12 || r > LIM) continue;
+      const a = NORM((Math.atan2(cx, -cz) * 180) / Math.PI);
+      if (a > HARBOUR.from - 22 && a < HARBOUR.to + 22 && r > HARBOUR.shore - 30) continue;
+      if (FR() > 0.86) continue;
+      const pts = q.map(([x, z]) => [x + (cx - x) * 0.07, z + (cz - z) * 0.07]);
+      if (pts.some(([x, z]) => riverDistance(x, z, 30) < RIVER_HALF + 4) || riverDistance(cx, cz, 30) < RIVER_HALF + 8) continue;
+      if (lotNear(cx, cz, CELL * 0.45) || distanceToRoads(index, cx, cz, 12) < 6) continue;
+      const ex = Math.hypot(q[1][0] - q[0][0], q[1][1] - q[0][1]), ez = Math.hypot(q[3][0] - q[0][0], q[3][1] - q[0][1]);
+      const rotY = Math.atan2(q[1][0] - q[0][0], q[1][1] - q[0][1]) - Math.PI / 2;
+      fields.push({ id: `fd${fieldIndex}`, x: cx, z: cz, w: ex * 0.9, d: ez * 0.9, rotY, crop: hash('crop' + i + ':' + j) % 6, pts });
       fieldIndex++;
     }
   }
@@ -430,6 +493,7 @@ export function computeMetropolis() {
     wallR: WALL_R,
     roads,
     ringRoads: rings,
+    yards: buildYards(lots, riverDistance),
     avenues,
     streets,
     bridges,
@@ -445,6 +509,25 @@ export function computeMetropolis() {
   result.patches = buildGroundPatches(result);
   cached = Object.freeze(result);
   return cached;
+}
+
+// Irregular house plots: a jittered yard polygon around and behind each house in the outer districts (lawn,
+// kitchen garden, orchard grass or bare yard), so from above the parcels read as uneven strips, not squares.
+const YARD_KINDS = new Set(['cottage', 'farmhouse', 'house', 'villa', 'domus', 'siheyuan', 'residential', 'barn', 'insula', 'workshop']);
+function buildYards(lots, riverDistance) {
+  const yards = [];
+  for (const lot of lots) {
+    if (lot.zone === 'inner' || lot.zone === 'harbour' || !YARD_KINDS.has(lot.kind)) continue;
+    const h = hash(lot.id + 'yard'), f = (k, a, b) => a + (((h >>> k) % 97) / 96) * (b - a);
+    const half = lot.size / 2, country = lot.zone === 'country';
+    const back = half + (country ? f(0, 5, 14) : f(0, 2.5, 8)), side = half + f(5, 0.6, country ? 4 : 2.4), front = half * (lot.fd || 1) + 0.4;
+    const local = [[-side + f(9, -0.8, 0.8), front], [side + f(13, -0.8, 0.8), front], [side + f(17, -1.5, 2.5), -back + f(21, -2, 2)], [f(25, -2, 2), -back - f(3, 0, 3)], [-side - f(7, -1.5, 2.5), -back + f(11, -2, 2)]];
+    const c = Math.cos(lot.rotY), sn = Math.sin(lot.rotY);
+    const pts = local.map(([lx, lz]) => [lot.x + lx * c + lz * sn, lot.z - lx * sn + lz * c]);
+    if (pts.some(([x, z]) => riverDistance(x, z, 20) < RIVER_HALF + 2 || Math.abs(Math.hypot(x, z) - WALL_R) < 4)) continue;
+    yards.push({ id: lot.id, pts, tone: h % 4 });
+  }
+  return yards;
 }
 
 export function buildGroundPatches(plan) {

@@ -32,7 +32,7 @@ export function buildLife(plan, material, { quality = 'medium' } = {}) {
   const kinds = ['car', 'bus', 'handcart', 'oxcart', 'person', 'sampan', 'sailboat', 'barge', 'ferry', 'galley'];
   const geos = {};
   for (const k of kinds) { try { geos[k] = normalizeGeometry(STREET_PROPS[k](hash(k) % 3)); } catch { geos[k] = null; } }
-  const roads = plan.roads.filter((r) => r.kind === 'avenue' || r.kind === 'ring').map((r) => ({ road: r, path: pathOf(r.pts, r.kind === 'ring') }));
+  const roads = plan.roads.filter((r) => r.kind === 'avenue' || r.kind === 'ring').map((r) => ({ road: r, path: pathOf(r.pts, r.kind === 'ring' && !r.arc) }));
   const rivers = plan.river.legs.map((l) => pathOf(l.pts, false));
   const harbour = [];
   for (let k = 0; k < 3; k++) {
@@ -50,12 +50,12 @@ export function buildLife(plan, material, { quality = 'medium' } = {}) {
     const style = styleAt(plan, probe.x, probe.z), modern = style === 'modern' || (style === 'mixed' && rnd() < 0.5) || (style === 'outer' && rnd() < 0.4);
     const kind = modern ? (rnd() < 0.12 ? 'bus' : 'car') : rnd() < 0.6 ? 'handcart' : 'oxcart';
     const dir = rnd() < 0.5 ? 1 : -1;
-    movers.push({ kind, path, s: s0, v: dir * (modern ? 7 + rnd() * 5 : 1.6 + rnd() * 1.2), lane: dir * (road.w / 2 - (kind === 'bus' ? 1.4 : 1.1)), bob: 0 });
+    movers.push({ kind, path, s: s0, v: dir * (modern ? 7 + rnd() * 5 : 1.6 + rnd() * 1.2), lane: dir * (road.w / 2 - (kind === 'bus' ? 1.4 : 1.1)), bob: 0, pingpong: !!road.arc });
   }
   for (let i = 0; i < nWalk && roads.length; i++) {
     const { road, path } = roads[Math.floor(rnd() * roads.length)];
     const dir = rnd() < 0.5 ? 1 : -1;
-    movers.push({ kind: 'person', path, s: rnd() * path.len, v: dir * (1.0 + rnd() * 0.5), lane: (rnd() < 0.5 ? 1 : -1) * (road.w / 2 + 0.5 + rnd() * 0.4), bob: 1 });
+    movers.push({ kind: 'person', path, s: rnd() * path.len, v: dir * (1.0 + rnd() * 0.5), lane: (rnd() < 0.5 ? 1 : -1) * (road.w / 2 + 0.5 + rnd() * 0.4), bob: 1, pingpong: !!road.arc });
   }
   for (let i = 0; i < nBoat; i++) {
     const onRiver = i % 3 !== 2 && rivers.length;

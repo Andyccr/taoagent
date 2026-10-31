@@ -43,7 +43,7 @@ export function placeDressing(plan, { claimedLots = new Set(), quality = 'medium
     const cx = lot.x - sin * lot.setback, cz = lot.z - cos * lot.setback, base = footprintHeight(cx, cz, lot.size, lot.rotY) - 0.05;
     // Local (x, z) in lot units -> world; ly is the height above the building's base (the result is absolute).
     const put = (kind, lx, ly, lz, rot, scale, variant, cls = 'dress') => {
-      const wx = lx * s, wz = lz * s;
+      const wx = lx * s * (lot.fw || 1), wz = lz * s * (lot.fd || 1);
       out.push({ kind, x: cx + wx * cos + wz * sin, z: cz - wx * sin + wz * cos, y: base + ly, rotY: lot.rotY + rot, scale, variant, cls });
     };
     const k = Math.min(1, Math.max(0.42, s * 0.95)); // prop scale: smaller on small, dense-core lots
