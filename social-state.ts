@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import crypto from 'node:crypto'
-import { Store, HttpError, json, string, id, readJsonSafe, componentKind, type Turn } from './store.ts'
+import { Store, HttpError, json, string, id, readJsonSafe, componentKind, staleLockDirectory, type Turn } from './store.ts'
 
 export interface LifeEntry { id:string; at:string; agentId:string; kind:'observation'|'reflection'|'contribution'|'intention'|'episode'; importance?:number; lastAccess?:string; episodeId?:string; participants?:string[]; text:string; sourceIds:string[]; supersedes?:string }
 export interface LifeMember { agentId:string; interests:string; attention:string; stance:string; lastAt?:string; readIds:string[] }
@@ -21,10 +21,8 @@ export function changeLife<T>(store:Store,key:string,operation:(state:LifeState)
   requireGroup(store,key);const directory=store.file('chats',id(key),'social');fs.mkdirSync(directory,{recursive:true})
   const lock=store.file('chats',key,'social','.social-lock'),owner=lock+'/owner.json'
   if(fs.existsSync(lock)){
-    let stale=false
-    try{const value=JSON.parse(fs.readFileSync(owner,'utf8')) as {pid:number};if(Number.isSafeInteger(value.pid)&&value.pid>0){try{process.kill(value.pid,0)}catch(error){stale=(error as NodeJS.ErrnoException).code==='ESRCH'}}}catch{/* Incomplete claims remain protected. */}
-    if(!stale)throw new HttpError(409,'日常空间正在更新，请重试')
-    fs.unlinkSync(owner);fs.rmdirSync(lock)
+    if(!staleLockDirectory(lock,owner))throw new HttpError(409,'日常空间正在更新，请重试')
+    if(fs.existsSync(owner))fs.unlinkSync(owner);fs.rmdirSync(lock)
   }
   try{fs.mkdirSync(lock)}catch{throw new HttpError(409,'日常空间正在更新，请重试')}
   try{json(owner,{pid:process.pid});const state=lifeState(store,key),result=operation(state);state.revision=crypto.randomUUID();json(store.file('chats',key,'social','state.json'),state);return result}finally{fs.unlinkSync(owner);fs.rmdirSync(lock)}

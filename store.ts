@@ -76,6 +76,34 @@ export function atomic(file: string, content: string) {
   try { fs.writeFileSync(tmp, content, { mode: 0o600 }); fs.renameSync(tmp, file) }
   finally { if (fs.existsSync(tmp)) fs.unlinkSync(tmp) }
 }
+// A lock directory whose owner process is gone, or whose owner record was never written (crash between
+// mkdir and the owner write) and has not been touched for 30 seconds, may be taken over.
+export function staleLockDirectory(directory: string, ownerFile: string): boolean {
+  try {
+    const owner = JSON.parse(fs.readFileSync(ownerFile, 'utf8')) as { pid?: unknown }
+    if (!Number.isSafeInteger(owner.pid) || Number(owner.pid) <= 0) return false
+    try { process.kill(Number(owner.pid), 0); return false } catch (error) { return (error as NodeJS.ErrnoException).code === 'ESRCH' }
+  } catch {
+    try { return Date.now() - fs.statSync(directory).mtimeMs > 30000 } catch { return false }
+  }
+}
+// Cheap change detector for files that are only ever replaced through atomic rename. Empty string: file missing.
+export function fileSignature(file: string): string {
+  try { const stat = fs.statSync(file, { bigint: true }); return `${stat.ino}:${stat.size}:${stat.mtimeNs}:${stat.ctimeNs}` }
+  catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') return ''; throw error }
+}
+// Append-only files (JSONL histories, audit logs) keep the atomic-rename guarantee without decoding and
+// re-encoding the whole file: the kernel copies the current bytes to the temp file, the new line is appended,
+// and only a complete temp file replaces the original.
+export function appendAtomic(file: string, content: string) {
+  fs.mkdirSync(path.dirname(file), { recursive: true })
+  const tmp = file + '.' + crypto.randomUUID() + '.tmp'
+  try {
+    try { fs.copyFileSync(file, tmp) } catch (error) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error }
+    fs.appendFileSync(tmp, content, { mode: 0o600 })
+    fs.renameSync(tmp, file)
+  } finally { if (fs.existsSync(tmp)) fs.unlinkSync(tmp) }
+}
 export function json(file: string, value: unknown) { atomic(file, JSON.stringify(value, null, 2) + '\n') }
 const corruptCopies = new Set<string>()
 export function readJsonSafe<T>(file: string, fallback: T): T {
@@ -311,9 +339,10 @@ export class Store {
       if (session.kind !== 'group' || (modelId && !this.models().some(model => model.id === modelId))) throw new HttpError(400,'请选择有效的群模型')
       if (expectedModelId !== undefined && expectedModelId !== session.modelId) throw new HttpError(409,'群模型已在其他窗口更改，请重新载入后选择')
       if (modelId === session.modelId) return session
-      const updated = {...session,modelId,updatedAt:new Date(Math.max(Date.now(),Date.parse(session.updatedAt)+1)).toISOString()}
-      json(this.file('chats',key,'session.json'),updated)
-      return updated
+      const updatedAt = new Date(Math.max(Date.now(),Date.parse(session.updatedAt)+1)).toISOString()
+      // Persist the stored record, not the active-member view, so archived members return when restored.
+      json(this.file('chats',key,'session.json'),{...this.storedSession(key),modelId,updatedAt})
+      return {...session,modelId,updatedAt}
     })
   }
   private saveAgentUnlocked(agent: Agent, rules: string, memory: string) {
@@ -344,6 +373,7 @@ export class Store {
     }
     return session
   }
+  private storedSession(key: string): Session { return read<Session>(this.file('chats', id(key), 'session.json'), this.root) }
   requireActiveSession(key:string) { const session=this.session(key);if(session.archivedAt)throw new HttpError(410,'此群聊已删除，请先恢复再继续');return session }
   groupVersion(key:string) {
     const session=read<Session>(this.file('chats',id(key),'session.json'), this.root)
@@ -423,6 +453,8 @@ export class Store {
     const minimum=city?1:details.spaceKind==='solo'||(key&&this.session(key).spaceKind==='solo')?1:2
     if(members.length<minimum||(!city&&members.length>12))throw new HttpError(400,minimum===1?'请选择 1–12 个 Agent':'请选择 2–12 个 Agent')
     for (const member of members) this.requireActiveAgent(member)
+    // A creation retry with a known ID returns the group it created instead of resetting its history.
+    if (!key && fs.existsSync(this.file('chats', creationId, 'session.json')) && !this.session(creationId).archivedAt) return this.session(creationId)
     const existing = key ? this.session(key) : undefined
     if(existing?.archivedAt||!key&&fs.existsSync(this.file('chats',creationId,'session.json'))&&this.session(creationId).archivedAt)throw new HttpError(410,'群聊已删除，编辑或创建不能恢复它')
     if (expected !== undefined && expected !== existing?.updatedAt) throw new HttpError(409, '群设置已在另一窗口更新，你的编辑仍保留，请重新载入对照')
@@ -608,7 +640,7 @@ export class Store {
     atomic(file, next)
     const auditFile = path.join(path.dirname(file), 'memory-events.jsonl')
     const event = { at: new Date().toISOString(), sourceSessionId: key, sourceMessageId: sourceId, agentId, scope, operation: append ? 'append' : 'edit' }
-    atomic(auditFile, (fs.existsSync(auditFile) ? fs.readFileSync(auditFile, 'utf8') : '') + JSON.stringify(event) + '\n')
+    appendAtomic(auditFile, JSON.stringify(event) + '\n')
     return true
   }
   memoryItems(key: string, agentId: string, scope: MemoryScope): MemoryItem[] {
@@ -775,22 +807,39 @@ export class Store {
       return true
     })
   }
+  // Parsed histories are reused while the file identity (inode, size, mtime, ctime) is unchanged.
+  // Every write goes through atomic rename, so any change, including one from another local instance, invalidates the entry.
+  private messageCache = new Map<string, { signature: string; messages: Message[] }>()
   messages(key: string): Message[] {
     this.session(key)
-    return this.text('chats', id(key), 'messages.jsonl').split('\n').filter(Boolean).flatMap(line => { try { return [JSON.parse(line) as Message] } catch { return [] } })
+    const file = this.file('chats', id(key), 'messages.jsonl'), signature = fileSignature(file)
+    if (!signature) { this.messageCache.delete(file); return [] }
+    let cached = this.messageCache.get(file)
+    if (cached?.signature !== signature) {
+      const messages = fs.readFileSync(file, 'utf8').split('\n').filter(Boolean).flatMap(line => { try { return [JSON.parse(line) as Message] } catch { return [] } })
+      cached = { signature, messages }
+      this.messageCache.delete(file); this.messageCache.set(file, cached)
+      if (this.messageCache.size > 24) this.messageCache.delete(this.messageCache.keys().next().value as string)
+    } else { this.messageCache.delete(file); this.messageCache.set(file, cached) }
+    return cached.messages.map(message => ({ ...message }))
   }
   append(key: string, role: Message['role'], content: string, status: Message['status'] = 'complete', extra: Pick<Message, 'agentId' | 'agentName' | 'kind' | 'turnId' | 'phase' | 'contextMessageIds' | 'concurrentMessageIds' | 'replyToMessageId' | 'responseIntent'> = {}, messageId?: string) {
     return this.withMemoryLock(this.file('chats',id(key),'MEMORY.md'),()=>{
     const session = this.session(key)
     if(session.archivedAt&&status!=='interrupted')throw new HttpError(410,'群聊已删除，停止发布新消息')
     const at = new Date().toISOString()
-    // Rewrite the small tail via atomic rename: a crash cannot leave a half JSON line.
+    // Append through a complete temp copy and atomic rename: a crash cannot leave a half JSON line.
     const file = this.file('chats', id(key), 'messages.jsonl')
     const message: Message = { id: messageId ? id(messageId) : crypto.randomUUID(), role, content, at, status, ...extra }
-    atomic(file, this.text('chats', key, 'messages.jsonl') + JSON.stringify(message) + '\n')
-    session.updatedAt = at
-    if (session.title === '新对话' && role === 'user') session.title = content.replace(/\s+/g, ' ').slice(0, 42)
-    json(this.file('chats', key, 'session.json'), session)
+    const before = fileSignature(file), cached = this.messageCache.get(file)
+    appendAtomic(file, JSON.stringify(message) + '\n')
+    // Extend a current cache entry instead of reparsing the whole history on the next read.
+    if (cached && before && cached.signature === before) this.messageCache.set(file, { signature: fileSignature(file), messages: [...cached.messages, { ...message }] })
+    // Persist the stored record, not the active-member view, so archived members return when restored.
+    const stored = this.storedSession(key)
+    stored.updatedAt = at
+    if (stored.title === '新对话' && role === 'user') stored.title = content.replace(/\s+/g, ' ').slice(0, 42)
+    json(this.file('chats', key, 'session.json'), stored)
     return message
     })
   }
