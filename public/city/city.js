@@ -82,6 +82,19 @@ export function createCity(container, roster, opts = {}) {
   sun.castShadow = shadows;
   scene.add(sun, sun.target);
   const fill = new THREE.DirectionalLight('#a6c8ff', 0.35);
+  const LIGHTS = {
+    day: { fog: SKY.clone(), hemi: new THREE.Color('#bcd8f4'), ground: new THREE.Color('#cbb48c'), hemiI: 1.15, sun: new THREE.Color('#ffd9a3'), sunI: 2.05, fill: new THREE.Color('#a6c8ff'), fillI: 0.35, exp: 1.05 },
+    night: { fog: NIGHT_SKY.clone(), hemi: new THREE.Color('#33415e'), ground: new THREE.Color('#1b1a20'), hemiI: 0.75, sun: new THREE.Color('#9db4d8'), sunI: 0.45, fill: new THREE.Color('#6f8fc4'), fillI: 0.22, exp: 1.32 },
+  };
+  let lightK = -1, lightTarget = 0;
+  function applyLight(k) {
+    const a = LIGHTS.day, b = LIGHTS.night, e = k * k * (3 - 2 * k), mix = (x, y) => x + (y - x) * e;
+    scene.fog.color.lerpColors(a.fog, b.fog, e);
+    hemi.color.lerpColors(a.hemi, b.hemi, e); hemi.groundColor.lerpColors(a.ground, b.ground, e); hemi.intensity = mix(a.hemiI, b.hemiI);
+    sun.color.lerpColors(a.sun, b.sun, e); sun.intensity = mix(a.sunI, b.sunI);
+    fill.color.lerpColors(a.fill, b.fill, e); fill.intensity = mix(a.fillI, b.fillI);
+    renderer.toneMappingExposure = mix(a.exp, b.exp);
+  }
   fill.position.set(-40, 26, -34);
   fill.castShadow = false;
   scene.add(fill, fill.target);
@@ -735,6 +748,7 @@ export function createCity(container, roster, opts = {}) {
     renderer.info.reset();
     const t0 = performance.now();
     camera.updateMatrixWorld();
+    if (lightK >= 0 && lightK !== lightTarget) { lightK = lightTarget > lightK ? Math.min(lightTarget, lightK + real / 1.5) : Math.max(lightTarget, lightK - real / 1.5); applyLight(lightK); }
     city.update(camera, dt);
     if (composer) composer.render(); else renderer.render(scene, camera);
     frameMs = frameMs * 0.9 + (performance.now() - t0) * 0.1;
@@ -784,15 +798,9 @@ export function createCity(container, roster, opts = {}) {
     if (o.night !== undefined) {
       nightOn = !!o.night;
       scene.background = nightOn ? skyNight : skyDay;
-      scene.fog.color.copy(nightOn ? NIGHT_SKY : SKY);
-      hemi.color.set(nightOn ? '#33415e' : '#bcd8f4');
-      hemi.groundColor.set(nightOn ? '#1b1a20' : '#cbb48c');
-      hemi.intensity = nightOn ? 0.75 : 1.15;
-      sun.color.set(nightOn ? '#9db4d8' : '#ffd9a3');
-      sun.intensity = nightOn ? 0.45 : 2.05;
-      fill.color.set(nightOn ? '#6f8fc4' : '#a6c8ff');
-      fill.intensity = nightOn ? 0.22 : 0.35;
-      renderer.toneMappingExposure = nightOn ? 1.32 : 1.05;
+      // Lights, fog and exposure ease between day and night over ~1.5 s (see frame()); first call snaps.
+      lightTarget = nightOn ? 1 : 0;
+      if (lightK < 0) applyLight(lightK = lightTarget);
       lamps.visible = nightOn; lanterns.visible = nightOn; city.setNight(nightOn);
       // Wonders share city-wide materials, so night floodlighting swaps in per-wonder clones instead of editing the shared ones.
       for (const w of city.wonders || []) {
