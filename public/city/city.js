@@ -15,6 +15,9 @@ import { buildModern, buildSkyline } from './styles-modern.js';
 import { buildGround, buildPlaza, buildStreet, buildReservedPlot, buildStele, buildTree, buildPine } from './decor.js';
 import { createSmoke, createFireworks } from './effects.js';
 import { buildMetropolis } from './metropolis.js';
+import { heightAt, footprintHeight } from './metro-height.js';
+import { STREET_PROPS } from './street-props.js';
+import { DRESSING } from './dressing-props.js';
 import { bakeStatic } from './bake.js';
 import { computeMetropolis, assignClaims, CANAL } from './metropolis-plan.js';
 import { buildCharacter, applyVisual } from './characters.js';
@@ -112,7 +115,7 @@ export function createCity(container, roster, opts = {}) {
   // ---------- static city ----------
   // Static core decor is merged per material after building (bakeStatic) to save draw calls.
   const decor = new THREE.Group(); decor.name = 'coreDecor'; scene.add(decor);
-  decor.add(buildGround({ radius: CITY_R + 90, shadows }));
+  decor.add(buildGround({ radius: (plan.canal?.outer || 50) + 3, shadows }));
   decor.add(buildPlaza({ radius: PLAZA_R, shadows }));
   const roadOut = PLAZA_R + ROAD_W;
   for (const p of layout.plots) {
@@ -136,6 +139,36 @@ export function createCity(container, roster, opts = {}) {
   }
   for (const ang of [135, 225]) { const t = buildPine({ seed: seed++, shadows }); const p = polar(PLAZA_R - 1.6, ang); t.position.set(p.x, 0, p.z); decor.add(t); }
 
+  // Core gardens in the gaps between plots and streets: flower beds, clipped hedges, blossom trees, benches and
+  // lanterns, plus strollers and a tea cart on the plaza (one merged mesh after baking).
+  {
+    const parts = [], plotsAt = layout.plots.map((p) => [p.x, p.z]);
+    const free = (x, z, m) => plotsAt.every(([px, pz]) => Math.max(Math.abs(px - x), Math.abs(pz - z)) > PLOT / 2 + m);
+    const put = (geo, x, z, rot = 0, s = 1) => { if (!geo) return; geo.scale(s, s, s); geo.rotateY(rot); geo.translate(x, 0, z); parts.push(geo); };
+    const bed = (x, z, rot, w, d, flower) => {
+      const g = new THREE.BoxGeometry(w, 0.32, d).translate(0, 0.16, 0), f = new THREE.BoxGeometry(w - 0.3, 0.12, d - 0.3).translate(0, 0.36, 0);
+      const paint = (geo, hex) => { const c = new THREE.Color(hex), n = geo.getAttribute('position').count, a = new Float32Array(n * 3); for (let i = 0; i < n; i++) a.set([c.r, c.g, c.b], i * 3); geo.setAttribute('color', new THREE.BufferAttribute(a, 3)); return geo; };
+      put(paint(g, '#b8ad96'), x, z, rot); put(paint(f, flower), x, z, rot);
+    };
+    const flowers = ['#c8475a', '#e0b23c', '#d77fa8', '#8f63b8', '#e8e2d0'];
+    let k = 0;
+    for (const r of [21.75, 32.25, 42.5]) for (let i = 0; i < 12; i++, k++) {
+      const a = 15 + 30 * i, p = polar(r, a), rot = Math.atan2(-p.x, -p.z);
+      if (!free(p.x, p.z, 1.2)) continue;
+      bed(p.x, p.z, rot, 2.8, 1.4, flowers[k % flowers.length]);
+      const side = polar(r, a + (k % 2 ? 6 : -6));
+      if (free(side.x, side.z, 0.8)) put(STREET_PROPS[k % 3 ? 'blossom' : 'cypress']?.(k % 3), side.x, side.z, k, 0.9);
+      const lamp = polar(r - 1.6, a + (k % 2 ? -5 : 5));
+      if (free(lamp.x, lamp.z, 0.5)) put(STREET_PROPS[k % 2 ? 'lanternPost' : 'bench']?.(0), lamp.x, lamp.z, rot + (k % 2 ? 0 : Math.PI / 2));
+      for (const j of [-1, 1]) { const b = polar(r + 1.6, a + j * 4); if (free(b.x, b.z, 0.4)) put(STREET_PROPS.bush?.(k % 3), b.x, b.z, k * j, 0.8); }
+    }
+    // Strollers and a tea cart on the plaza ring; a few groups chatting by the avenue heads.
+    for (let i = 0; i < 6; i++) { const p = polar(PLAZA_R - 1.4, 60 * i + 25); put(DRESSING.personGroup?.(i % 4), p.x, p.z, i * 1.3, 0.62); }
+    for (let i = 0; i < 4; i++) { const p = polar(PLAZA_R + ROAD_W + 0.9, 90 * i + 45); if (free(p.x, p.z, 0.4)) put(DRESSING.personGroup?.((i + 2) % 4), p.x, p.z, i, 0.62); }
+    { const p = polar(PLAZA_R - 2.2, 150); put(DRESSING.streetVendorCart?.(1), p.x, p.z, Math.atan2(-p.x, -p.z), 0.65); }
+    const merged = parts.length ? mergeGeometries(parts.map((g) => (g.index ? g.toNonIndexed() : g)).map((g) => { for (const n of Object.keys(g.attributes)) if (!['position', 'normal', 'color', 'uv'].includes(n)) g.deleteAttribute(n); if (!g.getAttribute('uv')) g.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(g.getAttribute('position').count * 2), 2)); return g; })) : null;
+    if (merged) { const m = new THREE.Mesh(merged, cityMaterial('solid')); m.castShadow = shadows; m.receiveShadow = shadows; m.name = 'coreGardens'; decor.add(m); }
+  }
   bakeStatic(decor);
 
   // Usage stele in the plaza (front-left of the hall, facing the camera side).
@@ -252,7 +285,7 @@ export function createCity(container, roster, opts = {}) {
   // Agents beyond the 18 core plots move into claimable city lots (filler skipped there, building scaled to the lot).
   for (const p of layout.claimed || []) {
     const g = new THREE.Group();
-    g.position.set(p.x, 0, p.z); g.rotation.y = p.rotY;
+    g.position.set(p.x, footprintHeight(p.x, p.z, p.size, p.rotY), p.z); g.rotation.y = p.rotY;
     const b = buildForStyle(p.bot.style, { color: p.bot.color, shadows, variant: p.variant || 0 });
     b.group.scale.setScalar(p.size / PLOT);
     g.add(b.group);
@@ -422,6 +455,7 @@ export function createCity(container, roster, opts = {}) {
         if (dist <= move) { p.set(q.x, 0, q.z); move -= dist; m.seg++; }
         else { p.x += (dx / dist) * move; p.z += (dz / dist) * move; move = 0; }
       }
+      m.f.root.position.y = heightAt(m.f.root.position.x, m.f.root.position.z);
       m.phase += dt * 9;
       const sw = Math.sin(m.phase) * 0.6;
       m.f.legs[0].rotation.x = sw; m.f.legs[1].rotation.x = -sw;
@@ -783,7 +817,7 @@ export function createCity(container, roster, opts = {}) {
     const out = new THREE.Vector3(w.x, 0, w.z); if (out.lengthSq() < 1) out.set(0, 0, 1); out.normalize();
     const side = new THREE.Vector3(-out.z, 0, out.x).multiplyScalar(0.45);
     const dir = out.add(side).normalize().multiplyScalar(Math.cos(0.5)).setY(Math.sin(0.5));
-    glide(new THREE.Vector3(w.x, Math.min(w.height, 60) * 0.35, w.z), Math.min(240, Math.max(70, w.radius * 3.4, Math.min(w.height, 180) * 1.35)), dir);
+    glide(new THREE.Vector3(w.x, (w.group?.position.y || 0) + Math.min(w.height, 60) * 0.35, w.z), Math.min(240, Math.max(70, w.radius * 3.4, Math.min(w.height, 180) * 1.35)), dir);
     return true;
   }
   function focusWonderByIndex(i) { const w = city.wonders[i]; if (!w) return false; pendingFlash = new THREE.Vector3(w.x, 0.2, w.z); return focusWonder(w.id); }
@@ -805,7 +839,7 @@ export function createCity(container, roster, opts = {}) {
       // Wonders share city-wide materials, so night floodlighting swaps in per-wonder clones instead of editing the shared ones.
       for (const w of city.wonders || []) {
         w.group?.traverse((o) => {
-          if (!o.isMesh || !o.material || Array.isArray(o.material)) return;
+          if (!o.isMesh || !o.material || Array.isArray(o.material) || o.material.userData.flood) return; // flood-lit wonder material handles night itself
           if (nightOn) {
             if (o.userData._dayMat) return;
             const lit = nightWonderMats.get(o.material) || o.material.clone();

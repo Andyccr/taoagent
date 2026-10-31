@@ -6,6 +6,7 @@ import { normalizeGeometry } from './metro-batch.js';
 import { STREET_PROPS } from './street-props.js';
 import { hash } from './metropolis-plan.js';
 import { styleAt } from './metro-scatter.js';
+import { heightAt, footprintHeight } from './metro-height.js';
 
 function pathOf(pts, closed) {
   const p = closed && (pts[0][0] !== pts[pts.length - 1][0] || pts[0][1] !== pts[pts.length - 1][1]) ? [...pts, pts[0]] : pts;
@@ -93,7 +94,7 @@ export function buildLife(plan, material, { quality = 'medium' } = {}) {
       const boat = m.bob === 2;
       q.setFromAxisAngle(up, heading + (boat ? Math.PI / 2 : m.kind === 'car' || m.kind === 'bus' ? 0 : 0));
       const y = m.bob === 1 ? Math.abs(Math.sin(t * 6 + m.s)) * 0.06 : boat ? 0.05 + Math.sin(t * 1.3 + m.s) * 0.05 : 0.02;
-      m4.compose(p.set(x, y, z), q, sc);
+      m4.compose(p.set(x, boat ? y : y + heightAt(x, z), z), q, sc);
       mesh.setMatrixAt(m.id, m4);
     }
   }
@@ -114,13 +115,13 @@ export function buildNightLights(plan, props, claimedLots) {
       const hh = hash(lot.id + 'w' + i);
       if (hh % 4 === 0) continue;
       const a = lot.rotY + ((hh % 4) * Math.PI) / 2, rr = lot.size * 0.42;
-      pos.push(lot.x + Math.sin(a) * rr + ((hh >>> 4) % 10 - 5) / 6, 1.4 + ((hh >>> 8) % 100) / 100 * tall, lot.z + Math.cos(a) * rr + ((hh >>> 12) % 10 - 5) / 6);
+      pos.push(lot.x + Math.sin(a) * rr + ((hh >>> 4) % 10 - 5) / 6, footprintHeight(lot.x, lot.z, lot.size, lot.rotY) + 1.4 + ((hh >>> 8) % 100) / 100 * tall, lot.z + Math.cos(a) * rr + ((hh >>> 12) % 10 - 5) / 6);
       const c = warm[hh % 3]; col.push(c.r, c.g, c.b);
     }
   }
   for (const p of props) {
     if (p.kind !== 'lanternPost' && p.kind !== 'modernLamp' && p.kind !== 'gasLamp' && p.kind !== 'romanTorch') continue;
-    pos.push(p.x, p.kind === 'romanTorch' ? 1.6 : 3.1, p.z);
+    pos.push(p.x, heightAt(p.x, p.z) + (p.kind === 'romanTorch' ? 1.6 : 3.1), p.z);
     const c = p.kind === 'lanternPost' ? new THREE.Color(0xff6a2e) : p.kind === 'modernLamp' ? new THREE.Color(0xfff4d6) : warm[0];
     col.push(c.r, c.g, c.b);
   }

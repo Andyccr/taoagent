@@ -38,6 +38,11 @@ import { buildGreatAqueduct } from './wonder-aqueduct.js';
 import { buildTempleOfHeaven } from './wonder-temple-heaven.js';
 import { buildSkylineTowers } from './wonder-skyline.js';
 import { buildLighthouse } from './wonder-lighthouse.js';
+import { buildColossus } from './wonder-colossus.js';
+import { buildHangingGardens } from './wonder-gardens.js';
+import { heightAt, footprintHeight, drape, seaOutline, coastSides } from './metro-height.js';
+import { placeDressing } from './metro-dress.js';
+import { DRESSING } from './dressing-props.js';
 
 const FILLERS = {
   chinese: { ...CHINESE_FILLERS, ...CHINESE_EXTRA },
@@ -49,7 +54,7 @@ const FILLERS = {
 };
 const WONDER_BUILDERS = {
   palace: buildPalace, pagoda: buildGreatPagoda, acropolis: buildAcropolis, colosseum: buildColosseum, pantheon: buildPantheon, arch: buildTriumphalArch, supertall: buildSupertall, wall: () => buildCityWall(100),
-  aqueduct: buildGreatAqueduct, heaven: buildTempleOfHeaven, skyline: buildSkylineTowers, lighthouse: buildLighthouse,
+  aqueduct: buildGreatAqueduct, heaven: buildTempleOfHeaven, skyline: buildSkylineTowers, lighthouse: buildLighthouse, colossus: buildColossus, gardens: buildHangingGardens,
 };
 // Per-quality distances (metres from the camera): near = full filler model (proxy beyond), cull = filler hidden,
 // trees = full tree model (canopy stand-in beyond, hidden past treeCull), props / people = dressing hidden beyond.
@@ -59,6 +64,7 @@ export const LOD = {
   high: { near: 400, cull: 2800, trees: 440, treeCull: 2200, props: 230, people: 170 },
 };
 const GROUND = { chinese: '#c9c19f', greek: '#cfcab4', roman: '#c8b48e', modern: '#b9bcb6', mixed: '#c4c0a4', blend: '#c9c3a6', harbour: '#b7c2b0', industrial: '#b5b0a4', suburb: '#b8bf98', country: '#a9b98a', farmland: '#a9b98a' };
+const DISTRICT_TINT = { roman: [1.05, 0.98, 0.9], greek: [1.03, 1.03, 1.03], chinese: [1.0, 0.96, 0.94], modern: [0.95, 0.98, 1.04], common: [1.02, 0.99, 0.95], outer: [1.02, 0.98, 0.9] };
 const PARK = { park: '#8fb36a', plaza: '#d6cdb6', market: '#cdbf9f' };
 const CROP = ['#c9b458', '#8fae5a', '#a7c46a', '#b98e4f'];
 
@@ -195,30 +201,58 @@ function crosswalkGeometry(plan) {
 }
 
 let sharedStatic = null;
-const LAND_R = 2450, SEA_FAR = 2440;
+// Lift every vertex of a ground-standing mesh by the terrain under it (walls, hills).
+function liftByTerrain(g) {
+  const p = g.getAttribute('position');
+  for (let i = 0; i < p.count; i++) p.setY(i, p.getY(i) + heightAt(p.getX(i), p.getZ(i)));
+  p.needsUpdate = true; g.computeBoundingBox(); g.computeBoundingSphere();
+}
 // Open sea: the harbour arc (where the sea wall stands) widening into a bay with ragged headlands out to the horizon.
 function seaGeometry(plan) {
-  const { shore, from, to } = plan.sea, far = SEA_FAR, pts = [];
-  const wob = (r, k) => 2.2 * Math.sin(r / 37 + k) + 1.3 * Math.sin(r / 13 + k * 2.1);
-  const side = (deg, dir, r) => deg + dir * (14 * THREE.MathUtils.smoothstep(r, shore + 40, 1150) + wob(r, dir + 2) * Math.min(1, (r - shore) / 120));
-  for (let i = 0; i <= 40; i++) { const a = from + (to - from) * (i / 40); const p = polar(shore, a); pts.push([p.x, p.z]); }
-  for (let r = shore + 15; r <= far; r += 30) { const p = polar(r, side(to, 1, r)); pts.push([p.x, p.z]); }
-  for (let i = 0; i <= 24; i++) { const a = to + 14 - (to - from + 28) * (i / 24); const p = polar(far, a); pts.push([p.x, p.z]); }
-  for (let r = far; r >= shore + 15; r -= 30) { const p = polar(r, side(from, -1, r)); pts.push([p.x, p.z]); }
-  const outline = pts.map(([x, z]) => new THREE.Vector2(x, -z));
+  const outline = seaOutline(plan).map(([x, z]) => new THREE.Vector2(x, -z));
   const g = new THREE.ShapeGeometry(new THREE.Shape(outline), 1).rotateX(-Math.PI / 2);
   g.deleteAttribute('uv');
   g.userData.outline = outline;
   return g;
 }
 
-// Land disc with the sea cut out (no land under the water, so nothing can z-fight with it far away).
-function landGeometry(sea) {
-  const land = new THREE.Shape();
-  land.absarc(0, 0, LAND_R, 0, Math.PI * 2, false);
-  land.holes.push(new THREE.Path(sea.userData.outline.slice().reverse()));
-  const g = new THREE.ShapeGeometry(land, 160).rotateX(-Math.PI / 2);
-  g.deleteAttribute('uv');
+// Land: one smooth polar grid draped over the terrain (fine rings over the city, wide ones to the horizon), with
+// every cell that lies in the open sea left out so the water never fights the ground.
+function landGeometry(plan, sea, coarse = false) {
+  const segs = coarse ? 240 : 360, radii = [0];
+  for (let r = coarse ? 6 : 4; r <= 340; r += coarse ? 6 : 4) radii.push(r);
+  for (let r = 350; r <= 700; r += coarse ? 20 : 10) radii.push(r);
+  for (let r = 750; r <= 2450; r += 50) radii.push(r);
+  const outline = sea.userData.outline, inSea = (x, z) => {
+    let inside = false;
+    for (let i = 0, j = outline.length - 1; i < outline.length; j = i++) {
+      const xi = outline[i].x, zi = -outline[i].y, xj = outline[j].x, zj = -outline[j].y;
+      if ((zi > z) !== (zj > z) && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi) inside = !inside;
+    }
+    return inside;
+  };
+  const pos = new Float32Array(radii.length * segs * 3), idx = [];
+  radii.forEach((r, j) => { for (let i = 0; i < segs; i++) { const a = (i / segs) * Math.PI * 2, x = Math.sin(a) * r, z = -Math.cos(a) * r, o = (j * segs + i) * 3; pos[o] = x; pos[o + 1] = heightAt(x, z); pos[o + 2] = z; } });
+  const { from, to, shore } = plan.sea;
+  for (let j = 0; j < radii.length - 1; j++) for (let i = 0; i < segs; i++) {
+    const i2 = (i + 1) % segs, a = j * segs + i, b = j * segs + i2, c = (j + 1) * segs + i, d = (j + 1) * segs + i2;
+    const deg = ((i + 0.5) / segs) * 360, rm = (radii[j] + radii[j + 1]) / 2;
+    if (rm > shore + 4 && deg > from - 30 && deg < to + 30) {
+      const am = ((i + 0.5) / segs) * Math.PI * 2;
+      if (inSea(Math.sin(am) * rm, -Math.cos(am) * rm) && pos[a * 3 + 1] < -0.3 && pos[d * 3 + 1] < -0.3) continue;
+    }
+    idx.push(a, c, b, b, c, d);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  // Keep the faces pointing up whatever the polar winding is.
+  const ay = pos[1], cy0 = pos[segs * 3 + 1];
+  const A = new THREE.Vector3(pos[segs * 9], 0, pos[segs * 9 + 2]), C = new THREE.Vector3(pos[segs * 12], 0, pos[segs * 12 + 2]), B = new THREE.Vector3(pos[segs * 9 + 3], 0, pos[segs * 9 + 5]);
+  if (C.clone().sub(A).cross(B.clone().sub(A)).y < 0) for (let k = 0; k < idx.length; k += 3) { const t = idx[k + 1]; idx[k + 1] = idx[k + 2]; idx[k + 2] = t; }
+  void ay; void cy0;
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  g.computeBoundingSphere();
   return g;
 }
 
@@ -255,7 +289,7 @@ float gNoise( vec2 p ) { vec2 i = floor( p ), f = fract( p ); vec2 u = f * f * (
 function pavedMaterial(color, size, plain = false) {
   const m = new THREE.MeshStandardMaterial({ color, roughness: 0.95 });
   if (plain) return m;
-  m.customProgramCacheKey = () => 'city-paved-v1';
+  m.customProgramCacheKey = () => 'city-paved-v2';
   m.onBeforeCompile = (sh) => {
     sh.uniforms.uStone = { value: size };
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vPaveW;')
@@ -263,7 +297,10 @@ function pavedMaterial(color, size, plain = false) {
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>
 varying vec3 vPaveW;
 uniform float uStone;
-float pHash( vec2 p ) { return fract( sin( dot( p, vec2( 41.3, 289.1 ) ) ) * 43758.5453 ); }`)
+float pHash( vec2 p ) { return fract( sin( dot( p, vec2( 41.3, 289.1 ) ) ) * 43758.5453 ); }
+float pNoise( vec2 p ) { vec2 i = floor( p ), f = fract( p ); f = f * f * ( 3.0 - 2.0 * f );
+  return mix( mix( pHash( i ), pHash( i + vec2( 1.0, 0.0 ) ), f.x ), mix( pHash( i + vec2( 0.0, 1.0 ) ), pHash( i + vec2( 1.0, 1.0 ) ), f.x ), f.y ); }
+float vPuddle;`)
       .replace('#include <color_fragment>', `#include <color_fragment>
   {
     vec2 p = vPaveW.xz / vec2( uStone, uStone * 0.62 );
@@ -274,7 +311,13 @@ float pHash( vec2 p ) { return fract( sin( dot( p, vec2( 41.3, 289.1 ) ) ) * 437
     float joint = 1.0 - smoothstep( 0.6, 1.6, e );
     float fade = ( 1.0 - smoothstep( 25.0, 110.0, length( vViewPosition ) ) ) * clamp( 1.6 - max( w.x, w.y ) * 2.0, 0.0, 1.0 );
     diffuseColor.rgb *= 1.0 - fade * ( 0.16 * joint - 0.07 * ( pHash( floor( p ) ) - 0.5 ) );
-  }`);
+    // Wear: soft grime stains and worn wheel/foot paths; after rain-like puddles in low spots (darker, glossy).
+    float stain = pNoise( vPaveW.xz / 7.0 ) * 0.6 + pNoise( vPaveW.xz / 2.3 ) * 0.4;
+    float near = 1.0 - smoothstep( 60.0, 220.0, length( vViewPosition ) );
+    diffuseColor.rgb *= 1.0 - near * 0.12 * smoothstep( 0.45, 0.9, stain );
+    vPuddle = near * smoothstep( 0.80, 0.86, pNoise( vPaveW.xz / 5.0 + 17.0 ) * 0.75 + pNoise( vPaveW.xz / 1.7 ) * 0.25 );
+    diffuseColor.rgb = mix( diffuseColor.rgb, diffuseColor.rgb * vec3( 0.55, 0.6, 0.68 ), vPuddle );
+  }`).replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n  roughnessFactor = mix( roughnessFactor, 0.12, vPuddle );');
   };
   return m;
 }
@@ -309,11 +352,44 @@ function staticGeometry() {
   const waterGeo = ribbon(canalPts, canal.half * 2, true);
   const kerbs = mergeGeometries([-1, 1].map((side) => ribbon(offsetPolyline(canalPts, side * canal.half, true), 0.7, true)));
 
-  const sea = seaGeometry(plan), land = landGeometry(sea);
+  const sea = seaGeometry(plan), land = landGeometry(plan, sea);
+  // Everything flat on the ground follows the terrain (split into short edges so it hugs the land grid).
+  for (const r of roads) r.geo = drape(r.geo, 0.05, 5);
+  const crosswalks = crosswalkGeometry(plan);
+  const wall = wallGeometry(plan); liftByTerrain(wall);
+  const terrain = terrainGeometry(plan); if (terrain.hills) liftByTerrain(terrain.hills);
+  const rv = riverGeometry(plan), river = { water: rv.water, banks: drape(mergeGeometries([rv.quay, rv.path]), 0, 5) };
+  // Sand along both natural coasts of the bay (half under the shallows, half up the beach).
+  const coasts = coastSides(plan), beach = drape(mergeGeometries(coasts.map((c) => ribbon(c, 30))), 0.06, 6);
+  const patches = new Map();
+  for (const patch of plan.patches || []) {
+    const style = patch.style || patch.zone || patch.kind || patch.type || 'mixed';
+    const pts = patch.pts || patch.points;
+    if (!pts || pts.length < 3) continue;
+    const color = GROUND[style] || GROUND.mixed;
+    const shape = new THREE.Shape();
+    shape.moveTo(pts[0][0], -pts[0][1]);
+    for (let i = 1; i < pts.length; i++) shape.lineTo(pts[i][0], -pts[i][1]);
+    shape.closePath();
+    const g = new THREE.ShapeGeometry(shape); g.rotateX(-Math.PI / 2); g.deleteAttribute('uv');
+    if (!patches.has(color)) patches.set(color, []);
+    patches.get(color).push(g);
+  }
+  for (const [color, geos] of patches) patches.set(color, drape(mergeGeometries(geos), 0.03, 6));
+  const parkGeos = [];
+  for (const p of plan.parks) {
+    const g = new THREE.CircleGeometry(p.r, 20).rotateX(-Math.PI / 2).translate(p.x, 0, p.z);
+    g.deleteAttribute('uv');
+    const c = new THREE.Color(PARK[p.kind] || PARK.park), n = g.getAttribute('position').count, colors = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) { colors[i * 3] = c.r; colors[i * 3 + 1] = c.g; colors[i * 3 + 2] = c.b; }
+    g.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    parkGeos.push(g);
+  }
+  const parks = parkGeos.length ? drape(mergeGeometries(parkGeos), 0.045, 5) : null;
 
   sharedStatic = {
-    roads, waterGeo, kerbs, sea, land, crosswalks: crosswalkGeometry(plan), bridge: bridgeWithRail(canal.half * 2 + 1.5, 5.2),
-    riverBridge: bridge(plan.river.half * 2 + 2, 6.4), wall: wallGeometry(plan), terrain: terrainGeometry(plan), quay: quayGeometry(plan),
+    roads, waterGeo, kerbs, sea, land, patches, parks, river, beach, coasts, crosswalks: crosswalks ? drape(crosswalks, 0.07, 4) : null, bridge: bridgeWithRail(canal.half * 2 + 1.5, 5.2),
+    riverBridge: bridge(plan.river.half * 2 + 2, 6.4), wall, terrain, quay: quayGeometry(plan),
     mountains: mountainRangeGeometry({ inner: 1120, outer: 2350, heightScale: 0.78, seaFrom: plan.sea.from, seaTo: plan.sea.to }),
   };
   return sharedStatic;
@@ -329,35 +405,12 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
   const st = staticGeometry();
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), sc = new THREE.Vector3(1, 1, 1), pos = new THREE.Vector3();
 
-  const base = new THREE.Mesh(st.land, groundMaterial(quality === 'low'));
+  if (quality === 'low' && !st.landCoarse) st.landCoarse = landGeometry(plan, st.sea, true);
+  const base = new THREE.Mesh(quality === 'low' ? st.landCoarse : st.land, groundMaterial(quality === 'low'));
   base.position.y = 0.002; base.receiveShadow = quality !== 'low'; root.add(base);
 
-  const patchGroups = new Map();
-  const patches = plan.patches || [];
-  const capParks = patches.length > 1800;
-  let parkSeen = 0;
-  for (const patch of patches) {
-    const style = patch.style || patch.zone || patch.kind || patch.type || 'mixed';
-    const isPark = style === 'park' || patch.kind === 'park' || patch.zone === 'park';
-    if (capParks && isPark && (parkSeen++ % 2 === 1)) continue;
-    const pts = patch.pts || patch.points;
-    if (!pts || pts.length < 3) continue;
-    const color = GROUND[style] || GROUND.mixed;
-    if (!patchGroups.has(color)) patchGroups.set(color, []);
-    const shape = new THREE.Shape();
-    shape.moveTo(pts[0][0], -pts[0][1]);
-    for (let i = 1; i < pts.length; i++) shape.lineTo(pts[i][0], -pts[i][1]);
-    shape.closePath();
-    const g = new THREE.ShapeGeometry(shape);
-    g.rotateX(-Math.PI / 2);
-    g.deleteAttribute('uv');
-    patchGroups.get(color).push(g);
-  }
-  for (const [color, geos] of patchGroups) {
-    const merged = geos.length === 1 ? geos[0] : mergeGeometries(geos);
-    if (!merged) continue;
-    const mesh = new THREE.Mesh(merged, new THREE.MeshStandardMaterial({ color, roughness: 1 }));
-    mesh.position.y = 0.006;
+  for (const [color, geo] of st.patches) {
+    const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color, roughness: 1, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -2 }));
     mesh.receiveShadow = quality !== 'low';
     root.add(mesh);
   }
@@ -367,6 +420,7 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
   const waterMat = plain ? cityMaterial('water') : createWaterMaterial({ color: '#4f86a3', deep: '#2d5f7a', opacity: 0.9 });
   const seaMat = plain ? cityMaterial('water') : createWaterMaterial({ color: '#3f7896', deep: '#1f4c66', opacity: 0.96, scale: 2.2 });
   const sea = new THREE.Mesh(st.sea, seaMat); sea.position.y = 0.04; root.add(sea);
+  const beach = new THREE.Mesh(st.beach, new THREE.MeshStandardMaterial({ color: '#dcc9a0', roughness: 1, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -2 })); beach.receiveShadow = quality !== 'low'; root.add(beach);
 
   for (const r of st.roads) { const m = new THREE.Mesh(r.geo, pavedMaterial(r.color, r.y >= 0.04 ? 0.38 : r.y > 0.022 ? 0.55 : 1.15, quality === 'low')); m.position.y = r.y; m.receiveShadow = quality !== 'low'; root.add(m); }
   if (st.crosswalks) { const m = new THREE.Mesh(st.crosswalks, new THREE.MeshStandardMaterial({ color: '#eae6da', roughness: 0.9 })); m.position.y = 0.045; m.receiveShadow = quality !== 'low'; root.add(m); }
@@ -383,42 +437,51 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
   const fillerMat = createBatchMaterial(solid, { detail: quality !== 'low' }), propMat = createBatchMaterial(solid);
   const fillers = createLodBatch(fillerMat, { name: 'fillers', castShadow: quality === 'high', receiveShadow: quality !== 'low', surface: 'detail' });
   const tint = new THREE.Color();
+  // Processional ways: a paved approach from each city wonder toward the centre, lined with lamps, statues and
+  // cypresses; fillers and street props standing on them are left out.
+  const ways = [];
+  for (const w of plan.wonders) {
+    if (!['palace', 'pagoda', 'acropolis', 'colosseum', 'pantheon', 'supertall', 'heaven', 'skyline', 'gardens'].includes(w.kind)) continue;
+    const r = Math.hypot(w.x, w.z);
+    let ux = -w.x / r, uz = -w.z / r;
+    const ext = Math.max(Math.abs(ux) * (w.x1 - w.x0), Math.abs(uz) * (w.z1 - w.z0)) / 2;
+    let len = Math.min(54, r - ext - 58);
+    if (len < 16) { ux = -ux; uz = -uz; len = 42; } // inner wonders: the approach runs out to the ring roads instead
+    ways.push({ w, ax: w.x + ux * (ext - 1), az: w.z + uz * (ext - 1), bx: w.x + ux * (ext + len), bz: w.z + uz * (ext + len), ux, uz, half: 4.5, len });
+  }
+  const onWay = (x, z, m = 0) => ways.some((a) => {
+    const t = Math.max(0, Math.min(1, ((x - a.ax) * (a.bx - a.ax) + (z - a.az) * (a.bz - a.az)) / ((a.bx - a.ax) ** 2 + (a.bz - a.az) ** 2)));
+    return Math.hypot(x - (a.ax + (a.bx - a.ax) * t), z - (a.az + (a.bz - a.az) * t)) < a.half + m;
+  });
   for (const lot of plan.lots) {
     if (claimedLots.has(lot.id)) continue;
+    if (onWay(lot.x, lot.z, lot.size * 0.6 + 2.5)) continue;
     const handle = fillers.geometry(lot.style + ':' + lot.kind + ':' + lot.variant, () => fillerGeometry(lot.style, lot.kind, lot.variant), true);
     if (!handle) continue;
     const s = lot.size / 7;
     q.setFromAxisAngle(up, lot.rotY);
-    m4.compose(pos.set(lot.x - Math.sin(lot.rotY) * lot.setback, 0, lot.z - Math.cos(lot.rotY) * lot.setback), q, sc.set(s, lot.scaleY * s, s));
-    const th = hash(lot.id + 'tint'), b = 0.92 + (th % 17) / 100, warm = ((th >>> 5) % 9 - 4) / 500;
-    fillers.instance(handle, m4, tint.setRGB(b + warm, b, b - warm), lod.cull, lod.near);
+    const fx = lot.x - Math.sin(lot.rotY) * lot.setback, fz = lot.z - Math.cos(lot.rotY) * lot.setback;
+    m4.compose(pos.set(fx, footprintHeight(fx, fz, lot.size, lot.rotY) - 0.05, fz), q, sc.set(s, lot.scaleY * s, s));
+    // Per-district palette, neighbourhood-scale drift (streets of warmer or paler houses) and per-house wear.
+    const th = hash(lot.id + 'tint'), b = 0.9 + (th % 19) / 100, warm = ((th >>> 5) % 9 - 4) / 300;
+    const pal = DISTRICT_TINT[lot.style] || DISTRICT_TINT.common;
+    const drift = 0.045 * Math.sin(lot.x / 53 + Math.cos(lot.z / 71) * 2) + 0.03 * Math.sin(lot.z / 37 - lot.x / 91);
+    const age = lot.style === 'modern' ? 0 : Math.min(0.06, Math.max(0, (lot.r - 140) / 3000)) + ((th >>> 9) % 5 === 0 ? 0.05 : 0);
+    fillers.instance(handle, m4, tint.setRGB((b + warm + drift) * pal[0] - age, (b + drift * 0.6) * pal[1] - age, (b - warm - drift * 0.4) * pal[2] - age * 1.2), lod.cull, lod.near);
     stats.fillers++; stats.fillerKinds.add(lot.style + ':' + lot.kind);
   }
   const fillerMesh = fillers.finish();
   if (fillerMesh) { fillerMesh.userData.info = { name: '空置建筑', dept: '可分配给新成员', state: '', label: '' }; root.add(fillerMesh); batches.push(fillerMesh); stats.instancedMeshes++; }
 
-  // Parks: one merged vertex-coloured mesh.
-  const parkGeos = [];
-  for (const p of plan.parks) {
-    const g = new THREE.CircleGeometry(p.r, 20).rotateX(-Math.PI / 2).translate(p.x, 0.012, p.z);
-    g.deleteAttribute('uv');
-    const c = new THREE.Color(PARK[p.kind] || PARK.park);
-    const n = g.getAttribute('position').count, colors = new Float32Array(n * 3);
-    for (let i = 0; i < n; i++) { colors[i * 3] = c.r; colors[i * 3 + 1] = c.g; colors[i * 3 + 2] = c.b; }
-    g.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-    parkGeos.push(g);
-  }
-  if (parkGeos.length) {
-    const parks = new THREE.Mesh(mergeGeometries(parkGeos), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1 }));
-    parks.receiveShadow = quality !== 'low'; root.add(parks);
-  }
+  // Parks: one merged vertex-coloured mesh draped over the land.
+  if (st.parks) { const parks = new THREE.Mesh(st.parks, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -3 })); parks.receiveShadow = quality !== 'low'; root.add(parks); }
 
   // Fields: one instanced flat box with per-instance crop colours.
   if (plan.fields.length) {
     const fields = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 0.08, 1), new THREE.MeshStandardMaterial({ roughness: 1 }), plan.fields.length);
     plan.fields.forEach((f, i) => {
       q.setFromAxisAngle(up, f.rotY);
-      m4.compose(pos.set(f.x, 0.04, f.z), q, sc.set(f.w, 1, f.d));
+      m4.compose(pos.set(f.x, footprintHeight(f.x, f.z, Math.min(f.w, f.d), f.rotY) + 0.04, f.z), q, sc.set(f.w, 1, f.d));
       fields.setMatrixAt(i, m4);
       const ci = typeof f.crop === 'number' ? ((Math.floor(f.crop) % 4) + 4) % 4 : hash(String(f.crop)) % 4;
       fields.setColorAt(i, new THREE.Color(CROP[ci]));
@@ -434,13 +497,47 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
   const range = { tree: lod.treeCull, prop: lod.props, boat: lod.props * 1.6, people: lod.people };
   for (const p of placed) {
     const lim = range[p.cls];
-    if (!lim) continue;
+    if (!lim || onWay(p.x, p.z, 1.5)) continue;
     const tree = p.cls === 'tree';
     const handle = props.geometry('sp:' + p.kind + ':' + p.variant, () => STREET_PROPS[p.kind]?.(p.variant), tree ? treeProxyGeometry : false);
     q.setFromAxisAngle(up, p.rotY);
-    m4.compose(pos.set(p.x, 0, p.z), q, sc.setScalar(p.scale || 1));
+    m4.compose(pos.set(p.x, p.cls === 'boat' ? 0 : heightAt(p.x, p.z), p.z), q, sc.setScalar(p.scale || 1));
     props.instance(handle, m4, null, lim, tree ? lod.trees : Infinity);
     if (p.cls === 'tree') stats.trees++; else stats.props++;
+  }
+  // Harbour: timber docks out from the quay with cranes behind them, moored and anchored ships of several types;
+  // rocks along both natural coasts of the bay.
+  {
+    const H = plan.sea, far = lod.treeCull, avoid = plan.wonders.filter((w) => w.kind === 'lighthouse' || w.kind === 'colossus');
+    const clear = (x, z, m) => !avoid.some((w) => Math.hypot(w.x - x, w.z - z) < m + Math.max(w.w, w.d) / 2);
+    const add = (kind, variant, x, y, z, rotY, scale) => {
+      const handle = props.geometry('dr:' + kind + ':' + variant, () => DRESSING[kind]?.(variant));
+      if (!handle) return;
+      q.setFromAxisAngle(up, rotY); m4.compose(pos.set(x, y, z), q, sc.setScalar(scale));
+      props.instance(handle, m4, null, far); stats.props++;
+    };
+    let i = 0;
+    for (let a = H.from + 4; a <= H.to - 4; a += 3.2, i++) {
+      const d = polar(H.shore + 8, a), rad = Math.atan2(d.x, d.z);
+      if (!clear(d.x, d.z, 20)) continue;
+      add('dock', i % 4, d.x, 0.05, d.z, rad, 1.15);
+      if (i % 2 === 0) { const c = polar(H.shore - 4, a + 0.6); add('crane', i % 4, c.x, heightAt(c.x, c.z), c.z, rad, 1.25); }
+      const moored = ['merchantShip', 'junk', 'fishingBoat', 'containerShip'][hash('dock' + i) % 4];
+      if (hash('moor' + i) % 3 !== 0) { const m = polar(H.shore + 12 + (moored === 'containerShip' ? 12 : 6), a + 1.3); add(moored, i % 4, m.x, 0, m.z, rad + (i % 2 ? 0 : Math.PI), moored === 'fishingBoat' ? 1.2 : 1.6); }
+    }
+    for (let k = 0; k < 18; k++) {
+      const a = H.from + 3 + ((hash('ship' + k) % 1000) / 1000) * (H.to - H.from - 6), r = H.shore + 60 + (hash('shr' + k) % 260);
+      const p = polar(r, a); if (!clear(p.x, p.z, 25)) continue;
+      const kind = ['merchantShip', 'junk', 'fishingBoat', 'fishingBoat', 'containerShip', 'junk'][k % 6];
+      add(kind, k % 4, p.x, 0, p.z, (hash('shh' + k) % 628) / 100, kind === 'fishingBoat' ? 1.3 : 1.7);
+    }
+    for (const c of st.coasts) c.forEach(([x, z], j) => {
+      if (j % 2) return;
+      const h = hash('rk' + x.toFixed(0) + z.toFixed(0)), n = j < c.length - 1 ? c[j + 1] : c[j - 1];
+      const tx = n[0] - x, tz = n[1] - z, l = Math.hypot(tx, tz) || 1, off = ((h % 300) / 10 - 15);
+      const rx = x + (-tz / l) * off, rz = z + (tx / l) * off;
+      add('rock', h % 4, rx, Math.max(-0.6, heightAt(rx, rz)) - 0.3, rz, (h % 628) / 100, 1.2 + (h % 30) / 10);
+    });
   }
   if (lod.props) {
     const roofs = [['antenna', antenna, 8], ['chimney', chimneyPot, 5]];
@@ -453,20 +550,52 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
       const handle = props.geometry('roof:' + which[0], () => which[1](0));
       const hh = hash(lot.id + 'py'), tall = (lot.scaleY || 1) * (lot.size / 7);
       q.setFromAxisAngle(up, lot.rotY + ((hh % 20) - 10) / 40);
-      m4.compose(pos.set(lot.x, which[2] * tall, lot.z), q, sc.setScalar(0.85 + (hh % 30) / 100));
+      m4.compose(pos.set(lot.x, footprintHeight(lot.x, lot.z, lot.size, lot.rotY) + which[2] * tall, lot.z), q, sc.setScalar(0.85 + (hh % 30) / 100));
       props.instance(handle, m4, null, lod.props);
     }
+  }
+  const wayGeos = [];
+  for (const a of ways) {
+    const style = a.w.district === 'chinese' ? 'chinese' : a.w.district === 'modern' ? 'modern' : a.w.district === 'roman' ? 'roman' : 'greek';
+    const lamp = { chinese: 'lanternPost', modern: 'modernLamp', roman: 'romanTorch', greek: 'gasLamp' }[style];
+    const tree = { chinese: 'willow', modern: 'planeTree', roman: 'cypress', greek: 'cypress' }[style];
+    wayGeos.push(ribbon([[a.ax, a.az], [a.bx, a.bz]], a.half * 2));
+    for (let d = 4, i = 0; d < a.len; d += 5.5, i++) for (const side of [-1, 1]) {
+      const x = a.ax - a.ux * -d + -a.uz * side * (a.half + 1.2), z = a.az - a.uz * -d + a.ux * side * (a.half + 1.2);
+      const kind = i % 3 === 1 ? lamp : i % 3 === 2 && style !== 'modern' ? 'statue' : tree, isTree = kind === tree;
+      const handle = props.geometry('sp:' + kind + ':' + (i % 3), () => STREET_PROPS[kind]?.(i % 3), isTree ? treeProxyGeometry : false);
+      q.setFromAxisAngle(up, Math.atan2(a.ux, a.uz) + (side > 0 ? Math.PI / 2 : -Math.PI / 2));
+      m4.compose(pos.set(x, heightAt(x, z), z), q, sc.setScalar(kind === 'statue' ? 1.4 : 1.1));
+      props.instance(handle, m4, null, isTree ? lod.treeCull : Math.max(lod.props, 300), isTree ? lod.trees : Infinity);
+      stats.props++;
+    }
+  }
+  if (wayGeos.length) { const m = new THREE.Mesh(drape(mergeGeometries(wayGeos), 0.09, 4), pavedMaterial('#e2d8c0', 0.5, quality === 'low')); m.receiveShadow = quality !== 'low'; root.add(m); }
+  // Facade, lane and rooftop dressing in its own short-range batch (none on low).
+  const dressRange = { medium: 120, high: 190 }[quality] || 0;
+  if (dressRange) {
+    const dress = createLodBatch(propMat, { name: 'dressing', castShadow: false, receiveShadow: false });
+    for (const d of placeDressing(plan, { claimedLots, quality, fillerGeometry })) {
+      const handle = dress.geometry('dr:' + d.kind + ':' + d.variant, () => DRESSING[d.kind]?.(d.variant));
+      if (!handle) continue;
+      q.setFromAxisAngle(up, d.rotY);
+      m4.compose(pos.set(d.x, d.y, d.z), q, sc.setScalar(d.scale));
+      dress.instance(handle, m4, null, dressRange);
+      stats.dressing = (stats.dressing || 0) + 1;
+    }
+    const dressMesh = dress.finish();
+    if (dressMesh) { root.add(dressMesh); batches.push(dressMesh); stats.instancedMeshes++; }
   }
   const propMesh = props.finish();
   if (propMesh) { root.add(propMesh); batches.push(propMesh); stats.instancedMeshes++; }
 
   // River, quays and towpaths; city wall with gates; hills and mountains.
-  const river = riverGeometry(plan);
+  const river = st.river;
   const riverWater = new THREE.Mesh(river.water, waterMat); riverWater.position.y = 0.035; root.add(riverWater);
-  const quay = new THREE.Mesh(mergeGeometries([river.quay, river.path]), new THREE.MeshStandardMaterial({ color: '#bdb39f', roughness: 0.95 })); quay.receiveShadow = quality !== 'low'; root.add(quay);
+  const quay = new THREE.Mesh(river.banks, new THREE.MeshStandardMaterial({ color: '#bdb39f', roughness: 0.95 })); quay.receiveShadow = quality !== 'low'; root.add(quay);
   if (plan.riverBridges.length) {
     const rb = new THREE.InstancedMesh(st.riverBridge, solid, plan.riverBridges.length);
-    plan.riverBridges.forEach((b, i) => { q.setFromAxisAngle(up, b.rotY); m4.compose(pos.set(b.x, 0, b.z), q, sc.set(b.w / 6.4, 1, 1)); rb.setMatrixAt(i, m4); });
+    plan.riverBridges.forEach((b, i) => { q.setFromAxisAngle(up, b.rotY); m4.compose(pos.set(b.x, heightAt(b.x, b.z), b.z), q, sc.set(b.w / 6.4, 1, 1)); rb.setMatrixAt(i, m4); });
     rb.computeBoundingSphere(); root.add(rb); stats.instancedMeshes++;
   }
   const seaWall = new THREE.Mesh(st.quay, solid); seaWall.receiveShadow = quality !== 'low'; root.add(seaWall);
@@ -487,14 +616,24 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
 
   // Wonders: district anchors, each on a paved pad that hides the roads under it.
   const pad = new THREE.MeshStandardMaterial({ color: '#d6cdb6', roughness: 0.95 });
+  // Wonders share one clone of the solid material that is floodlit at night: warm light washing up from the base.
+  const wonderMat = solid.clone(), flood = { value: 0 };
+  wonderMat.userData.flood = true;
+  wonderMat.customProgramCacheKey = () => 'city-wonder-flood-v1';
+  wonderMat.onBeforeCompile = (sh) => {
+    sh.uniforms.uFlood = flood;
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying float vFloodY;').replace('#include <project_vertex>', '#include <project_vertex>\nvFloodY = (modelMatrix * vec4(transformed, 1.0)).y - modelMatrix[3].y;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform float uFlood;\nvarying float vFloodY;')
+      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += diffuseColor.rgb * vec3(1.0, 0.82, 0.58) * uFlood * (0.05 + 0.34 * exp(-max(vFloodY, 0.0) / 30.0));');
+  };
   const wonders = [];
   for (const w of plan.wonders) {
     const parts = wonderParts(w.kind); if (!parts || !parts.solid) continue;
-    const g = new THREE.Group(); g.position.set(w.x, 0, w.z); g.rotation.y = w.rotY;
-    if (w.kind !== 'lighthouse') {
-    const base2 = new THREE.Mesh(new THREE.BoxGeometry(Math.abs(Math.sin(w.rotY)) > 0.5 ? w.d : w.w, 0.08, Math.abs(Math.sin(w.rotY)) > 0.5 ? w.w : w.d), pad); base2.position.y = 0.04; base2.receiveShadow = quality !== 'low'; g.add(base2);
+    const g = new THREE.Group(); g.position.set(w.x, w.kind === 'lighthouse' || w.kind === 'colossus' ? 0 : heightAt(w.x, w.z), w.z); g.rotation.y = w.rotY;
+    if (w.kind !== 'lighthouse' && w.kind !== 'colossus') {
+    const base2 = new THREE.Mesh(new THREE.BoxGeometry(Math.abs(Math.sin(w.rotY)) > 0.5 ? w.d : w.w, 0.08, Math.abs(Math.sin(w.rotY)) > 0.5 ? w.w : w.d), pad); base2.scale.y = 30; base2.position.y = -1.1; base2.receiveShadow = quality !== 'low'; g.add(base2);
     }
-    const body = new THREE.Mesh(parts.solid, solid); body.castShadow = quality === 'high'; body.receiveShadow = quality === 'high'; g.add(body);
+    const body = new THREE.Mesh(parts.solid, wonderMat); body.castShadow = quality === 'high'; body.receiveShadow = quality === 'high'; g.add(body);
     const meshes = [body];
     if (parts.glass) { const glass = new THREE.Mesh(parts.glass, cityMaterial('glass')); g.add(glass); meshes.push(glass); }
     const info = { wonder: true, id: w.id, name: parts.name || w.name, dept: '奇观 · ' + ({ chinese: '宫城', greek: '希腊学园', roman: '罗马工程区', modern: '现代都会', harbour: '港口' }[w.district] || ''), state: '', label: '' };
@@ -522,7 +661,7 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
     updateWater(elapsed, nightOn);
   }
   function setNight(on) {
-    nightOn = !!on; night.visible = nightOn; fillerMat.userData.uniforms.uNight.value = nightOn ? 1 : 0;
+    nightOn = !!on; night.visible = nightOn; fillerMat.userData.uniforms.uNight.value = nightOn ? 1 : 0; flood.value = nightOn ? 1 : 0;
     if (sky) sky.userData.setNight(nightOn);
   }
   // Free everything this build created on the GPU (shared geometry/material caches stay for the next build).
@@ -530,6 +669,7 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
     const keep = new Set([solid, cityMaterial('glass'), cityMaterial('water')]);
     const shared = new Set(Object.values(st).flatMap((v) => (v && v.isBufferGeometry ? [v] : v && typeof v === 'object' ? Object.values(v).filter((x) => x && x.isBufferGeometry) : [])));
     for (const r of st.roads) shared.add(r.geo);
+    for (const g of st.patches.values()) shared.add(g);
     root.traverse((o) => {
       if (o.isBatchedMesh || o.isInstancedMesh) o.dispose();
       else if (o.geometry && !shared.has(o.geometry) && !o.userData.sharedGeometry) o.geometry.dispose();

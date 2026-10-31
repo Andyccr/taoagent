@@ -153,8 +153,8 @@ test('the metropolis is an organic city with a mixed outer ring, collision free 
     }
   }
 
-  assert.equal(plan.wonders.length, 12)
-  assert.deepEqual(plan.wonders.map((wonder: any) => wonder.id).sort(), ['acropolis', 'aqueduct', 'arch', 'colosseum', 'heaven', 'lighthouse', 'pagoda', 'palace', 'pantheon', 'skyline', 'supertall', 'wall'])
+  assert.equal(plan.wonders.length, 14)
+  assert.deepEqual(plan.wonders.map((wonder: any) => wonder.id).sort(), ['acropolis', 'aqueduct', 'arch', 'colosseum', 'colossus', 'gardens', 'heaven', 'lighthouse', 'pagoda', 'palace', 'pantheon', 'skyline', 'supertall', 'wall'])
   for (const a of plan.wonders) {
     assert(Math.hypot(a.x, a.z) > CANAL.outer, a.id + ' stays outside the canal')
     for (let x = a.x0; x <= a.x1; x += 2) for (let z = a.z0; z <= a.z1; z += 2) assert(riverDistance(x, z) > RIVER_HALF, a.id + ' stays out of the river')

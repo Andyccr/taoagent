@@ -36,17 +36,19 @@ export function riverLine(leg) {
 const WONDERS = [
   // Larger ceremonial footprints (axis-aligned w×d); plazas clear lots via circleHitsBox.
   { id: 'palace', kind: 'palace', name: '紫宸宫', angle: 180, r: 96, w: 92, d: 118, rotY: Math.PI, district: 'chinese' },
-  { id: 'pagoda', kind: 'pagoda', name: '万佛塔', angle: 138, r: 128, w: 40, d: 40, rotY: 0, district: 'chinese' },
+  { id: 'pagoda', kind: 'pagoda', name: '万佛塔', angle: 141, r: 134, w: 56, d: 56, rotY: 0, district: 'chinese' },
   { id: 'wall', kind: 'wall', name: '万里城关', angle: 180, r: WALL_R, w: 110, d: 40, rotY: 0, district: 'chinese' },
-  { id: 'acropolis', kind: 'acropolis', name: '雅典卫城', angle: 270, r: 108, w: 78, d: 62, rotY: Math.PI / 2, district: 'greek' },
-  { id: 'colosseum', kind: 'colosseum', name: '大斗兽场', angle: 58, r: 108, w: 58, d: 48, rotY: 0, district: 'roman' },
+  { id: 'acropolis', kind: 'acropolis', name: '雅典卫城', angle: 276, r: 106, w: 84, d: 84, rotY: Math.PI / 2, district: 'greek' },
+  { id: 'colosseum', kind: 'colosseum', name: '大斗兽场', angle: 63, r: 114, w: 72, d: 60, rotY: 0, district: 'roman' },
   { id: 'pantheon', kind: 'pantheon', name: '万神殿', angle: 120, r: 108, w: 62, d: 42, rotY: -Math.PI / 2, district: 'roman' },
-  { id: 'arch', kind: 'arch', name: '凯旋门', angle: 90, r: 68, w: 14, d: 28, rotY: Math.PI / 2, district: 'roman' },
+  { id: 'arch', kind: 'arch', name: '凯旋门', angle: 90, r: 68, w: 18, d: 36, rotY: Math.PI / 2, district: 'roman' },
   { id: 'supertall', kind: 'supertall', name: '天穹塔', angle: 0, r: 88, w: 48, d: 48, rotY: 0, district: 'modern' },
   { id: 'aqueduct', kind: 'aqueduct', name: '大渡槽', angle: 95, r: 206, w: 212, d: 20, rotY: -Math.PI / 2, district: 'roman' },
   { id: 'heaven', kind: 'heaven', name: '天坛', angle: 210, r: 200, w: 80, d: 80, rotY: 0, district: 'chinese' },
   { id: 'skyline', kind: 'skyline', name: '双子星塔', angle: 330, r: 192, w: 70, d: 70, rotY: 0, district: 'modern' },
   { id: 'lighthouse', kind: 'lighthouse', name: '法罗斯灯塔', angle: 45, r: 462, w: 62, d: 62, rotY: Math.PI / 4, district: 'harbour' },
+  { id: 'gardens', kind: 'gardens', name: '空中花园', angle: 298, r: 205, w: 84, d: 84, rotY: Math.PI / 2, district: 'greek' },
+  { id: 'colossus', kind: 'colossus', name: '太阳神巨像', angle: 63, r: 452, w: 44, d: 44, rotY: -1.1, district: 'harbour' },
 ];
 
 // Civic kinds cluster near the centre, homes and shops dominate the outer neighbourhoods.

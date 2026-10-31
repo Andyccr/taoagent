@@ -177,9 +177,21 @@ export function scatterProps(plan, { claimedLots = new Set(), quality = 'medium'
     }
   }
 
+  // 5b. Courtyard trees inside courtyard houses, backyard trees behind homes (organic greenery between buildings).
+  const COURT = new Set(['siheyuan', 'courtyardLarge', 'domus']), YARD = new Set(['cottage', 'farmhouse', 'house', 'villa', 'residential', 'insula']);
+  for (const lot of plan.lots) {
+    if (claimedLots.has(lot.id)) continue;
+    const h = hash(lot.id + 'yard'), style = styleAt(plan, lot.x, lot.z);
+    if (COURT.has(lot.kind) && h % 3 !== 0) push(lot.style === 'chinese' ? (h % 2 ? 'blossom' : 'pine') : 'cypress', lot.x, lot.z, (h % 628) / 100, Math.max(0.45, lot.size / 11), 'tree', h % 3);
+    if (!YARD.has(lot.kind) || h % 2) continue;
+    const back = lot.size * 0.5 + 1.4 + (h % 3) * 0.5, side = ((h >>> 3) % 5 - 2) * 0.6;
+    const tx = lot.x - Math.sin(lot.rotY) * back + Math.cos(lot.rotY) * side, tz = lot.z - Math.cos(lot.rotY) * back - Math.sin(lot.rotY) * side;
+    if (free(tx, tz, 0.3, 1.2)) push(pickTree(style, h >>> 5), tx, tz, (h % 628) / 100, 0.8 + (h % 40) / 100, 'tree', h % 3);
+  }
+
   // 6. Wonder forecourts: ceremonial trees, banners and visitors.
   for (const w of plan.wonders) {
-    if (w.kind === 'lighthouse') continue;
+    if (w.kind === 'lighthouse' || w.kind === 'colossus') continue;
     const rx = (w.x1 - w.x0) / 2 + 2.5, rz = (w.z1 - w.z0) / 2 + 2.5, style = styleAt(plan, w.x, w.z);
     for (let i = 0; i < 20; i++) {
       const a = (i / 20) * Math.PI * 2, x = w.x + Math.cos(a) * rx, z = w.z + Math.sin(a) * rz;
