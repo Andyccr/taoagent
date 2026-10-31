@@ -5,6 +5,7 @@
 // primitives is the BOTTOM of the shape. Colours are hex numbers or CSS strings.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { createSurfaceTexture } from './textures.js';
 
 export { THREE };
 
@@ -22,7 +23,10 @@ export function createGeo() {
   function push(geometry, hex, x, y, z, rot = {}) {
     if (rot === null || typeof rot !== 'object') rot = {};
     let g = geometry.index ? geometry.toNonIndexed() : geometry;
-    g.deleteAttribute('uv');
+    if (!g.getAttribute('uv')) {
+      const n = g.getAttribute('position').count;
+      g.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(n * 2), 2));
+    }
     if (g.getAttribute('uv1')) g.deleteAttribute('uv1');
     e.set(rot.rx || 0, rot.ry || 0, rot.rz || 0);
     q.setFromEuler(e);
@@ -107,14 +111,17 @@ export function createGeo() {
 }
 
 // Shared materials: one per surface type for the whole city.
+// createGeo keeps uv so the shared solid material can carry the plaster bump and roughness detail.
 const shared = new Map();
 export function cityMaterial(kind = 'solid') {
   if (shared.has(kind)) return shared.get(kind);
+  const solid = kind !== 'glass' && kind !== 'water';
+  const surface = solid ? createSurfaceTexture('plaster') : null;
   const m = kind === 'glass'
     ? new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.25, metalness: 0.55, emissive: new THREE.Color('#1d3550'), emissiveIntensity: 0.35 })
     : kind === 'water'
       ? new THREE.MeshStandardMaterial({ color: '#5f8fa8', roughness: 0.2, metalness: 0.1, transparent: true, opacity: 0.88 })
-      : new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.85, metalness: 0.02, flatShading: true });
+      : new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.85, metalness: 0.02, flatShading: true, bumpMap: surface, bumpScale: 0.03, roughnessMap: surface });
   shared.set(kind, m);
   return m;
 }

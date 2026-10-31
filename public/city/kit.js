@@ -1,7 +1,15 @@
 // Tiny geometry/material kit shared by all procedural city builders.
 import * as THREE from 'three';
+import { createSurfaceTexture } from './textures.js';
 export { THREE };
 export const CJK_FONT = '"Noto Sans CJK SC","Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif';
+
+function isStoneLike(name, color) {
+  if (name && /stone|marble|plaster|concrete|granite|limestone/i.test(name)) return true;
+  const hsl = { h: 0, s: 0, l: 0 };
+  color.getHSL(hsl);
+  return hsl.s <= 0.42 && hsl.l >= 0.38 && hsl.l < 0.98;
+}
 
 // Every builder creates its own materials through a kit so one building can be greyed without affecting others.
 export function makeKit(shadows = true) {
@@ -13,6 +21,10 @@ export function makeKit(shadows = true) {
       emissive: new THREE.Color(o.emissive ?? 0x000000), emissiveIntensity: o.emissiveIntensity ?? 1,
       transparent: !!o.transparent, opacity: o.opacity ?? 1, map: o.map ?? null, flatShading: o.flatShading ?? false,
     });
+    if (o.bump !== false && isStoneLike(o.name ?? o.kind, m.color)) {
+      m.bumpMap = createSurfaceTexture('stone');
+      m.bumpScale = 0.03;
+    }
     m.userData.orig = { color: m.color.clone(), emissive: m.emissive.clone(), emissiveIntensity: m.emissiveIntensity };
     mats.push(m);
     return m;

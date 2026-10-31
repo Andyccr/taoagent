@@ -45,3 +45,24 @@ export function lampPost(variant = 0) {
   g.sphere(variant % 2 === 0 ? 0.16 : 0.2, 0, 3.05, 0, 0xfff1c4, 3);
   return g.build();
 }
+
+export function bench(variant = 0) {
+  const g = createGeo();
+  const wood = [0x8a6a48, 0x6f5236, 0x9a7a52][Math.abs(variant) % 3];
+  const w = 1.7 + (Math.abs(variant) % 2) * 0.3;
+  g.box(w, 0.09, 0.52, 0, 0.4, 0, wood);
+  g.box(w, 0.34, 0.08, 0, 0.58, -0.22, wood);
+  for (const x of [-w / 2 + 0.12, w / 2 - 0.12]) g.box(0.09, 0.4, 0.48, x, 0, 0, 0x3a3a3a);
+  return g.build();
+}
+
+export function planter(variant = 0) {
+  const g = createGeo();
+  const stone = Math.abs(variant) % 2 ? 0xb2aa98 : 0x9a9282;
+  g.box(1.3, 0.5, 1.3, 0, 0, 0, stone);
+  g.box(1.14, 0.06, 1.14, 0, 0.46, 0, 0x5a4634);
+  const leaf = [0x5d8a3c, 0x6f9a46, 0x7a9a48][Math.abs(variant) % 3];
+  g.sphere(0.5, 0, 0.78, 0, leaf, 5);
+  if (Math.abs(variant) % 2) g.sphere(0.2, 0.3, 1.15, -0.1, 0xd9534f, 4);
+  return g.build();
+}

@@ -19,6 +19,8 @@ import { bakeStatic } from './bake.js';
 import { computeMetropolis, assignClaims, CANAL } from './metropolis-plan.js';
 import { buildCharacter, applyVisual } from './characters.js';
 import { CJK_FONT as CJK, textTexture } from './kit.js';
+import { cityMaterial } from './geo.js';
+import { setNightEmissive } from './night.js';
 
 // Reusable per-style building generators: add a style here + in roster STYLES.
 export const BUILDERS = { chinese: buildChinese, greek: buildGreek, roman: buildRoman, modern: buildModern };
@@ -41,6 +43,7 @@ export function createCity(container, roster, opts = {}) {
   const onAdaptive = typeof opts.onAdaptive === 'function' ? opts.onAdaptive : null;
   const quarterNames = opts.quarters || {};
   let nightOn = false;
+  const nightWonderMats = new Map();
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
   const dpr = () => Math.min(window.devicePixelRatio || 1, 2);
   renderer.setPixelRatio(dpr());
@@ -53,25 +56,44 @@ export function createCity(container, roster, opts = {}) {
   container.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
-  const SKY = new THREE.Color('#dde6ee');
-  const NIGHT_SKY = new THREE.Color('#1b2433');
-  scene.background = SKY.clone();
-  scene.fog = new THREE.Fog(SKY.clone(), 80, 260);
-  const hemi = new THREE.HemisphereLight('#ffffff', '#b7c29c', 1.25);
+  const DAY_ZENITH = '#4f7fb2', DAY_HORIZON = '#f0ddc2';
+  const NIGHT_ZENITH = '#0b1526', NIGHT_HORIZON = '#2b2340';
+  const SKY = new THREE.Color(DAY_HORIZON);
+  const NIGHT_SKY = new THREE.Color(NIGHT_HORIZON);
+  function skyTexture(top, bottom) {
+    const c = document.createElement('canvas'); c.width = 2; c.height = 256;
+    const ctx = c.getContext('2d');
+    const g = ctx.createLinearGradient(0, 0, 0, 256);
+    g.addColorStop(0, top); g.addColorStop(1, bottom);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, 2, 256);
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.minFilter = THREE.LinearFilter; tex.magFilter = THREE.LinearFilter;
+    return tex;
+  }
+  const skyDay = skyTexture(DAY_ZENITH, DAY_HORIZON);
+  const skyNight = skyTexture(NIGHT_ZENITH, NIGHT_HORIZON);
+  scene.background = skyDay;
+  scene.fog = new THREE.Fog(SKY.clone(), 90, 340);
+  const hemi = new THREE.HemisphereLight('#bcd8f4', '#cbb48c', 1.15);
   scene.add(hemi);
-  const sun = new THREE.DirectionalLight('#fff3df', 1.75);
-  sun.position.set(30, 55, 38);
+  const sun = new THREE.DirectionalLight('#ffd9a3', 2.05);
+  sun.position.set(42, 34, 52);
   sun.castShadow = shadows;
   scene.add(sun, sun.target);
+  const fill = new THREE.DirectionalLight('#a6c8ff', 0.35);
+  fill.position.set(-40, 26, -34);
+  fill.castShadow = false;
+  scene.add(fill, fill.target);
 
   const plan = computeMetropolis();
   const layout = computeCity(roster, { claim: (bots) => assignClaims(bots, plan) });
-  const R = layout.outerR;          // agent core
   const CITY_R = plan.outerEdge || plan.outerR; // framed city (countryside fades beyond)
   if (shadows) {
     sun.shadow.mapSize.set(2048, 2048);
-    Object.assign(sun.shadow.camera, { left: -R - 4, right: R + 4, top: R + 4, bottom: -R - 4, near: 1, far: 160 });
-    sun.shadow.bias = -0.0006; sun.shadow.normalBias = 0.04;
+    const sc = CITY_R + 16;
+    Object.assign(sun.shadow.camera, { left: -sc, right: sc, top: sc, bottom: -sc, near: 1, far: CITY_R * 2 + 160 });
+    sun.shadow.bias = -0.0005; sun.shadow.normalBias = 0.045;
   }
 
   // ---------- static city ----------
@@ -435,7 +457,7 @@ export function createCity(container, roster, opts = {}) {
     }
     camera.position.copy(target).addScaledVector(dir, dist); camera.lookAt(target);
     controls.target.copy(target); controls.maxDistance = dist * 1.8; controls.update();
-    scene.fog.near = dist * 1.0; scene.fog.far = dist * 2.6;
+    scene.fog.near = dist * 0.95; scene.fog.far = dist * 2.35;
   }
 
   let composer = null;
@@ -721,29 +743,33 @@ export function createCity(container, roster, opts = {}) {
     if (o.citizens !== undefined) for (const u of units.values()) u.fig.root.visible = !!o.citizens;
     if (o.night !== undefined) {
       nightOn = !!o.night;
-      scene.background.copy(nightOn ? NIGHT_SKY : SKY); scene.fog.color.copy(nightOn ? NIGHT_SKY : SKY);
-      hemi.intensity = nightOn ? 0.35 : 1.25; sun.intensity = nightOn ? 0.25 : 1.75;
-      renderer.toneMappingExposure = nightOn ? 1.25 : 1;
+      scene.background = nightOn ? skyNight : skyDay;
+      scene.fog.color.copy(nightOn ? NIGHT_SKY : SKY);
+      hemi.color.set(nightOn ? '#33415e' : '#bcd8f4');
+      hemi.groundColor.set(nightOn ? '#1b1a20' : '#cbb48c');
+      hemi.intensity = nightOn ? 0.75 : 1.15;
+      sun.color.set(nightOn ? '#9db4d8' : '#ffd9a3');
+      sun.intensity = nightOn ? 0.45 : 2.05;
+      fill.color.set(nightOn ? '#6f8fc4' : '#a6c8ff');
+      fill.intensity = nightOn ? 0.22 : 0.35;
+      renderer.toneMappingExposure = nightOn ? 1.32 : 1.05;
       lamps.visible = nightOn; lanterns.visible = nightOn;
+      // Wonders share city-wide materials, so night floodlighting swaps in per-wonder clones instead of editing the shared ones.
       for (const w of city.wonders || []) {
         w.group?.traverse((o) => {
-          if (!o.isMesh || !o.material) return;
-          const m = o.material;
-          if (!m.userData) m.userData = {};
-          if (m.userData._nightSaved == null) {
-            m.userData._nightSaved = { ei: m.emissiveIntensity || 0, er: m.emissive?.r, eg: m.emissive?.g, eb: m.emissive?.b };
-          }
+          if (!o.isMesh || !o.material || Array.isArray(o.material)) return;
           if (nightOn) {
-            if (!m.emissive) m.emissive = new THREE.Color(0xffb35a);
-            else m.emissive.setHex(0xffc27a);
-            m.emissiveIntensity = Math.max(m.emissiveIntensity || 0, 0.35);
-          } else if (m.userData._nightSaved) {
-            const s = m.userData._nightSaved;
-            if (m.emissive && s.er != null) m.emissive.setRGB(s.er, s.eg, s.eb);
-            m.emissiveIntensity = s.ei;
-          }
+            if (o.userData._dayMat) return;
+            const lit = nightWonderMats.get(o.material) || o.material.clone();
+            if (lit.emissive && lit.emissive.getHex() === 0) { lit.emissive.setHex(0xffc58a); lit.emissiveIntensity = 0.06; }
+            nightWonderMats.set(o.material, lit);
+            o.userData._dayMat = o.material; o.material = lit;
+          } else if (o.userData._dayMat) { o.material = o.userData._dayMat; delete o.userData._dayMat; }
         });
       }
+      const glass = cityMaterial('glass');
+      if (!glass.userData._day) glass.userData._day = { e: glass.emissive.getHex(), i: glass.emissiveIntensity };
+      if (nightOn) setNightEmissive([glass], true); else { glass.emissive.setHex(glass.userData._day.e); glass.emissiveIntensity = glass.userData._day.i; }
       if (!lowPower) rebuildComposer(nightOn && (opts.quality === 'high'));
       for (const u of units.values()) applyWindows(u);
     }
@@ -775,6 +801,7 @@ export function createCity(container, roster, opts = {}) {
       cancelAnimationFrame(raf); ro.disconnect(); controls.dispose();
       el.removeEventListener('pointermove', onMove); el.removeEventListener('pointerdown', onDown);
       el.removeEventListener('pointerup', onUp); el.removeEventListener('pointerleave', onLeave);
+      skyDay.dispose(); skyNight.dispose(); for (const m of nightWonderMats.values()) m.dispose();
       renderer.dispose(); renderer.forceContextLoss?.(); tip.remove(); el.remove();
     },
   };
