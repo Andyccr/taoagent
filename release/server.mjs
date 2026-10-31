@@ -47,10 +47,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/event-stream.js
+// node_modules/@earendil-works/pi-ai/dist/utils/event-stream.js
 var FifoQueue, EventStream, AssistantMessageEventStream;
 var init_event_stream = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/event-stream.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/utils/event-stream.js"() {
     FifoQueue = class {
       incoming = [];
       outgoing = [];
@@ -160,7 +160,7 @@ var init_event_stream = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/lazy.js
+// node_modules/@earendil-works/pi-ai/dist/api/lazy.js
 function createSetupErrorMessage(model, error, timestamp) {
   return {
     role: "assistant",
@@ -224,24 +224,24 @@ function lazyApi(load, capabilities) {
   return api;
 }
 var init_lazy = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/lazy.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/api/lazy.js"() {
     init_event_stream();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/auth/context.js
+// node_modules/@earendil-works/pi-ai/dist/auth/context.js
 var init_context = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/auth/context.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/auth/context.js"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/auth/credential-store.js
+// node_modules/@earendil-works/pi-ai/dist/auth/credential-store.js
 var init_credential_store = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/auth/credential-store.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/auth/credential-store.js"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/diagnostics.js
+// node_modules/@earendil-works/pi-ai/dist/utils/diagnostics.js
 function formatThrownValue(value) {
   if (value instanceof Error)
     return value.message || value.name;
@@ -253,11 +253,11 @@ function appendAssistantMessageDiagnostic(message, diagnostic) {
   message.diagnostics = [...message.diagnostics ?? [], diagnostic];
 }
 var init_diagnostics = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/diagnostics.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/utils/diagnostics.js"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/models-error.js
+// node_modules/@earendil-works/pi-ai/dist/utils/models-error.js
 function withCauseDetail(message, cause) {
   if (cause === void 0 || cause === null)
     return message;
@@ -268,7 +268,7 @@ function withCauseDetail(message, cause) {
 }
 var ModelsError;
 var init_models_error = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/models-error.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/utils/models-error.js"() {
     init_diagnostics();
     ModelsError = class extends Error {
       code;
@@ -281,22 +281,22 @@ var init_models_error = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/auth/resolve.js
+// node_modules/@earendil-works/pi-ai/dist/auth/resolve.js
 var DEFAULT_OAUTH_MINIMUM_VALIDITY_MS;
 var init_resolve = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/auth/resolve.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/auth/resolve.js"() {
     init_models_error();
     DEFAULT_OAUTH_MINIMUM_VALIDITY_MS = 5 * 60 * 1e3;
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/models-store.js
+// node_modules/@earendil-works/pi-ai/dist/models-store.js
 var init_models_store = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/models-store.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/models-store.js"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/model-operations.js
+// node_modules/@earendil-works/pi-ai/dist/utils/model-operations.js
 function getModelType(model) {
   return model.type ?? "chat";
 }
@@ -326,11 +326,11 @@ function classifierErrorResult(model, error, aborted = false) {
   };
 }
 var init_model_operations = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/model-operations.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/utils/model-operations.js"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/text.js
+// node_modules/@earendil-works/pi-ai/dist/utils/text.js
 function contentText(content, separator = "\n") {
   if (typeof content === "string")
     return content;
@@ -357,11 +357,11 @@ ${value}`);
   return parts.join("\n\n");
 }
 var init_text = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/text.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/utils/text.js"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/transcript.js
+// node_modules/@earendil-works/pi-ai/dist/utils/transcript.js
 function createInitialSystemMessage(systemPrompt, tools2) {
   const hasSystemPrompt = systemPrompt !== void 0 && systemPrompt.length > 0;
   const hasTools = tools2 !== void 0 && tools2.length > 0;
@@ -500,12 +500,12 @@ function resolveTranscriptTools(messages, supportsToolAdditions) {
   };
 }
 var init_transcript = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/transcript.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/utils/transcript.js"() {
     init_text();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/models.js
+// node_modules/@earendil-works/pi-ai/dist/models.js
 function hasKnownModelType(model) {
   return Object.hasOwn(KNOWN_MODEL_TYPES, getModelType(model));
 }
@@ -671,7 +671,7 @@ function clampThinkingLevel(model, level) {
 }
 var KNOWN_MODEL_TYPES, EXTENDED_THINKING_LEVELS;
 var init_models = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/models.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/models.js"() {
     init_lazy();
     init_resolve();
     init_model_operations();
@@ -680,9 +680,9 @@ var init_models = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/partial-json/dist/options.js
+// node_modules/partial-json/dist/options.js
 var require_options = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/partial-json/dist/options.js"(exports) {
+  "node_modules/partial-json/dist/options.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Allow = exports.ALL = exports.COLLECTION = exports.ATOM = exports.SPECIAL = exports.INF = exports._INFINITY = exports.INFINITY = exports.NAN = exports.BOOL = exports.NULL = exports.OBJ = exports.ARR = exports.NUM = exports.STR = void 0;
@@ -705,9 +705,9 @@ var require_options = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/partial-json/dist/index.js
+// node_modules/partial-json/dist/index.js
 var require_dist = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/partial-json/dist/index.js"(exports) {
+  "node_modules/partial-json/dist/index.js"(exports) {
     "use strict";
     var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
@@ -916,7 +916,7 @@ var require_dist = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/json-parse.js
+// node_modules/@earendil-works/pi-ai/dist/utils/json-parse.js
 function isControlCharacter(char) {
   const codePoint = char.codePointAt(0);
   return codePoint !== void 0 && codePoint >= 0 && codePoint <= 31;
@@ -1032,13 +1032,13 @@ function parseStreamingJson(partialJson) {
 }
 var import_partial_json, VALID_JSON_ESCAPES;
 var init_json_parse = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/json-parse.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/utils/json-parse.js"() {
     import_partial_json = __toESM(require_dist(), 1);
     VALID_JSON_ESCAPES = /* @__PURE__ */ new Set(['"', "\\", "/", "b", "f", "n", "r", "t"]);
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/tslib.mjs
+// node_modules/@anthropic-ai/sdk/internal/tslib.mjs
 function __classPrivateFieldSet(receiver, state3, value, kind, f3) {
   if (kind === "m")
     throw new TypeError("Private method is not writable");
@@ -1056,11 +1056,11 @@ function __classPrivateFieldGet2(receiver, state3, kind, f3) {
   return kind === "m" ? f3 : kind === "a" ? f3.call(receiver) : f3 ? f3.value : state3.get(receiver);
 }
 var init_tslib = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/tslib.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/tslib.mjs"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/errors.mjs
+// node_modules/@anthropic-ai/sdk/internal/errors.mjs
 function isAbortError(err) {
   return typeof err === "object" && err !== null && // Spec-compliant fetch implementations
   ("name" in err && err.name === "AbortError" || // Expo fetch
@@ -1068,7 +1068,7 @@ function isAbortError(err) {
 }
 var castToError;
 var init_errors = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/errors.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/errors.mjs"() {
     castToError = (err) => {
       if (err instanceof Error)
         return err;
@@ -1097,10 +1097,10 @@ var init_errors = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/core/error.mjs
+// node_modules/@anthropic-ai/sdk/core/error.mjs
 var AnthropicError, APIError, APIUserAbortError, APIConnectionError, APIConnectionTimeoutError, RetryableError, BadRequestError, AuthenticationError, PermissionDeniedError, NotFoundError, ConflictError, UnprocessableEntityError, RateLimitError, InternalServerError;
 var init_error = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/core/error.mjs"() {
+  "node_modules/@anthropic-ai/sdk/core/error.mjs"() {
     init_errors();
     AnthropicError = /* @__PURE__ */ (() => {
       class AnthropicError2 extends Error {
@@ -1206,7 +1206,7 @@ var init_error = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/values.mjs
+// node_modules/@anthropic-ai/sdk/internal/utils/values.mjs
 function maybeObj(x2) {
   if (typeof x2 !== "object") {
     return {};
@@ -1230,7 +1230,7 @@ function checkNever(_value) {
 }
 var startsWithSchemeRegexp, isAbsoluteURL, isArray, isReadonlyArray, validatePositiveInteger, safeJSON;
 var init_values = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/values.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/utils/values.mjs"() {
     init_error();
     startsWithSchemeRegexp = /^[a-z][a-z0-9+.-]*:/i;
     isAbsoluteURL = (url) => {
@@ -1257,10 +1257,10 @@ var init_values = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/sleep.mjs
+// node_modules/@anthropic-ai/sdk/internal/utils/sleep.mjs
 var sleep;
 var init_sleep = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/sleep.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/utils/sleep.mjs"() {
     sleep = (ms, signal) => new Promise((resolve2) => {
       if (signal?.aborted)
         return resolve2();
@@ -1277,15 +1277,15 @@ var init_sleep = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/version.mjs
+// node_modules/@anthropic-ai/sdk/version.mjs
 var VERSION;
 var init_version = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/version.mjs"() {
+  "node_modules/@anthropic-ai/sdk/version.mjs"() {
     VERSION = "0.129.0";
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/detect-platform.mjs
+// node_modules/@anthropic-ai/sdk/internal/detect-platform.mjs
 function getDetectedPlatform() {
   if (typeof Deno !== "undefined" && Deno.build != null) {
     return "deno";
@@ -1323,7 +1323,7 @@ function getBrowserInfo() {
 }
 var isRunningInBrowser, getPlatformProperties, normalizeArch, normalizePlatform, _platformHeaders, getPlatformHeaders;
 var init_detect_platform = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/detect-platform.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/detect-platform.mjs"() {
     init_version();
     isRunningInBrowser = () => {
       return (
@@ -1424,7 +1424,7 @@ var init_detect_platform = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/request-signal.mjs
+// node_modules/@anthropic-ai/sdk/internal/request-signal.mjs
 function makeCleanup(signal, listener) {
   return () => signal.removeEventListener("abort", listener);
 }
@@ -1445,13 +1445,13 @@ function releaseRequestSignal(controller) {
 }
 var cleanups, registry;
 var init_request_signal = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/request-signal.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/request-signal.mjs"() {
     cleanups = /* @__PURE__ */ new WeakMap();
     registry = typeof globalThis.FinalizationRegistry === "function" ? new globalThis.FinalizationRegistry((controller) => releaseRequestSignal(controller)) : null;
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/shims.mjs
+// node_modules/@anthropic-ai/sdk/internal/shims.mjs
 function getDefaultFetch() {
   if (typeof fetch !== "undefined") {
     return fetch;
@@ -1523,14 +1523,14 @@ async function CancelReadableStream(stream6) {
   await cancelPromise;
 }
 var init_shims = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/shims.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/shims.mjs"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/request-options.mjs
+// node_modules/@anthropic-ai/sdk/internal/request-options.mjs
 var FallbackEncoder;
 var init_request_options = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/request-options.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/request-options.mjs"() {
     FallbackEncoder = ({ headers, body }) => {
       return {
         bodyHeaders: {
@@ -1542,10 +1542,10 @@ var init_request_options = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/qs/formats.mjs
+// node_modules/@anthropic-ai/sdk/internal/qs/formats.mjs
 var default_format, default_formatter, formatters, RFC1738;
 var init_formats = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/qs/formats.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/qs/formats.mjs"() {
     default_format = "RFC3986";
     default_formatter = (v) => String(v);
     formatters = {
@@ -1556,7 +1556,7 @@ var init_formats = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/qs/utils.mjs
+// node_modules/@anthropic-ai/sdk/internal/qs/utils.mjs
 function is_buffer(obj) {
   if (!obj || typeof obj !== "object") {
     return false;
@@ -1575,7 +1575,7 @@ function maybe_map(val, fn) {
 }
 var has, hex_table, limit, encode;
 var init_utils = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/qs/utils.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/qs/utils.mjs"() {
     init_formats();
     init_values();
     has = (obj, key) => (has = Object.hasOwn ?? Function.prototype.call.bind(Object.prototype.hasOwnProperty), has(obj, key));
@@ -1642,7 +1642,7 @@ var init_utils = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/qs/stringify.mjs
+// node_modules/@anthropic-ai/sdk/internal/qs/stringify.mjs
 function is_non_nullish_primitive(v) {
   return typeof v === "string" || typeof v === "number" || typeof v === "boolean" || typeof v === "symbol" || typeof v === "bigint";
 }
@@ -1882,7 +1882,7 @@ function stringify(object2, opts = {}) {
 }
 var array_prefix_generators, push_to_array, toISOString, defaults, sentinel;
 var init_stringify = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/qs/stringify.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/qs/stringify.mjs"() {
     init_utils();
     init_formats();
     init_values();
@@ -1927,17 +1927,17 @@ var init_stringify = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/query.mjs
+// node_modules/@anthropic-ai/sdk/internal/utils/query.mjs
 function stringifyQuery(query) {
   return stringify(query, { arrayFormat: "brackets" });
 }
 var init_query = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/query.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/utils/query.mjs"() {
     init_stringify();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/node.mjs
+// node_modules/@anthropic-ai/sdk/internal/node.mjs
 var node_exports = {};
 __export(node_exports, {
   child_process: () => child_process,
@@ -1956,11 +1956,11 @@ import * as path4 from "node:path";
 import * as stream from "node:stream";
 import * as util from "node:util";
 var init_node = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/node.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/node.mjs"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/credentials/types.mjs
+// node_modules/@anthropic-ai/sdk/lib/credentials/types.mjs
 function requireSecureTokenEndpoint(baseURL) {
   if (!baseURL)
     return;
@@ -2106,7 +2106,7 @@ async function readLimitedText(resp) {
 }
 var GRANT_TYPE_JWT_BEARER, GRANT_TYPE_REFRESH_TOKEN, TOKEN_ENDPOINT, OAUTH_API_BETA_HEADER, FEDERATION_BETA_HEADER, ADVISORY_REFRESH_THRESHOLD_IN_SECONDS, MANDATORY_REFRESH_THRESHOLD_IN_SECONDS, ADVISORY_REFRESH_BACKOFF_IN_SECONDS, MAX_TOKEN_RESPONSE_BYTES, MAX_ERROR_BODY_CHARS, SAFE_ERROR_KEYS, WorkloadIdentityError;
 var init_types = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/credentials/types.mjs"() {
+  "node_modules/@anthropic-ai/sdk/lib/credentials/types.mjs"() {
     init_error();
     GRANT_TYPE_JWT_BEARER = "urn:ietf:params:oauth:grant-type:jwt-bearer";
     GRANT_TYPE_REFRESH_TOKEN = "refresh_token";
@@ -2130,19 +2130,19 @@ var init_types = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/time.mjs
+// node_modules/@anthropic-ai/sdk/internal/utils/time.mjs
 function nowAsSeconds() {
   return Math.floor(Date.now() / 1e3);
 }
 var init_time = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/time.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/utils/time.mjs"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/credentials/token-cache.mjs
+// node_modules/@anthropic-ai/sdk/lib/credentials/token-cache.mjs
 var TokenCache;
 var init_token_cache = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/credentials/token-cache.mjs"() {
+  "node_modules/@anthropic-ai/sdk/lib/credentials/token-cache.mjs"() {
     init_types();
     init_time();
     TokenCache = class {
@@ -2235,10 +2235,10 @@ var init_token_cache = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/env.mjs
+// node_modules/@anthropic-ai/sdk/internal/utils/env.mjs
 var readEnv;
 var init_env = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/env.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/utils/env.mjs"() {
     readEnv = (env2) => {
       if (typeof globalThis.process !== "undefined") {
         return globalThis.process.env?.[env2]?.trim() || void 0;
@@ -2251,7 +2251,7 @@ var init_env = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/bytes.mjs
+// node_modules/@anthropic-ai/sdk/internal/utils/bytes.mjs
 function concatBytes(buffers) {
   let length = 0;
   for (const buffer of buffers) {
@@ -2275,14 +2275,14 @@ function decodeUTF8(bytes) {
 }
 var encodeUTF8_, decodeUTF8_;
 var init_bytes = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/bytes.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/utils/bytes.mjs"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/base64.mjs
+// node_modules/@anthropic-ai/sdk/internal/utils/base64.mjs
 var fromBase64;
 var init_base64 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/base64.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/utils/base64.mjs"() {
     init_error();
     fromBase64 = (str) => {
       if (typeof globalThis.Buffer !== "undefined") {
@@ -2302,7 +2302,7 @@ var init_base64 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/log.mjs
+// node_modules/@anthropic-ai/sdk/internal/utils/log.mjs
 function noop() {
 }
 function makeLogFn(fnLevel, logger, logLevel) {
@@ -2350,7 +2350,7 @@ function debugLogRequestDetails(logger, message, details) {
 }
 var defaultLogLevel, levelNumbers, parseLogLevel, noopLogger, cachedLoggers, lastEnvLevel, cachedDefaultLogger, formatRequestDetails;
 var init_log = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/log.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/utils/log.mjs"() {
     init_values();
     init_env();
     defaultLogLevel = "warn";
@@ -2400,10 +2400,10 @@ var init_log = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/uuid.mjs
+// node_modules/@anthropic-ai/sdk/internal/utils/uuid.mjs
 var uuid4;
 var init_uuid = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/uuid.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/utils/uuid.mjs"() {
     uuid4 = function() {
       const { crypto: crypto17 } = globalThis;
       if (crypto17?.randomUUID) {
@@ -2417,9 +2417,9 @@ var init_uuid = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils.mjs
+// node_modules/@anthropic-ai/sdk/internal/utils.mjs
 var init_utils2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/utils.mjs"() {
     init_values();
     init_base64();
     init_env();
@@ -2430,7 +2430,7 @@ var init_utils2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/core/credentials.mjs
+// node_modules/@anthropic-ai/sdk/core/credentials.mjs
 function validateProfileName(name) {
   if (!name) {
     throw new Error("profile name is empty");
@@ -2447,7 +2447,7 @@ function validateProfileName(name) {
 }
 var CREDENTIALS_FILE_VERSION, PROFILE_NAME_PATTERN, loadConfigWithSource, getCredentialsPath, getRootConfigPath, supportsLocalConfigFiles, getActiveProfileName;
 var init_credentials = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/core/credentials.mjs"() {
+  "node_modules/@anthropic-ai/sdk/core/credentials.mjs"() {
     init_detect_platform();
     init_utils2();
     CREDENTIALS_FILE_VERSION = "1.0";
@@ -2609,7 +2609,7 @@ var init_credentials = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/credentials/identity-token.mjs
+// node_modules/@anthropic-ai/sdk/lib/credentials/identity-token.mjs
 function identityTokenFromFile(path11) {
   if (!path11) {
     throw new AnthropicError("Identity token file path is empty");
@@ -2636,12 +2636,12 @@ function identityTokenFromValue(token) {
   return () => token;
 }
 var init_identity_token = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/credentials/identity-token.mjs"() {
+  "node_modules/@anthropic-ai/sdk/lib/credentials/identity-token.mjs"() {
     init_error();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/credentials/oidc-federation.mjs
+// node_modules/@anthropic-ai/sdk/lib/credentials/oidc-federation.mjs
 function oidcFederationProvider(config) {
   return async () => {
     requireSecureTokenEndpoint(config.baseURL);
@@ -2699,14 +2699,14 @@ function oidcFederationProvider(config) {
   };
 }
 var init_oidc_federation = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/credentials/oidc-federation.mjs"() {
+  "node_modules/@anthropic-ai/sdk/lib/credentials/oidc-federation.mjs"() {
     init_types();
     init_time();
     init_version();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/credentials/user-oauth.mjs
+// node_modules/@anthropic-ai/sdk/lib/credentials/user-oauth.mjs
 function userOAuthProvider(config) {
   return async (opts) => {
     const { fs: fs16 } = await Promise.resolve().then(() => (init_node(), node_exports));
@@ -2780,7 +2780,7 @@ function userOAuthProvider(config) {
   };
 }
 var init_user_oauth = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/credentials/user-oauth.mjs"() {
+  "node_modules/@anthropic-ai/sdk/lib/credentials/user-oauth.mjs"() {
     init_credentials();
     init_types();
     init_time();
@@ -2788,7 +2788,7 @@ var init_user_oauth = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/credentials/credential-chain.mjs
+// node_modules/@anthropic-ai/sdk/lib/credentials/credential-chain.mjs
 function resolveCredentialsFromConfig(config, options) {
   const credentialsPath = config.authentication.credentials_path ?? null;
   const effectiveBaseURL = (config.base_url || options.baseURL).replace(/\/+$/, "");
@@ -2920,7 +2920,7 @@ function cachedExchangeProvider(exchange, credentialsPath, onCacheWriteError, on
   };
 }
 var init_credential_chain = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/credentials/credential-chain.mjs"() {
+  "node_modules/@anthropic-ai/sdk/lib/credentials/credential-chain.mjs"() {
     init_env();
     init_credentials();
     init_types();
@@ -2931,7 +2931,7 @@ var init_credential_chain = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/decoders/line.mjs
+// node_modules/@anthropic-ai/sdk/internal/decoders/line.mjs
 function findNewlineIndex(buffer, startIndex) {
   const newline = 10;
   const carriage = 13;
@@ -2947,7 +2947,7 @@ function findNewlineIndex(buffer, startIndex) {
 }
 var _LineDecoder_buffer, _LineDecoder_carriageReturnIndex, LineDecoder;
 var init_line = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/decoders/line.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/decoders/line.mjs"() {
     init_tslib();
     init_bytes();
     LineDecoder = /* @__PURE__ */ (() => {
@@ -3000,7 +3000,7 @@ var init_line = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/core/streaming.mjs
+// node_modules/@anthropic-ai/sdk/core/streaming.mjs
 async function* _iterSSEMessages(response, controller) {
   if (!response.body) {
     controller.abort();
@@ -3034,7 +3034,7 @@ function partition(str, delimiter2) {
 }
 var _Stream_client, Stream, SSEDecoder;
 var init_streaming = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/core/streaming.mjs"() {
+  "node_modules/@anthropic-ai/sdk/core/streaming.mjs"() {
     init_tslib();
     init_error();
     init_shims();
@@ -3261,7 +3261,7 @@ var init_streaming = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/parse.mjs
+// node_modules/@anthropic-ai/sdk/internal/parse.mjs
 async function defaultParseResponse(client, props) {
   const { response, requestLogID, retryOfRequestLogID, startTime } = props;
   const body = await (async () => {
@@ -3312,14 +3312,14 @@ function addResponseIDs(value, response) {
   });
 }
 var init_parse = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/parse.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/parse.mjs"() {
     init_streaming();
     init_log();
     init_request_signal();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/core/middleware.mjs
+// node_modules/@anthropic-ai/sdk/core/middleware.mjs
 function isFetchOriginError(err) {
   return typeof err === "object" && err !== null && fetchOriginErrors.has(err);
 }
@@ -3415,7 +3415,7 @@ function applyMiddleware(fetchFn, middleware, options, client) {
 }
 var fetchOriginErrors;
 var init_middleware = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/core/middleware.mjs"() {
+  "node_modules/@anthropic-ai/sdk/core/middleware.mjs"() {
     init_errors();
     init_parse();
     init_log();
@@ -3425,10 +3425,10 @@ var init_middleware = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/core/api-promise.mjs
+// node_modules/@anthropic-ai/sdk/core/api-promise.mjs
 var _APIPromise_client, APIPromise;
 var init_api_promise = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/core/api-promise.mjs"() {
+  "node_modules/@anthropic-ai/sdk/core/api-promise.mjs"() {
     init_tslib();
     init_parse();
     APIPromise = /* @__PURE__ */ (() => {
@@ -3502,10 +3502,10 @@ var init_api_promise = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/core/pagination.mjs
+// node_modules/@anthropic-ai/sdk/core/pagination.mjs
 var _AbstractPage_client, AbstractPage, PagePromise, Page, PageCursor, BidirectionalPageCursor;
 var init_pagination = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/core/pagination.mjs"() {
+  "node_modules/@anthropic-ai/sdk/core/pagination.mjs"() {
     init_tslib();
     init_error();
     init_parse();
@@ -3666,7 +3666,7 @@ var init_pagination = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/uploads.mjs
+// node_modules/@anthropic-ai/sdk/internal/uploads.mjs
 function makeFile(fileBits, fileName2, options) {
   checkFileSupport();
   return new File(fileBits, fileName2 ?? "", options);
@@ -3697,7 +3697,7 @@ function supportsFormData(fetchObject) {
 }
 var checkFileSupport, isAsyncIterable, multipartFormRequestOptions, supportsFormDataMap, createForm, addFormValue;
 var init_uploads = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/uploads.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/uploads.mjs"() {
     init_shims();
     checkFileSupport = () => {
       if (typeof File === "undefined") {
@@ -3755,7 +3755,7 @@ var init_uploads = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/to-file.mjs
+// node_modules/@anthropic-ai/sdk/internal/to-file.mjs
 async function toFile(value, name, options) {
   checkFileSupport();
   value = await value;
@@ -3809,7 +3809,7 @@ function propsForError(value) {
 }
 var isBlobLike, isFileLike, isResponseLike;
 var init_to_file = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/to-file.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/to-file.mjs"() {
     init_uploads();
     init_uploads();
     isBlobLike = (value) => value != null && typeof value === "object" && typeof value.size === "number" && typeof value.type === "string" && typeof value.text === "function" && typeof value.slice === "function" && typeof value.arrayBuffer === "function";
@@ -3818,23 +3818,23 @@ var init_to_file = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/core/uploads.mjs
+// node_modules/@anthropic-ai/sdk/core/uploads.mjs
 var init_uploads2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/core/uploads.mjs"() {
+  "node_modules/@anthropic-ai/sdk/core/uploads.mjs"() {
     init_to_file();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/shared.mjs
+// node_modules/@anthropic-ai/sdk/resources/shared.mjs
 var init_shared = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/shared.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/shared.mjs"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/core/resource.mjs
+// node_modules/@anthropic-ai/sdk/core/resource.mjs
 var APIResource;
 var init_resource = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/core/resource.mjs"() {
+  "node_modules/@anthropic-ai/sdk/core/resource.mjs"() {
     APIResource = class {
       constructor(client) {
         this._client = client;
@@ -3843,7 +3843,7 @@ var init_resource = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/headers.mjs
+// node_modules/@anthropic-ai/sdk/internal/headers.mjs
 function* iterateHeaders(headers) {
   if (!headers)
     return;
@@ -3884,7 +3884,7 @@ function* iterateHeaders(headers) {
 }
 var brand_privateNullableHeaders, clearSentinel, APPEND_HEADERS, appendHeaderValue, buildHeaders;
 var init_headers = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/headers.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/headers.mjs"() {
     init_values();
     brand_privateNullableHeaders = /* @__PURE__ */ Symbol.for("brand.privateNullableHeaders");
     clearSentinel = /* @__PURE__ */ Symbol("clear");
@@ -3936,13 +3936,13 @@ var init_headers = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/path.mjs
+// node_modules/@anthropic-ai/sdk/internal/utils/path.mjs
 function encodeURIPath(str) {
   return str.replace(/[^A-Za-z0-9\-._~!$&'()*+,;=:@]+/g, encodeURIComponent);
 }
 var EMPTY, createPathTagFunction, path5;
 var init_path = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/path.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/utils/path.mjs"() {
     init_error();
     EMPTY = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.create(null));
     createPathTagFunction = (pathEncoder = encodeURIPath) => function path11(statics, ...params) {
@@ -3997,10 +3997,10 @@ ${underline}`);
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/deployment-runs.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/deployment-runs.mjs
 var DeploymentRuns;
 var init_deployment_runs = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/deployment-runs.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/deployment-runs.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -4059,10 +4059,10 @@ var init_deployment_runs = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/deployments.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/deployments.mjs
 var Deployments;
 var init_deployments = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/deployments.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/deployments.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -4280,10 +4280,10 @@ var init_deployments = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/dreams.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/dreams.mjs
 var Dreams;
 var init_dreams = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/dreams.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/dreams.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -4452,7 +4452,7 @@ var init_dreams = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/stainless-helper-header.mjs
+// node_modules/@anthropic-ai/sdk/internal/stainless-helper-header.mjs
 function helperHeader(value) {
   return { [STAINLESS_HELPER_HEADER]: value };
 }
@@ -4503,17 +4503,17 @@ function stainlessHelperHeaderFromFile(file) {
 }
 var STAINLESS_HELPER_HEADER, STAINLESS_HELPER_METHOD_HEADER, SDK_HELPER_SYMBOL;
 var init_stainless_helper_header = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/stainless-helper-header.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/stainless-helper-header.mjs"() {
     STAINLESS_HELPER_HEADER = "x-stainless-helper";
     STAINLESS_HELPER_METHOD_HEADER = "x-stainless-helper-method";
     SDK_HELPER_SYMBOL = /* @__PURE__ */ Symbol("anthropic.sdk.stainlessHelper");
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/files.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/files.mjs
 var Files;
 var init_files = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/files.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/files.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -4648,10 +4648,10 @@ var init_files = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/models.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/models.mjs
 var Models;
 var init_models2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/models.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/models.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -4715,10 +4715,10 @@ var init_models2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/user-profiles.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/user-profiles.mjs
 var UserProfiles;
 var init_user_profiles = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/user-profiles.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/user-profiles.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -4849,9 +4849,9 @@ var init_user_profiles = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@stablelib/base64/lib/base64.js
+// node_modules/@stablelib/base64/lib/base64.js
 var require_base64 = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@stablelib/base64/lib/base64.js"(exports) {
+  "node_modules/@stablelib/base64/lib/base64.js"(exports) {
     "use strict";
     var __extends = exports && exports.__extends || /* @__PURE__ */ (function() {
       var extendStatics = function(d, b) {
@@ -5062,9 +5062,9 @@ var require_base64 = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/fast-sha256/sha256.js
+// node_modules/fast-sha256/sha256.js
 var require_sha256 = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/fast-sha256/sha256.js"(exports, module) {
+  "node_modules/fast-sha256/sha256.js"(exports, module) {
     (function(root, factory) {
       var exports2 = {};
       factory(exports2);
@@ -5486,9 +5486,9 @@ var require_sha256 = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/standardwebhooks/dist/timing_safe_equal.js
+// node_modules/standardwebhooks/dist/timing_safe_equal.js
 var require_timing_safe_equal = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/standardwebhooks/dist/timing_safe_equal.js"(exports) {
+  "node_modules/standardwebhooks/dist/timing_safe_equal.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.timingSafeEqual = timingSafeEqual;
@@ -5520,9 +5520,9 @@ var require_timing_safe_equal = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/standardwebhooks/dist/index.js
+// node_modules/standardwebhooks/dist/index.js
 var require_dist2 = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/standardwebhooks/dist/index.js"(exports) {
+  "node_modules/standardwebhooks/dist/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Webhook = exports.WebhookVerificationError = void 0;
@@ -5637,10 +5637,10 @@ var require_dist2 = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/webhooks.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/webhooks.mjs
 var import_standardwebhooks, Webhooks;
 var init_webhooks = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/webhooks.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/webhooks.mjs"() {
     init_resource();
     import_standardwebhooks = __toESM(require_dist2(), 1);
     Webhooks = class extends APIResource {
@@ -5671,10 +5671,10 @@ var init_webhooks = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/agents/versions.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/agents/versions.mjs
 var Versions;
 var init_versions = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/agents/versions.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/agents/versions.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -5711,10 +5711,10 @@ var init_versions = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/agents/agents.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/agents/agents.mjs
 var Agents;
 var init_agents = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/agents/agents.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/agents/agents.mjs"() {
     init_resource();
     init_versions();
     init_versions();
@@ -5860,7 +5860,7 @@ var init_agents = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/abort.mjs
+// node_modules/@anthropic-ai/sdk/internal/utils/abort.mjs
 function linkAbort(external, controller) {
   if (!external)
     return () => {
@@ -5875,11 +5875,11 @@ function linkAbort(external, controller) {
   return () => external.removeEventListener("abort", onAbort);
 }
 var init_abort = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/abort.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/utils/abort.mjs"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/backoff.mjs
+// node_modules/@anthropic-ai/sdk/internal/utils/backoff.mjs
 function isStatus(e2, code) {
   return e2 instanceof APIError && e2.status === code;
 }
@@ -5899,12 +5899,12 @@ function applyJitter(ms) {
   return ms * (1 - Math.random() * 0.25);
 }
 var init_backoff = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/backoff.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/utils/backoff.mjs"() {
     init_error();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/helper-client.mjs
+// node_modules/@anthropic-ai/sdk/lib/helper-client.mjs
 function copyClientForHelper(client, { authToken, helper }) {
   if (!authToken) {
     throw new AnthropicError(`copyClientForHelper: expected a non-empty authToken but received ${JSON.stringify(authToken)}`);
@@ -5930,14 +5930,14 @@ function copyClientForHelper(client, { authToken, helper }) {
   });
 }
 var init_helper_client = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/helper-client.mjs"() {
+  "node_modules/@anthropic-ai/sdk/lib/helper-client.mjs"() {
     init_error();
     init_headers();
     init_stainless_helper_header();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/environments/poller.mjs
+// node_modules/@anthropic-ai/sdk/lib/environments/poller.mjs
 function backoff2(attempt) {
   return backoff(attempt, POLL_BACKOFF_BASE_MS, POLL_BACKOFF_CAP_MS);
 }
@@ -5948,7 +5948,7 @@ function defaultWorkerId() {
 }
 var _WorkPoller_runnerClient, _WorkPoller_consumed, _WorkPoller_controller, _WorkPoller_detachExternal, _WorkPoller_autoStop, _WorkPoller_drain, _WorkPoller_blockMs, _WorkPoller_reclaimOlderThanMs, _WorkPoller_requestOpts, _IdleLog_log, _IdleLog_environmentId, _IdleLog_idleSince, _IdleLog_lastReport, POLL_BLOCK_MS, POLL_BACKOFF_BASE_MS, POLL_BACKOFF_CAP_MS, IDLE_REPORT_INTERVAL_MS, WorkPoller, IdleLog;
 var init_poller = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/environments/poller.mjs"() {
+  "node_modules/@anthropic-ai/sdk/lib/environments/poller.mjs"() {
     init_tslib();
     init_error();
     init_log();
@@ -6106,10 +6106,10 @@ var init_poller = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/async-queue.mjs
+// node_modules/@anthropic-ai/sdk/internal/utils/async-queue.mjs
 var _AsyncQueue_items, _AsyncQueue_waiters, _AsyncQueue_closed, AsyncQueue;
 var init_async_queue = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/async-queue.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/utils/async-queue.mjs"() {
     init_tslib();
     AsyncQueue = /* @__PURE__ */ (() => {
       class AsyncQueue2 {
@@ -6178,10 +6178,10 @@ var init_async_queue = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/tools/ToolError.mjs
+// node_modules/@anthropic-ai/sdk/lib/tools/ToolError.mjs
 var ToolError;
 var init_ToolError = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/tools/ToolError.mjs"() {
+  "node_modules/@anthropic-ai/sdk/lib/tools/ToolError.mjs"() {
     ToolError = /* @__PURE__ */ (() => {
       class ToolError2 extends Error {
         constructor(content) {
@@ -6200,7 +6200,7 @@ var init_ToolError = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/tools/BetaRunnableTool.mjs
+// node_modules/@anthropic-ai/sdk/lib/tools/BetaRunnableTool.mjs
 function toolName(tool) {
   return "name" in tool ? tool.name : "mcp_server_name" in tool ? tool.mcp_server_name : tool.type;
 }
@@ -6217,12 +6217,12 @@ async function runRunnableTool(tool, rawInput, context) {
   }
 }
 var init_BetaRunnableTool = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/tools/BetaRunnableTool.mjs"() {
+  "node_modules/@anthropic-ai/sdk/lib/tools/BetaRunnableTool.mjs"() {
     init_ToolError();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/tools/SessionToolRunner.mjs
+// node_modules/@anthropic-ai/sdk/lib/tools/SessionToolRunner.mjs
 function isEndTurnIdle(ev) {
   return ev.type === "session.status_idle" && ev.stop_reason?.type === "end_turn";
 }
@@ -6255,7 +6255,7 @@ function toSessionContent(content) {
 }
 var _IdleClock_maxIdleMs, _IdleClock_onExpire, _IdleClock_blockers, _IdleClock_armPending, _IdleClock_timer, _SessionToolRunner_instances, _SessionToolRunner_consumed, _SessionToolRunner_controller, _SessionToolRunner_detachExternal, _SessionToolRunner_requestOpts, _SessionToolRunner_toolByName, _SessionToolRunner_logger, _SessionToolRunner_seen, _SessionToolRunner_answered, _SessionToolRunner_confirmationVerdicts, _SessionToolRunner_awaitingConfirmation, _SessionToolRunner_results, _SessionToolRunner_inFlightCount, _SessionToolRunner_sendRetryWindowMs, _SessionToolRunner_onIdle, _SessionToolRunner_idleClock, _SessionToolRunner_requestOptions, _SessionToolRunner_streamLoop, _SessionToolRunner_reconcile, _SessionToolRunner_ingestHistory, _SessionToolRunner_handleStreamEvent, _SessionToolRunner_routeToolEvent, _SessionToolRunner_noteConfirmation, _SessionToolRunner_applyVerdict, _SessionToolRunner_surfaceCall, _SessionToolRunner_execute, _SessionToolRunner_sendResult, _SessionToolRunner_drain, STREAM_BACKOFF_START_MS, STREAM_BACKOFF_CAP_MS, TOOL_TIMEOUT_MS, DRAIN_TIMEOUT_MS, SEND_BACKOFF_START_MS, SEND_BACKOFF_CAP_MS, SEND_RETRY_WINDOW_MS, DEFAULT_MAX_IDLE_MS, IdleClock, SessionToolRunner;
 var init_SessionToolRunner = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/tools/SessionToolRunner.mjs"() {
+  "node_modules/@anthropic-ai/sdk/lib/tools/SessionToolRunner.mjs"() {
     init_tslib();
     init_error();
     init_log();
@@ -6760,7 +6760,7 @@ var init_SessionToolRunner = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/tools/agent-toolset/sync-interval.mjs
+// node_modules/@anthropic-ai/sdk/tools/agent-toolset/sync-interval.mjs
 function checkMemorySyncInterval(ms, option) {
   if (!(ms >= MIN_MEMORY_SYNC_INTERVAL_MS)) {
     throw new AnthropicError(`${option} must be at least ${MIN_MEMORY_SYNC_INTERVAL_MS}ms (got ${ms}); to run without memory sync, pass \`memorySyncIntervalMs: null\` to the worker instead`);
@@ -6768,14 +6768,14 @@ function checkMemorySyncInterval(ms, option) {
 }
 var DEFAULT_MEMORY_SYNC_INTERVAL_MS, MIN_MEMORY_SYNC_INTERVAL_MS;
 var init_sync_interval = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/tools/agent-toolset/sync-interval.mjs"() {
+  "node_modules/@anthropic-ai/sdk/tools/agent-toolset/sync-interval.mjs"() {
     init_error();
     DEFAULT_MEMORY_SYNC_INTERVAL_MS = 15e3;
     MIN_MEMORY_SYNC_INTERVAL_MS = 5e3;
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/helpers/beta/json-schema.mjs
+// node_modules/@anthropic-ai/sdk/helpers/beta/json-schema.mjs
 function betaTool(options) {
   if (options.inputSchema.type !== "object") {
     throw new Error(`JSON schema for tool "${options.name}" must be an object, but got ${options.inputSchema.type}`);
@@ -6791,11 +6791,11 @@ function betaTool(options) {
   };
 }
 var init_json_schema = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/helpers/beta/json-schema.mjs"() {
+  "node_modules/@anthropic-ai/sdk/helpers/beta/json-schema.mjs"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/promise.mjs
+// node_modules/@anthropic-ai/sdk/internal/utils/promise.mjs
 function promiseWithResolvers() {
   let resolve2;
   let reject;
@@ -6806,11 +6806,11 @@ function promiseWithResolvers() {
   return { promise, resolve: resolve2, reject };
 }
 var init_promise = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/utils/promise.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/utils/promise.mjs"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/tools/agent-toolset/fs-util.mjs
+// node_modules/@anthropic-ai/sdk/tools/agent-toolset/fs-util.mjs
 function isWithin(root, p) {
   const rel = path4.relative(root, p);
   return rel === "" || !rel.startsWith(".." + path4.sep) && rel !== ".." && !path4.isAbsolute(rel);
@@ -6925,7 +6925,7 @@ function fsErrorMessage(err, file) {
 }
 var fs7, DIR_CREATE_MODE, FILE_CREATE_MODE, MAX_SYMLINK_HOPS;
 var init_fs_util = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/tools/agent-toolset/fs-util.mjs"() {
+  "node_modules/@anthropic-ai/sdk/tools/agent-toolset/fs-util.mjs"() {
     init_node();
     init_ToolError();
     fs7 = fs6.promises;
@@ -6935,7 +6935,7 @@ var init_fs_util = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/tools/agent-toolset/skills.mjs
+// node_modules/@anthropic-ai/sdk/tools/agent-toolset/skills.mjs
 async function setupSkills(ctx) {
   const { client, sessionId } = ctx;
   if (!client)
@@ -7124,7 +7124,7 @@ async function readHead(file, n) {
 }
 var fs8, execFileAsync, INCONSISTENT_LISTING, PLAIN_TYPE_CHARS;
 var init_skills = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/tools/agent-toolset/skills.mjs"() {
+  "node_modules/@anthropic-ai/sdk/tools/agent-toolset/skills.mjs"() {
     init_node();
     init_error();
     init_log();
@@ -7136,7 +7136,7 @@ var init_skills = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/file-store.mjs
+// node_modules/@anthropic-ai/sdk/internal/file-store.mjs
 function isPathLegal(p) {
   return p.startsWith("/") && !p.split("/").includes("..");
 }
@@ -7318,7 +7318,7 @@ function oldEnoughToCache(st, walkStartNs) {
 }
 var fsp, C, OWNER_ONLY_DIR_MODE, OWNER_ONLY_FILE_MODE, OWNER_ONLY_EXEC_MODE, O_NOFOLLOW, O_NONBLOCK, FileStoreError, FileStore, TIMESTAMP_TRUST_MARGIN_NS, _internals, LocalFileStore, asyncDispose;
 var init_file_store = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/file-store.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/file-store.mjs"() {
     init_node();
     init_bytes();
     fsp = fs6.promises;
@@ -7584,7 +7584,7 @@ var init_file_store = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/tools/agent-toolset/memories.mjs
+// node_modules/@anthropic-ai/sdk/tools/agent-toolset/memories.mjs
 function markerSha(memoryStoreId) {
   return crypto7.createHash("sha256").update(`version ${MARKER_VERSION}
 ${memoryStoreId}`, "utf-8").digest("hex");
@@ -7612,7 +7612,7 @@ async function settledOrAborted(p, signal) {
 }
 var _SessionMemoryStores_instances, _SessionMemoryStores_client, _SessionMemoryStores_workdir, _SessionMemoryStores_syncIntervalMs, _SessionMemoryStores_syncDeletions, _SessionMemoryStores_log, _SessionMemoryStores_lastSyncAt, _SessionMemoryStores_finished, _SessionMemoryStores_stores, _SessionMemoryStores_storeRoot, _SessionMemoryStores_scanMarker, _SessionMemoryStores_syncStore, _SessionMemoryStores_flushStore, _SessionMemoryStores_recover, _SessionMemoryStores_stampAndPull, _SessionMemoryStores_syncPath, _SessionMemoryStores_removeLocal, _SessionMemoryStores_write, _SessionMemoryStores_pullAll, _SessionMemoryStores_uploadAll, _SessionMemoryStores_listMemories, _SessionMemoryStores_upload, _SessionMemoryStores_corroboratedDelete, _SessionMemoryStores_deleteRemote, MEMORY_FLUSH_TIMEOUT_MS, MARKER_PATH, MARKER_VERSION, DELETE_CORROBORATION_MS, LIST_PAGE_SIZE, FULL_LIST_PAGE_SIZE, FETCH_CONCURRENCY, UPLOAD_CONCURRENCY, DELETE_CAP_FLOOR, DELETE_CAP_CEILING, SessionMemoryError, DeletePass, SessionMemoryStores;
 var init_memories = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/tools/agent-toolset/memories.mjs"() {
+  "node_modules/@anthropic-ai/sdk/tools/agent-toolset/memories.mjs"() {
     init_tslib();
     init_node();
     init_error();
@@ -8301,7 +8301,7 @@ ${store.memoryStoreId}`);
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/tools/agent-toolset/node.mjs
+// node_modules/@anthropic-ai/sdk/tools/agent-toolset/node.mjs
 var node_exports2 = {};
 __export(node_exports2, {
   BashSession: () => BashSession,
@@ -8800,7 +8800,7 @@ async function findRg() {
 }
 var _BashSession_instances, _BashSession_proc, _BashSession_buf, _BashSession_truncated, _BashSession_closed, _BashSession_waiting, _BashSession_append, _LineRangeCollector_instances, _LineRangeCollector_filePath, _LineRangeCollector_startLine, _LineRangeCollector_endLine, _LineRangeCollector_start, _LineRangeCollector_end, _LineRangeCollector_limit, _LineRangeCollector_line, _LineRangeCollector_collected, _LineRangeCollector_collectedBytes, _LineRangeCollector_collect, _LineRangeCollector_overLimitError, BASH_OUTPUT_LIMIT, BASH_DEFAULT_TIMEOUT_MS, DEFAULT_MAX_FILE_BYTES, READ_STREAM_CHUNK_BYTES, NEWLINE, GREP_OUTPUT_LIMIT, GREP_MAX_LINE_LENGTH, GLOB_RESULT_LIMIT, BashTimeoutError, ANSI_RE, fsGlob, BashSession, LineRangeCollector, WALK_MAX_DEPTH, WALK_MAX_ENTRIES;
 var init_node2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/tools/agent-toolset/node.mjs"() {
+  "node_modules/@anthropic-ai/sdk/tools/agent-toolset/node.mjs"() {
     init_tslib();
     init_error();
     init_ToolError();
@@ -9015,7 +9015,7 @@ ${out}`;
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/environments/worker.mjs
+// node_modules/@anthropic-ai/sdk/lib/environments/worker.mjs
 function hasMemoryStore(session) {
   return session.resources.some((r2) => r2.type === "memory_store");
 }
@@ -9142,7 +9142,7 @@ async function heartbeatLoop(client, work, lease, logger, requestOptions, onLeas
 }
 var _EnvironmentWorker_instances, _EnvironmentWorker_signal, _EnvironmentWorker_handleItem, _Lease_ctrl, _Lease_endReason, HEARTBEAT_DEFAULT_MS, HEARTBEAT_TTL_DEFAULT_MS, NO_HEARTBEAT_SENTINEL, EnvironmentWorker, Lease;
 var init_worker = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/environments/worker.mjs"() {
+  "node_modules/@anthropic-ai/sdk/lib/environments/worker.mjs"() {
     init_tslib();
     init_error();
     init_log();
@@ -9439,10 +9439,10 @@ var init_worker = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/environments/work.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/environments/work.mjs
 var Work;
 var init_work = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/environments/work.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/environments/work.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -9708,10 +9708,10 @@ var init_work = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/environments/environments.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/environments/environments.mjs
 var Environments;
 var init_environments = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/environments/environments.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/environments/environments.mjs"() {
     init_resource();
     init_work();
     init_work();
@@ -9879,10 +9879,10 @@ var init_environments = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/memory-stores/memories.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/memory-stores/memories.mjs
 var Memories;
 var init_memories2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/memory-stores/memories.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/memory-stores/memories.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -10025,10 +10025,10 @@ var init_memories2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/memory-stores/memory-versions.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/memory-stores/memory-versions.mjs
 var MemoryVersions;
 var init_memory_versions = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/memory-stores/memory-versions.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/memory-stores/memory-versions.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -10116,10 +10116,10 @@ var init_memory_versions = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/memory-stores/memory-stores.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/memory-stores/memory-stores.mjs
 var MemoryStores;
 var init_memory_stores = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/memory-stores/memory-stores.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/memory-stores/memory-stores.mjs"() {
     init_resource();
     init_memories2();
     init_memories2();
@@ -10282,17 +10282,17 @@ var init_memory_stores = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/error.mjs
+// node_modules/@anthropic-ai/sdk/error.mjs
 var init_error2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/error.mjs"() {
+  "node_modules/@anthropic-ai/sdk/error.mjs"() {
     init_error();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/decoders/jsonl.mjs
+// node_modules/@anthropic-ai/sdk/internal/decoders/jsonl.mjs
 var JSONLDecoder;
 var init_jsonl = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/decoders/jsonl.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/decoders/jsonl.mjs"() {
     init_error();
     init_shims();
     init_line();
@@ -10332,10 +10332,10 @@ var init_jsonl = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/messages/batches.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/messages/batches.mjs
 var Batches;
 var init_batches = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/messages/batches.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/messages/batches.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -10552,10 +10552,10 @@ var init_batches = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/constants.mjs
+// node_modules/@anthropic-ai/sdk/internal/constants.mjs
 var MODEL_NONSTREAMING_TOKENS;
 var init_constants = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/constants.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/constants.mjs"() {
     MODEL_NONSTREAMING_TOKENS = {
       "claude-opus-4@20250514": 8192,
       "anthropic.claude-opus-4-1-20250805-v1:0": 8192,
@@ -10564,7 +10564,7 @@ var init_constants = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/beta-parser.mjs
+// node_modules/@anthropic-ai/sdk/lib/beta-parser.mjs
 function getOutputFormat(params) {
   return params?.output_format ?? params?.output_config?.format;
 }
@@ -10637,22 +10637,22 @@ function parseBetaOutputFormat(params, content) {
   }
 }
 var init_beta_parser = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/beta-parser.mjs"() {
+  "node_modules/@anthropic-ai/sdk/lib/beta-parser.mjs"() {
     init_error();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/streaming.mjs
+// node_modules/@anthropic-ai/sdk/streaming.mjs
 var init_streaming2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/streaming.mjs"() {
+  "node_modules/@anthropic-ai/sdk/streaming.mjs"() {
     init_streaming();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/_vendor/partial-json-parser/parser.mjs
+// node_modules/@anthropic-ai/sdk/_vendor/partial-json-parser/parser.mjs
 var tokenize, strip, unstrip, generate, partialParse2;
 var init_parser = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/_vendor/partial-json-parser/parser.mjs"() {
+  "node_modules/@anthropic-ai/sdk/_vendor/partial-json-parser/parser.mjs"() {
     tokenize = (input) => {
       let current = 0;
       let tokens = [];
@@ -10885,7 +10885,7 @@ var init_parser = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/message-stream-utils.mjs
+// node_modules/@anthropic-ai/sdk/internal/message-stream-utils.mjs
 function withLazyInput(prev, jsonBuf) {
   const next = {};
   for (const key of Object.keys(prev)) {
@@ -10910,19 +10910,19 @@ function withLazyInput(prev, jsonBuf) {
 }
 var JSON_BUF_PROPERTY;
 var init_message_stream_utils = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/internal/message-stream-utils.mjs"() {
+  "node_modules/@anthropic-ai/sdk/internal/message-stream-utils.mjs"() {
     init_parser();
     JSON_BUF_PROPERTY = "__json_buf";
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/BetaMessageStream.mjs
+// node_modules/@anthropic-ai/sdk/lib/BetaMessageStream.mjs
 function tracksToolInput(content) {
   return content.type === "tool_use" || content.type === "server_tool_use" || content.type === "mcp_tool_use";
 }
 var _BetaMessageStream_instances, _BetaMessageStream_currentMessageSnapshot, _BetaMessageStream_params, _BetaMessageStream_connectedPromise, _BetaMessageStream_resolveConnectedPromise, _BetaMessageStream_rejectConnectedPromise, _BetaMessageStream_endPromise, _BetaMessageStream_resolveEndPromise, _BetaMessageStream_rejectEndPromise, _BetaMessageStream_listeners, _BetaMessageStream_ended, _BetaMessageStream_errored, _BetaMessageStream_aborted, _BetaMessageStream_catchingPromiseCreated, _BetaMessageStream_response, _BetaMessageStream_request_id, _BetaMessageStream_workspace_id, _BetaMessageStream_logger, _BetaMessageStream_getFinalMessage, _BetaMessageStream_getFinalText, _BetaMessageStream_handleError, _BetaMessageStream_beginRequest, _BetaMessageStream_addStreamEvent, _BetaMessageStream_endRequest, _BetaMessageStream_accumulateMessage, _BetaMessageStream_toolInputParseError, BetaMessageStream;
 var init_BetaMessageStream = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/BetaMessageStream.mjs"() {
+  "node_modules/@anthropic-ai/sdk/lib/BetaMessageStream.mjs"() {
     init_tslib();
     init_stainless_helper_header();
     init_error2();
@@ -11556,10 +11556,10 @@ var init_BetaMessageStream = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/internal/BetaToolRunnerStream.mjs
+// node_modules/@anthropic-ai/sdk/lib/internal/BetaToolRunnerStream.mjs
 var _BetaToolRunnerStream_instances, _BetaToolRunnerStream_onToolCall, _BetaToolRunnerStream_emitted, _BetaToolRunnerStream_readers, _BetaToolRunnerStream_toolCalls, _BetaToolRunnerStream_closed, _BetaToolRunnerStream_ready, _BetaToolRunnerStream_fallback, _BetaToolRunnerStream_track, _BetaToolRunnerStream_release, _BetaToolRunnerStream_removeReader, BetaToolRunnerStream;
 var init_BetaToolRunnerStream = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/internal/BetaToolRunnerStream.mjs"() {
+  "node_modules/@anthropic-ai/sdk/lib/internal/BetaToolRunnerStream.mjs"() {
     init_tslib();
     init_stainless_helper_header();
     init_BetaMessageStream();
@@ -11676,7 +11676,7 @@ var init_BetaToolRunnerStream = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/tools/BetaToolRunner.mjs
+// node_modules/@anthropic-ai/sdk/lib/tools/BetaToolRunner.mjs
 function rejectCompactionParam(params) {
   if ("compaction" in params && params.compaction != null) {
     throw new AnthropicError("`compaction` cannot be set on a tool runner: every request in the loop would compact again. Call `runner.compactBeforeNextTurn()` when the conversation should be compacted instead.");
@@ -11825,7 +11825,7 @@ function determineNextStepFromStopReason(stopReason) {
 }
 var _BetaToolRunner_instances, _BetaToolRunner_consumed, _BetaToolRunner_mutated, _BetaToolRunner_state, _BetaToolRunner_options, _BetaToolRunner_message, _BetaToolRunner_stream, _BetaToolRunner_toolResponse, _BetaToolRunner_completion, _BetaToolRunner_iterationCount, _BetaToolRunner_compaction, _BetaToolRunner_calls, _BetaToolRunner_lastStopReason, _BetaToolRunner_toolOverrides, _BetaToolRunner_pendingToolChanges, _BetaToolRunner_send, _BetaToolRunner_streamThatStartsTools, _BetaToolRunner_startedCallsSettled, _BetaToolRunner_compact, _BetaToolRunner_runnableTools, _BetaToolRunner_availableToolNames, _BetaToolRunner_recordRemovalsFromHistory, _BetaToolRunner_compactAfterFinalTurn, _BetaToolRunner_generateToolResponse, _BetaToolRunner_flushPendingToolChanges, _BetaToolRunner_pendingToolChangesMessage, BetaToolRunner;
 var init_BetaToolRunner = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/tools/BetaToolRunner.mjs"() {
+  "node_modules/@anthropic-ai/sdk/lib/tools/BetaToolRunner.mjs"() {
     init_tslib();
     init_ToolError();
     init_error();
@@ -12341,7 +12341,7 @@ var init_BetaToolRunner = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/messages/messages.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/messages/messages.mjs
 function transformOutputFormat(params) {
   if (!params.output_format) {
     return params;
@@ -12360,7 +12360,7 @@ function transformOutputFormat(params) {
 }
 var DEPRECATED_MODELS, MODELS_TO_WARN_WITH_THINKING_ENABLED, Messages;
 var init_messages = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/messages/messages.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/messages/messages.mjs"() {
     init_error2();
     init_batches();
     init_resource();
@@ -12490,10 +12490,10 @@ Please migrate to a newer model. Visit https://docs.anthropic.com/en/docs/resour
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/api-keys.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/organization/api-keys.mjs
 var APIKeys;
 var init_api_keys = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/api-keys.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/organization/api-keys.mjs"() {
     init_resource();
     init_pagination();
     init_path();
@@ -12547,10 +12547,10 @@ var init_api_keys = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/compliance-settings.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/organization/compliance-settings.mjs
 var ComplianceSettings;
 var init_compliance_settings = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/compliance-settings.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/organization/compliance-settings.mjs"() {
     init_resource();
     ComplianceSettings = class extends APIResource {
       /**
@@ -12600,10 +12600,10 @@ var init_compliance_settings = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/external-keys.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/organization/external-keys.mjs
 var ExternalKeys;
 var init_external_keys = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/external-keys.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/organization/external-keys.mjs"() {
     init_resource();
     init_pagination();
     init_path();
@@ -12720,10 +12720,10 @@ var init_external_keys = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/invites.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/organization/invites.mjs
 var Invites;
 var init_invites = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/invites.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/organization/invites.mjs"() {
     init_resource();
     init_pagination();
     init_path();
@@ -12797,10 +12797,10 @@ var init_invites = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/rate-limits.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/organization/rate-limits.mjs
 var RateLimits;
 var init_rate_limits = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/rate-limits.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/organization/rate-limits.mjs"() {
     init_resource();
     init_pagination();
     RateLimits = class extends APIResource {
@@ -12829,10 +12829,10 @@ var init_rate_limits = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/users.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/organization/users.mjs
 var Users;
 var init_users = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/users.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/organization/users.mjs"() {
     init_resource();
     init_pagination();
     init_path();
@@ -12897,10 +12897,10 @@ var init_users = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/federation/issuers.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/organization/federation/issuers.mjs
 var Issuers;
 var init_issuers = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/federation/issuers.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/organization/federation/issuers.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -13067,10 +13067,10 @@ var init_issuers = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/federation/rules/workspaces.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/organization/federation/rules/workspaces.mjs
 var Workspaces;
 var init_workspaces = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/federation/rules/workspaces.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/organization/federation/rules/workspaces.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -13182,10 +13182,10 @@ var init_workspaces = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/federation/rules/rules.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/organization/federation/rules/rules.mjs
 var Rules;
 var init_rules = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/federation/rules/rules.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/organization/federation/rules/rules.mjs"() {
     init_resource();
     init_workspaces();
     init_workspaces();
@@ -13383,10 +13383,10 @@ var init_rules = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/federation/federation.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/organization/federation/federation.mjs
 var Federation;
 var init_federation = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/federation/federation.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/organization/federation/federation.mjs"() {
     init_resource();
     init_issuers();
     init_issuers();
@@ -13407,10 +13407,10 @@ var init_federation = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/service-accounts/workspaces.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/organization/service-accounts/workspaces.mjs
 var Workspaces2;
 var init_workspaces2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/service-accounts/workspaces.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/organization/service-accounts/workspaces.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -13533,10 +13533,10 @@ var init_workspaces2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/service-accounts/service-accounts.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/organization/service-accounts/service-accounts.mjs
 var ServiceAccounts;
 var init_service_accounts = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/service-accounts/service-accounts.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/organization/service-accounts/service-accounts.mjs"() {
     init_resource();
     init_workspaces2();
     init_workspaces2();
@@ -13710,10 +13710,10 @@ var init_service_accounts = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/workspaces/members.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/organization/workspaces/members.mjs
 var Members;
 var init_members = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/workspaces/members.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/organization/workspaces/members.mjs"() {
     init_resource();
     init_pagination();
     init_path();
@@ -13813,10 +13813,10 @@ var init_members = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/workspaces/rate-limits.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/organization/workspaces/rate-limits.mjs
 var RateLimits2;
 var init_rate_limits2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/workspaces/rate-limits.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/organization/workspaces/rate-limits.mjs"() {
     init_resource();
     init_pagination();
     init_path();
@@ -13850,10 +13850,10 @@ var init_rate_limits2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/workspaces/service-accounts.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/organization/workspaces/service-accounts.mjs
 var ServiceAccounts2;
 var init_service_accounts2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/workspaces/service-accounts.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/organization/workspaces/service-accounts.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -14040,10 +14040,10 @@ var init_service_accounts2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/workspaces/workspaces.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/organization/workspaces/workspaces.mjs
 var Workspaces3;
 var init_workspaces3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/workspaces/workspaces.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/organization/workspaces/workspaces.mjs"() {
     init_resource();
     init_members();
     init_members();
@@ -14155,10 +14155,10 @@ var init_workspaces3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/organization.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/organization/organization.mjs
 var Organization;
 var init_organization = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/organization/organization.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/organization/organization.mjs"() {
     init_resource();
     init_api_keys();
     init_api_keys();
@@ -14220,10 +14220,10 @@ var init_organization = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/sessions/events.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/sessions/events.mjs
 var Events;
 var init_events = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/sessions/events.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/sessions/events.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -14351,10 +14351,10 @@ var init_events = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/sessions/resources.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/sessions/resources.mjs
 var Resources;
 var init_resources = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/sessions/resources.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/sessions/resources.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -14499,10 +14499,10 @@ var init_resources = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/sessions/threads/events.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/sessions/threads/events.mjs
 var Events2;
 var init_events2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/sessions/threads/events.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/sessions/threads/events.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -14567,10 +14567,10 @@ var init_events2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/sessions/threads/threads.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/sessions/threads/threads.mjs
 var Threads;
 var init_threads = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/sessions/threads/threads.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/sessions/threads/threads.mjs"() {
     init_resource();
     init_events2();
     init_events2();
@@ -14667,10 +14667,10 @@ var init_threads = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/sessions/sessions.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/sessions/sessions.mjs
 var Sessions;
 var init_sessions = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/sessions/sessions.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/sessions/sessions.mjs"() {
     init_resource();
     init_events();
     init_events();
@@ -14846,10 +14846,10 @@ var init_sessions = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/skills/versions.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/skills/versions.mjs
 var Versions2;
 var init_versions2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/skills/versions.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/skills/versions.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -14989,10 +14989,10 @@ var init_versions2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/skills/skills.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/skills/skills.mjs
 var Skills;
 var init_skills2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/skills/skills.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/skills/skills.mjs"() {
     init_resource();
     init_versions2();
     init_versions2();
@@ -15108,10 +15108,10 @@ var init_skills2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/tunnels/certificates.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/tunnels/certificates.mjs
 var Certificates;
 var init_certificates = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/tunnels/certificates.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/tunnels/certificates.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -15250,10 +15250,10 @@ var init_certificates = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/tunnels/tunnels.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/tunnels/tunnels.mjs
 var Tunnels;
 var init_tunnels = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/tunnels/tunnels.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/tunnels/tunnels.mjs"() {
     init_resource();
     init_certificates();
     init_certificates();
@@ -15452,10 +15452,10 @@ var init_tunnels = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/vaults/credentials.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/vaults/credentials.mjs
 var Credentials;
 var init_credentials2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/vaults/credentials.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/vaults/credentials.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -15651,10 +15651,10 @@ var init_credentials2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/vaults/vaults.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/vaults/vaults.mjs
 var Vaults;
 var init_vaults = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/vaults/vaults.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/vaults/vaults.mjs"() {
     init_resource();
     init_credentials2();
     init_credentials2();
@@ -15821,10 +15821,10 @@ var init_vaults = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/beta.mjs
+// node_modules/@anthropic-ai/sdk/resources/beta/beta.mjs
 var Beta;
 var init_beta = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/beta/beta.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/beta/beta.mjs"() {
     init_resource();
     init_deployment_runs();
     init_deployment_runs();
@@ -15901,10 +15901,10 @@ var init_beta = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/completions.mjs
+// node_modules/@anthropic-ai/sdk/resources/completions.mjs
 var Completions;
 var init_completions = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/completions.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/completions.mjs"() {
     init_resource();
     init_headers();
     Completions = class extends APIResource {
@@ -15928,10 +15928,10 @@ var init_completions = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/files.mjs
+// node_modules/@anthropic-ai/sdk/resources/files.mjs
 var Files2;
 var init_files2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/files.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/files.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -16050,7 +16050,7 @@ var init_files2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/parser.mjs
+// node_modules/@anthropic-ai/sdk/lib/parser.mjs
 function getOutputFormat2(params) {
   return params?.output_config?.format;
 }
@@ -16111,18 +16111,18 @@ function parseOutputFormat(params, content) {
   }
 }
 var init_parser2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/parser.mjs"() {
+  "node_modules/@anthropic-ai/sdk/lib/parser.mjs"() {
     init_error();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/MessageStream.mjs
+// node_modules/@anthropic-ai/sdk/lib/MessageStream.mjs
 function tracksToolInput2(content) {
   return content.type === "tool_use" || content.type === "server_tool_use";
 }
 var _MessageStream_instances, _MessageStream_currentMessageSnapshot, _MessageStream_params, _MessageStream_connectedPromise, _MessageStream_resolveConnectedPromise, _MessageStream_rejectConnectedPromise, _MessageStream_endPromise, _MessageStream_resolveEndPromise, _MessageStream_rejectEndPromise, _MessageStream_listeners, _MessageStream_ended, _MessageStream_errored, _MessageStream_aborted, _MessageStream_catchingPromiseCreated, _MessageStream_response, _MessageStream_request_id, _MessageStream_workspace_id, _MessageStream_logger, _MessageStream_getFinalMessage, _MessageStream_getFinalText, _MessageStream_handleError, _MessageStream_beginRequest, _MessageStream_addStreamEvent, _MessageStream_endRequest, _MessageStream_accumulateMessage, MessageStream;
 var init_MessageStream = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/lib/MessageStream.mjs"() {
+  "node_modules/@anthropic-ai/sdk/lib/MessageStream.mjs"() {
     init_tslib();
     init_stainless_helper_header();
     init_errors();
@@ -16708,10 +16708,10 @@ var init_MessageStream = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/messages/batches.mjs
+// node_modules/@anthropic-ai/sdk/resources/messages/batches.mjs
 var Batches2;
 var init_batches2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/messages/batches.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/messages/batches.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -16907,10 +16907,10 @@ var init_batches2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/messages/messages.mjs
+// node_modules/@anthropic-ai/sdk/resources/messages/messages.mjs
 var Messages2, DEPRECATED_MODELS2, MODELS_TO_WARN_WITH_THINKING_ENABLED2;
 var init_messages2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/messages/messages.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/messages/messages.mjs"() {
     init_resource();
     init_headers();
     init_stainless_helper_header();
@@ -17041,10 +17041,10 @@ Please migrate to a newer model. Visit https://docs.anthropic.com/en/docs/resour
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/models.mjs
+// node_modules/@anthropic-ai/sdk/resources/models.mjs
 var Models2;
 var init_models3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/models.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/models.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -17106,10 +17106,10 @@ var init_models3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/skills/versions.mjs
+// node_modules/@anthropic-ai/sdk/resources/skills/versions.mjs
 var Versions3;
 var init_versions3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/skills/versions.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/skills/versions.mjs"() {
     init_resource();
     init_pagination();
     init_headers();
@@ -17208,10 +17208,10 @@ var init_versions3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/skills/skills.mjs
+// node_modules/@anthropic-ai/sdk/resources/skills/skills.mjs
 var Skills2;
 var init_skills3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/skills/skills.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/skills/skills.mjs"() {
     init_resource();
     init_versions3();
     init_versions3();
@@ -17311,9 +17311,9 @@ var init_skills3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/index.mjs
+// node_modules/@anthropic-ai/sdk/resources/index.mjs
 var init_resources2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/resources/index.mjs"() {
+  "node_modules/@anthropic-ai/sdk/resources/index.mjs"() {
     init_shared();
     init_beta();
     init_completions();
@@ -17324,10 +17324,10 @@ var init_resources2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/client.mjs
+// node_modules/@anthropic-ai/sdk/client.mjs
 var _BaseAnthropic_instances, _a, _BaseAnthropic_encoder, _BaseAnthropic_baseURLOverridden, HUMAN_PROMPT, AI_PROMPT, BaseAnthropic, Anthropic;
 var init_client = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/client.mjs"() {
+  "node_modules/@anthropic-ai/sdk/client.mjs"() {
     init_tslib();
     init_values();
     init_sleep();
@@ -18137,14 +18137,14 @@ var init_client = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/index.mjs
+// node_modules/@anthropic-ai/sdk/index.mjs
 var init_sdk = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@anthropic-ai/sdk/index.mjs"() {
+  "node_modules/@anthropic-ai/sdk/index.mjs"() {
     init_client();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/provider-env.js
+// node_modules/@earendil-works/pi-ai/dist/utils/provider-env.js
 function getBunSandboxEnvValue(name) {
   if (typeof process === "undefined" || !process.versions?.bun || Object.keys(process.env).length > 0) {
     return void 0;
@@ -18170,15 +18170,15 @@ function getProviderEnvValue(name, env2) {
 }
 var procEnvCache;
 var init_provider_env = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/provider-env.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/utils/provider-env.js"() {
     procEnvCache = null;
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/env-api-keys.js
+// node_modules/@earendil-works/pi-ai/dist/env-api-keys.js
 var __rewriteRelativeImportExtension, _existsSync, _homedir, _join, dynamicImport, NODE_FS_SPECIFIER, NODE_OS_SPECIFIER, NODE_PATH_SPECIFIER, ANTHROPIC_FEDERATION_RULE_ID_ENV, ANTHROPIC_ORGANIZATION_ID_ENV, ANTHROPIC_SERVICE_ACCOUNT_ID_ENV, ANTHROPIC_IDENTITY_TOKEN_FILE_ENV, ANTHROPIC_WORKSPACE_ID_ENV;
 var init_env_api_keys = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/env-api-keys.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/env-api-keys.js"() {
     __rewriteRelativeImportExtension = function(path11, preserveJsx) {
       if (typeof path11 === "string" && /^\.\.?\//.test(path11)) {
         return path11.replace(/\.(tsx)$|((?:\.d)?)((?:\.[^./]+?)?)\.([cm]?)ts$/i, function(m2, tsx, d, ext, cm) {
@@ -18213,7 +18213,7 @@ var init_env_api_keys = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/headers.js
+// node_modules/@earendil-works/pi-ai/dist/utils/headers.js
 function headersToRecord(headers) {
   const result = {};
   for (const [key, value] of headers.entries()) {
@@ -18234,11 +18234,11 @@ function providerHeadersToRecord(...headerSources) {
   return merged.size > 0 ? Object.fromEntries(merged.values()) : void 0;
 }
 var init_headers2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/headers.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/utils/headers.js"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/pi-user-agent.js
+// node_modules/@earendil-works/pi-ai/dist/utils/pi-user-agent.js
 function loadNodeOs() {
   if (typeof process === "undefined" || !(process.versions?.node || process.versions?.bun)) {
     return null;
@@ -18250,12 +18250,12 @@ function getPiUserAgent() {
 }
 var nodeOs;
 var init_pi_user_agent = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/pi-user-agent.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/utils/pi-user-agent.js"() {
     nodeOs = loadNodeOs();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/provider-retry.js
+// node_modules/@earendil-works/pi-ai/dist/utils/provider-retry.js
 function isProviderError(error) {
   if (!(error instanceof Error) || !("status" in error) || !("headers" in error))
     return false;
@@ -18338,21 +18338,21 @@ async function retryProviderRequest(request, options = {}) {
 }
 var DEFAULT_MAX_RETRY_DELAY_MS;
 var init_provider_retry = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/provider-retry.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/utils/provider-retry.js"() {
     DEFAULT_MAX_RETRY_DELAY_MS = 6e4;
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/sanitize-unicode.js
+// node_modules/@earendil-works/pi-ai/dist/utils/sanitize-unicode.js
 function sanitizeSurrogates(text2) {
   return text2.replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, "");
 }
 var init_sanitize_unicode = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/sanitize-unicode.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/utils/sanitize-unicode.js"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/constrained-sampling.js
+// node_modules/@earendil-works/pi-ai/dist/api/constrained-sampling.js
 function isJsonSchemaObject(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -18556,7 +18556,7 @@ function createGrammarToolInputProperties(tools2, supportsOpenAIGrammarTools) {
 }
 var UnsupportedStrictJsonSchemaError, UNSUPPORTED_STRICT_SCHEMA_KEYS;
 var init_constrained_sampling = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/constrained-sampling.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/api/constrained-sampling.js"() {
     UnsupportedStrictJsonSchemaError = class extends Error {
     };
     UNSUPPORTED_STRICT_SCHEMA_KEYS = [
@@ -18580,7 +18580,7 @@ var init_constrained_sampling = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/github-copilot-headers.js
+// node_modules/@earendil-works/pi-ai/dist/api/github-copilot-headers.js
 function inferCopilotInitiator(messages) {
   const last = messages[messages.length - 1];
   return last && last.role !== "user" ? "agent" : "user";
@@ -18607,11 +18607,11 @@ function buildCopilotDynamicHeaders(params) {
   return headers;
 }
 var init_github_copilot_headers = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/github-copilot-headers.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/api/github-copilot-headers.js"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/estimate.js
+// node_modules/@earendil-works/pi-ai/dist/utils/estimate.js
 function calculateContextTokens(usage) {
   return usage.totalTokens || usage.input + usage.output + usage.cacheRead + usage.cacheWrite;
 }
@@ -18695,14 +18695,14 @@ function estimateToolsTokens(tools2) {
 }
 var CHARS_PER_TOKEN, ESTIMATED_IMAGE_CHARS;
 var init_estimate = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/estimate.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/utils/estimate.js"() {
     init_text();
     CHARS_PER_TOKEN = 3.5;
     ESTIMATED_IMAGE_CHARS = 4800;
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/simple-options.js
+// node_modules/@earendil-works/pi-ai/dist/api/simple-options.js
 function clampMaxTokensToContext(model, context, maxTokens) {
   if (model.contextWindow <= 0)
     return Math.max(MIN_MAX_TOKENS, maxTokens);
@@ -18760,7 +18760,7 @@ function adjustMaxTokensForThinking(baseMaxTokens, modelMaxTokens, reasoningLeve
 }
 var CONTEXT_SAFETY_TOKENS, MIN_MAX_TOKENS, MIN_ANSWER_TOKENS, DEFAULT_THINKING_BUDGETS;
 var init_simple_options = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/simple-options.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/api/simple-options.js"() {
     init_models();
     init_estimate();
     CONTEXT_SAFETY_TOKENS = 4096;
@@ -18775,7 +18775,7 @@ var init_simple_options = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/transform-messages.js
+// node_modules/@earendil-works/pi-ai/dist/api/transform-messages.js
 function splitErrorToolResultImages(msg) {
   if (!msg.isError)
     return void 0;
@@ -18944,14 +18944,14 @@ function transformMessages(messages, model, normalizeToolCallId2) {
 }
 var NON_VISION_USER_IMAGE_PLACEHOLDER, NON_VISION_TOOL_IMAGE_PLACEHOLDER, ERROR_TOOL_IMAGE_PLACEHOLDER;
 var init_transform_messages = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/transform-messages.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/api/transform-messages.js"() {
     NON_VISION_USER_IMAGE_PLACEHOLDER = "(image omitted: model does not support images)";
     NON_VISION_TOOL_IMAGE_PLACEHOLDER = "(tool image omitted: model does not support images)";
     ERROR_TOOL_IMAGE_PLACEHOLDER = "(image attached after the tool results)";
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/anthropic-messages.js
+// node_modules/@earendil-works/pi-ai/dist/api/anthropic-messages.js
 var anthropic_messages_exports = {};
 __export(anthropic_messages_exports, {
   stream: () => stream2,
@@ -19689,7 +19689,7 @@ function mapStopReason(reason, stopDetails) {
 }
 var claudeCodeVersion, claudeCodeTools, ccToolLookup, toClaudeCodeName, fromClaudeCodeName, FINE_GRAINED_TOOL_STREAMING_BETA, INTERLEAVED_THINKING_BETA, SERVER_SIDE_FALLBACK_BETA, MID_CONVERSATION_OUTPUT_CONFIG_BETA, THINKING_BINDING_CONTROLS_BETA, INLINE_TOOLS_BETA, DEFERRED_TOOL_PLACEHOLDER, PiAnthropic, federationClient, ANTHROPIC_MESSAGE_EVENTS, stream2, streamSimple, ANTHROPIC_STRICT_UNSUPPORTED_KEYWORDS, ANTHROPIC_STRICT_STRING_FORMATS, isAnthropicStrictUnsupportedKeyword;
 var init_anthropic_messages = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/anthropic-messages.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/api/anthropic-messages.js"() {
     init_sdk();
     init_env_api_keys();
     init_models();
@@ -20140,9 +20140,9 @@ var init_anthropic_messages = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/retry/lib/retry_operation.js
+// node_modules/retry/lib/retry_operation.js
 var require_retry_operation = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/retry/lib/retry_operation.js"(exports, module) {
+  "node_modules/retry/lib/retry_operation.js"(exports, module) {
     function RetryOperation(timeouts, options) {
       if (typeof options === "boolean") {
         options = { forever: options };
@@ -20275,9 +20275,9 @@ var require_retry_operation = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/retry/lib/retry.js
+// node_modules/retry/lib/retry.js
 var require_retry = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/retry/lib/retry.js"(exports) {
+  "node_modules/retry/lib/retry.js"(exports) {
     var RetryOperation = require_retry_operation();
     exports.operation = function(options) {
       var timeouts = exports.timeouts(options);
@@ -20361,16 +20361,16 @@ var require_retry = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/retry/index.js
+// node_modules/retry/index.js
 var require_retry2 = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/retry/index.js"(exports, module) {
+  "node_modules/retry/index.js"(exports, module) {
     module.exports = require_retry();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/p-retry/index.js
+// node_modules/p-retry/index.js
 var require_p_retry = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/p-retry/index.js"(exports, module) {
+  "node_modules/p-retry/index.js"(exports, module) {
     "use strict";
     var retry2 = require_retry2();
     var networkErrorMsgs = [
@@ -20447,9 +20447,9 @@ var require_p_retry = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/extend/index.js
+// node_modules/extend/index.js
 var require_extend = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/extend/index.js"(exports, module) {
+  "node_modules/extend/index.js"(exports, module) {
     "use strict";
     var hasOwn4 = Object.prototype.hasOwnProperty;
     var toStr = Object.prototype.toString;
@@ -20538,9 +20538,9 @@ var require_extend = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/package.json
+// node_modules/gaxios/package.json
 var require_package = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/package.json"(exports, module) {
+  "node_modules/gaxios/package.json"(exports, module) {
     module.exports = {
       name: "gaxios",
       version: "7.3.1",
@@ -20649,18 +20649,18 @@ var require_package = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/build/cjs/src/util.cjs
+// node_modules/gaxios/build/cjs/src/util.cjs
 var require_util = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/build/cjs/src/util.cjs"(exports, module) {
+  "node_modules/gaxios/build/cjs/src/util.cjs"(exports, module) {
     "use strict";
     var pkg = require_package();
     module.exports = { pkg };
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/build/cjs/src/common.js
+// node_modules/gaxios/build/cjs/src/common.js
 var require_common = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/build/cjs/src/common.js"(exports) {
+  "node_modules/gaxios/build/cjs/src/common.js"(exports) {
     "use strict";
     var __importDefault = exports && exports.__importDefault || function(mod) {
       return mod && mod.__esModule ? mod : { "default": mod };
@@ -20900,9 +20900,9 @@ var require_common = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/build/cjs/src/retry.js
+// node_modules/gaxios/build/cjs/src/retry.js
 var require_retry3 = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/build/cjs/src/retry.js"(exports) {
+  "node_modules/gaxios/build/cjs/src/retry.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.getRetryConfig = getRetryConfig;
@@ -21005,9 +21005,9 @@ var require_retry3 = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/build/cjs/src/interceptor.js
+// node_modules/gaxios/build/cjs/src/interceptor.js
 var require_interceptor = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/build/cjs/src/interceptor.js"(exports) {
+  "node_modules/gaxios/build/cjs/src/interceptor.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.GaxiosInterceptorManager = void 0;
@@ -21017,9 +21017,9 @@ var require_interceptor = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/ms/index.js
+// node_modules/ms/index.js
 var require_ms = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/ms/index.js"(exports, module) {
+  "node_modules/ms/index.js"(exports, module) {
     var s2 = 1e3;
     var m2 = s2 * 60;
     var h2 = m2 * 60;
@@ -21133,9 +21133,9 @@ var require_ms = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/debug/src/common.js
+// node_modules/debug/src/common.js
 var require_common2 = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/debug/src/common.js"(exports, module) {
+  "node_modules/debug/src/common.js"(exports, module) {
     function setup(env2) {
       createDebug.debug = createDebug;
       createDebug.default = createDebug;
@@ -21310,9 +21310,9 @@ var require_common2 = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/debug/src/browser.js
+// node_modules/debug/src/browser.js
 var require_browser = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/debug/src/browser.js"(exports, module) {
+  "node_modules/debug/src/browser.js"(exports, module) {
     exports.formatArgs = formatArgs;
     exports.save = save2;
     exports.load = load;
@@ -21480,9 +21480,9 @@ var require_browser = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/debug/src/node.js
+// node_modules/debug/src/node.js
 var require_node = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/debug/src/node.js"(exports, module) {
+  "node_modules/debug/src/node.js"(exports, module) {
     var tty = __require("tty");
     var util2 = __require("util");
     exports.init = init;
@@ -21654,9 +21654,9 @@ var require_node = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/debug/src/index.js
+// node_modules/debug/src/index.js
 var require_src = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/debug/src/index.js"(exports, module) {
+  "node_modules/debug/src/index.js"(exports, module) {
     if (typeof process === "undefined" || process.type === "renderer" || process.browser === true || process.__nwjs) {
       module.exports = require_browser();
     } else {
@@ -21665,9 +21665,9 @@ var require_src = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/node_modules/agent-base/dist/helpers.js
+// node_modules/gaxios/node_modules/agent-base/dist/helpers.js
 var require_helpers = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/node_modules/agent-base/dist/helpers.js"(exports) {
+  "node_modules/gaxios/node_modules/agent-base/dist/helpers.js"(exports) {
     "use strict";
     var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
@@ -21735,9 +21735,9 @@ var require_helpers = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/node_modules/agent-base/dist/index.js
+// node_modules/gaxios/node_modules/agent-base/dist/index.js
 var require_dist3 = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/node_modules/agent-base/dist/index.js"(exports) {
+  "node_modules/gaxios/node_modules/agent-base/dist/index.js"(exports) {
     "use strict";
     var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
@@ -21891,9 +21891,9 @@ var require_dist3 = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/node_modules/https-proxy-agent/dist/parse-proxy-response.js
+// node_modules/gaxios/node_modules/https-proxy-agent/dist/parse-proxy-response.js
 var require_parse_proxy_response = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/node_modules/https-proxy-agent/dist/parse-proxy-response.js"(exports) {
+  "node_modules/gaxios/node_modules/https-proxy-agent/dist/parse-proxy-response.js"(exports) {
     "use strict";
     var __importDefault = exports && exports.__importDefault || function(mod) {
       return mod && mod.__esModule ? mod : { "default": mod };
@@ -21987,9 +21987,9 @@ var require_parse_proxy_response = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/node_modules/https-proxy-agent/dist/index.js
+// node_modules/gaxios/node_modules/https-proxy-agent/dist/index.js
 var require_dist4 = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/node_modules/https-proxy-agent/dist/index.js"(exports) {
+  "node_modules/gaxios/node_modules/https-proxy-agent/dist/index.js"(exports) {
     "use strict";
     var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
@@ -22137,7 +22137,7 @@ var require_dist4 = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/data-uri-to-buffer/dist/index.js
+// node_modules/data-uri-to-buffer/dist/index.js
 function dataUriToBuffer(uri) {
   if (!/^data:/i.test(uri)) {
     throw new TypeError('`uri` does not appear to be a Data URI (must begin with "data:")');
@@ -22176,14 +22176,14 @@ function dataUriToBuffer(uri) {
 }
 var dist_default;
 var init_dist = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/data-uri-to-buffer/dist/index.js"() {
+  "node_modules/data-uri-to-buffer/dist/index.js"() {
     dist_default = dataUriToBuffer;
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/web-streams-polyfill/dist/ponyfill.es2018.js
+// node_modules/web-streams-polyfill/dist/ponyfill.es2018.js
 var require_ponyfill_es2018 = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/web-streams-polyfill/dist/ponyfill.es2018.js"(exports, module) {
+  "node_modules/web-streams-polyfill/dist/ponyfill.es2018.js"(exports, module) {
     (function(global2, factory) {
       typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2.WebStreamsPolyfill = {}));
     })(exports, (function(exports2) {
@@ -26456,9 +26456,9 @@ var require_ponyfill_es2018 = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/fetch-blob/streams.cjs
+// node_modules/fetch-blob/streams.cjs
 var require_streams = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/fetch-blob/streams.cjs"() {
+  "node_modules/fetch-blob/streams.cjs"() {
     var POOL_SIZE2 = 65536;
     if (!globalThis.ReadableStream) {
       try {
@@ -26502,7 +26502,7 @@ var require_streams = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/fetch-blob/index.js
+// node_modules/fetch-blob/index.js
 async function* toIterator(parts, clone2 = true) {
   for (const part of parts) {
     if ("stream" in part) {
@@ -26539,7 +26539,7 @@ async function* toIterator(parts, clone2 = true) {
 }
 var import_streams, POOL_SIZE, _Blob, Blob3, fetch_blob_default;
 var init_fetch_blob = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/fetch-blob/index.js"() {
+  "node_modules/fetch-blob/index.js"() {
     import_streams = __toESM(require_streams(), 1);
     POOL_SIZE = 65536;
     _Blob = class Blob2 {
@@ -26706,10 +26706,10 @@ var init_fetch_blob = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/fetch-blob/file.js
+// node_modules/fetch-blob/file.js
 var _File, File3, file_default;
 var init_file = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/fetch-blob/file.js"() {
+  "node_modules/fetch-blob/file.js"() {
     init_fetch_blob();
     _File = class File2 extends fetch_blob_default {
       #lastModified = 0;
@@ -26750,7 +26750,7 @@ var init_file = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/formdata-polyfill/esm.min.js
+// node_modules/formdata-polyfill/esm.min.js
 function formDataToBlob(F2, B = fetch_blob_default) {
   var b = `${r()}${r()}`.replace(/\./g, "").slice(-28).padStart(32, "-"), c = [], p = `--${b}\r
 Content-Disposition: form-data; name="`;
@@ -26766,7 +26766,7 @@ Content-Type: ${v.type || "application/octet-stream"}\r
 }
 var t, i, h, r, m, f, e, x, FormData2;
 var init_esm_min = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/formdata-polyfill/esm.min.js"() {
+  "node_modules/formdata-polyfill/esm.min.js"() {
     init_fetch_blob();
     init_file();
     ({ toStringTag: t, iterator: i, hasInstance: h } = Symbol);
@@ -26847,10 +26847,10 @@ var init_esm_min = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/errors/base.js
+// node_modules/node-fetch/src/errors/base.js
 var FetchBaseError;
 var init_base = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/errors/base.js"() {
+  "node_modules/node-fetch/src/errors/base.js"() {
     FetchBaseError = class extends Error {
       constructor(message, type) {
         super(message);
@@ -26867,10 +26867,10 @@ var init_base = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/errors/fetch-error.js
+// node_modules/node-fetch/src/errors/fetch-error.js
 var FetchError;
 var init_fetch_error = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/errors/fetch-error.js"() {
+  "node_modules/node-fetch/src/errors/fetch-error.js"() {
     init_base();
     FetchError = class extends FetchBaseError {
       /**
@@ -26889,10 +26889,10 @@ var init_fetch_error = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/utils/is.js
+// node_modules/node-fetch/src/utils/is.js
 var NAME, isURLSearchParameters, isBlob, isAbortSignal, isDomainOrSubdomain, isSameProtocol;
 var init_is = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/utils/is.js"() {
+  "node_modules/node-fetch/src/utils/is.js"() {
     NAME = Symbol.toStringTag;
     isURLSearchParameters = (object2) => {
       return typeof object2 === "object" && typeof object2.append === "function" && typeof object2.delete === "function" && typeof object2.get === "function" && typeof object2.getAll === "function" && typeof object2.has === "function" && typeof object2.set === "function" && typeof object2.sort === "function" && object2[NAME] === "URLSearchParams";
@@ -26916,9 +26916,9 @@ var init_is = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/node-domexception/index.js
+// node_modules/node-domexception/index.js
 var require_node_domexception = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/node-domexception/index.js"(exports, module) {
+  "node_modules/node-domexception/index.js"(exports, module) {
     if (!globalThis.DOMException) {
       try {
         const { MessageChannel } = __require("worker_threads"), port = new MessageChannel().port1, ab = new ArrayBuffer();
@@ -26931,12 +26931,12 @@ var require_node_domexception = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/fetch-blob/from.js
+// node_modules/fetch-blob/from.js
 import { statSync, createReadStream as createReadStream2, promises as fs10 } from "node:fs";
 import { basename } from "node:path";
 var import_node_domexception, stat2, blobFromSync, blobFrom, fileFrom, fileFromSync, fromBlob, fromFile, BlobDataItem;
 var init_from = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/fetch-blob/from.js"() {
+  "node_modules/fetch-blob/from.js"() {
     import_node_domexception = __toESM(require_node_domexception(), 1);
     init_file();
     init_fetch_blob();
@@ -26995,7 +26995,7 @@ var init_from = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/utils/multipart-parser.js
+// node_modules/node-fetch/src/utils/multipart-parser.js
 var multipart_parser_exports = {};
 __export(multipart_parser_exports, {
   toFormData: () => toFormData
@@ -27089,7 +27089,7 @@ async function toFormData(Body2, ct) {
 }
 var s, S, f2, F, LF, CR, SPACE, HYPHEN, COLON, A, Z, lower, noop2, MultipartParser;
 var init_multipart_parser = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/utils/multipart-parser.js"() {
+  "node_modules/node-fetch/src/utils/multipart-parser.js"() {
     init_from();
     init_esm_min();
     s = 0;
@@ -27357,7 +27357,7 @@ var init_multipart_parser = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/body.js
+// node_modules/node-fetch/src/body.js
 import Stream2, { PassThrough } from "node:stream";
 import { types, deprecate, promisify } from "node:util";
 import { Buffer as Buffer2 } from "node:buffer";
@@ -27407,7 +27407,7 @@ async function consumeBody(data) {
 }
 var pipeline, INTERNALS, Body, clone, getNonSpecFormDataBoundary, extractContentType, getTotalBytes, writeToStream;
 var init_body = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/body.js"() {
+  "node_modules/node-fetch/src/body.js"() {
     init_fetch_blob();
     init_esm_min();
     init_fetch_error();
@@ -27615,7 +27615,7 @@ var init_body = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/headers.js
+// node_modules/node-fetch/src/headers.js
 import { types as types2 } from "node:util";
 import http from "node:http";
 function fromRawHeaders(headers = []) {
@@ -27638,7 +27638,7 @@ function fromRawHeaders(headers = []) {
 }
 var validateHeaderName, validateHeaderValue, Headers2;
 var init_headers3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/headers.js"() {
+  "node_modules/node-fetch/src/headers.js"() {
     validateHeaderName = typeof http.validateHeaderName === "function" ? http.validateHeaderName : (name) => {
       if (!/^[\^`\-\w!#$%&'*+.|~]+$/.test(name)) {
         const error = new TypeError(`Header name must be a valid HTTP token [${name}]`);
@@ -27806,10 +27806,10 @@ var init_headers3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/utils/is-redirect.js
+// node_modules/node-fetch/src/utils/is-redirect.js
 var redirectStatus, isRedirect;
 var init_is_redirect = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/utils/is-redirect.js"() {
+  "node_modules/node-fetch/src/utils/is-redirect.js"() {
     redirectStatus = /* @__PURE__ */ new Set([301, 302, 303, 307, 308]);
     isRedirect = (code) => {
       return redirectStatus.has(code);
@@ -27817,10 +27817,10 @@ var init_is_redirect = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/response.js
+// node_modules/node-fetch/src/response.js
 var INTERNALS2, Response2;
 var init_response = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/response.js"() {
+  "node_modules/node-fetch/src/response.js"() {
     init_headers3();
     init_body();
     init_is_redirect();
@@ -27943,10 +27943,10 @@ var init_response = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/utils/get-search.js
+// node_modules/node-fetch/src/utils/get-search.js
 var getSearch;
 var init_get_search = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/utils/get-search.js"() {
+  "node_modules/node-fetch/src/utils/get-search.js"() {
     getSearch = (parsedURL) => {
       if (parsedURL.search) {
         return parsedURL.search;
@@ -27958,7 +27958,7 @@ var init_get_search = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/utils/referrer.js
+// node_modules/node-fetch/src/utils/referrer.js
 import { isIP } from "node:net";
 function stripURLForUseAsAReferrer(url, originOnly = false) {
   if (url == null) {
@@ -28087,7 +28087,7 @@ function parseReferrerPolicyFromHeader(headers) {
 }
 var ReferrerPolicy, DEFAULT_REFERRER_POLICY;
 var init_referrer = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/utils/referrer.js"() {
+  "node_modules/node-fetch/src/utils/referrer.js"() {
     ReferrerPolicy = /* @__PURE__ */ new Set([
       "",
       "no-referrer",
@@ -28103,12 +28103,12 @@ var init_referrer = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/request.js
+// node_modules/node-fetch/src/request.js
 import { format as formatUrl } from "node:url";
 import { deprecate as deprecate2 } from "node:util";
 var INTERNALS3, isRequest, doBadDataWarn, Request2, getNodeRequestOptions;
 var init_request = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/request.js"() {
+  "node_modules/node-fetch/src/request.js"() {
     init_headers3();
     init_body();
     init_is();
@@ -28308,10 +28308,10 @@ var init_request = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/errors/abort-error.js
+// node_modules/node-fetch/src/errors/abort-error.js
 var AbortError;
 var init_abort_error = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/errors/abort-error.js"() {
+  "node_modules/node-fetch/src/errors/abort-error.js"() {
     init_base();
     AbortError = class extends FetchBaseError {
       constructor(message, type = "aborted") {
@@ -28321,7 +28321,7 @@ var init_abort_error = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/index.js
+// node_modules/node-fetch/src/index.js
 var src_exports = {};
 __export(src_exports, {
   AbortError: () => AbortError,
@@ -28607,7 +28607,7 @@ function fixResponseChunkedTransferBadEnding(request, errorCallback) {
 }
 var supportedSchemas;
 var init_src = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/node-fetch/src/index.js"() {
+  "node_modules/node-fetch/src/index.js"() {
     init_dist();
     init_body();
     init_response();
@@ -28624,9 +28624,9 @@ var init_src = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/build/cjs/src/gaxios.js
+// node_modules/gaxios/build/cjs/src/gaxios.js
 var require_gaxios = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/build/cjs/src/gaxios.js"(exports) {
+  "node_modules/gaxios/build/cjs/src/gaxios.js"(exports) {
     "use strict";
     var __importDefault = exports && exports.__importDefault || function(mod) {
       return mod && mod.__esModule ? mod : { "default": mod };
@@ -29098,9 +29098,9 @@ Content-Type: ${partContentType}\r
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/build/cjs/src/index.js
+// node_modules/gaxios/build/cjs/src/index.js
 var require_src2 = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/gaxios/build/cjs/src/index.js"(exports) {
+  "node_modules/gaxios/build/cjs/src/index.js"(exports) {
     "use strict";
     var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
@@ -29137,9 +29137,9 @@ var require_src2 = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/bignumber.js/bignumber.js
+// node_modules/bignumber.js/bignumber.js
 var require_bignumber = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/bignumber.js/bignumber.js"(exports, module) {
+  "node_modules/bignumber.js/bignumber.js"(exports, module) {
     (function(globalObject) {
       "use strict";
       var BigNumber, isNumeric = /^-?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i, mathceil = Math.ceil, mathfloor = Math.floor, bignumberError = "[BigNumber Error] ", tooManyDigits = bignumberError + "Number primitive has more than 15 significant digits: ", BASE = 1e14, LOG_BASE = 14, MAX_SAFE_INTEGER = 9007199254740991, POWS_TEN = [1, 10, 100, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13], SQRT_BASE = 1e7, MAX = 1e9;
@@ -30488,9 +30488,9 @@ var require_bignumber = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/json-bigint/lib/stringify.js
+// node_modules/json-bigint/lib/stringify.js
 var require_stringify = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/json-bigint/lib/stringify.js"(exports, module) {
+  "node_modules/json-bigint/lib/stringify.js"(exports, module) {
     var BigNumber = require_bignumber();
     var JSON2 = module.exports;
     (function() {
@@ -30600,9 +30600,9 @@ var require_stringify = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/json-bigint/lib/parse.js
+// node_modules/json-bigint/lib/parse.js
 var require_parse = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/json-bigint/lib/parse.js"(exports, module) {
+  "node_modules/json-bigint/lib/parse.js"(exports, module) {
     var BigNumber = null;
     var suspectProtoRx = /(?:_|\\u005[Ff])(?:_|\\u005[Ff])(?:p|\\u0070)(?:r|\\u0072)(?:o|\\u006[Ff])(?:t|\\u0074)(?:o|\\u006[Ff])(?:_|\\u005[Ff])(?:_|\\u005[Ff])/;
     var suspectConstructorRx = /(?:c|\\u0063)(?:o|\\u006[Ff])(?:n|\\u006[Ee])(?:s|\\u0073)(?:t|\\u0074)(?:r|\\u0072)(?:u|\\u0075)(?:c|\\u0063)(?:t|\\u0074)(?:o|\\u006[Ff])(?:r|\\u0072)/;
@@ -30881,9 +30881,9 @@ var require_parse = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/json-bigint/index.js
+// node_modules/json-bigint/index.js
 var require_json_bigint = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/json-bigint/index.js"(exports, module) {
+  "node_modules/json-bigint/index.js"(exports, module) {
     var json_stringify = require_stringify().stringify;
     var json_parse = require_parse();
     module.exports = function(options) {
@@ -30897,9 +30897,9 @@ var require_json_bigint = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/gcp-metadata/build/src/gcp-residency.js
+// node_modules/gcp-metadata/build/src/gcp-residency.js
 var require_gcp_residency = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/gcp-metadata/build/src/gcp-residency.js"(exports) {
+  "node_modules/gcp-metadata/build/src/gcp-residency.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.GCE_LINUX_BIOS_PATHS = void 0;
@@ -30952,9 +30952,9 @@ var require_gcp_residency = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-logging-utils/build/src/colours.js
+// node_modules/google-logging-utils/build/src/colours.js
 var require_colours = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-logging-utils/build/src/colours.js"(exports) {
+  "node_modules/google-logging-utils/build/src/colours.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Colours = void 0;
@@ -31013,9 +31013,9 @@ var require_colours = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-logging-utils/build/src/logging-utils.js
+// node_modules/google-logging-utils/build/src/logging-utils.js
 var require_logging_utils = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-logging-utils/build/src/logging-utils.js"(exports) {
+  "node_modules/google-logging-utils/build/src/logging-utils.js"(exports) {
     "use strict";
     var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
@@ -31302,9 +31302,9 @@ var require_logging_utils = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-logging-utils/build/src/index.js
+// node_modules/google-logging-utils/build/src/index.js
 var require_src3 = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-logging-utils/build/src/index.js"(exports) {
+  "node_modules/google-logging-utils/build/src/index.js"(exports) {
     "use strict";
     var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
@@ -31327,9 +31327,9 @@ var require_src3 = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/gcp-metadata/build/src/index.js
+// node_modules/gcp-metadata/build/src/index.js
 var require_src4 = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/gcp-metadata/build/src/index.js"(exports) {
+  "node_modules/gcp-metadata/build/src/index.js"(exports) {
     "use strict";
     var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
@@ -31583,9 +31583,9 @@ var require_src4 = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/base64-js/index.js
+// node_modules/base64-js/index.js
 var require_base64_js = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/base64-js/index.js"(exports) {
+  "node_modules/base64-js/index.js"(exports) {
     "use strict";
     exports.byteLength = byteLength;
     exports.toByteArray = toByteArray;
@@ -31684,9 +31684,9 @@ var require_base64_js = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/crypto/shared.js
+// node_modules/google-auth-library/build/src/crypto/shared.js
 var require_shared = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/crypto/shared.js"(exports) {
+  "node_modules/google-auth-library/build/src/crypto/shared.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.fromArrayBufferToHex = fromArrayBufferToHex;
@@ -31699,9 +31699,9 @@ var require_shared = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/crypto/browser/crypto.js
+// node_modules/google-auth-library/build/src/crypto/browser/crypto.js
 var require_crypto = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/crypto/browser/crypto.js"(exports) {
+  "node_modules/google-auth-library/build/src/crypto/browser/crypto.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.BrowserCrypto = void 0;
@@ -31795,9 +31795,9 @@ var require_crypto = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/crypto/node/crypto.js
+// node_modules/google-auth-library/build/src/crypto/node/crypto.js
 var require_crypto2 = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/crypto/node/crypto.js"(exports) {
+  "node_modules/google-auth-library/build/src/crypto/node/crypto.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.NodeCrypto = void 0;
@@ -31864,9 +31864,9 @@ var require_crypto2 = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/crypto/crypto.js
+// node_modules/google-auth-library/build/src/crypto/crypto.js
 var require_crypto3 = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/crypto/crypto.js"(exports) {
+  "node_modules/google-auth-library/build/src/crypto/crypto.js"(exports) {
     "use strict";
     var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
@@ -31902,9 +31902,9 @@ var require_crypto3 = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/safe-buffer/index.js
+// node_modules/safe-buffer/index.js
 var require_safe_buffer = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/safe-buffer/index.js"(exports, module) {
+  "node_modules/safe-buffer/index.js"(exports, module) {
     var buffer = __require("buffer");
     var Buffer4 = buffer.Buffer;
     function copyProps(src, dst) {
@@ -31960,9 +31960,9 @@ var require_safe_buffer = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/ecdsa-sig-formatter/src/param-bytes-for-alg.js
+// node_modules/ecdsa-sig-formatter/src/param-bytes-for-alg.js
 var require_param_bytes_for_alg = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/ecdsa-sig-formatter/src/param-bytes-for-alg.js"(exports, module) {
+  "node_modules/ecdsa-sig-formatter/src/param-bytes-for-alg.js"(exports, module) {
     "use strict";
     function getParamSize(keySize) {
       var result = (keySize / 8 | 0) + (keySize % 8 === 0 ? 0 : 1);
@@ -31984,9 +31984,9 @@ var require_param_bytes_for_alg = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/ecdsa-sig-formatter/src/ecdsa-sig-formatter.js
+// node_modules/ecdsa-sig-formatter/src/ecdsa-sig-formatter.js
 var require_ecdsa_sig_formatter = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/ecdsa-sig-formatter/src/ecdsa-sig-formatter.js"(exports, module) {
+  "node_modules/ecdsa-sig-formatter/src/ecdsa-sig-formatter.js"(exports, module) {
     "use strict";
     var Buffer4 = require_safe_buffer().Buffer;
     var getParamBytesForAlg = require_param_bytes_for_alg();
@@ -32124,9 +32124,9 @@ var require_ecdsa_sig_formatter = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/util.js
+// node_modules/google-auth-library/build/src/util.js
 var require_util2 = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/util.js"(exports) {
+  "node_modules/google-auth-library/build/src/util.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.LRUCache = void 0;
@@ -32239,9 +32239,9 @@ var require_util2 = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/package.json
+// node_modules/google-auth-library/package.json
 var require_package2 = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/package.json"(exports, module) {
+  "node_modules/google-auth-library/package.json"(exports, module) {
     module.exports = {
       name: "google-auth-library",
       version: "10.9.1",
@@ -32335,9 +32335,9 @@ var require_package2 = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/shared.cjs
+// node_modules/google-auth-library/build/src/shared.cjs
 var require_shared2 = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/shared.cjs"(exports) {
+  "node_modules/google-auth-library/build/src/shared.cjs"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.USER_AGENT = exports.PRODUCT_NAME = exports.pkg = void 0;
@@ -32350,9 +32350,9 @@ var require_shared2 = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/authclient.js
+// node_modules/google-auth-library/build/src/auth/authclient.js
 var require_authclient = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/authclient.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/authclient.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.AuthClient = exports.DEFAULT_EAGER_REFRESH_THRESHOLD_MILLIS = exports.DEFAULT_UNIVERSE = void 0;
@@ -32585,9 +32585,9 @@ var require_authclient = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/loginticket.js
+// node_modules/google-auth-library/build/src/auth/loginticket.js
 var require_loginticket = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/loginticket.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/loginticket.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.LoginTicket = void 0;
@@ -32637,9 +32637,9 @@ var require_loginticket = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/oauth2client.js
+// node_modules/google-auth-library/build/src/auth/oauth2client.js
 var require_oauth2client = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/oauth2client.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/oauth2client.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.OAuth2Client = exports.ClientAuthentication = exports.CertificateFormat = exports.CodeChallengeMethod = void 0;
@@ -33318,9 +33318,9 @@ var require_oauth2client = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/computeclient.js
+// node_modules/google-auth-library/build/src/auth/computeclient.js
 var require_computeclient = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/computeclient.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/computeclient.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Compute = void 0;
@@ -33410,9 +33410,9 @@ var require_computeclient = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/idtokenclient.js
+// node_modules/google-auth-library/build/src/auth/idtokenclient.js
 var require_idtokenclient = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/idtokenclient.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/idtokenclient.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IdTokenClient = void 0;
@@ -33456,9 +33456,9 @@ var require_idtokenclient = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/envDetect.js
+// node_modules/google-auth-library/build/src/auth/envDetect.js
 var require_envDetect = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/envDetect.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/envDetect.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.GCPEnv = void 0;
@@ -33533,9 +33533,9 @@ var require_envDetect = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/jws/lib/data-stream.js
+// node_modules/jws/lib/data-stream.js
 var require_data_stream = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/jws/lib/data-stream.js"(exports, module) {
+  "node_modules/jws/lib/data-stream.js"(exports, module) {
     var Buffer4 = require_safe_buffer().Buffer;
     var Stream6 = __require("stream");
     var util2 = __require("util");
@@ -33581,9 +33581,9 @@ var require_data_stream = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/buffer-equal-constant-time/index.js
+// node_modules/buffer-equal-constant-time/index.js
 var require_buffer_equal_constant_time = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/buffer-equal-constant-time/index.js"(exports, module) {
+  "node_modules/buffer-equal-constant-time/index.js"(exports, module) {
     "use strict";
     var Buffer4 = __require("buffer").Buffer;
     var SlowBuffer = __require("buffer").SlowBuffer;
@@ -33615,9 +33615,9 @@ var require_buffer_equal_constant_time = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/jwa/index.js
+// node_modules/jwa/index.js
 var require_jwa = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/jwa/index.js"(exports, module) {
+  "node_modules/jwa/index.js"(exports, module) {
     var Buffer4 = require_safe_buffer().Buffer;
     var crypto17 = __require("crypto");
     var formatEcdsa = require_ecdsa_sig_formatter();
@@ -33839,9 +33839,9 @@ var require_jwa = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/jws/lib/tostring.js
+// node_modules/jws/lib/tostring.js
 var require_tostring = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/jws/lib/tostring.js"(exports, module) {
+  "node_modules/jws/lib/tostring.js"(exports, module) {
     var Buffer4 = __require("buffer").Buffer;
     module.exports = function toString(obj) {
       if (typeof obj === "string")
@@ -33853,9 +33853,9 @@ var require_tostring = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/jws/lib/sign-stream.js
+// node_modules/jws/lib/sign-stream.js
 var require_sign_stream = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/jws/lib/sign-stream.js"(exports, module) {
+  "node_modules/jws/lib/sign-stream.js"(exports, module) {
     var Buffer4 = require_safe_buffer().Buffer;
     var DataStream = require_data_stream();
     var jwa = require_jwa();
@@ -33928,9 +33928,9 @@ var require_sign_stream = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/jws/lib/verify-stream.js
+// node_modules/jws/lib/verify-stream.js
 var require_verify_stream = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/jws/lib/verify-stream.js"(exports, module) {
+  "node_modules/jws/lib/verify-stream.js"(exports, module) {
     var Buffer4 = require_safe_buffer().Buffer;
     var DataStream = require_data_stream();
     var jwa = require_jwa();
@@ -34043,9 +34043,9 @@ var require_verify_stream = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/jws/index.js
+// node_modules/jws/index.js
 var require_jws = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/jws/index.js"(exports) {
+  "node_modules/jws/index.js"(exports) {
     var SignStream = require_sign_stream();
     var VerifyStream = require_verify_stream();
     var ALGORITHMS = [
@@ -34076,9 +34076,9 @@ var require_jws = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/gtoken/jwsSign.js
+// node_modules/google-auth-library/build/src/gtoken/jwsSign.js
 var require_jwsSign = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/gtoken/jwsSign.js"(exports) {
+  "node_modules/google-auth-library/build/src/gtoken/jwsSign.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.buildPayloadForJwsSign = buildPayloadForJwsSign;
@@ -34110,9 +34110,9 @@ var require_jwsSign = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/gtoken/getToken.js
+// node_modules/google-auth-library/build/src/gtoken/getToken.js
 var require_getToken = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/gtoken/getToken.js"(exports) {
+  "node_modules/google-auth-library/build/src/gtoken/getToken.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.getToken = getToken;
@@ -34154,9 +34154,9 @@ var require_getToken = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/gtoken/errorWithCode.js
+// node_modules/google-auth-library/build/src/gtoken/errorWithCode.js
 var require_errorWithCode = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/gtoken/errorWithCode.js"(exports) {
+  "node_modules/google-auth-library/build/src/gtoken/errorWithCode.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ErrorWithCode = void 0;
@@ -34171,9 +34171,9 @@ var require_errorWithCode = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/gtoken/getCredentials.js
+// node_modules/google-auth-library/build/src/gtoken/getCredentials.js
 var require_getCredentials = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/gtoken/getCredentials.js"(exports) {
+  "node_modules/google-auth-library/build/src/gtoken/getCredentials.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.getCredentials = getCredentials;
@@ -34272,9 +34272,9 @@ var require_getCredentials = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/gtoken/tokenHandler.js
+// node_modules/google-auth-library/build/src/gtoken/tokenHandler.js
 var require_tokenHandler = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/gtoken/tokenHandler.js"(exports) {
+  "node_modules/google-auth-library/build/src/gtoken/tokenHandler.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.TokenHandler = void 0;
@@ -34363,9 +34363,9 @@ var require_tokenHandler = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/gtoken/revokeToken.js
+// node_modules/google-auth-library/build/src/gtoken/revokeToken.js
 var require_revokeToken = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/gtoken/revokeToken.js"(exports) {
+  "node_modules/google-auth-library/build/src/gtoken/revokeToken.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.revokeToken = revokeToken;
@@ -34381,9 +34381,9 @@ var require_revokeToken = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/gtoken/googleToken.js
+// node_modules/google-auth-library/build/src/gtoken/googleToken.js
 var require_googleToken = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/gtoken/googleToken.js"(exports) {
+  "node_modules/google-auth-library/build/src/gtoken/googleToken.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.GoogleToken = void 0;
@@ -34487,9 +34487,9 @@ var require_googleToken = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/jwtaccess.js
+// node_modules/google-auth-library/build/src/auth/jwtaccess.js
 var require_jwtaccess = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/jwtaccess.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/jwtaccess.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.JWTAccess = void 0;
@@ -34657,9 +34657,9 @@ var require_jwtaccess = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/jwtclient.js
+// node_modules/google-auth-library/build/src/auth/jwtclient.js
 var require_jwtclient = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/jwtclient.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/jwtclient.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.JWT = void 0;
@@ -34929,9 +34929,9 @@ var require_jwtclient = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/refreshclient.js
+// node_modules/google-auth-library/build/src/auth/refreshclient.js
 var require_refreshclient = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/refreshclient.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/refreshclient.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.UserRefreshClient = exports.USER_REFRESH_ACCOUNT_TYPE = void 0;
@@ -35057,9 +35057,9 @@ var require_refreshclient = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/impersonated.js
+// node_modules/google-auth-library/build/src/auth/impersonated.js
 var require_impersonated = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/impersonated.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/impersonated.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Impersonated = exports.IMPERSONATED_ACCOUNT_TYPE = void 0;
@@ -35236,9 +35236,9 @@ var require_impersonated = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/oauth2common.js
+// node_modules/google-auth-library/build/src/auth/oauth2common.js
 var require_oauth2common = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/oauth2common.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/oauth2common.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.OAuthClientAuthHandler = void 0;
@@ -35384,9 +35384,9 @@ var require_oauth2common = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/stscredentials.js
+// node_modules/google-auth-library/build/src/auth/stscredentials.js
 var require_stscredentials = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/stscredentials.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/stscredentials.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StsCredentials = void 0;
@@ -35472,9 +35472,9 @@ var require_stscredentials = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/baseexternalclient.js
+// node_modules/google-auth-library/build/src/auth/baseexternalclient.js
 var require_baseexternalclient = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/baseexternalclient.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/baseexternalclient.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.BaseExternalAccountClient = exports.CLOUD_RESOURCE_MANAGER = exports.EXTERNAL_ACCOUNT_TYPE = exports.EXPIRATION_TIME_OFFSET = void 0;
@@ -35851,9 +35851,9 @@ var require_baseexternalclient = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/filesubjecttokensupplier.js
+// node_modules/google-auth-library/build/src/auth/filesubjecttokensupplier.js
 var require_filesubjecttokensupplier = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/filesubjecttokensupplier.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/filesubjecttokensupplier.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.FileSubjectTokenSupplier = void 0;
@@ -35916,9 +35916,9 @@ var require_filesubjecttokensupplier = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/urlsubjecttokensupplier.js
+// node_modules/google-auth-library/build/src/auth/urlsubjecttokensupplier.js
 var require_urlsubjecttokensupplier = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/urlsubjecttokensupplier.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/urlsubjecttokensupplier.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.UrlSubjectTokenSupplier = void 0;
@@ -35974,9 +35974,9 @@ var require_urlsubjecttokensupplier = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/certificatesubjecttokensupplier.js
+// node_modules/google-auth-library/build/src/auth/certificatesubjecttokensupplier.js
 var require_certificatesubjecttokensupplier = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/certificatesubjecttokensupplier.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/certificatesubjecttokensupplier.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.CertificateSubjectTokenSupplier = exports.InvalidConfigurationError = exports.CertificateSourceUnavailableError = exports.CERTIFICATE_CONFIGURATION_ENV_VARIABLE = void 0;
@@ -36158,9 +36158,9 @@ var require_certificatesubjecttokensupplier = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/identitypoolclient.js
+// node_modules/google-auth-library/build/src/auth/identitypoolclient.js
 var require_identitypoolclient = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/identitypoolclient.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/identitypoolclient.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IdentityPoolClient = void 0;
@@ -36270,9 +36270,9 @@ var require_identitypoolclient = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/awsrequestsigner.js
+// node_modules/google-auth-library/build/src/auth/awsrequestsigner.js
 var require_awsrequestsigner = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/awsrequestsigner.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/awsrequestsigner.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.AwsRequestSigner = void 0;
@@ -36420,9 +36420,9 @@ ${credentialScope}
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/defaultawssecuritycredentialssupplier.js
+// node_modules/google-auth-library/build/src/auth/defaultawssecuritycredentialssupplier.js
 var require_defaultawssecuritycredentialssupplier = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/defaultawssecuritycredentialssupplier.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/defaultawssecuritycredentialssupplier.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.DefaultAwsSecurityCredentialsSupplier = void 0;
@@ -36575,9 +36575,9 @@ var require_defaultawssecuritycredentialssupplier = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/awsclient.js
+// node_modules/google-auth-library/build/src/auth/awsclient.js
 var require_awsclient = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/awsclient.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/awsclient.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.AwsClient = void 0;
@@ -36689,9 +36689,9 @@ var require_awsclient = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/executable-response.js
+// node_modules/google-auth-library/build/src/auth/executable-response.js
 var require_executable_response = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/executable-response.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/executable-response.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.InvalidSubjectTokenError = exports.InvalidMessageFieldError = exports.InvalidCodeFieldError = exports.InvalidTokenTypeFieldError = exports.InvalidExpirationTimeFieldError = exports.InvalidSuccessFieldError = exports.InvalidVersionFieldError = exports.ExecutableResponseError = exports.ExecutableResponse = void 0;
@@ -36820,9 +36820,9 @@ var require_executable_response = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/pluggable-auth-handler.js
+// node_modules/google-auth-library/build/src/auth/pluggable-auth-handler.js
 var require_pluggable_auth_handler = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/pluggable-auth-handler.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/pluggable-auth-handler.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.PluggableAuthHandler = exports.ExecutableError = void 0;
@@ -36961,9 +36961,9 @@ var require_pluggable_auth_handler = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/pluggable-auth-client.js
+// node_modules/google-auth-library/build/src/auth/pluggable-auth-client.js
 var require_pluggable_auth_client = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/pluggable-auth-client.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/pluggable-auth-client.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.PluggableAuthClient = exports.ExecutableError = void 0;
@@ -37088,9 +37088,9 @@ var require_pluggable_auth_client = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/externalclient.js
+// node_modules/google-auth-library/build/src/auth/externalclient.js
 var require_externalclient = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/externalclient.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/externalclient.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ExternalAccountClient = void 0;
@@ -37137,9 +37137,9 @@ var require_externalclient = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/externalAccountAuthorizedUserClient.js
+// node_modules/google-auth-library/build/src/auth/externalAccountAuthorizedUserClient.js
 var require_externalAccountAuthorizedUserClient = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/externalAccountAuthorizedUserClient.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/externalAccountAuthorizedUserClient.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ExternalAccountAuthorizedUserClient = exports.EXTERNAL_ACCOUNT_AUTHORIZED_USER_TYPE = void 0;
@@ -37324,9 +37324,9 @@ var require_externalAccountAuthorizedUserClient = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/gdchclient.js
+// node_modules/google-auth-library/build/src/auth/gdchclient.js
 var require_gdchclient = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/gdchclient.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/gdchclient.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.GdchClient = exports.GDCH_SERVICE_ACCOUNT_TYPE = void 0;
@@ -37607,9 +37607,9 @@ var require_gdchclient = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/googleauth.js
+// node_modules/google-auth-library/build/src/auth/googleauth.js
 var require_googleauth = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/googleauth.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/googleauth.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.GoogleAuth = exports.GoogleAuthExceptionMessages = void 0;
@@ -38415,9 +38415,9 @@ var require_googleauth = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/iam.js
+// node_modules/google-auth-library/build/src/auth/iam.js
 var require_iam = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/iam.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/iam.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IAMAuth = void 0;
@@ -38451,9 +38451,9 @@ var require_iam = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/downscopedclient.js
+// node_modules/google-auth-library/build/src/auth/downscopedclient.js
 var require_downscopedclient = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/downscopedclient.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/downscopedclient.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.DownscopedClient = exports.EXPIRATION_TIME_OFFSET = exports.MAX_ACCESS_BOUNDARY_RULES_COUNT = void 0;
@@ -38636,9 +38636,9 @@ var require_downscopedclient = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/passthrough.js
+// node_modules/google-auth-library/build/src/auth/passthrough.js
 var require_passthrough = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/auth/passthrough.js"(exports) {
+  "node_modules/google-auth-library/build/src/auth/passthrough.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.PassThroughClient = void 0;
@@ -38681,9 +38681,9 @@ var require_passthrough = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/index.js
+// node_modules/google-auth-library/build/src/index.js
 var require_src5 = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/google-auth-library/build/src/index.js"(exports) {
+  "node_modules/google-auth-library/build/src/index.js"(exports) {
     "use strict";
     var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
@@ -38817,9 +38817,9 @@ var require_src5 = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/constants.js
+// node_modules/ws/lib/constants.js
 var require_constants = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/constants.js"(exports, module) {
+  "node_modules/ws/lib/constants.js"(exports, module) {
     "use strict";
     var BINARY_TYPES = ["nodebuffer", "arraybuffer", "fragments"];
     var hasBlob = typeof Blob !== "undefined";
@@ -38840,9 +38840,9 @@ var require_constants = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/buffer-util.js
+// node_modules/ws/lib/buffer-util.js
 var require_buffer_util = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/buffer-util.js"(exports, module) {
+  "node_modules/ws/lib/buffer-util.js"(exports, module) {
     "use strict";
     var { EMPTY_BUFFER } = require_constants();
     var FastBuffer = Buffer[Symbol.species];
@@ -38915,9 +38915,9 @@ var require_buffer_util = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/limiter.js
+// node_modules/ws/lib/limiter.js
 var require_limiter = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/limiter.js"(exports, module) {
+  "node_modules/ws/lib/limiter.js"(exports, module) {
     "use strict";
     var kDone = /* @__PURE__ */ Symbol("kDone");
     var kRun = /* @__PURE__ */ Symbol("kRun");
@@ -38965,9 +38965,9 @@ var require_limiter = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/permessage-deflate.js
+// node_modules/ws/lib/permessage-deflate.js
 var require_permessage_deflate = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/permessage-deflate.js"(exports, module) {
+  "node_modules/ws/lib/permessage-deflate.js"(exports, module) {
     "use strict";
     var zlib2 = __require("zlib");
     var bufferUtil = require_buffer_util();
@@ -39348,9 +39348,9 @@ var require_permessage_deflate = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/validation.js
+// node_modules/ws/lib/validation.js
 var require_validation = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/validation.js"(exports, module) {
+  "node_modules/ws/lib/validation.js"(exports, module) {
     "use strict";
     var { isUtf8 } = __require("buffer");
     var { hasBlob } = require_constants();
@@ -39549,9 +39549,9 @@ var require_validation = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/receiver.js
+// node_modules/ws/lib/receiver.js
 var require_receiver = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/receiver.js"(exports, module) {
+  "node_modules/ws/lib/receiver.js"(exports, module) {
     "use strict";
     var { Writable } = __require("stream");
     var PerMessageDeflate2 = require_permessage_deflate();
@@ -40172,9 +40172,9 @@ var require_receiver = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/sender.js
+// node_modules/ws/lib/sender.js
 var require_sender = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/sender.js"(exports, module) {
+  "node_modules/ws/lib/sender.js"(exports, module) {
     "use strict";
     var { Duplex } = __require("stream");
     var { randomFillSync } = __require("crypto");
@@ -40665,9 +40665,9 @@ var require_sender = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/event-target.js
+// node_modules/ws/lib/event-target.js
 var require_event_target = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/event-target.js"(exports, module) {
+  "node_modules/ws/lib/event-target.js"(exports, module) {
     "use strict";
     var { kForOnEventAttribute, kListener } = require_constants();
     var kCode = /* @__PURE__ */ Symbol("kCode");
@@ -40894,9 +40894,9 @@ var require_event_target = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/extension.js
+// node_modules/ws/lib/extension.js
 var require_extension = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/extension.js"(exports, module) {
+  "node_modules/ws/lib/extension.js"(exports, module) {
     "use strict";
     var { tokenChars } = require_validation();
     function push(dest, name, elem) {
@@ -41047,9 +41047,9 @@ var require_extension = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/websocket.js
+// node_modules/ws/lib/websocket.js
 var require_websocket = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/websocket.js"(exports, module) {
+  "node_modules/ws/lib/websocket.js"(exports, module) {
     "use strict";
     var EventEmitter = __require("events");
     var https2 = __require("https");
@@ -41956,9 +41956,9 @@ var require_websocket = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/stream.js
+// node_modules/ws/lib/stream.js
 var require_stream = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/stream.js"(exports, module) {
+  "node_modules/ws/lib/stream.js"(exports, module) {
     "use strict";
     var WebSocket2 = require_websocket();
     var { Duplex } = __require("stream");
@@ -42054,9 +42054,9 @@ var require_stream = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/subprotocol.js
+// node_modules/ws/lib/subprotocol.js
 var require_subprotocol = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/subprotocol.js"(exports, module) {
+  "node_modules/ws/lib/subprotocol.js"(exports, module) {
     "use strict";
     var { tokenChars } = require_validation();
     function parse(header) {
@@ -42099,9 +42099,9 @@ var require_subprotocol = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/websocket-server.js
+// node_modules/ws/lib/websocket-server.js
 var require_websocket_server = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/ws/lib/websocket-server.js"(exports, module) {
+  "node_modules/ws/lib/websocket-server.js"(exports, module) {
     "use strict";
     var EventEmitter = __require("events");
     var http4 = __require("http");
@@ -42500,10 +42500,10 @@ var require_websocket_server = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/ws/wrapper.mjs
+// node_modules/ws/wrapper.mjs
 var import_stream, import_extension, import_permessage_deflate, import_receiver, import_sender, import_subprotocol, import_websocket, import_websocket_server;
 var init_wrapper = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/ws/wrapper.mjs"() {
+  "node_modules/ws/wrapper.mjs"() {
     import_stream = __toESM(require_stream(), 1);
     import_extension = __toESM(require_extension(), 1);
     import_permessage_deflate = __toESM(require_permessage_deflate(), 1);
@@ -42515,7 +42515,7 @@ var init_wrapper = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@google/genai/dist/node/index.mjs
+// node_modules/@google/genai/dist/node/index.mjs
 import { createWriteStream } from "fs";
 import * as fs11 from "fs/promises";
 import { writeFile } from "fs/promises";
@@ -57089,7 +57089,7 @@ function getApiKeyFromEnv() {
 }
 var import_p_retry, import_google_auth_library, _defaultBaseGeminiUrl, _defaultBaseVertexUrl, BaseModule, Outcome, Language, FunctionResponseScheduling, Type2, AuthType, HttpElementLocation, ApiSpec, Environment, SafetyPolicy, PhishBlockThreshold, Behavior, DynamicRetrievalConfigMode, ThinkingLevel, PersonGeneration, ProminentPeople, HarmCategory, HarmBlockMethod, HarmBlockThreshold, FunctionCallingConfigMode, FinishReason, HarmProbability, HarmSeverity, UrlRetrievalStatus, BlockedReason, TrafficType, MediaModality, ModelStage, MediaResolution, Modality, Delivery, AspectRatio, ImageSize, TuningMode, AdapterSize, ResponseParseType, MatchOperation, ReinforcementTuningThinkingLevel, JobState, TuningJobState, AggregationMetric, PairwiseChoice, VideoOrientation, TuningSpeed, TuningTask, DocumentState, ServiceTier, MediaProcessing, PartMediaResolutionLevel, ToolType, ResourceScope, FeatureSelectionPreference, EmbeddingApiType, SafetyFilterLevel, ImagePromptLanguage, MaskReferenceMode, ControlReferenceType, SubjectReferenceType, EditMode, SegmentMode, VideoGenerationReferenceType, VideoGenerationMaskMode, VideoCompressionQuality, ImageResizeMode, TuningMethod, FileState, FileSource, TurnCompleteReason, InteractionStatus, VadSignalType, VoiceActivityType, StartSensitivity, EndSensitivity, ActivityHandling, TurnCoverage, AudioTranscriptionConfigMode, Scale, MusicGenerationMode, LiveMusicPlaybackControl, HttpResponse, GenerateContentResponse, EmbedContentResponse, GenerateImagesResponse, EditImageResponse, UpscaleImageResponse, RecontextImageResponse, SegmentImageResponse, ListModelsResponse, DeleteModelResponse, CountTokensResponse, ComputeTokensResponse, GenerateVideosOperation, ListTuningJobsResponse, CancelTuningJobResponse, ValidateRewardResponse, DeleteCachedContentResponse, ListCachedContentsResponse, ListDocumentsResponse, ListFileSearchStoresResponse, UploadToFileSearchStoreResumableResponse, ImportFileOperation, ListFilesResponse, CreateFileResponse, DeleteFileResponse, RegisterFilesResponse, ListBatchJobsResponse, LiveServerMessage, LiveMusicServerMessage, UploadToFileSearchStoreOperation, PagedItem, Pager, Batches3, Caches, Chats, Chat, ApiError, Files$1, CONTENT_TYPE_HEADER, SERVER_TIMEOUT_HEADER, USER_AGENT_HEADER, GOOGLE_API_CLIENT_HEADER, SDK_VERSION, LIBRARY_LABEL, VERTEX_AI_API_DEFAULT_VERSION, GOOGLE_AI_API_DEFAULT_VERSION, MULTI_REGIONAL_LOCATIONS, DEFAULT_RETRY_ATTEMPTS, DEFAULT_RETRY_INITIAL_DELAY, DEFAULT_RETRY_MAX_DELAY, DEFAULT_RETRY_EXP_BASE, DEFAULT_RETRY_JITTER, DEFAULT_RETRY_HTTP_STATUS_CODES, ApiClient, MCP_LABEL, hasMcpToolUsageFromMcpToTool, McpCallableTool, LiveMusic, LiveMusicSession, FUNCTION_RESPONSE_REQUIRES_ID, Live, defaultLiveSendClientContentParamerters, Session, DEFAULT_MAX_REMOTE_CALLS, Models3, Operations, Tokens, Documents, FileSearchStores, envMemo, GoogleGenAISecurityProvider, GoogleGenAIAuthHook, HTTPClientError, UnexpectedClientError, InvalidRequestError, RequestAbortedError, RequestTimeoutError, ConnectionError, GoogleGenAiError, GeminiNextGenAPIClientError, APIError2, APIUserAbortError2, APIConnectionError2, APIConnectionTimeoutError2, BadRequestError2, AuthenticationError2, PermissionDeniedError2, NotFoundError2, ConflictError2, UnprocessableEntityError2, RateLimitError2, InternalServerError2, SDKHooks, hasOwn2, ServerList, SDK_METADATA, encodeForm, encodeSimple, encodeFormQuery, DEFAULT_FETCHER, HTTPClient, mediaParamSeparator, codeRangeRE$1, defaultBackoff, PermanentError, TemporaryError, codeRangeRE, gt, webWorkerLike, isBrowserLike, ClientSDK, jsonLikeContentTypeRE, jsonlLikeContentTypeRE, GoogleGenAiDefaultError, Stream4, CR2, LF2, BOUNDARIES, MAX_BOUNDARY_LEN, DEFAULT_CONTENT_TYPES, headerValRE, SecurityErrorCode, SecurityError, _a2, APIPromise2, Agents2, Files4, Environments2, CancelInteractionByIdServerError, CancelInteractionByIdClientError, CreateInteractionServerError, CreateInteractionClientError, DeleteInteractionServerError, DeleteInteractionClientError, GetInteractionByIdServerError, GetInteractionByIdClientError, Interactions, Triggers, Webhooks2, GoogleGenAI$1, LEGACY_LYRIA_MODELS, GeminiNextGenInteractions, GeminiNextGenAgents, GeminiNextGenWebhooks, GeminiNextGenTriggers, GeminiNextGenEnvironmentFiles, GeminiNextGenEnvironments, GOOGLE_API_KEY_HEADER, REQUIRED_VERTEX_AI_SCOPE, NodeAuth, NodeDownloader, NodeWebSocketFactory, NodeWebSocket, Tunings, MAX_CHUNK_SIZE, MAX_RETRY_COUNT, INITIAL_RETRY_DELAY_MS, DELAY_MULTIPLIER, X_GOOG_UPLOAD_STATUS_HEADER_FIELD, NodeUploader, NodeFiles, LANGUAGE_LABEL_PREFIX, GoogleGenAI2;
 var init_node3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@google/genai/dist/node/index.mjs"() {
+  "node_modules/@google/genai/dist/node/index.mjs"() {
     import_p_retry = __toESM(require_p_retry(), 1);
     import_google_auth_library = __toESM(require_src5(), 1);
     init_wrapper();
@@ -64631,7 +64631,7 @@ var init_node3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/error-body.js
+// node_modules/@earendil-works/pi-ai/dist/utils/error-body.js
 function normalizeProviderError(error) {
   if (!(error instanceof Error)) {
     return { message: safeJsonStringify2(error), messageCarriesBody: false };
@@ -64713,12 +64713,12 @@ function safeJsonStringify2(value) {
 }
 var MAX_PROVIDER_ERROR_BODY_CHARS;
 var init_error_body = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/error-body.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/utils/error-body.js"() {
     MAX_PROVIDER_ERROR_BODY_CHARS = 4e3;
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/google-shared.js
+// node_modules/@earendil-works/pi-ai/dist/api/google-shared.js
 function resolveGoogleThinkingLevel(model, level) {
   const mapped = model.thinkingLevelMap?.[level];
   const resolvedLevel = typeof mapped === "string" ? mapped.toLowerCase() : level;
@@ -65030,7 +65030,7 @@ function retryGoogleRequest(request, options) {
 }
 var GOOGLE_SDK_THINKING_LEVEL_MAP, base64SignaturePattern, JSON_SCHEMA_META_DECLARATIONS;
 var init_google_shared = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/google-shared.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/api/google-shared.js"() {
     init_node3();
     init_models();
     init_provider_retry();
@@ -65060,7 +65060,7 @@ var init_google_shared = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/google-generative-ai.js
+// node_modules/@earendil-works/pi-ai/dist/api/google-generative-ai.js
 var google_generative_ai_exports = {};
 __export(google_generative_ai_exports, {
   stream: () => stream3,
@@ -65164,7 +65164,7 @@ function getGoogleBudget(model, level, customBudgets) {
 }
 var toolCallCounter, stream3, streamSimple2;
 var init_google_generative_ai = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/google-generative-ai.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/api/google-generative-ai.js"() {
     init_node3();
     init_models();
     init_error_body();
@@ -65420,7 +65420,7 @@ var init_google_generative_ai = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/tslib.mjs
+// node_modules/openai/internal/tslib.mjs
 function __classPrivateFieldSet2(receiver, state3, value, kind, f3) {
   if (kind === "m")
     throw new TypeError("Private method is not writable");
@@ -65438,14 +65438,14 @@ function __classPrivateFieldGet3(receiver, state3, kind, f3) {
   return kind === "m" ? f3 : kind === "a" ? f3.call(receiver) : f3 ? f3.value : state3.get(receiver);
 }
 var init_tslib2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/tslib.mjs"() {
+  "node_modules/openai/internal/tslib.mjs"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/uuid.mjs
+// node_modules/openai/internal/utils/uuid.mjs
 var uuid42;
 var init_uuid2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/uuid.mjs"() {
+  "node_modules/openai/internal/utils/uuid.mjs"() {
     uuid42 = function() {
       const { crypto: crypto17 } = globalThis;
       if (crypto17?.randomUUID) {
@@ -65459,7 +65459,7 @@ var init_uuid2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/errors.mjs
+// node_modules/openai/internal/errors.mjs
 function isAbortError3(err) {
   return typeof err === "object" && err !== null && // Spec-compliant fetch implementations
   ("name" in err && err.name === "AbortError" || // Expo fetch
@@ -65467,7 +65467,7 @@ function isAbortError3(err) {
 }
 var castToError2;
 var init_errors2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/errors.mjs"() {
+  "node_modules/openai/internal/errors.mjs"() {
     castToError2 = (err) => {
       if (err instanceof Error)
         return err;
@@ -65496,10 +65496,10 @@ var init_errors2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/core/error.mjs
+// node_modules/openai/core/error.mjs
 var OpenAIError, APIError3, APIUserAbortError3, APIConnectionError3, APIConnectionTimeoutError3, BadRequestError3, AuthenticationError3, PermissionDeniedError3, NotFoundError3, ConflictError3, UnprocessableEntityError3, RateLimitError3, InternalServerError3, LengthFinishReasonError, ContentFilterFinishReasonError, InvalidWebhookSignatureError, OAuthError, SubjectTokenProviderError;
 var init_error3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/core/error.mjs"() {
+  "node_modules/openai/core/error.mjs"() {
     init_errors2();
     OpenAIError = class extends Error {
     };
@@ -65636,7 +65636,7 @@ var init_error3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/values.mjs
+// node_modules/openai/internal/utils/values.mjs
 function maybeObj2(x2) {
   if (typeof x2 !== "object") {
     return {};
@@ -65658,7 +65658,7 @@ function isObj2(obj) {
 }
 var startsWithSchemeRegexp2, isAbsoluteURL2, isArray2, isReadonlyArray2, validatePositiveInteger2, safeJSON2;
 var init_values2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/values.mjs"() {
+  "node_modules/openai/internal/utils/values.mjs"() {
     init_error3();
     startsWithSchemeRegexp2 = /^[a-z][a-z0-9+.-]*:/i;
     isAbsoluteURL2 = (url) => {
@@ -65685,10 +65685,10 @@ var init_values2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/sleep.mjs
+// node_modules/openai/internal/utils/sleep.mjs
 var sleep3;
 var init_sleep2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/sleep.mjs"() {
+  "node_modules/openai/internal/utils/sleep.mjs"() {
     sleep3 = (ms, ...signals) => new Promise((resolve2, reject) => {
       const activeSignals = [...new Set(signals.filter((signal) => signal != null))];
       let timeout;
@@ -65740,7 +65740,7 @@ var init_sleep2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/abort.mjs
+// node_modules/openai/internal/utils/abort.mjs
 function subscribeWeakly(signal, reference, registry2) {
   let subscription = subscriptions.get(signal);
   if (!subscription) {
@@ -65802,7 +65802,7 @@ function addRequestAbortListener(signal, abort, requestSignal) {
 }
 var weakGlobals, finalizer, callbackOwners, subscriptions;
 var init_abort2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/abort.mjs"() {
+  "node_modules/openai/internal/utils/abort.mjs"() {
     weakGlobals = globalThis;
     finalizer = // oxlint-disable-next-line anti-slop/no-runtime-typeof -- Weak references and finalizers are optional host capabilities, so probe them before constructing either.
     typeof weakGlobals.FinalizationRegistry === "function" ? new weakGlobals.FinalizationRegistry((cleanup) => {
@@ -65816,7 +65816,7 @@ var init_abort2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/shims.mjs
+// node_modules/openai/internal/shims.mjs
 function getDefaultFetch2() {
   if (typeof fetch !== "undefined") {
     return fetch;
@@ -65888,11 +65888,11 @@ async function CancelReadableStream2(stream6) {
   await cancelPromise;
 }
 var init_shims2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/shims.mjs"() {
+  "node_modules/openai/internal/shims.mjs"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/bytes.mjs
+// node_modules/openai/internal/utils/bytes.mjs
 function encodeUTF82(str) {
   let encoder2;
   return (encodeUTF8_2 ?? (encoder2 = new globalThis.TextEncoder(), encodeUTF8_2 = encoder2.encode.bind(encoder2)))(str);
@@ -65903,11 +65903,11 @@ function decodeUTF82(bytes) {
 }
 var encodeUTF8_2, decodeUTF8_2;
 var init_bytes2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/bytes.mjs"() {
+  "node_modules/openai/internal/utils/bytes.mjs"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/decoders/line.mjs
+// node_modules/openai/internal/decoders/line.mjs
 function findNewlineIndex2(buffer, start, end) {
   const newline = 10;
   const carriage = 13;
@@ -65947,7 +65947,7 @@ function lineEndingLength(buffer, index3) {
 }
 var _LineDecoder_instances, _LineDecoder_buffer2, _LineDecoder_start, _LineDecoder_end, _LineDecoder_searchIndex, _LineDecoder_skipLeadingLF, _LineDecoder_append, MAX_RETAINED_BUFFER_BYTES, LineDecoder2;
 var init_line2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/decoders/line.mjs"() {
+  "node_modules/openai/internal/decoders/line.mjs"() {
     init_tslib2();
     init_bytes2();
     MAX_RETAINED_BUFFER_BYTES = 64 * 1024;
@@ -66068,7 +66068,7 @@ var init_line2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/log.mjs
+// node_modules/openai/internal/utils/log.mjs
 function noop3() {
 }
 function makeLogFn2(fnLevel, logger, logLevel) {
@@ -66118,7 +66118,7 @@ function redactURL(value) {
 }
 var levelNumbers2, parseLogLevel2, noopLogger2, cachedLoggers2, sensitiveQueryNames, sensitiveHeaderNames, formatRequestDetails2;
 var init_log2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/log.mjs"() {
+  "node_modules/openai/internal/utils/log.mjs"() {
     init_values2();
     levelNumbers2 = {
       off: 0,
@@ -66207,7 +66207,7 @@ var init_log2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/core/streaming.mjs
+// node_modules/openai/core/streaming.mjs
 function isTransportAbortError(error) {
   return !(error instanceof APIError3) && isAbortError3(error);
 }
@@ -66478,7 +66478,7 @@ function partition2(str, delimiter2) {
 }
 var _Stream_instances, _Stream_client2, _Stream_isTeeBranch, _Stream_cancelIterator, Stream5, DOUBLE_NEWLINE_DELIMITER_MAX_OVERLAP_BYTES, SSEDecoder2;
 var init_streaming3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/core/streaming.mjs"() {
+  "node_modules/openai/core/streaming.mjs"() {
     init_tslib2();
     init_error3();
     init_shims2();
@@ -66802,7 +66802,7 @@ var init_streaming3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/parse.mjs
+// node_modules/openai/internal/parse.mjs
 async function defaultParseResponse2(client, props) {
   const { response, requestLogID, retryOfRequestLogID, startTime } = props;
   let jsonBodyLength;
@@ -66870,22 +66870,22 @@ function addRequestID(value, response) {
   });
 }
 var init_parse2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/parse.mjs"() {
+  "node_modules/openai/internal/parse.mjs"() {
     init_streaming3();
     init_errors2();
     init_log2();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/version.mjs
+// node_modules/openai/version.mjs
 var VERSION2;
 var init_version2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/version.mjs"() {
+  "node_modules/openai/version.mjs"() {
     VERSION2 = "7.19.0";
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/detect-platform.mjs
+// node_modules/openai/internal/detect-platform.mjs
 function getDetectedPlatform2() {
   if (typeof Deno !== "undefined" && Deno.build != null) {
     return "deno";
@@ -66923,7 +66923,7 @@ function getBrowserInfo2() {
 }
 var isRunningInBrowser2, getPlatformProperties2, normalizeArch2, normalizePlatform2, _platformHeaders2, getPlatformHeaders2;
 var init_detect_platform2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/detect-platform.mjs"() {
+  "node_modules/openai/internal/detect-platform.mjs"() {
     init_version2();
     isRunningInBrowser2 = () => {
       return (
@@ -67024,7 +67024,7 @@ var init_detect_platform2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/request-options.mjs
+// node_modules/openai/internal/request-options.mjs
 function observeJSONRequestBody(body, observer) {
   let observers = jsonRequestBodyObservers.get(body);
   if (!observers) {
@@ -67045,7 +67045,7 @@ function observeJSONRequestBody(body, observer) {
 }
 var jsonRequestBodyObservers, FallbackEncoder2;
 var init_request_options2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/request-options.mjs"() {
+  "node_modules/openai/internal/request-options.mjs"() {
     jsonRequestBodyObservers = /* @__PURE__ */ new WeakMap();
     FallbackEncoder2 = ({ headers, body }) => {
       const observers = typeof body === "object" && body !== null ? jsonRequestBodyObservers.get(body) : void 0;
@@ -67078,10 +67078,10 @@ var init_request_options2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/qs/formats.mjs
+// node_modules/openai/internal/qs/formats.mjs
 var default_format2, default_formatter2, formatters2, RFC17382;
 var init_formats2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/qs/formats.mjs"() {
+  "node_modules/openai/internal/qs/formats.mjs"() {
     default_format2 = "RFC3986";
     default_formatter2 = String;
     formatters2 = {
@@ -67092,7 +67092,7 @@ var init_formats2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/qs/utils.mjs
+// node_modules/openai/internal/qs/utils.mjs
 function is_buffer2(obj) {
   if (!obj || typeof obj !== "object") {
     return false;
@@ -67111,7 +67111,7 @@ function maybe_map2(val, fn) {
 }
 var cachedHas, has2, hex_table2, limit2, encode2;
 var init_utils3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/qs/utils.mjs"() {
+  "node_modules/openai/internal/qs/utils.mjs"() {
     init_formats2();
     init_values2();
     has2 = (obj, key) => {
@@ -67185,7 +67185,7 @@ var init_utils3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/qs/stringify.mjs
+// node_modules/openai/internal/qs/stringify.mjs
 function is_non_nullish_primitive2(v) {
   return typeof v === "string" || typeof v === "number" || typeof v === "boolean" || typeof v === "symbol" || typeof v === "bigint";
 }
@@ -67440,7 +67440,7 @@ function stringify2(object2, opts = {}) {
 }
 var array_prefix_generators2, push_to_array2, toISOString2, defaults2, sentinel2;
 var init_stringify2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/qs/stringify.mjs"() {
+  "node_modules/openai/internal/qs/stringify.mjs"() {
     init_utils3();
     init_formats2();
     init_values2();
@@ -67485,17 +67485,17 @@ var init_stringify2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/query.mjs
+// node_modules/openai/internal/utils/query.mjs
 function stringifyQuery2(query) {
   return stringify2(query, { arrayFormat: "brackets" });
 }
 var init_query2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/query.mjs"() {
+  "node_modules/openai/internal/utils/query.mjs"() {
     init_stringify2();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/data-residency.mjs
+// node_modules/openai/internal/data-residency.mjs
 function resolveDataResidency(options) {
   if (options.dataResidency === null || options.dataResidency === void 0) {
     return void 0;
@@ -67511,7 +67511,7 @@ function resolveDataResidency(options) {
 }
 var endpoints;
 var init_data_residency = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/data-residency.mjs"() {
+  "node_modules/openai/internal/data-residency.mjs"() {
     init_error3();
     init_values2();
     endpoints = /* @__PURE__ */ new Map([
@@ -67523,10 +67523,10 @@ var init_data_residency = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/core/api-promise.mjs
+// node_modules/openai/core/api-promise.mjs
 var _APIPromise_client2, APIPromise3;
 var init_api_promise2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/core/api-promise.mjs"() {
+  "node_modules/openai/core/api-promise.mjs"() {
     init_tslib2();
     init_parse2();
     APIPromise3 = class _APIPromise extends Promise {
@@ -67592,10 +67592,10 @@ var init_api_promise2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/core/pagination.mjs
+// node_modules/openai/core/pagination.mjs
 var _AbstractPage_client2, AbstractPage2, PagePromise2, Page2, CursorPage, ConversationCursorPage, NextCursorPage, TokenPage;
 var init_pagination2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/core/pagination.mjs"() {
+  "node_modules/openai/core/pagination.mjs"() {
     init_tslib2();
     init_error3();
     init_parse2();
@@ -67792,7 +67792,7 @@ var init_pagination2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/auth/workload-identity-auth.mjs
+// node_modules/openai/auth/workload-identity-auth.mjs
 function calculateExpiresAt(expiresIn, exchangeStartedAt) {
   if (typeof expiresIn !== "number" || !Number.isFinite(expiresIn) || expiresIn <= 0) {
     throw new OpenAIError("Token exchange response has invalid 'expires_in' field");
@@ -67872,7 +67872,7 @@ function isUnsafeAccessToken(accessToken) {
 }
 var SUBJECT_TOKEN_TYPES, TOKEN_EXCHANGE_GRANT_TYPE, MAX_REFRESH_BUFFER_FRACTION, NATIVE_RESPONSE_PROTOTYPE, READ_NATIVE_RESPONSE_BODY, WorkloadIdentityAuth;
 var init_workload_identity_auth = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/auth/workload-identity-auth.mjs"() {
+  "node_modules/openai/auth/workload-identity-auth.mjs"() {
     init_shims2();
     init_error3();
     SUBJECT_TOKEN_TYPES = {
@@ -68011,7 +68011,7 @@ var init_workload_identity_auth = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/auth/x509-api-origin.mjs
+// node_modules/openai/internal/auth/x509-api-origin.mjs
 function assertX509APIOrigin(value) {
   let target;
   try {
@@ -68031,14 +68031,14 @@ function assertX509APIOrigin(value) {
 }
 var X509_API_BASE_URL;
 var init_x509_api_origin = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/auth/x509-api-origin.mjs"() {
+  "node_modules/openai/internal/auth/x509-api-origin.mjs"() {
     init_error3();
     init_log2();
     X509_API_BASE_URL = "https://mtls.api.openai.com/v1";
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/headers.mjs
+// node_modules/openai/internal/headers.mjs
 function* iterateHeaders2(headers) {
   if (!headers)
     return;
@@ -68078,7 +68078,7 @@ function* iterateHeaders2(headers) {
 }
 var brand_privateNullableHeaders2, httpTokenHeaderName, buildHeaders2;
 var init_headers4 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/headers.mjs"() {
+  "node_modules/openai/internal/headers.mjs"() {
     init_values2();
     brand_privateNullableHeaders2 = /* @__PURE__ */ Symbol("brand.privateNullableHeaders");
     httpTokenHeaderName = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/;
@@ -68110,7 +68110,7 @@ var init_headers4 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/auth/x509-transport-state-browser.mjs
+// node_modules/openai/internal/auth/x509-transport-state-browser.mjs
 var x509_transport_state_browser_exports = {};
 __export(x509_transport_state_browser_exports, {
   findRegisteredX509Transport: () => findRegisteredX509Transport,
@@ -68128,7 +68128,7 @@ __export(x509_transport_state_browser_exports, {
 });
 var registeredX509Transports, transientX509ConnectionErrors, retryableX509IssuerErrors, approvedX509Clients, approvedX509OAuthErrors, approvedX509Credentials, findRegisteredX509Transport, rememberRegisteredX509Transport, markTransientX509ConnectionError, isTransientX509ConnectionError, markRetryableX509IssuerError, isRetryableX509IssuerError, markApprovedX509Client, isApprovedX509Client, rememberX509OAuthError, findX509OAuthError, rememberX509Credential, findX509Credential;
 var init_x509_transport_state_browser = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/auth/x509-transport-state-browser.mjs"() {
+  "node_modules/openai/internal/auth/x509-transport-state-browser.mjs"() {
     registeredX509Transports = /* @__PURE__ */ new WeakMap();
     transientX509ConnectionErrors = /* @__PURE__ */ new WeakSet();
     retryableX509IssuerErrors = /* @__PURE__ */ new WeakSet();
@@ -68150,9 +68150,9 @@ var init_x509_transport_state_browser = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/auth/x509-transport-state.js
+// node_modules/openai/internal/auth/x509-transport-state.js
 var require_x509_transport_state = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/auth/x509-transport-state.js"(exports, module) {
+  "node_modules/openai/internal/auth/x509-transport-state.js"(exports, module) {
     "use strict";
     if (typeof module !== "undefined" && module !== globalThis.module && typeof exports !== "undefined" && module.exports === exports) {
       Object.defineProperty(exports, "__esModule", { value: true });
@@ -68179,10 +68179,10 @@ var require_x509_transport_state = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/auth/x509-transport-state.mjs
+// node_modules/openai/internal/auth/x509-transport-state.mjs
 var nodeState, state2, findRegisteredX509Transport3, rememberRegisteredX509Transport2, markTransientX509ConnectionError2, isTransientX509ConnectionError2, markRetryableX509IssuerError2, isRetryableX509IssuerError2, markApprovedX509Client2, isApprovedX509Client2, rememberX509OAuthError2, findX509OAuthError2, rememberX509Credential2, findX509Credential2;
 var init_x509_transport_state = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/auth/x509-transport-state.mjs"() {
+  "node_modules/openai/internal/auth/x509-transport-state.mjs"() {
     init_x509_transport_state_browser();
     nodeState = __toESM(require_x509_transport_state(), 1);
     state2 = typeof nodeState.findRegisteredX509Transport === "function" ? nodeState : x509_transport_state_browser_exports;
@@ -68203,7 +68203,7 @@ var init_x509_transport_state = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/auth/x509-transport-registry.mjs
+// node_modules/openai/internal/auth/x509-transport-registry.mjs
 function resolveX509Transport(value) {
   if (!value || typeof value !== "object") {
     throw new OpenAIError("X.509 workload identity requires an approved X.509 transport capability.");
@@ -68215,13 +68215,13 @@ function resolveX509Transport(value) {
   return registered;
 }
 var init_x509_transport_registry = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/auth/x509-transport-registry.mjs"() {
+  "node_modules/openai/internal/auth/x509-transport-registry.mjs"() {
     init_error3();
     init_x509_transport_state();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/auth/x509-workload-identity-auth.mjs
+// node_modules/openai/internal/auth/x509-workload-identity-auth.mjs
 function assertSafeHeaders(headers) {
   for (const name of Headers.prototype.keys.call(headers)) {
     const canonical3 = name.toLowerCase().split("_").join("-");
@@ -68326,7 +68326,7 @@ function snapshotX509RequestOptions(options) {
 }
 var _X509WorkloadIdentityAuth_instances, _a3, _X509WorkloadIdentityAuth_identityProviderId, _X509WorkloadIdentityAuth_serviceAccountId, _X509WorkloadIdentityAuth_configuredRefreshBufferMs, _X509WorkloadIdentityAuth_configuredRefreshBufferSeconds, _X509WorkloadIdentityAuth_organization, _X509WorkloadIdentityAuth_project, _X509WorkloadIdentityAuth_transport, _X509WorkloadIdentityAuth_refreshBufferMs, _X509WorkloadIdentityAuth_cachedToken, _X509WorkloadIdentityAuth_refresh, _X509WorkloadIdentityAuth_tokenGeneration, _X509WorkloadIdentityAuth_cancelRequestBody, _X509WorkloadIdentityAuth_assignToken, _X509WorkloadIdentityAuth_recoverRefreshFailure, _X509WorkloadIdentityAuth_fallbackToken, _X509WorkloadIdentityAuth_retireRefresh, _X509WorkloadIdentityAuth_beginRefresh, _X509WorkloadIdentityAuth_refreshToken, _X509WorkloadIdentityAuth_preflight, _X509WorkloadIdentityAuth_scope, _X509WorkloadIdentityAuth_assertTenantHeaders, FORBIDDEN_TRANSPORT_OPTIONS, headerValue, DEFAULT_REFRESH_BUFFER_MS, FAILED_REFRESH_COOLDOWN_MS, userAbortError, X509WorkloadIdentityAuth;
 var init_x509_workload_identity_auth = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/auth/x509-workload-identity-auth.mjs"() {
+  "node_modules/openai/internal/auth/x509-workload-identity-auth.mjs"() {
     init_tslib2();
     init_error3();
     init_headers4();
@@ -68921,7 +68921,7 @@ var init_x509_workload_identity_auth = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/auth/x509-credential-options.mjs
+// node_modules/openai/internal/auth/x509-credential-options.mjs
 function normalizeX509CredentialOptions(options) {
   const { credential } = options;
   if (credential === void 0) {
@@ -69021,7 +69021,7 @@ function prepareX509ClientClone(inherited, overrides, credential, currentlyX509)
   return { credential: nextCredential, provider: prepareProviderClone(inherited, overrides) };
 }
 var init_x509_credential_options = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/auth/x509-credential-options.mjs"() {
+  "node_modules/openai/internal/auth/x509-credential-options.mjs"() {
     init_error3();
     init_values2();
     init_x509_workload_identity_auth();
@@ -69029,7 +69029,7 @@ var init_x509_credential_options = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/uploads.mjs
+// node_modules/openai/internal/uploads.mjs
 function toStreamingFile(data, name, options) {
   if (typeof name !== "string" || !name) {
     throw new TypeError("toStreamingFile requires a non-empty file name");
@@ -69239,7 +69239,7 @@ function escapeHeaderValue(value) {
 }
 var brand_privateStreamingFile, checkFileSupport2, arrayBufferByteLengthGetter, isAsyncIterable2, maybeMultipartFormRequestOptions, multipartFormRequestOptions2, supportsFormDataMap2, createForm2, isBlob2, isReadableStream, isStreamingFile, isUploadable, hasStreamingUploadableValue, hasUploadableValue, snapshotPreservedUploadEntries, createStreamingFormRequestOptions, addFormValue2;
 var init_uploads3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/uploads.mjs"() {
+  "node_modules/openai/internal/uploads.mjs"() {
     init_headers4();
     init_shims2();
     init_bytes2();
@@ -69379,7 +69379,7 @@ var init_uploads3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/to-file.mjs
+// node_modules/openai/internal/to-file.mjs
 async function toFile2(value, name, options) {
   checkFileSupport2();
   value = await value;
@@ -69439,7 +69439,7 @@ function propsForError2(value) {
 }
 var isBlobLike2, isFileLike2, isResponseLike2, hasFilePropertyOverrides, canReuseNativeFile;
 var init_to_file2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/to-file.mjs"() {
+  "node_modules/openai/internal/to-file.mjs"() {
     init_uploads3();
     isBlobLike2 = (value) => value != null && typeof value === "object" && typeof value.size === "number" && typeof value.type === "string" && typeof value.text === "function" && typeof value.slice === "function" && typeof value.arrayBuffer === "function";
     isFileLike2 = (value) => value != null && typeof value === "object" && typeof value.name === "string" && typeof value.lastModified === "number" && isBlobLike2(value);
@@ -69449,18 +69449,18 @@ var init_to_file2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/core/uploads.mjs
+// node_modules/openai/core/uploads.mjs
 var init_uploads4 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/core/uploads.mjs"() {
+  "node_modules/openai/core/uploads.mjs"() {
     init_uploads3();
     init_to_file2();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/core/resource.mjs
+// node_modules/openai/core/resource.mjs
 var APIResource2;
 var init_resource2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/core/resource.mjs"() {
+  "node_modules/openai/core/resource.mjs"() {
     APIResource2 = class {
       constructor(client) {
         this._client = client;
@@ -69469,13 +69469,13 @@ var init_resource2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/path.mjs
+// node_modules/openai/internal/utils/path.mjs
 function encodeURIPath2(str) {
   return str.replace(/[^A-Za-z0-9\-._~!$&'()*+,;=:@]+/g, encodeURIComponent);
 }
 var EMPTY2, createPathTagFunction2, path8;
 var init_path2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/path.mjs"() {
+  "node_modules/openai/internal/utils/path.mjs"() {
     init_error3();
     EMPTY2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.create(null));
     createPathTagFunction2 = (pathEncoder = encodeURIPath2) => function path11(statics, ...params) {
@@ -69537,10 +69537,10 @@ ${underline}`);
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/chat/completions/messages.mjs
+// node_modules/openai/resources/chat/completions/messages.mjs
 var Messages3;
 var init_messages3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/chat/completions/messages.mjs"() {
+  "node_modules/openai/resources/chat/completions/messages.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -69566,14 +69566,14 @@ var init_messages3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/error.mjs
+// node_modules/openai/error.mjs
 var init_error4 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/error.mjs"() {
+  "node_modules/openai/error.mjs"() {
     init_error3();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/parser.mjs
+// node_modules/openai/lib/parser.mjs
 function isChatCompletionFunctionTool(tool) {
   return tool !== void 0 && "function" in tool && tool.function !== void 0;
 }
@@ -69695,21 +69695,21 @@ function validateInputTools(tools2) {
   }
 }
 var init_parser3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/parser.mjs"() {
+  "node_modules/openai/lib/parser.mjs"() {
     init_error4();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/chatCompletionUtils.mjs
+// node_modules/openai/lib/chatCompletionUtils.mjs
 var isAssistantMessage, isToolMessage;
 var init_chatCompletionUtils = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/chatCompletionUtils.mjs"() {
+  "node_modules/openai/lib/chatCompletionUtils.mjs"() {
     isAssistantMessage = (message) => message?.role === "assistant";
     isToolMessage = (message) => message?.role === "tool";
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/EventStream.mjs
+// node_modules/openai/lib/EventStream.mjs
 function captureNativeProxyDetector() {
   if (typeof process === "undefined") {
     return void 0;
@@ -70469,7 +70469,7 @@ function createBufferedEventLedger() {
 }
 var _EventStream_instances, _EventStream_connectedPromise, _EventStream_resolveConnectedPromise, _EventStream_rejectConnectedPromise, _EventStream_endPromise, _EventStream_resolveEndPromise, _EventStream_rejectEndPromise, _EventStream_listeners, _EventStream_abortListeners, _EventStream_emittedListenerRegistrations, _EventStream_pendingListenerCleanup, _EventStream_pendingBufferedEventChecks, _EventStream_listenerDispatchDepth, _EventStream_ended, _EventStream_errored, _EventStream_aborted, _EventStream_catchingPromiseCreated, _EventStream_terminalFailure, _EventStream_abortFromSignal, _EventStream_removeAbortListeners, _EventStream_onceForEmitted, _EventStream_removeEmittedListener, _EventStream_cleanupEmittedListeners, _EventStream_handleError, _EventStream_settleTerminalEvent, MAX_BUFFERED_ITERATOR_EVENTS, MAX_BUFFERED_ITERATOR_BYTES, MAX_INSPECTABLE_TYPED_ARRAY_ELEMENTS, MAX_BUFFERED_EVENT_DEPTH, bufferedJSONStringify, bufferedJSONParse, sdkOwnedBufferedEventArguments, typedArrayBufferGetter, typedArrayLengthGetter, dataViewBufferGetter, symbolDescriptionGetter, dateTimestampGetter, arrayBufferByteLengthGetter2, sharedArrayBufferByteLengthGetter, errorStackDescriptor, functionToString, objectToString, errorBrandDescriptor, nativeErrorBrand, nativeErrorConstructorSource, nativeDateConstructorSource, nativeFunctionConstructorSource, trustedIntrinsicPrototypes, trustedNativeConstructorSources, canonicalIntrinsicDescriptors, foreignErrorStackDescriptors, nativeProxyDetector, typedArrayConstructorDescriptor, blobInternalHandlePrototype, mapEntries, setValues, headersEntriesDescriptor, headersEntries, retainedStorageBrands, BUFFERED_LEDGER_ENTRY_BYTES, BUFFERED_LEDGER_NODE_BYTES, BUFFERED_LEDGER_EDGE_BYTES, BUFFERED_LEDGER_OWNER_BYTES, MAX_BUFFERED_LEDGER_RECONCILIATION_WORK, EventStream2;
 var init_EventStream = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/EventStream.mjs"() {
+  "node_modules/openai/lib/EventStream.mjs"() {
     init_tslib2();
     init_error4();
     MAX_BUFFERED_ITERATOR_EVENTS = 4096;
@@ -71173,16 +71173,16 @@ var init_EventStream = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/RunnableFunction.mjs
+// node_modules/openai/lib/RunnableFunction.mjs
 function isRunnableFunctionWithParse(fn) {
   return typeof fn.parse === "function";
 }
 var init_RunnableFunction = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/RunnableFunction.mjs"() {
+  "node_modules/openai/lib/RunnableFunction.mjs"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/AbstractChatCompletionRunner.mjs
+// node_modules/openai/lib/AbstractChatCompletionRunner.mjs
 function normalizeToolCallIds(chatCompletion) {
   for (const choice of chatCompletion.choices) {
     for (const toolCall of choice.message.tool_calls ?? []) {
@@ -71238,7 +71238,7 @@ function toRequestMessage(message) {
 }
 var _AbstractChatCompletionRunner_instances, _a4, _AbstractChatCompletionRunner_completionArrivedBeforeAbort, _AbstractChatCompletionRunner_afterCompletionInvoked, _AbstractChatCompletionRunner_getFinalContent, _AbstractChatCompletionRunner_getFinalMessage, _AbstractChatCompletionRunner_getFinalFunctionToolCall, _AbstractChatCompletionRunner_getFinalFunctionToolCallResult, _AbstractChatCompletionRunner_calculateTotalUsage, _AbstractChatCompletionRunner_throwIfAborted, _AbstractChatCompletionRunner_validateParams, _AbstractChatCompletionRunner_stringifyFunctionCallResult, DEFAULT_MAX_CHAT_COMPLETIONS, AbstractChatCompletionRunner;
 var init_AbstractChatCompletionRunner = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/AbstractChatCompletionRunner.mjs"() {
+  "node_modules/openai/lib/AbstractChatCompletionRunner.mjs"() {
     init_tslib2();
     init_error4();
     init_uuid2();
@@ -71615,10 +71615,10 @@ var init_AbstractChatCompletionRunner = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/ChatCompletionRunner.mjs
+// node_modules/openai/lib/ChatCompletionRunner.mjs
 var ChatCompletionRunner;
 var init_ChatCompletionRunner = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/ChatCompletionRunner.mjs"() {
+  "node_modules/openai/lib/ChatCompletionRunner.mjs"() {
     init_AbstractChatCompletionRunner();
     init_chatCompletionUtils();
     ChatCompletionRunner = class _ChatCompletionRunner extends AbstractChatCompletionRunner {
@@ -71646,7 +71646,7 @@ var init_ChatCompletionRunner = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/_vendor/partial-json-parser/parser.mjs
+// node_modules/openai/_vendor/partial-json-parser/parser.mjs
 function parseJSON(jsonString, allowPartial = Allow.ALL) {
   if (typeof jsonString !== "string") {
     throw new TypeError(`expecting str, got ${typeof jsonString}`);
@@ -71658,7 +71658,7 @@ function parseJSON(jsonString, allowPartial = Allow.ALL) {
 }
 var STR, NUM, ARR, OBJ, NULL, BOOL, NAN, INFINITY, MINUS_INFINITY, INF, SPECIAL, ATOM, COLLECTION, ALL, Allow, PartialJSON, MalformedJSON, _parseJSON, partialParse3;
 var init_parser4 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/_vendor/partial-json-parser/parser.mjs"() {
+  "node_modules/openai/_vendor/partial-json-parser/parser.mjs"() {
     STR = 1;
     NUM = 2;
     ARR = 4;
@@ -71876,14 +71876,14 @@ var init_parser4 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/streaming.mjs
+// node_modules/openai/streaming.mjs
 var init_streaming4 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/streaming.mjs"() {
+  "node_modules/openai/streaming.mjs"() {
     init_streaming3();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/ChatCompletionStream.mjs
+// node_modules/openai/lib/ChatCompletionStream.mjs
 function parseStructuredStreamingJSON(content) {
   try {
     return partialParse3(content);
@@ -72725,7 +72725,7 @@ function assertNever(_x) {
 }
 var _ChatCompletionStream_instances, _ChatCompletionStream_params, _ChatCompletionStream_rejectsUnfinishedTurns, _ChatCompletionStream_audioDoneChoiceIndexes, _ChatCompletionStream_choiceEventStates, _ChatCompletionStream_currentChatCompletionSnapshot, _ChatCompletionStream_hasAutoParseableTool, _ChatCompletionStream_partialJSONParseBudget, _ChatCompletionStream_beginRequest, _ChatCompletionStream_getChoiceEventState, _ChatCompletionStream_addChunk, _ChatCompletionStream_emitToolCallDoneEvent, _ChatCompletionStream_emitContentDoneEvents, _ChatCompletionStream_validateStructuredSnapshots, _ChatCompletionStream_endRequest, _ChatCompletionStream_accumulateChatCompletion, CHAT_COMPLETION_READABLE_STREAM_MESSAGE_PREFIX, MAX_STREAM_CHOICES, MAX_STREAM_TOOL_CALLS, MAX_PARTIAL_JSON_BYTES, MAX_PARTIAL_JSON_FRAGMENTS, MAX_PARTIAL_JSON_DEPTH, MAX_PARTIAL_JSON_PARSE_WORK, EAGER_PARTIAL_JSON_BYTES, MAX_SERIALIZED_PARSER_SCHEMA_NODES, stringifyParserSchemaValue, MAX_SERIALIZED_PARSER_SCHEMA_BYTES, MAX_SERIALIZED_PARSER_SCHEMA_DEPTH, OMITTED_SERIALIZED_PARSER_VALUE, UNSAFE_SERIALIZED_PARSER_VALUE, ChatCompletionStream;
 var init_ChatCompletionStream = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/ChatCompletionStream.mjs"() {
+  "node_modules/openai/lib/ChatCompletionStream.mjs"() {
     init_tslib2();
     init_parser4();
     init_error4();
@@ -73425,10 +73425,10 @@ var init_ChatCompletionStream = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/ChatCompletionStreamingRunner.mjs
+// node_modules/openai/lib/ChatCompletionStreamingRunner.mjs
 var ChatCompletionStreamingRunner;
 var init_ChatCompletionStreamingRunner = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/ChatCompletionStreamingRunner.mjs"() {
+  "node_modules/openai/lib/ChatCompletionStreamingRunner.mjs"() {
     init_ChatCompletionStream();
     init_error4();
     init_streaming4();
@@ -73489,10 +73489,10 @@ var init_ChatCompletionStreamingRunner = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/chat/completions/completions.mjs
+// node_modules/openai/resources/chat/completions/completions.mjs
 var Completions2;
 var init_completions2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/chat/completions/completions.mjs"() {
+  "node_modules/openai/resources/chat/completions/completions.mjs"() {
     init_resource2();
     init_messages3();
     init_messages3();
@@ -73614,10 +73614,10 @@ var init_completions2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/chat/chat.mjs
+// node_modules/openai/resources/chat/chat.mjs
 var Chat2;
 var init_chat = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/chat/chat.mjs"() {
+  "node_modules/openai/resources/chat/chat.mjs"() {
     init_resource2();
     init_completions2();
     init_completions2();
@@ -73631,33 +73631,33 @@ var init_chat = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/chat/completions/index.mjs
+// node_modules/openai/resources/chat/completions/index.mjs
 var init_completions3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/chat/completions/index.mjs"() {
+  "node_modules/openai/resources/chat/completions/index.mjs"() {
     init_completions2();
     init_completions2();
     init_messages3();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/chat/index.mjs
+// node_modules/openai/resources/chat/index.mjs
 var init_chat2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/chat/index.mjs"() {
+  "node_modules/openai/resources/chat/index.mjs"() {
     init_chat();
     init_completions3();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/shared.mjs
+// node_modules/openai/resources/shared.mjs
 var init_shared2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/shared.mjs"() {
+  "node_modules/openai/resources/shared.mjs"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/admin-api-keys.mjs
+// node_modules/openai/resources/admin/organization/admin-api-keys.mjs
 var AdminAPIKeys;
 var init_admin_api_keys = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/admin-api-keys.mjs"() {
+  "node_modules/openai/resources/admin/organization/admin-api-keys.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -73736,10 +73736,10 @@ var init_admin_api_keys = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/audit-logs.mjs
+// node_modules/openai/resources/admin/organization/audit-logs.mjs
 var AuditLogs;
 var init_audit_logs = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/audit-logs.mjs"() {
+  "node_modules/openai/resources/admin/organization/audit-logs.mjs"() {
     init_resource2();
     init_pagination2();
     AuditLogs = class extends APIResource2 {
@@ -73765,10 +73765,10 @@ var init_audit_logs = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/certificates.mjs
+// node_modules/openai/resources/admin/organization/certificates.mjs
 var Certificates2;
 var init_certificates2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/certificates.mjs"() {
+  "node_modules/openai/resources/admin/organization/certificates.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -73910,10 +73910,10 @@ var init_certificates2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/data-retention.mjs
+// node_modules/openai/resources/admin/organization/data-retention.mjs
 var DataRetention;
 var init_data_retention = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/data-retention.mjs"() {
+  "node_modules/openai/resources/admin/organization/data-retention.mjs"() {
     init_resource2();
     DataRetention = class extends APIResource2 {
       /**
@@ -73953,10 +73953,10 @@ var init_data_retention = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/invites.mjs
+// node_modules/openai/resources/admin/organization/invites.mjs
 var Invites2;
 var init_invites2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/invites.mjs"() {
+  "node_modules/openai/resources/admin/organization/invites.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -74037,10 +74037,10 @@ var init_invites2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/roles.mjs
+// node_modules/openai/resources/admin/organization/roles.mjs
 var Roles;
 var init_roles = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/roles.mjs"() {
+  "node_modules/openai/resources/admin/organization/roles.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -74134,10 +74134,10 @@ var init_roles = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/spend-alerts.mjs
+// node_modules/openai/resources/admin/organization/spend-alerts.mjs
 var SpendAlerts;
 var init_spend_alerts = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/spend-alerts.mjs"() {
+  "node_modules/openai/resources/admin/organization/spend-alerts.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -74245,10 +74245,10 @@ var init_spend_alerts = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/spend-limit.mjs
+// node_modules/openai/resources/admin/organization/spend-limit.mjs
 var SpendLimit;
 var init_spend_limit = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/spend-limit.mjs"() {
+  "node_modules/openai/resources/admin/organization/spend-limit.mjs"() {
     init_resource2();
     SpendLimit = class extends APIResource2 {
       /**
@@ -74305,10 +74305,10 @@ var init_spend_limit = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/usage.mjs
+// node_modules/openai/resources/admin/organization/usage.mjs
 var Usage;
 var init_usage = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/usage.mjs"() {
+  "node_modules/openai/resources/admin/organization/usage.mjs"() {
     init_resource2();
     Usage = class extends APIResource2 {
       /**
@@ -74513,10 +74513,10 @@ var init_usage = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/groups/roles.mjs
+// node_modules/openai/resources/admin/organization/groups/roles.mjs
 var Roles2;
 var init_roles2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/groups/roles.mjs"() {
+  "node_modules/openai/resources/admin/organization/groups/roles.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -74598,10 +74598,10 @@ var init_roles2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/groups/users.mjs
+// node_modules/openai/resources/admin/organization/groups/users.mjs
 var Users2;
 var init_users2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/groups/users.mjs"() {
+  "node_modules/openai/resources/admin/organization/groups/users.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -74683,10 +74683,10 @@ var init_users2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/groups/groups.mjs
+// node_modules/openai/resources/admin/organization/groups/groups.mjs
 var Groups;
 var init_groups = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/groups/groups.mjs"() {
+  "node_modules/openai/resources/admin/organization/groups/groups.mjs"() {
     init_resource2();
     init_roles2();
     init_roles2();
@@ -74792,10 +74792,10 @@ var init_groups = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/api-keys.mjs
+// node_modules/openai/resources/admin/organization/projects/api-keys.mjs
 var APIKeys2;
 var init_api_keys2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/api-keys.mjs"() {
+  "node_modules/openai/resources/admin/organization/projects/api-keys.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -74861,10 +74861,10 @@ var init_api_keys2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/certificates.mjs
+// node_modules/openai/resources/admin/organization/projects/certificates.mjs
 var Certificates3;
 var init_certificates3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/certificates.mjs"() {
+  "node_modules/openai/resources/admin/organization/projects/certificates.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -74926,10 +74926,10 @@ var init_certificates3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/data-retention.mjs
+// node_modules/openai/resources/admin/organization/projects/data-retention.mjs
 var DataRetention2;
 var init_data_retention2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/data-retention.mjs"() {
+  "node_modules/openai/resources/admin/organization/projects/data-retention.mjs"() {
     init_resource2();
     init_path2();
     DataRetention2 = class extends APIResource2 {
@@ -74973,10 +74973,10 @@ var init_data_retention2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/hosted-tool-permissions.mjs
+// node_modules/openai/resources/admin/organization/projects/hosted-tool-permissions.mjs
 var HostedToolPermissions;
 var init_hosted_tool_permissions = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/hosted-tool-permissions.mjs"() {
+  "node_modules/openai/resources/admin/organization/projects/hosted-tool-permissions.mjs"() {
     init_resource2();
     init_path2();
     HostedToolPermissions = class extends APIResource2 {
@@ -75019,10 +75019,10 @@ var init_hosted_tool_permissions = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/model-permissions.mjs
+// node_modules/openai/resources/admin/organization/projects/model-permissions.mjs
 var ModelPermissions;
 var init_model_permissions = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/model-permissions.mjs"() {
+  "node_modules/openai/resources/admin/organization/projects/model-permissions.mjs"() {
     init_resource2();
     init_path2();
     ModelPermissions = class extends APIResource2 {
@@ -75083,10 +75083,10 @@ var init_model_permissions = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/rate-limits.mjs
+// node_modules/openai/resources/admin/organization/projects/rate-limits.mjs
 var RateLimits3;
 var init_rate_limits3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/rate-limits.mjs"() {
+  "node_modules/openai/resources/admin/organization/projects/rate-limits.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -75131,10 +75131,10 @@ var init_rate_limits3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/roles.mjs
+// node_modules/openai/resources/admin/organization/projects/roles.mjs
 var Roles3;
 var init_roles3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/roles.mjs"() {
+  "node_modules/openai/resources/admin/organization/projects/roles.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -75240,10 +75240,10 @@ var init_roles3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/spend-alerts.mjs
+// node_modules/openai/resources/admin/organization/projects/spend-alerts.mjs
 var SpendAlerts2;
 var init_spend_alerts2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/spend-alerts.mjs"() {
+  "node_modules/openai/resources/admin/organization/projects/spend-alerts.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -75362,10 +75362,10 @@ var init_spend_alerts2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/spend-limit.mjs
+// node_modules/openai/resources/admin/organization/projects/spend-limit.mjs
 var SpendLimit2;
 var init_spend_limit2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/spend-limit.mjs"() {
+  "node_modules/openai/resources/admin/organization/projects/spend-limit.mjs"() {
     init_resource2();
     init_path2();
     SpendLimit2 = class extends APIResource2 {
@@ -75430,10 +75430,10 @@ var init_spend_limit2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/groups/roles.mjs
+// node_modules/openai/resources/admin/organization/projects/groups/roles.mjs
 var Roles4;
 var init_roles4 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/groups/roles.mjs"() {
+  "node_modules/openai/resources/admin/organization/projects/groups/roles.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -75518,10 +75518,10 @@ var init_roles4 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/groups/groups.mjs
+// node_modules/openai/resources/admin/organization/projects/groups/groups.mjs
 var Groups2;
 var init_groups2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/groups/groups.mjs"() {
+  "node_modules/openai/resources/admin/organization/projects/groups/groups.mjs"() {
     init_resource2();
     init_roles4();
     init_roles4();
@@ -75611,10 +75611,10 @@ var init_groups2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/service-accounts/api-keys.mjs
+// node_modules/openai/resources/admin/organization/projects/service-accounts/api-keys.mjs
 var APIKeys3;
 var init_api_keys3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/service-accounts/api-keys.mjs"() {
+  "node_modules/openai/resources/admin/organization/projects/service-accounts/api-keys.mjs"() {
     init_resource2();
     init_path2();
     APIKeys3 = class extends APIResource2 {
@@ -75638,10 +75638,10 @@ var init_api_keys3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/service-accounts/service-accounts.mjs
+// node_modules/openai/resources/admin/organization/projects/service-accounts/service-accounts.mjs
 var ServiceAccounts3;
 var init_service_accounts3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/service-accounts/service-accounts.mjs"() {
+  "node_modules/openai/resources/admin/organization/projects/service-accounts/service-accounts.mjs"() {
     init_resource2();
     init_api_keys3();
     init_api_keys3();
@@ -75747,10 +75747,10 @@ var init_service_accounts3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/users/roles.mjs
+// node_modules/openai/resources/admin/organization/projects/users/roles.mjs
 var Roles5;
 var init_roles5 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/users/roles.mjs"() {
+  "node_modules/openai/resources/admin/organization/projects/users/roles.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -75835,10 +75835,10 @@ var init_roles5 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/users/users.mjs
+// node_modules/openai/resources/admin/organization/projects/users/users.mjs
 var Users3;
 var init_users3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/users/users.mjs"() {
+  "node_modules/openai/resources/admin/organization/projects/users/users.mjs"() {
     init_resource2();
     init_roles5();
     init_roles5();
@@ -75951,10 +75951,10 @@ var init_users3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/projects.mjs
+// node_modules/openai/resources/admin/organization/projects/projects.mjs
 var Projects;
 var init_projects = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/projects/projects.mjs"() {
+  "node_modules/openai/resources/admin/organization/projects/projects.mjs"() {
     init_resource2();
     init_api_keys2();
     init_api_keys2();
@@ -76104,10 +76104,10 @@ var init_projects = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/users/roles.mjs
+// node_modules/openai/resources/admin/organization/users/roles.mjs
 var Roles6;
 var init_roles6 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/users/roles.mjs"() {
+  "node_modules/openai/resources/admin/organization/users/roles.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -76189,10 +76189,10 @@ var init_roles6 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/users/users.mjs
+// node_modules/openai/resources/admin/organization/users/users.mjs
 var Users4;
 var init_users4 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/users/users.mjs"() {
+  "node_modules/openai/resources/admin/organization/users/users.mjs"() {
     init_resource2();
     init_roles6();
     init_roles6();
@@ -76273,10 +76273,10 @@ var init_users4 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/organization.mjs
+// node_modules/openai/resources/admin/organization/organization.mjs
 var Organization2;
 var init_organization2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/organization/organization.mjs"() {
+  "node_modules/openai/resources/admin/organization/organization.mjs"() {
     init_resource2();
     init_admin_api_keys();
     init_admin_api_keys();
@@ -76334,10 +76334,10 @@ var init_organization2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/admin.mjs
+// node_modules/openai/resources/admin/admin.mjs
 var Admin;
 var init_admin = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/admin/admin.mjs"() {
+  "node_modules/openai/resources/admin/admin.mjs"() {
     init_resource2();
     init_organization2();
     init_organization2();
@@ -76351,10 +76351,10 @@ var init_admin = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/audio/speech.mjs
+// node_modules/openai/resources/audio/speech.mjs
 var Speech;
 var init_speech = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/audio/speech.mjs"() {
+  "node_modules/openai/resources/audio/speech.mjs"() {
     init_resource2();
     init_headers4();
     Speech = class extends APIResource2 {
@@ -76388,10 +76388,10 @@ var init_speech = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/audio/transcriptions.mjs
+// node_modules/openai/resources/audio/transcriptions.mjs
 var Transcriptions;
 var init_transcriptions = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/audio/transcriptions.mjs"() {
+  "node_modules/openai/resources/audio/transcriptions.mjs"() {
     init_resource2();
     init_uploads3();
     Transcriptions = class extends APIResource2 {
@@ -76408,10 +76408,10 @@ var init_transcriptions = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/audio/translations.mjs
+// node_modules/openai/resources/audio/translations.mjs
 var Translations;
 var init_translations = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/audio/translations.mjs"() {
+  "node_modules/openai/resources/audio/translations.mjs"() {
     init_resource2();
     init_uploads3();
     Translations = class extends APIResource2 {
@@ -76422,10 +76422,10 @@ var init_translations = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/audio/audio.mjs
+// node_modules/openai/resources/audio/audio.mjs
 var Audio;
 var init_audio = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/audio/audio.mjs"() {
+  "node_modules/openai/resources/audio/audio.mjs"() {
     init_resource2();
     init_speech();
     init_speech();
@@ -76447,10 +76447,10 @@ var init_audio = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/batches.mjs
+// node_modules/openai/resources/batches.mjs
 var Batches4;
 var init_batches3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/batches.mjs"() {
+  "node_modules/openai/resources/batches.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -76492,10 +76492,10 @@ var init_batches3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/assistants.mjs
+// node_modules/openai/resources/beta/assistants.mjs
 var Assistants;
 var init_assistants = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/assistants.mjs"() {
+  "node_modules/openai/resources/beta/assistants.mjs"() {
     init_resource2();
     init_pagination2();
     init_headers4();
@@ -76568,10 +76568,10 @@ var init_assistants = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/realtime/sessions.mjs
+// node_modules/openai/resources/beta/realtime/sessions.mjs
 var Sessions2;
 var init_sessions2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/realtime/sessions.mjs"() {
+  "node_modules/openai/resources/beta/realtime/sessions.mjs"() {
     init_resource2();
     init_headers4();
     Sessions2 = class extends APIResource2 {
@@ -76602,10 +76602,10 @@ var init_sessions2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/realtime/transcription-sessions.mjs
+// node_modules/openai/resources/beta/realtime/transcription-sessions.mjs
 var TranscriptionSessions;
 var init_transcription_sessions = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/realtime/transcription-sessions.mjs"() {
+  "node_modules/openai/resources/beta/realtime/transcription-sessions.mjs"() {
     init_resource2();
     init_headers4();
     TranscriptionSessions = class extends APIResource2 {
@@ -76636,10 +76636,10 @@ var init_transcription_sessions = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/realtime/realtime.mjs
+// node_modules/openai/resources/beta/realtime/realtime.mjs
 var Realtime;
 var init_realtime = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/realtime/realtime.mjs"() {
+  "node_modules/openai/resources/beta/realtime/realtime.mjs"() {
     init_resource2();
     init_sessions2();
     init_sessions2();
@@ -76657,10 +76657,10 @@ var init_realtime = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/environments/files.mjs
+// node_modules/openai/resources/beta/agents/environments/files.mjs
 var Files5;
 var init_files3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/environments/files.mjs"() {
+  "node_modules/openai/resources/beta/agents/environments/files.mjs"() {
     init_resource2();
     init_pagination2();
     init_headers4();
@@ -76719,10 +76719,10 @@ var init_files3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/environments/templates.mjs
+// node_modules/openai/resources/beta/agents/environments/templates.mjs
 var Templates;
 var init_templates = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/environments/templates.mjs"() {
+  "node_modules/openai/resources/beta/agents/environments/templates.mjs"() {
     init_resource2();
     init_pagination2();
     init_headers4();
@@ -76832,10 +76832,10 @@ var init_templates = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/environments/environments.mjs
+// node_modules/openai/resources/beta/agents/environments/environments.mjs
 var Environments3;
 var init_environments2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/environments/environments.mjs"() {
+  "node_modules/openai/resources/beta/agents/environments/environments.mjs"() {
     init_resource2();
     init_files3();
     init_files3();
@@ -76875,10 +76875,10 @@ var init_environments2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/agents/turn-state.mjs
+// node_modules/openai/lib/agents/turn-state.mjs
 var _TurnState_turnID, _TurnState_turnEnded, _TurnState_eventIDs, _TurnState_calls, TurnState;
 var init_turn_state = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/agents/turn-state.mjs"() {
+  "node_modules/openai/lib/agents/turn-state.mjs"() {
     init_tslib2();
     TurnState = class {
       constructor() {
@@ -76929,7 +76929,7 @@ var init_turn_state = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/agents/agent-session-stream.mjs
+// node_modules/openai/lib/agents/agent-session-stream.mjs
 function isInputContent(value) {
   if (!isObj2(value)) {
     return false;
@@ -76976,7 +76976,7 @@ async function cancelBody(response) {
 }
 var _AgentSessionStream_instances, _AgentSessionStream_consumed, _AgentSessionStream_stream, _AgentSessionStream_response, _AgentSessionStream_reading, _AgentSessionStream_sessions, _AgentSessionStream_sessionID, _AgentSessionStream_input, _AgentSessionStream_handlers, _AgentSessionStream_inputKey, _AgentSessionStream_options, _AgentSessionStream_iterate, _AgentSessionStream_result, _AgentSessionStream_checkAbort, _AgentSessionStream_abortError, _AgentSessionStream_wait, _AgentSessionStream_submit, AgentSessionStream;
 var init_agent_session_stream = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/agents/agent-session-stream.mjs"() {
+  "node_modules/openai/lib/agents/agent-session-stream.mjs"() {
     init_tslib2();
     init_turn_state();
     init_error3();
@@ -77163,10 +77163,10 @@ var init_agent_session_stream = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/sessions/artifacts.mjs
+// node_modules/openai/resources/beta/agents/sessions/artifacts.mjs
 var Artifacts;
 var init_artifacts = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/sessions/artifacts.mjs"() {
+  "node_modules/openai/resources/beta/agents/sessions/artifacts.mjs"() {
     init_resource2();
     init_pagination2();
     init_headers4();
@@ -77270,10 +77270,10 @@ var init_artifacts = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/sessions/events.mjs
+// node_modules/openai/resources/beta/agents/sessions/events.mjs
 var Events3;
 var init_events3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/sessions/events.mjs"() {
+  "node_modules/openai/resources/beta/agents/sessions/events.mjs"() {
     init_resource2();
     init_headers4();
     init_path2();
@@ -77346,10 +77346,10 @@ var init_events3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/sessions/items.mjs
+// node_modules/openai/resources/beta/agents/sessions/items.mjs
 var Items;
 var init_items = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/sessions/items.mjs"() {
+  "node_modules/openai/resources/beta/agents/sessions/items.mjs"() {
     init_resource2();
     init_pagination2();
     init_headers4();
@@ -77382,10 +77382,10 @@ var init_items = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/sessions/turns.mjs
+// node_modules/openai/resources/beta/agents/sessions/turns.mjs
 var Turns;
 var init_turns = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/sessions/turns.mjs"() {
+  "node_modules/openai/resources/beta/agents/sessions/turns.mjs"() {
     init_resource2();
     init_pagination2();
     init_headers4();
@@ -77440,10 +77440,10 @@ var init_turns = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/sessions/subagents/items.mjs
+// node_modules/openai/resources/beta/agents/sessions/subagents/items.mjs
 var Items2;
 var init_items2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/sessions/subagents/items.mjs"() {
+  "node_modules/openai/resources/beta/agents/sessions/subagents/items.mjs"() {
     init_resource2();
     init_pagination2();
     init_headers4();
@@ -77477,10 +77477,10 @@ var init_items2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/sessions/subagents/turns/items.mjs
+// node_modules/openai/resources/beta/agents/sessions/subagents/turns/items.mjs
 var Items3;
 var init_items3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/sessions/subagents/turns/items.mjs"() {
+  "node_modules/openai/resources/beta/agents/sessions/subagents/turns/items.mjs"() {
     init_resource2();
     init_pagination2();
     init_headers4();
@@ -77514,10 +77514,10 @@ var init_items3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/sessions/subagents/turns/turns.mjs
+// node_modules/openai/resources/beta/agents/sessions/subagents/turns/turns.mjs
 var Turns2;
 var init_turns2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/sessions/subagents/turns/turns.mjs"() {
+  "node_modules/openai/resources/beta/agents/sessions/subagents/turns/turns.mjs"() {
     init_resource2();
     init_items3();
     init_items3();
@@ -77582,10 +77582,10 @@ var init_turns2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/sessions/subagents/subagents.mjs
+// node_modules/openai/resources/beta/agents/sessions/subagents/subagents.mjs
 var Subagents;
 var init_subagents = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/sessions/subagents/subagents.mjs"() {
+  "node_modules/openai/resources/beta/agents/sessions/subagents/subagents.mjs"() {
     init_resource2();
     init_items2();
     init_items2();
@@ -77649,10 +77649,10 @@ var init_subagents = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/sessions/sessions.mjs
+// node_modules/openai/resources/beta/agents/sessions/sessions.mjs
 var Sessions3;
 var init_sessions3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/sessions/sessions.mjs"() {
+  "node_modules/openai/resources/beta/agents/sessions/sessions.mjs"() {
     init_agent_session_stream();
     init_resource2();
     init_artifacts();
@@ -77776,10 +77776,10 @@ var init_sessions3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/vaults/credentials.mjs
+// node_modules/openai/resources/beta/agents/vaults/credentials.mjs
 var Credentials2;
 var init_credentials3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/vaults/credentials.mjs"() {
+  "node_modules/openai/resources/beta/agents/vaults/credentials.mjs"() {
     init_resource2();
     init_pagination2();
     init_headers4();
@@ -77909,10 +77909,10 @@ var init_credentials3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/vaults/vaults.mjs
+// node_modules/openai/resources/beta/agents/vaults/vaults.mjs
 var Vaults2;
 var init_vaults2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/vaults/vaults.mjs"() {
+  "node_modules/openai/resources/beta/agents/vaults/vaults.mjs"() {
     init_resource2();
     init_credentials3();
     init_credentials3();
@@ -78002,10 +78002,10 @@ var init_vaults2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/agents.mjs
+// node_modules/openai/resources/beta/agents/agents.mjs
 var Agents3;
 var init_agents2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/agents/agents.mjs"() {
+  "node_modules/openai/resources/beta/agents/agents.mjs"() {
     init_resource2();
     init_environments2();
     init_environments2();
@@ -78120,10 +78120,10 @@ var init_agents2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/chatkit/sessions.mjs
+// node_modules/openai/resources/beta/chatkit/sessions.mjs
 var Sessions4;
 var init_sessions4 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/chatkit/sessions.mjs"() {
+  "node_modules/openai/resources/beta/chatkit/sessions.mjs"() {
     init_resource2();
     init_headers4();
     init_path2();
@@ -78170,10 +78170,10 @@ var init_sessions4 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/chatkit/threads.mjs
+// node_modules/openai/resources/beta/chatkit/threads.mjs
 var Threads2;
 var init_threads2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/chatkit/threads.mjs"() {
+  "node_modules/openai/resources/beta/chatkit/threads.mjs"() {
     init_resource2();
     init_pagination2();
     init_headers4();
@@ -78256,10 +78256,10 @@ var init_threads2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/chatkit/chatkit.mjs
+// node_modules/openai/resources/beta/chatkit/chatkit.mjs
 var ChatKit;
 var init_chatkit = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/chatkit/chatkit.mjs"() {
+  "node_modules/openai/resources/beta/chatkit/chatkit.mjs"() {
     init_resource2();
     init_sessions4();
     init_sessions4();
@@ -78277,10 +78277,10 @@ var init_chatkit = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/responses/input-items.mjs
+// node_modules/openai/resources/beta/responses/input-items.mjs
 var InputItems;
 var init_input_items = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/responses/input-items.mjs"() {
+  "node_modules/openai/resources/beta/responses/input-items.mjs"() {
     init_resource2();
     init_pagination2();
     init_headers4();
@@ -78315,10 +78315,10 @@ var init_input_items = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/responses/input-tokens.mjs
+// node_modules/openai/resources/beta/responses/input-tokens.mjs
 var InputTokens;
 var init_input_tokens = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/responses/input-tokens.mjs"() {
+  "node_modules/openai/resources/beta/responses/input-tokens.mjs"() {
     init_resource2();
     init_headers4();
     InputTokens = class extends APIResource2 {
@@ -78350,10 +78350,10 @@ var init_input_tokens = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/responses/responses.mjs
+// node_modules/openai/resources/beta/responses/responses.mjs
 var Responses;
 var init_responses = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/responses/responses.mjs"() {
+  "node_modules/openai/resources/beta/responses/responses.mjs"() {
     init_resource2();
     init_input_items();
     init_input_items();
@@ -78471,10 +78471,10 @@ var init_responses = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/threads/messages.mjs
+// node_modules/openai/resources/beta/threads/messages.mjs
 var Messages4;
 var init_messages4 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/threads/messages.mjs"() {
+  "node_modules/openai/resources/beta/threads/messages.mjs"() {
     init_resource2();
     init_pagination2();
     init_headers4();
@@ -78550,10 +78550,10 @@ var init_messages4 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/threads/runs/steps.mjs
+// node_modules/openai/resources/beta/threads/runs/steps.mjs
 var Steps;
 var init_steps = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/threads/runs/steps.mjs"() {
+  "node_modules/openai/resources/beta/threads/runs/steps.mjs"() {
     init_resource2();
     init_pagination2();
     init_headers4();
@@ -78591,10 +78591,10 @@ var init_steps = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/base64.mjs
+// node_modules/openai/internal/utils/base64.mjs
 var fromBase642, toFloat32Array;
 var init_base642 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/base64.mjs"() {
+  "node_modules/openai/internal/utils/base64.mjs"() {
     init_error3();
     init_bytes2();
     fromBase642 = (str) => {
@@ -78632,10 +78632,10 @@ var init_base642 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/env.mjs
+// node_modules/openai/internal/utils/env.mjs
 var readEnv2;
 var init_env2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils/env.mjs"() {
+  "node_modules/openai/internal/utils/env.mjs"() {
     readEnv2 = (env2) => {
       try {
         if (typeof globalThis.process !== "undefined") {
@@ -78652,9 +78652,9 @@ var init_env2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils.mjs
+// node_modules/openai/internal/utils.mjs
 var init_utils4 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/utils.mjs"() {
+  "node_modules/openai/internal/utils.mjs"() {
     init_values2();
     init_base642();
     init_env2();
@@ -78665,7 +78665,7 @@ var init_utils4 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/assistant-stream-delta.mjs
+// node_modules/openai/internal/assistant-stream-delta.mjs
 function getAssistantStreamDiagnosticProperty(property) {
   switch (property) {
     case "value":
@@ -78945,7 +78945,7 @@ function createAssistantStreamArrayDeltaCommit(accumulator, delta, kind, cacheAr
 }
 var MAX_ASSISTANT_STREAM_ARRAY_GROWTH, MAX_EXTERNALLY_MUTABLE_ASSISTANT_STREAM_ARRAY_LENGTH, assistantStreamArrayStates, externallyMutableAssistantStreamValues;
 var init_assistant_stream_delta = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/assistant-stream-delta.mjs"() {
+  "node_modules/openai/internal/assistant-stream-delta.mjs"() {
     init_error4();
     init_utils4();
     MAX_ASSISTANT_STREAM_ARRAY_GROWTH = 1024;
@@ -78955,7 +78955,7 @@ var init_assistant_stream_delta = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/AssistantStream.mjs
+// node_modules/openai/lib/AssistantStream.mjs
 function stabilizeAssistantStreamEvent(event) {
   const eventDescriptor = Object.getOwnPropertyDescriptor(event, "event");
   const dataDescriptor = Object.getOwnPropertyDescriptor(event, "data");
@@ -78986,7 +78986,7 @@ function assertNever2(_x) {
 }
 var _AssistantStream_instances, _AssistantStream_runStepSnapshots, _AssistantStream_runStepIDOwners, _AssistantStream_activeRunStepID, _AssistantStream_messageSnapshots, _AssistantStream_messageIDOwners, _AssistantStream_messageSnapshot, _AssistantStream_activeMessageID, _AssistantStream_finalRun, _AssistantStream_currentContentIndex, _AssistantStream_currentContent, _AssistantStream_currentToolCallIndex, _AssistantStream_currentToolCall, _AssistantStream_currentEvent, _AssistantStream_currentRunSnapshot, _AssistantStream_currentRunStepSnapshot, _AssistantStream_addEvent, _AssistantStream_endRequest, _AssistantStream_validateRunStepEvent, _AssistantStream_reserveRunStepAlias, _AssistantStream_validateMessageEvent, _AssistantStream_reserveMessageAlias, _AssistantStream_handleMessage, _AssistantStream_handleRunStep, _AssistantStream_emitExposed, _AssistantStream_handleEvent, _AssistantStream_accumulateRunStep, _AssistantStream_accumulateMessage, _AssistantStream_accumulateContent, _AssistantStream_handleRun, AssistantStream;
 var init_AssistantStream = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/AssistantStream.mjs"() {
+  "node_modules/openai/lib/AssistantStream.mjs"() {
     init_tslib2();
     init_streaming4();
     init_error4();
@@ -79630,7 +79630,7 @@ var init_AssistantStream = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/polling.mjs
+// node_modules/openai/lib/polling.mjs
 function sleepUntilAborted(milliseconds, signal) {
   return new Promise((resolve2, reject) => {
     let timer;
@@ -79735,14 +79735,14 @@ async function pollWithResponse(retrieve, intermediateStatuses, terminalStatuses
   }
 }
 var init_polling = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/polling.mjs"() {
+  "node_modules/openai/lib/polling.mjs"() {
     init_error3();
     init_headers4();
     init_sleep2();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/assistant-run-polling.mjs
+// node_modules/openai/lib/assistant-run-polling.mjs
 function pollAssistantRun(resource, runID, params, options) {
   return pollWithResponse((headers) => resource.retrieve(runID, params, {
     ...options,
@@ -79750,15 +79750,15 @@ function pollAssistantRun(resource, runID, params, options) {
   }), ["queued", "in_progress", "cancelling"], ["requires_action", "incomplete", "cancelled", "completed", "failed", "expired"], options);
 }
 var init_assistant_run_polling = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/assistant-run-polling.mjs"() {
+  "node_modules/openai/lib/assistant-run-polling.mjs"() {
     init_polling();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/threads/runs/runs.mjs
+// node_modules/openai/resources/beta/threads/runs/runs.mjs
 var Runs;
 var init_runs = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/threads/runs/runs.mjs"() {
+  "node_modules/openai/resources/beta/threads/runs/runs.mjs"() {
     init_resource2();
     init_steps();
     init_steps();
@@ -79901,10 +79901,10 @@ var init_runs = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/threads/threads.mjs
+// node_modules/openai/resources/beta/threads/threads.mjs
 var Threads3;
 var init_threads3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/threads/threads.mjs"() {
+  "node_modules/openai/resources/beta/threads/threads.mjs"() {
     init_resource2();
     init_messages4();
     init_messages4();
@@ -80000,10 +80000,10 @@ var init_threads3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/beta.mjs
+// node_modules/openai/resources/beta/beta.mjs
 var Beta2;
 var init_beta2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/beta/beta.mjs"() {
+  "node_modules/openai/resources/beta/beta.mjs"() {
     init_resource2();
     init_assistants();
     init_assistants();
@@ -80037,10 +80037,10 @@ var init_beta2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/completions.mjs
+// node_modules/openai/resources/completions.mjs
 var Completions3;
 var init_completions4 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/completions.mjs"() {
+  "node_modules/openai/resources/completions.mjs"() {
     init_resource2();
     Completions3 = class extends APIResource2 {
       create(body, options) {
@@ -80055,10 +80055,10 @@ var init_completions4 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/containers/files/content.mjs
+// node_modules/openai/resources/containers/files/content.mjs
 var Content;
 var init_content = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/containers/files/content.mjs"() {
+  "node_modules/openai/resources/containers/files/content.mjs"() {
     init_resource2();
     init_headers4();
     init_path2();
@@ -80079,10 +80079,10 @@ var init_content = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/containers/files/files.mjs
+// node_modules/openai/resources/containers/files/files.mjs
 var Files6;
 var init_files4 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/containers/files/files.mjs"() {
+  "node_modules/openai/resources/containers/files/files.mjs"() {
     init_resource2();
     init_content();
     init_content();
@@ -80140,10 +80140,10 @@ var init_files4 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/containers/containers.mjs
+// node_modules/openai/resources/containers/containers.mjs
 var Containers;
 var init_containers = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/containers/containers.mjs"() {
+  "node_modules/openai/resources/containers/containers.mjs"() {
     init_resource2();
     init_files4();
     init_files4();
@@ -80195,10 +80195,10 @@ var init_containers = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/content-provenance-checks.mjs
+// node_modules/openai/resources/content-provenance-checks.mjs
 var ContentProvenanceChecks;
 var init_content_provenance_checks = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/content-provenance-checks.mjs"() {
+  "node_modules/openai/resources/content-provenance-checks.mjs"() {
     init_resource2();
     init_uploads3();
     ContentProvenanceChecks = class extends APIResource2 {
@@ -80220,10 +80220,10 @@ var init_content_provenance_checks = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/conversations/items.mjs
+// node_modules/openai/resources/conversations/items.mjs
 var Items4;
 var init_items4 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/conversations/items.mjs"() {
+  "node_modules/openai/resources/conversations/items.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -80271,10 +80271,10 @@ var init_items4 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/conversations/conversations.mjs
+// node_modules/openai/resources/conversations/conversations.mjs
 var Conversations;
 var init_conversations = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/conversations/conversations.mjs"() {
+  "node_modules/openai/resources/conversations/conversations.mjs"() {
     init_resource2();
     init_items4();
     init_items4();
@@ -80323,7 +80323,7 @@ var init_conversations = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/embeddings.mjs
+// node_modules/openai/lib/embeddings.mjs
 function createEmbedding(client, body, options) {
   const hasUserProvidedEncodingFormat = !!body.encoding_format;
   const encodingFormat = hasUserProvidedEncodingFormat ? body.encoding_format : "base64";
@@ -80363,15 +80363,15 @@ function createEmbedding(client, body, options) {
   });
 }
 var init_embeddings = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/embeddings.mjs"() {
+  "node_modules/openai/lib/embeddings.mjs"() {
     init_utils4();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/embeddings.mjs
+// node_modules/openai/resources/embeddings.mjs
 var Embeddings;
 var init_embeddings2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/embeddings.mjs"() {
+  "node_modules/openai/resources/embeddings.mjs"() {
     init_resource2();
     init_embeddings();
     Embeddings = class extends APIResource2 {
@@ -80382,10 +80382,10 @@ var init_embeddings2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/evals/runs/output-items.mjs
+// node_modules/openai/resources/evals/runs/output-items.mjs
 var OutputItems;
 var init_output_items = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/evals/runs/output-items.mjs"() {
+  "node_modules/openai/resources/evals/runs/output-items.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -80411,10 +80411,10 @@ var init_output_items = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/evals/runs/runs.mjs
+// node_modules/openai/resources/evals/runs/runs.mjs
 var Runs2;
 var init_runs2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/evals/runs/runs.mjs"() {
+  "node_modules/openai/resources/evals/runs/runs.mjs"() {
     init_resource2();
     init_output_items();
     init_output_items();
@@ -80482,10 +80482,10 @@ var init_runs2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/evals/evals.mjs
+// node_modules/openai/resources/evals/evals.mjs
 var Evals;
 var init_evals = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/evals/evals.mjs"() {
+  "node_modules/openai/resources/evals/evals.mjs"() {
     init_resource2();
     init_runs2();
     init_runs2();
@@ -80540,7 +80540,7 @@ var init_evals = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/file-processing.mjs
+// node_modules/openai/lib/file-processing.mjs
 async function waitForFileProcessing(resource, id2, pollInterval, maxWait) {
   const terminalStates = /* @__PURE__ */ new Set(["processed", "error", "deleted"]);
   const start = performance.now();
@@ -80557,16 +80557,16 @@ async function waitForFileProcessing(resource, id2, pollInterval, maxWait) {
   return file;
 }
 var init_file_processing = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/file-processing.mjs"() {
+  "node_modules/openai/lib/file-processing.mjs"() {
     init_error4();
     init_sleep2();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/files.mjs
+// node_modules/openai/resources/files.mjs
 var Files7;
 var init_files5 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/files.mjs"() {
+  "node_modules/openai/resources/files.mjs"() {
     init_resource2();
     init_pagination2();
     init_headers4();
@@ -80649,20 +80649,20 @@ var init_files5 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/fine-tuning/methods.mjs
+// node_modules/openai/resources/fine-tuning/methods.mjs
 var Methods;
 var init_methods = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/fine-tuning/methods.mjs"() {
+  "node_modules/openai/resources/fine-tuning/methods.mjs"() {
     init_resource2();
     Methods = class extends APIResource2 {
     };
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/fine-tuning/alpha/graders.mjs
+// node_modules/openai/resources/fine-tuning/alpha/graders.mjs
 var Graders;
 var init_graders = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/fine-tuning/alpha/graders.mjs"() {
+  "node_modules/openai/resources/fine-tuning/alpha/graders.mjs"() {
     init_resource2();
     Graders = class extends APIResource2 {
       /**
@@ -80717,10 +80717,10 @@ var init_graders = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/fine-tuning/alpha/alpha.mjs
+// node_modules/openai/resources/fine-tuning/alpha/alpha.mjs
 var Alpha2;
 var init_alpha = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/fine-tuning/alpha/alpha.mjs"() {
+  "node_modules/openai/resources/fine-tuning/alpha/alpha.mjs"() {
     init_resource2();
     init_graders();
     init_graders();
@@ -80734,10 +80734,10 @@ var init_alpha = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/fine-tuning/checkpoints/permissions.mjs
+// node_modules/openai/resources/fine-tuning/checkpoints/permissions.mjs
 var Permissions;
 var init_permissions = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/fine-tuning/checkpoints/permissions.mjs"() {
+  "node_modules/openai/resources/fine-tuning/checkpoints/permissions.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -80826,10 +80826,10 @@ var init_permissions = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/fine-tuning/checkpoints/checkpoints.mjs
+// node_modules/openai/resources/fine-tuning/checkpoints/checkpoints.mjs
 var Checkpoints;
 var init_checkpoints = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/fine-tuning/checkpoints/checkpoints.mjs"() {
+  "node_modules/openai/resources/fine-tuning/checkpoints/checkpoints.mjs"() {
     init_resource2();
     init_permissions();
     init_permissions();
@@ -80843,10 +80843,10 @@ var init_checkpoints = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/fine-tuning/jobs/checkpoints.mjs
+// node_modules/openai/resources/fine-tuning/jobs/checkpoints.mjs
 var Checkpoints2;
 var init_checkpoints2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/fine-tuning/jobs/checkpoints.mjs"() {
+  "node_modules/openai/resources/fine-tuning/jobs/checkpoints.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -80871,10 +80871,10 @@ var init_checkpoints2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/fine-tuning/jobs/jobs.mjs
+// node_modules/openai/resources/fine-tuning/jobs/jobs.mjs
 var Jobs;
 var init_jobs = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/fine-tuning/jobs/jobs.mjs"() {
+  "node_modules/openai/resources/fine-tuning/jobs/jobs.mjs"() {
     init_resource2();
     init_checkpoints2();
     init_checkpoints2();
@@ -81010,10 +81010,10 @@ var init_jobs = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/fine-tuning/fine-tuning.mjs
+// node_modules/openai/resources/fine-tuning/fine-tuning.mjs
 var FineTuning;
 var init_fine_tuning = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/fine-tuning/fine-tuning.mjs"() {
+  "node_modules/openai/resources/fine-tuning/fine-tuning.mjs"() {
     init_resource2();
     init_methods();
     init_methods();
@@ -81039,20 +81039,20 @@ var init_fine_tuning = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/graders/grader-models.mjs
+// node_modules/openai/resources/graders/grader-models.mjs
 var GraderModels;
 var init_grader_models = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/graders/grader-models.mjs"() {
+  "node_modules/openai/resources/graders/grader-models.mjs"() {
     init_resource2();
     GraderModels = class extends APIResource2 {
     };
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/graders/graders.mjs
+// node_modules/openai/resources/graders/graders.mjs
 var Graders2;
 var init_graders2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/graders/graders.mjs"() {
+  "node_modules/openai/resources/graders/graders.mjs"() {
     init_resource2();
     init_grader_models();
     init_grader_models();
@@ -81066,10 +81066,10 @@ var init_graders2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/images.mjs
+// node_modules/openai/resources/images.mjs
 var Images;
 var init_images = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/images.mjs"() {
+  "node_modules/openai/resources/images.mjs"() {
     init_resource2();
     init_uploads3();
     Images = class extends APIResource2 {
@@ -81107,10 +81107,10 @@ var init_images = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/live/sessions.mjs
+// node_modules/openai/resources/live/sessions.mjs
 var Sessions5;
 var init_sessions5 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/live/sessions.mjs"() {
+  "node_modules/openai/resources/live/sessions.mjs"() {
     init_resource2();
     init_headers4();
     init_path2();
@@ -81232,30 +81232,30 @@ var init_sessions5 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/live/forks/forks.mjs
+// node_modules/openai/resources/live/forks/forks.mjs
 var Forks;
 var init_forks = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/live/forks/forks.mjs"() {
+  "node_modules/openai/resources/live/forks/forks.mjs"() {
     init_resource2();
     Forks = class extends APIResource2 {
     };
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/live/sideband/sideband.mjs
+// node_modules/openai/resources/live/sideband/sideband.mjs
 var Sideband;
 var init_sideband = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/live/sideband/sideband.mjs"() {
+  "node_modules/openai/resources/live/sideband/sideband.mjs"() {
     init_resource2();
     Sideband = class extends APIResource2 {
     };
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/live/live.mjs
+// node_modules/openai/resources/live/live.mjs
 var Live2;
 var init_live = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/live/live.mjs"() {
+  "node_modules/openai/resources/live/live.mjs"() {
     init_resource2();
     init_sessions5();
     init_sessions5();
@@ -81292,10 +81292,10 @@ var init_live = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/models.mjs
+// node_modules/openai/resources/models.mjs
 var Models4;
 var init_models4 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/models.mjs"() {
+  "node_modules/openai/resources/models.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -81325,10 +81325,10 @@ var init_models4 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/moderations.mjs
+// node_modules/openai/resources/moderations.mjs
 var Moderations;
 var init_moderations = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/moderations.mjs"() {
+  "node_modules/openai/resources/moderations.mjs"() {
     init_resource2();
     Moderations = class extends APIResource2 {
       /**
@@ -81343,7 +81343,7 @@ var init_moderations = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/multipart-encoding.mjs
+// node_modules/openai/internal/multipart-encoding.mjs
 async function encodedMultipartFormRequestOptions(options, client, encodings, rawBodyField = null) {
   if (options.body === null || typeof options.body !== "object" || Array.isArray(options.body)) {
     throw new TypeError("Multipart request body must be an object");
@@ -81385,16 +81385,16 @@ async function encodedMultipartFormRequestOptions(options, client, encodings, ra
   };
 }
 var init_multipart_encoding = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/multipart-encoding.mjs"() {
+  "node_modules/openai/internal/multipart-encoding.mjs"() {
     init_uploads3();
     init_headers4();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/realtime/calls.mjs
+// node_modules/openai/resources/realtime/calls.mjs
 var Calls;
 var init_calls = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/realtime/calls.mjs"() {
+  "node_modules/openai/resources/realtime/calls.mjs"() {
     init_resource2();
     init_headers4();
     init_path2();
@@ -81495,10 +81495,10 @@ var init_calls = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/realtime/client-secrets.mjs
+// node_modules/openai/resources/realtime/client-secrets.mjs
 var ClientSecrets;
 var init_client_secrets = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/realtime/client-secrets.mjs"() {
+  "node_modules/openai/resources/realtime/client-secrets.mjs"() {
     init_resource2();
     ClientSecrets = class extends APIResource2 {
       /**
@@ -81535,10 +81535,10 @@ var init_client_secrets = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/realtime/realtime.mjs
+// node_modules/openai/resources/realtime/realtime.mjs
 var Realtime2;
 var init_realtime2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/realtime/realtime.mjs"() {
+  "node_modules/openai/resources/realtime/realtime.mjs"() {
     init_resource2();
     init_calls();
     init_calls();
@@ -81556,7 +81556,7 @@ var init_realtime2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/ResponsesParser.mjs
+// node_modules/openai/lib/ResponsesParser.mjs
 function maybeParseResponse(response, params) {
   if (!params || !hasAutoParseableInput2(params)) {
     const parsed = {
@@ -81688,16 +81688,16 @@ function addOutputText(rsp) {
   rsp.output_text = texts.join("");
 }
 var init_ResponsesParser = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/ResponsesParser.mjs"() {
+  "node_modules/openai/lib/ResponsesParser.mjs"() {
     init_error4();
     init_parser3();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/responses/output-text-index.mjs
+// node_modules/openai/internal/responses/output-text-index.mjs
 var OutputTextIndex;
 var init_output_text_index = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/responses/output-text-index.mjs"() {
+  "node_modules/openai/internal/responses/output-text-index.mjs"() {
     OutputTextIndex = class {
       constructor() {
         this.capacity = 1;
@@ -81766,7 +81766,7 @@ var init_output_text_index = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/responses/canonical-output-text.mjs
+// node_modules/openai/internal/responses/canonical-output-text.mjs
 function createCanonicalResponseContext() {
   return {
     canonicalSnapshot: void 0,
@@ -81871,12 +81871,12 @@ function updateOutputText(context, snapshot, outputIndex, previousText, nextText
   snapshot.output_text = snapshot.output_text.slice(0, offset) + nextText + snapshot.output_text.slice(offset + previousText.length);
 }
 var init_canonical_output_text = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/responses/canonical-output-text.mjs"() {
+  "node_modules/openai/internal/responses/canonical-output-text.mjs"() {
     init_output_text_index();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/responses/response-accumulator.mjs
+// node_modules/openai/internal/responses/response-accumulator.mjs
 function validateArrayIndex(collection, index3, kind, allowAppend = false) {
   if (!Array.isArray(collection) || !Number.isSafeInteger(index3) || index3 < 0 || index3 > collection.length || (index3 === collection.length ? !allowAppend || index3 in collection : !hasOwn3(collection, index3))) {
     throw new OpenAIError(`missing ${kind} at index ${index3}`);
@@ -82655,7 +82655,7 @@ function accumulateResponseWithContext(event, snapshot, context, rejectInvalidSh
 }
 var responseOutputIdentityIndexes, expectedOutputItemTypes, supportedResponseEventTypes, responseEventRoutingFields;
 var init_response_accumulator = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/responses/response-accumulator.mjs"() {
+  "node_modules/openai/internal/responses/response-accumulator.mjs"() {
     init_error4();
     init_utils4();
     init_canonical_output_text();
@@ -82776,13 +82776,13 @@ var init_response_accumulator = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/responses/ResponseStream.mjs
+// node_modules/openai/lib/responses/ResponseStream.mjs
 function finalizeResponse(snapshot, params) {
   return maybeParseResponse(snapshot, params);
 }
 var _ResponseStream_instances, _ResponseStream_params, _ResponseStream_currentResponseSnapshot, _ResponseStream_finalResponse, _ResponseStream_accumulatorContext, _ResponseStream_beginRequest, _ResponseStream_addEvent, _ResponseStream_endRequest, ResponseStream;
 var init_ResponseStream = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/responses/ResponseStream.mjs"() {
+  "node_modules/openai/lib/responses/ResponseStream.mjs"() {
     init_tslib2();
     init_error4();
     init_EventStream();
@@ -82961,10 +82961,10 @@ var init_ResponseStream = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/responses/input-items.mjs
+// node_modules/openai/resources/responses/input-items.mjs
 var InputItems2;
 var init_input_items2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/responses/input-items.mjs"() {
+  "node_modules/openai/resources/responses/input-items.mjs"() {
     init_resource2();
     init_pagination2();
     init_path2();
@@ -82989,10 +82989,10 @@ var init_input_items2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/responses/input-tokens.mjs
+// node_modules/openai/resources/responses/input-tokens.mjs
 var InputTokens2;
 var init_input_tokens2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/responses/input-tokens.mjs"() {
+  "node_modules/openai/resources/responses/input-tokens.mjs"() {
     init_resource2();
     InputTokens2 = class extends APIResource2 {
       /**
@@ -83017,10 +83017,10 @@ var init_input_tokens2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/responses/responses.mjs
+// node_modules/openai/resources/responses/responses.mjs
 var Responses2;
 var init_responses2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/responses/responses.mjs"() {
+  "node_modules/openai/resources/responses/responses.mjs"() {
     init_ResponsesParser();
     init_ResponseStream();
     init_resource2();
@@ -83130,10 +83130,10 @@ var init_responses2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/safety/alerts.mjs
+// node_modules/openai/resources/safety/alerts.mjs
 var Alerts;
 var init_alerts = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/safety/alerts.mjs"() {
+  "node_modules/openai/resources/safety/alerts.mjs"() {
     init_resource2();
     init_path2();
     Alerts = class extends APIResource2 {
@@ -83147,10 +83147,10 @@ var init_alerts = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/safety/safety.mjs
+// node_modules/openai/resources/safety/safety.mjs
 var Safety;
 var init_safety = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/safety/safety.mjs"() {
+  "node_modules/openai/resources/safety/safety.mjs"() {
     init_resource2();
     init_alerts();
     init_alerts();
@@ -83164,10 +83164,10 @@ var init_safety = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/skills/content.mjs
+// node_modules/openai/resources/skills/content.mjs
 var Content2;
 var init_content2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/skills/content.mjs"() {
+  "node_modules/openai/resources/skills/content.mjs"() {
     init_resource2();
     init_headers4();
     init_path2();
@@ -83187,10 +83187,10 @@ var init_content2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/skills/versions/content.mjs
+// node_modules/openai/resources/skills/versions/content.mjs
 var Content3;
 var init_content3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/skills/versions/content.mjs"() {
+  "node_modules/openai/resources/skills/versions/content.mjs"() {
     init_resource2();
     init_headers4();
     init_path2();
@@ -83211,10 +83211,10 @@ var init_content3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/skills/versions/versions.mjs
+// node_modules/openai/resources/skills/versions/versions.mjs
 var Versions4;
 var init_versions4 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/skills/versions/versions.mjs"() {
+  "node_modules/openai/resources/skills/versions/versions.mjs"() {
     init_resource2();
     init_content3();
     init_content3();
@@ -83269,10 +83269,10 @@ var init_versions4 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/skills/skills.mjs
+// node_modules/openai/resources/skills/skills.mjs
 var Skills3;
 var init_skills4 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/skills/skills.mjs"() {
+  "node_modules/openai/resources/skills/skills.mjs"() {
     init_resource2();
     init_content2();
     init_content2();
@@ -83333,10 +83333,10 @@ var init_skills4 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/uploads/parts.mjs
+// node_modules/openai/resources/uploads/parts.mjs
 var Parts;
 var init_parts = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/uploads/parts.mjs"() {
+  "node_modules/openai/resources/uploads/parts.mjs"() {
     init_resource2();
     init_uploads3();
     init_path2();
@@ -83362,10 +83362,10 @@ var init_parts = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/uploads/uploads.mjs
+// node_modules/openai/resources/uploads/uploads.mjs
 var Uploads;
 var init_uploads5 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/uploads/uploads.mjs"() {
+  "node_modules/openai/resources/uploads/uploads.mjs"() {
     init_resource2();
     init_parts();
     init_parts();
@@ -83441,7 +83441,7 @@ var init_uploads5 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/vector-store-polling.mjs
+// node_modules/openai/lib/vector-store-polling.mjs
 function pollVectorStoreFile(resource, vectorStoreID, fileID, options) {
   return pollWithResponse((headers) => resource.retrieve(fileID, { vector_store_id: vectorStoreID }, { ...options, headers }), ["in_progress"], ["failed", "cancelled", "completed"], options);
 }
@@ -83449,15 +83449,15 @@ function pollVectorStoreFileBatch(resource, vectorStoreID, batchID, options) {
   return pollWithResponse((headers) => resource.retrieve(batchID, { vector_store_id: vectorStoreID }, { ...options, headers }), ["in_progress"], ["failed", "cancelled", "completed"], options);
 }
 var init_vector_store_polling = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/vector-store-polling.mjs"() {
+  "node_modules/openai/lib/vector-store-polling.mjs"() {
     init_polling();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/Util.mjs
+// node_modules/openai/lib/Util.mjs
 var allSettledWithThrow;
 var init_Util = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/Util.mjs"() {
+  "node_modules/openai/lib/Util.mjs"() {
     allSettledWithThrow = async (promises) => {
       const results = await Promise.allSettled(promises);
       const rejected = results.filter((result) => result.status === "rejected");
@@ -83479,7 +83479,7 @@ var init_Util = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/vector-store-upload.mjs
+// node_modules/openai/lib/vector-store-upload.mjs
 async function uploadAndPollVectorStoreFileBatch(resource, client, vectorStoreId, files, fileIds, options) {
   if (files === null || files === void 0 || files.length === 0) {
     throw new Error("No `files` provided to process. If you've already uploaded files you should use `.createAndPoll()` instead");
@@ -83506,15 +83506,15 @@ async function uploadAndPollVectorStoreFileBatch(resource, client, vectorStoreId
   return await resource.createAndPoll(vectorStoreId, { file_ids: allFileIds }, options);
 }
 var init_vector_store_upload = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/vector-store-upload.mjs"() {
+  "node_modules/openai/lib/vector-store-upload.mjs"() {
     init_Util();
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/vector-stores/file-batches.mjs
+// node_modules/openai/resources/vector-stores/file-batches.mjs
 var FileBatches;
 var init_file_batches = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/vector-stores/file-batches.mjs"() {
+  "node_modules/openai/resources/vector-stores/file-batches.mjs"() {
     init_resource2();
     init_pagination2();
     init_headers4();
@@ -83596,10 +83596,10 @@ var init_file_batches = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/vector-stores/files.mjs
+// node_modules/openai/resources/vector-stores/files.mjs
 var Files8;
 var init_files6 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/vector-stores/files.mjs"() {
+  "node_modules/openai/resources/vector-stores/files.mjs"() {
     init_resource2();
     init_pagination2();
     init_headers4();
@@ -83715,10 +83715,10 @@ var init_files6 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/vector-stores/vector-stores.mjs
+// node_modules/openai/resources/vector-stores/vector-stores.mjs
 var VectorStores;
 var init_vector_stores = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/vector-stores/vector-stores.mjs"() {
+  "node_modules/openai/resources/vector-stores/vector-stores.mjs"() {
     init_resource2();
     init_file_batches();
     init_file_batches();
@@ -83805,10 +83805,10 @@ var init_vector_stores = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/videos.mjs
+// node_modules/openai/resources/videos.mjs
 var Videos;
 var init_videos = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/videos.mjs"() {
+  "node_modules/openai/resources/videos.mjs"() {
     init_resource2();
     init_pagination2();
     init_headers4();
@@ -83915,7 +83915,7 @@ var init_videos = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/webhook-signature.mjs
+// node_modules/openai/lib/webhook-signature.mjs
 function webhookSignatureRequiresSigning(signatureHeader) {
   return signatureHeader.split(" ", MAX_DIRECT_WEBHOOK_VERIFICATIONS + 1).length > MAX_DIRECT_WEBHOOK_VERIFICATIONS;
 }
@@ -84011,7 +84011,7 @@ async function verifyWebhookSignature(payload, signatureHeader, timestamp, webho
 }
 var MAX_DIRECT_WEBHOOK_VERIFICATIONS, SHA256_SIGNATURE_LENGTH;
 var init_webhook_signature = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/lib/webhook-signature.mjs"() {
+  "node_modules/openai/lib/webhook-signature.mjs"() {
     init_error4();
     init_base642();
     init_bytes2();
@@ -84020,10 +84020,10 @@ var init_webhook_signature = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/webhooks/event-types.mjs
+// node_modules/openai/resources/webhooks/event-types.mjs
 var EventTypes;
 var init_event_types = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/webhooks/event-types.mjs"() {
+  "node_modules/openai/resources/webhooks/event-types.mjs"() {
     init_resource2();
     EventTypes = class extends APIResource2 {
       /**
@@ -84042,10 +84042,10 @@ var init_event_types = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/webhooks/webhooks.mjs
+// node_modules/openai/resources/webhooks/webhooks.mjs
 var _Webhooks_instances, _Webhooks_validateSecret, _Webhooks_getRequiredHeader, Webhooks3;
 var init_webhooks2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/webhooks/webhooks.mjs"() {
+  "node_modules/openai/resources/webhooks/webhooks.mjs"() {
     init_tslib2();
     init_resource2();
     init_headers4();
@@ -84225,9 +84225,9 @@ var init_webhooks2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/index.mjs
+// node_modules/openai/resources/index.mjs
 var init_resources3 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/resources/index.mjs"() {
+  "node_modules/openai/resources/index.mjs"() {
     init_chat2();
     init_shared2();
     init_admin();
@@ -84258,7 +84258,7 @@ var init_resources3 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/realtime-credentials.mjs
+// node_modules/openai/internal/realtime-credentials.mjs
 async function resolveRealtimeAPIKey(client) {
   let apiKey;
   const isProvider = await client._callApiKey((resolved) => {
@@ -84267,11 +84267,11 @@ async function resolveRealtimeAPIKey(client) {
   return { apiKey: apiKey === void 0 ? client.apiKey : apiKey, isProvider };
 }
 var init_realtime_credentials = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/realtime-credentials.mjs"() {
+  "node_modules/openai/internal/realtime-credentials.mjs"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/provider.mjs
+// node_modules/openai/internal/provider.mjs
 function configureProvider(provider) {
   const definition = providerDefinitions.get(provider);
   if (!definition) {
@@ -84281,7 +84281,7 @@ function configureProvider(provider) {
 }
 var providerDefinitionsKey, providerGlobal, existingProviderDefinitions, providerDefinitions;
 var init_provider = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/provider.mjs"() {
+  "node_modules/openai/internal/provider.mjs"() {
     providerDefinitionsKey = /* @__PURE__ */ Symbol.for("openai.node.providerDefinitions.v1");
     providerGlobal = globalThis;
     existingProviderDefinitions = providerGlobal[providerDefinitionsKey];
@@ -84292,7 +84292,7 @@ var init_provider = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/client.mjs
+// node_modules/openai/client.mjs
 function isRunningInBrowserOrBrowserWorker() {
   if (isRunningInBrowser2())
     return true;
@@ -84338,7 +84338,7 @@ function isUndiciDispatcherVersionMismatchError(error) {
 }
 var _OpenAI_instances, _a5, _OpenAI_encoder, _OpenAI_x509Authentication, _OpenAI_x509Credential, _OpenAI_x509Fetch, _OpenAI_explicitDataResidency, _OpenAI_responseAttempts, _OpenAI_baseURLOverridden, WORKLOAD_IDENTITY_API_KEY_PLACEHOLDER, inheritedDataResidencySelection, OpenAI, composedCallerSignals;
 var init_client2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/client.mjs"() {
+  "node_modules/openai/client.mjs"() {
     init_tslib2();
     init_uuid2();
     init_values2();
@@ -85466,9 +85466,9 @@ var init_client2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/azure.mjs
+// node_modules/openai/azure.mjs
 var init_azure = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/azure.mjs"() {
+  "node_modules/openai/azure.mjs"() {
     init_headers4();
     init_error4();
     init_utils4();
@@ -85478,20 +85478,20 @@ var init_azure = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/bedrock.mjs
+// node_modules/openai/internal/bedrock.mjs
 var brand_privateBedrockClient;
 var init_bedrock = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/internal/bedrock.mjs"() {
+  "node_modules/openai/internal/bedrock.mjs"() {
     init_error4();
     init_utils4();
     brand_privateBedrockClient = /* @__PURE__ */ Symbol.for("openai.privateBedrockClient");
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/bedrock.mjs
+// node_modules/openai/bedrock.mjs
 var _a6;
 var init_bedrock2 = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/bedrock.mjs"() {
+  "node_modules/openai/bedrock.mjs"() {
     init_error4();
     init_client2();
     init_realtime_credentials();
@@ -85505,9 +85505,9 @@ var init_bedrock2 = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/openai/index.mjs
+// node_modules/openai/index.mjs
 var init_openai = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/openai/index.mjs"() {
+  "node_modules/openai/index.mjs"() {
     init_client2();
     init_uploads4();
     init_api_promise2();
@@ -85519,7 +85519,7 @@ var init_openai = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/hash.js
+// node_modules/@earendil-works/pi-ai/dist/utils/hash.js
 function shortHash(str) {
   let h1 = 3735928559;
   let h2 = 1103547991;
@@ -85533,11 +85533,11 @@ function shortHash(str) {
   return (h2 >>> 0).toString(36) + (h1 >>> 0).toString(36);
 }
 var init_hash = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/hash.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/utils/hash.js"() {
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/openai-prompt-cache.js
+// node_modules/@earendil-works/pi-ai/dist/api/openai-prompt-cache.js
 function clampOpenAIPromptCacheKey(key) {
   if (key === void 0)
     return void 0;
@@ -85548,12 +85548,12 @@ function clampOpenAIPromptCacheKey(key) {
 }
 var OPENAI_PROMPT_CACHE_KEY_MAX_LENGTH;
 var init_openai_prompt_cache = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/openai-prompt-cache.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/api/openai-prompt-cache.js"() {
     OPENAI_PROMPT_CACHE_KEY_MAX_LENGTH = 64;
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/openai-completions.js
+// node_modules/@earendil-works/pi-ai/dist/api/openai-completions.js
 var openai_completions_exports = {};
 __export(openai_completions_exports, {
   convertMessages: () => convertMessages3,
@@ -86341,7 +86341,7 @@ function getCompat(model) {
 }
 var OPENAI_COMPLETIONS_REASONING_FIELDS, stream4, streamSimple3;
 var init_openai_completions = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/openai-completions.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/api/openai-completions.js"() {
     init_openai();
     init_models();
     init_error_body();
@@ -86713,7 +86713,7 @@ ${rawMetadata}`;
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/openai-responses-shared.js
+// node_modules/@earendil-works/pi-ai/dist/api/openai-responses-shared.js
 function encodeTextSignatureV1(id2, phase) {
   const payload = { v: 1, id: id2 };
   if (phase)
@@ -87352,7 +87352,7 @@ function mapStopReason4(status, incompleteReason) {
   }
 }
 var init_openai_responses_shared = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/openai-responses-shared.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/api/openai-responses-shared.js"() {
     init_models();
     init_hash();
     init_json_parse();
@@ -87364,7 +87364,7 @@ var init_openai_responses_shared = __esm({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/openai-responses.js
+// node_modules/@earendil-works/pi-ai/dist/api/openai-responses.js
 var openai_responses_exports = {};
 __export(openai_responses_exports, {
   stream: () => stream5,
@@ -87557,7 +87557,7 @@ function applyServiceTierPricing(usage, serviceTier, model) {
 }
 var OPENAI_TOOL_CALL_PROVIDERS, OPENAI_RESPONSES_MIN_OUTPUT_TOKENS, CHATGPT_USAGE_URL, CONFIGURATION_UPDATE_REQUEST_EFFORT, stream5, streamSimple4;
 var init_openai_responses = __esm({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/openai-responses.js"() {
+  "node_modules/@earendil-works/pi-ai/dist/api/openai-responses.js"() {
     init_openai();
     init_models();
     init_error_body();
@@ -87672,9 +87672,9 @@ Check your ChatGPT usage: ${CHATGPT_USAGE_URL}` : errorMessage;
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/isexe/windows.js
+// node_modules/isexe/windows.js
 var require_windows = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/isexe/windows.js"(exports, module) {
+  "node_modules/isexe/windows.js"(exports, module) {
     module.exports = isexe;
     isexe.sync = sync;
     var fs16 = __require("fs");
@@ -87712,9 +87712,9 @@ var require_windows = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/isexe/mode.js
+// node_modules/isexe/mode.js
 var require_mode = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/isexe/mode.js"(exports, module) {
+  "node_modules/isexe/mode.js"(exports, module) {
     module.exports = isexe;
     isexe.sync = sync;
     var fs16 = __require("fs");
@@ -87745,9 +87745,9 @@ var require_mode = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/isexe/index.js
+// node_modules/isexe/index.js
 var require_isexe = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/isexe/index.js"(exports, module) {
+  "node_modules/isexe/index.js"(exports, module) {
     var fs16 = __require("fs");
     var core;
     if (process.platform === "win32" || global.TESTING_WINDOWS) {
@@ -87800,9 +87800,9 @@ var require_isexe = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/which/which.js
+// node_modules/which/which.js
 var require_which = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/which/which.js"(exports, module) {
+  "node_modules/which/which.js"(exports, module) {
     var isWindows = process.platform === "win32" || process.env.OSTYPE === "cygwin" || process.env.OSTYPE === "msys";
     var path11 = __require("path");
     var COLON2 = isWindows ? ";" : ":";
@@ -87896,9 +87896,9 @@ var require_which = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/path-key/index.js
+// node_modules/path-key/index.js
 var require_path_key = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/path-key/index.js"(exports, module) {
+  "node_modules/path-key/index.js"(exports, module) {
     "use strict";
     var pathKey = (options = {}) => {
       const environment = options.env || process.env;
@@ -87913,9 +87913,9 @@ var require_path_key = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/cross-spawn/lib/util/resolveCommand.js
+// node_modules/cross-spawn/lib/util/resolveCommand.js
 var require_resolveCommand = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/cross-spawn/lib/util/resolveCommand.js"(exports, module) {
+  "node_modules/cross-spawn/lib/util/resolveCommand.js"(exports, module) {
     "use strict";
     var path11 = __require("path");
     var which = require_which();
@@ -87955,9 +87955,9 @@ var require_resolveCommand = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/cross-spawn/lib/util/escape.js
+// node_modules/cross-spawn/lib/util/escape.js
 var require_escape = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/cross-spawn/lib/util/escape.js"(exports, module) {
+  "node_modules/cross-spawn/lib/util/escape.js"(exports, module) {
     "use strict";
     var metaCharsRegExp = /([()\][%!^"`<>&|;, *?])/g;
     function escapeCommand(arg) {
@@ -87980,17 +87980,17 @@ var require_escape = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/shebang-regex/index.js
+// node_modules/shebang-regex/index.js
 var require_shebang_regex = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/shebang-regex/index.js"(exports, module) {
+  "node_modules/shebang-regex/index.js"(exports, module) {
     "use strict";
     module.exports = /^#!(.*)/;
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/shebang-command/index.js
+// node_modules/shebang-command/index.js
 var require_shebang_command = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/shebang-command/index.js"(exports, module) {
+  "node_modules/shebang-command/index.js"(exports, module) {
     "use strict";
     var shebangRegex = require_shebang_regex();
     module.exports = (string2 = "") => {
@@ -88008,9 +88008,9 @@ var require_shebang_command = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/cross-spawn/lib/util/readShebang.js
+// node_modules/cross-spawn/lib/util/readShebang.js
 var require_readShebang = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/cross-spawn/lib/util/readShebang.js"(exports, module) {
+  "node_modules/cross-spawn/lib/util/readShebang.js"(exports, module) {
     "use strict";
     var fs16 = __require("fs");
     var shebangCommand = require_shebang_command();
@@ -88030,9 +88030,9 @@ var require_readShebang = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/cross-spawn/lib/parse.js
+// node_modules/cross-spawn/lib/parse.js
 var require_parse2 = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/cross-spawn/lib/parse.js"(exports, module) {
+  "node_modules/cross-spawn/lib/parse.js"(exports, module) {
     "use strict";
     var path11 = __require("path");
     var resolveCommand = require_resolveCommand();
@@ -88092,9 +88092,9 @@ var require_parse2 = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/cross-spawn/lib/enoent.js
+// node_modules/cross-spawn/lib/enoent.js
 var require_enoent = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/cross-spawn/lib/enoent.js"(exports, module) {
+  "node_modules/cross-spawn/lib/enoent.js"(exports, module) {
     "use strict";
     var isWin = process.platform === "win32";
     function notFoundError(original, syscall) {
@@ -88142,9 +88142,9 @@ var require_enoent = __commonJS({
   }
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/cross-spawn/index.js
+// node_modules/cross-spawn/index.js
 var require_cross_spawn = __commonJS({
-  "../../home/box/projects/TaoAgent/taoagent/node_modules/cross-spawn/index.js"(exports, module) {
+  "node_modules/cross-spawn/index.js"(exports, module) {
     "use strict";
     var cp2 = __require("child_process");
     var parse = require_parse2();
@@ -88203,20 +88203,8 @@ function changeLife(store, key, operation) {
   fs.mkdirSync(directory, { recursive: true });
   const lock2 = store.file("chats", key, "social", ".social-lock"), owner = lock2 + "/owner.json";
   if (fs.existsSync(lock2)) {
-    let stale = false;
-    try {
-      const value = JSON.parse(fs.readFileSync(owner, "utf8"));
-      if (Number.isSafeInteger(value.pid) && value.pid > 0) {
-        try {
-          process.kill(value.pid, 0);
-        } catch (error) {
-          stale = error.code === "ESRCH";
-        }
-      }
-    } catch {
-    }
-    if (!stale) throw new HttpError(409, "\u65E5\u5E38\u7A7A\u95F4\u6B63\u5728\u66F4\u65B0\uFF0C\u8BF7\u91CD\u8BD5");
-    fs.unlinkSync(owner);
+    if (!staleLockDirectory(lock2, owner)) throw new HttpError(409, "\u65E5\u5E38\u7A7A\u95F4\u6B63\u5728\u66F4\u65B0\uFF0C\u8BF7\u91CD\u8BD5");
+    if (fs.existsSync(owner)) fs.unlinkSync(owner);
     fs.rmdirSync(lock2);
   }
   try {
@@ -88605,6 +88593,48 @@ function atomic(file, content) {
     if (fs2.existsSync(tmp)) fs2.unlinkSync(tmp);
   }
 }
+function staleLockDirectory(directory, ownerFile) {
+  try {
+    const owner = JSON.parse(fs2.readFileSync(ownerFile, "utf8"));
+    if (!Number.isSafeInteger(owner.pid) || Number(owner.pid) <= 0) return false;
+    try {
+      process.kill(Number(owner.pid), 0);
+      return false;
+    } catch (error) {
+      return error.code === "ESRCH";
+    }
+  } catch {
+    try {
+      return Date.now() - fs2.statSync(directory).mtimeMs > 3e4;
+    } catch {
+      return false;
+    }
+  }
+}
+function fileSignature(file) {
+  try {
+    const stat4 = fs2.statSync(file, { bigint: true });
+    return `${stat4.ino}:${stat4.size}:${stat4.mtimeNs}:${stat4.ctimeNs}`;
+  } catch (error) {
+    if (error.code === "ENOENT") return "";
+    throw error;
+  }
+}
+function appendAtomic(file, content) {
+  fs2.mkdirSync(path.dirname(file), { recursive: true });
+  const tmp = file + "." + crypto3.randomUUID() + ".tmp";
+  try {
+    try {
+      fs2.copyFileSync(file, tmp);
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+    }
+    fs2.appendFileSync(tmp, content, { mode: 384 });
+    fs2.renameSync(tmp, file);
+  } finally {
+    if (fs2.existsSync(tmp)) fs2.unlinkSync(tmp);
+  }
+}
 function json(file, value) {
   atomic(file, JSON.stringify(value, null, 2) + "\n");
 }
@@ -88906,9 +88936,9 @@ var Store2 = class {
       if (session.kind !== "group" || modelId && !this.models().some((model) => model.id === modelId)) throw new HttpError(400, "\u8BF7\u9009\u62E9\u6709\u6548\u7684\u7FA4\u6A21\u578B");
       if (expectedModelId !== void 0 && expectedModelId !== session.modelId) throw new HttpError(409, "\u7FA4\u6A21\u578B\u5DF2\u5728\u5176\u4ED6\u7A97\u53E3\u66F4\u6539\uFF0C\u8BF7\u91CD\u65B0\u8F7D\u5165\u540E\u9009\u62E9");
       if (modelId === session.modelId) return session;
-      const updated = { ...session, modelId, updatedAt: new Date(Math.max(Date.now(), Date.parse(session.updatedAt) + 1)).toISOString() };
-      json(this.file("chats", key, "session.json"), updated);
-      return updated;
+      const updatedAt = new Date(Math.max(Date.now(), Date.parse(session.updatedAt) + 1)).toISOString();
+      json(this.file("chats", key, "session.json"), { ...this.storedSession(key), modelId, updatedAt });
+      return { ...session, modelId, updatedAt };
     });
   }
   saveAgentUnlocked(agent, rules, memory) {
@@ -88937,6 +88967,9 @@ var Store2 = class {
       return { ...session, memberIds: members, agentId: members[0] || session.agentId, coordinatorId: members.includes(session.coordinatorId || "") ? session.coordinatorId : members[0] };
     }
     return session;
+  }
+  storedSession(key) {
+    return read(this.file("chats", id(key), "session.json"), this.root);
   }
   requireActiveSession(key) {
     const session = this.session(key);
@@ -89031,6 +89064,7 @@ var Store2 = class {
     const minimum = city ? 1 : details.spaceKind === "solo" || key && this.session(key).spaceKind === "solo" ? 1 : 2;
     if (members.length < minimum || !city && members.length > 12) throw new HttpError(400, minimum === 1 ? "\u8BF7\u9009\u62E9 1\u201312 \u4E2A Agent" : "\u8BF7\u9009\u62E9 2\u201312 \u4E2A Agent");
     for (const member2 of members) this.requireActiveAgent(member2);
+    if (!key && fs2.existsSync(this.file("chats", creationId, "session.json")) && !this.session(creationId).archivedAt) return this.session(creationId);
     const existing = key ? this.session(key) : void 0;
     if (existing?.archivedAt || !key && fs2.existsSync(this.file("chats", creationId, "session.json")) && this.session(creationId).archivedAt) throw new HttpError(410, "\u7FA4\u804A\u5DF2\u5220\u9664\uFF0C\u7F16\u8F91\u6216\u521B\u5EFA\u4E0D\u80FD\u6062\u590D\u5B83");
     if (expected !== void 0 && expected !== existing?.updatedAt) throw new HttpError(409, "\u7FA4\u8BBE\u7F6E\u5DF2\u5728\u53E6\u4E00\u7A97\u53E3\u66F4\u65B0\uFF0C\u4F60\u7684\u7F16\u8F91\u4ECD\u4FDD\u7559\uFF0C\u8BF7\u91CD\u65B0\u8F7D\u5165\u5BF9\u7167");
@@ -89237,7 +89271,7 @@ var Store2 = class {
     atomic(file, next);
     const auditFile = path.join(path.dirname(file), "memory-events.jsonl");
     const event = { at: (/* @__PURE__ */ new Date()).toISOString(), sourceSessionId: key, sourceMessageId: sourceId, agentId, scope, operation: append ? "append" : "edit" };
-    atomic(auditFile, (fs2.existsSync(auditFile) ? fs2.readFileSync(auditFile, "utf8") : "") + JSON.stringify(event) + "\n");
+    appendAtomic(auditFile, JSON.stringify(event) + "\n");
     return true;
   }
   memoryItems(key, agentId, scope) {
@@ -89450,15 +89484,34 @@ ${text2}`).join("\n\n");
       return true;
     });
   }
+  // Parsed histories are reused while the file identity (inode, size, mtime, ctime) is unchanged.
+  // Every write goes through atomic rename, so any change, including one from another local instance, invalidates the entry.
+  messageCache = /* @__PURE__ */ new Map();
   messages(key) {
     this.session(key);
-    return this.text("chats", id(key), "messages.jsonl").split("\n").filter(Boolean).flatMap((line) => {
-      try {
-        return [JSON.parse(line)];
-      } catch {
-        return [];
-      }
-    });
+    const file = this.file("chats", id(key), "messages.jsonl"), signature2 = fileSignature(file);
+    if (!signature2) {
+      this.messageCache.delete(file);
+      return [];
+    }
+    let cached = this.messageCache.get(file);
+    if (cached?.signature !== signature2) {
+      const messages = fs2.readFileSync(file, "utf8").split("\n").filter(Boolean).flatMap((line) => {
+        try {
+          return [JSON.parse(line)];
+        } catch {
+          return [];
+        }
+      });
+      cached = { signature: signature2, messages };
+      this.messageCache.delete(file);
+      this.messageCache.set(file, cached);
+      if (this.messageCache.size > 24) this.messageCache.delete(this.messageCache.keys().next().value);
+    } else {
+      this.messageCache.delete(file);
+      this.messageCache.set(file, cached);
+    }
+    return cached.messages.map((message) => ({ ...message }));
   }
   append(key, role, content, status = "complete", extra = {}, messageId) {
     return this.withMemoryLock(this.file("chats", id(key), "MEMORY.md"), () => {
@@ -89467,10 +89520,13 @@ ${text2}`).join("\n\n");
       const at = (/* @__PURE__ */ new Date()).toISOString();
       const file = this.file("chats", id(key), "messages.jsonl");
       const message = { id: messageId ? id(messageId) : crypto3.randomUUID(), role, content, at, status, ...extra };
-      atomic(file, this.text("chats", key, "messages.jsonl") + JSON.stringify(message) + "\n");
-      session.updatedAt = at;
-      if (session.title === "\u65B0\u5BF9\u8BDD" && role === "user") session.title = content.replace(/\s+/g, " ").slice(0, 42);
-      json(this.file("chats", key, "session.json"), session);
+      const before = fileSignature(file), cached = this.messageCache.get(file);
+      appendAtomic(file, JSON.stringify(message) + "\n");
+      if (cached && before && cached.signature === before) this.messageCache.set(file, { signature: fileSignature(file), messages: [...cached.messages, { ...message }] });
+      const stored = this.storedSession(key);
+      stored.updatedAt = at;
+      if (stored.title === "\u65B0\u5BF9\u8BDD" && role === "user") stored.title = content.replace(/\s+/g, " ").slice(0, 42);
+      json(this.file("chats", key, "session.json"), stored);
       return message;
     });
   }
@@ -89714,7 +89770,7 @@ if (process.argv[1] && path2.basename(process.argv[1]) === "portable.ts" && path
 }
 
 // evolution.ts
-var evolvable = ["public/workbench.js", "public/workbench.css", "public/sidebar.js", "public/sidebar.css", "components.ts", "civilization.ts", "public/civilization.js", "public/civilization.css", "public/components.css", "public/product.css", "public/town.js", "public/town.css", "public/square.js", "public/city-entry.js", "build-city.mjs", ...fs4.readdirSync(path3.join(ROOT, "public", "city")).filter((name) => name.endsWith(".js")).map((name) => "public/city/" + name), "context.ts", "audience.ts", "communication.ts", "reasoning.ts", "defaults.ts", "public/client.js", "public/index.html", "public/style.css", "app.ts", "runtime.ts", "store.ts", "pi.ts", "models.ts", "opencode-go.ts", "portable.ts", "migrate.ts"];
+var evolvable = ["public/workbench.js", "public/workbench.css", "public/sidebar.js", "public/sidebar.css", "components.ts", "civilization.ts", "public/civilization.js", "public/civilization.css", "public/components.css", "public/product.css", "public/town.js", "public/town.css", "public/square.js", "public/city-entry.js", "build-city.mjs", ...(fs4.existsSync(path3.join(ROOT, "public", "city")) ? fs4.readdirSync(path3.join(ROOT, "public", "city")) : []).filter((name) => name.endsWith(".js")).map((name) => "public/city/" + name), "context.ts", "audience.ts", "communication.ts", "reasoning.ts", "defaults.ts", "public/client.js", "public/index.html", "public/style.css", "app.ts", "runtime.ts", "store.ts", "pi.ts", "models.ts", "opencode-go.ts", "portable.ts", "migrate.ts"];
 var protectedReadableFiles = ["execution.ts", "evolution.ts", "build.mjs", "package.json", "package-lock.json", "README.md", "AGENTS.md", "CLAUDE.md"];
 var testPath = (name) => /^tests\/[a-zA-Z0-9_-]+\.test\.(ts|mjs)$/.test(name);
 var digest = (text2) => crypto5.createHash("sha256").update(text2).digest("hex");
@@ -90199,7 +90255,7 @@ import crypto12 from "node:crypto";
 // runtime.ts
 import crypto11 from "node:crypto";
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/system/memory/memory.mjs
+// node_modules/typebox/build/system/memory/memory.mjs
 var memory_exports = {};
 __export(memory_exports, {
   Assign: () => Assign,
@@ -90210,7 +90266,7 @@ __export(memory_exports, {
   Update: () => Update
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/system/memory/metrics.mjs
+// node_modules/typebox/build/system/memory/metrics.mjs
 var Metrics = {
   assign: 0,
   create: 0,
@@ -90219,7 +90275,7 @@ var Metrics = {
   update: 0
 };
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/system/settings/settings.mjs
+// node_modules/typebox/build/system/settings/settings.mjs
 var settings_exports = {};
 __export(settings_exports, {
   Get: () => Get,
@@ -90227,7 +90283,7 @@ __export(settings_exports, {
   Set: () => Set2
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/guard/emit.mjs
+// node_modules/typebox/build/guard/emit.mjs
 var emit_exports = {};
 __export(emit_exports, {
   And: () => And,
@@ -90277,7 +90333,7 @@ __export(emit_exports, {
   Ternary: () => Ternary
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/guard/guard.mjs
+// node_modules/typebox/build/guard/guard.mjs
 var guard_exports = {};
 __export(guard_exports, {
   Counted: () => Counted,
@@ -90320,7 +90376,7 @@ __export(guard_exports, {
   Values: () => Values
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/guard/string.mjs
+// node_modules/typebox/build/guard/string.mjs
 function IsBetween(value, min, max) {
   return value >= min && value <= max;
 }
@@ -90427,7 +90483,7 @@ function IsMaxLength(value, maxLength) {
   }
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/guard/guard.mjs
+// node_modules/typebox/build/guard/guard.mjs
 function IsArray(value) {
   return Array.isArray(value);
 }
@@ -90583,7 +90639,7 @@ function IsDeepEqual(left, right) {
   return IsArray(left) ? DeepEqualArray(left, right) : IsObject(left) ? DeepEqualObject(left, right) : IsEqual(left, right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/guard/emit.mjs
+// node_modules/typebox/build/guard/emit.mjs
 var identifierRegExp = /^[\p{ID_Start}_$][\p{ID_Continue}_$\u200C\u200D]*$/u;
 function IsIdentifier(value) {
   return identifierRegExp.test(value);
@@ -90727,7 +90783,7 @@ function MultipleOf(dividend, divisor) {
   return `Guard.IsMultipleOf(${dividend}, ${divisor})`;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/guard/globals.mjs
+// node_modules/typebox/build/guard/globals.mjs
 var globals_exports = {};
 __export(globals_exports, {
   IsBigInt64Array: () => IsBigInt64Array,
@@ -90808,10 +90864,10 @@ function IsMap(value) {
   return value instanceof globalThis.Map;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/guard/index.mjs
+// node_modules/typebox/build/guard/index.mjs
 var guard_default = guard_exports;
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/system/settings/settings.mjs
+// node_modules/typebox/build/system/settings/settings.mjs
 var settings = {
   immutableTypes: false,
   maxErrors: 8,
@@ -90844,18 +90900,18 @@ function Get() {
   return settings;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/system/memory/freeze.mjs
+// node_modules/typebox/build/system/memory/freeze.mjs
 function Freeze(value) {
   return settings_exports.Get().immutableTypes ? Object.freeze(value) : value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/system/memory/assign.mjs
+// node_modules/typebox/build/system/memory/assign.mjs
 function Assign(left, right) {
   Metrics.assign += 1;
   return Freeze({ ...left, ...right });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/system/memory/clone.mjs
+// node_modules/typebox/build/system/memory/clone.mjs
 function FromClassInstance(value) {
   return value;
 }
@@ -90915,7 +90971,7 @@ function Clone(value) {
   return FromValue(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/system/memory/create.mjs
+// node_modules/typebox/build/system/memory/create.mjs
 function MergeHidden(left, right) {
   for (const key of Object.keys(right)) {
     Object.defineProperty(left, key, {
@@ -90937,7 +90993,7 @@ function Create(hidden, enumerable, options = {}) {
   return Freeze(withHidden);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/system/memory/discard.mjs
+// node_modules/typebox/build/system/memory/discard.mjs
 function Discard(value, propertyKeys) {
   Metrics.discard += 1;
   const result = {};
@@ -90951,7 +91007,7 @@ function Discard(value, propertyKeys) {
   return Freeze(result);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/system/memory/update.mjs
+// node_modules/typebox/build/system/memory/update.mjs
 function Update(current, hidden, enumerable) {
   Metrics.update += 1;
   const settings2 = settings_exports.Get();
@@ -90975,7 +91031,7 @@ function Update(current, hidden, enumerable) {
   return Freeze(result);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/schema.mjs
+// node_modules/typebox/build/type/types/schema.mjs
 function IsKind(value, kind) {
   return guard_exports.IsObject(value) && guard_exports.HasPropertyKey(value, "~kind") && guard_exports.IsEqual(value["~kind"], kind);
 }
@@ -90983,7 +91039,7 @@ function IsSchema(value) {
   return guard_exports.IsObject(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/deferred.mjs
+// node_modules/typebox/build/type/types/deferred.mjs
 function Deferred(action, parameters, options) {
   return memory_exports.Create({ "~kind": "Deferred" }, { type: "deferred", action, parameters, options }, {});
 }
@@ -90991,7 +91047,7 @@ function IsDeferred(value) {
   return IsKind(value, "Deferred");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/readonly/instantiate_add.mjs
+// node_modules/typebox/build/type/engine/readonly/instantiate_add.mjs
 function AddReadonlyOperation(type) {
   return memory_exports.Update(type, { "~readonly": true }, {});
 }
@@ -91004,7 +91060,7 @@ function AddReadonlyInstantiate(context, state3, type, options) {
   return AddReadonlyAction(instantiatedType, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/optional/instantiate_add.mjs
+// node_modules/typebox/build/type/engine/optional/instantiate_add.mjs
 function AddOptionalOperation(type) {
   return memory_exports.Update(type, { "~optional": true }, {});
 }
@@ -91017,7 +91073,7 @@ function AddOptionalInstantiate(context, state3, type, options) {
   return AddOptionalAction(instantiatedType, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/array.mjs
+// node_modules/typebox/build/type/types/array.mjs
 function _Array_(items, options) {
   return memory_exports.Create({ "~kind": "Array" }, { type: "array", items }, options);
 }
@@ -91028,7 +91084,7 @@ function ArrayOptions(type) {
   return memory_exports.Discard(type, ["~kind", "type", "items"]);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/constructor.mjs
+// node_modules/typebox/build/type/types/constructor.mjs
 function Constructor(parameters, instanceType, options = {}) {
   return memory_exports.Create({ "~kind": "Constructor" }, { type: "constructor", parameters, instanceType }, options);
 }
@@ -91039,7 +91095,7 @@ function ConstructorOptions(type) {
   return memory_exports.Discard(type, ["~kind", "type", "parameters", "instanceType"]);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/function.mjs
+// node_modules/typebox/build/type/types/function.mjs
 function _Function_(parameters, returnType, options = {}) {
   return memory_exports.Create({ ["~kind"]: "Function" }, { type: "function", parameters, returnType }, options);
 }
@@ -91050,7 +91106,7 @@ function FunctionOptions(type) {
   return memory_exports.Discard(type, ["~kind", "type", "parameters", "returnType"]);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/ref.mjs
+// node_modules/typebox/build/type/types/ref.mjs
 function Ref(ref, options) {
   return memory_exports.Create({ ["~kind"]: "Ref" }, { $ref: ref }, options);
 }
@@ -91058,7 +91114,7 @@ function IsRef(value) {
   return IsKind(value, "Ref");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/generic.mjs
+// node_modules/typebox/build/type/types/generic.mjs
 function Generic(parameters, expression) {
   return memory_exports.Create({ "~kind": "Generic" }, { type: "generic", parameters, expression });
 }
@@ -91066,7 +91122,7 @@ function IsGeneric(value) {
   return IsKind(value, "Generic");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/any.mjs
+// node_modules/typebox/build/type/types/any.mjs
 function Any(options) {
   return memory_exports.Create({ ["~kind"]: "Any" }, {}, options);
 }
@@ -91074,7 +91130,7 @@ function IsAny(value) {
   return IsKind(value, "Any");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/never.mjs
+// node_modules/typebox/build/type/types/never.mjs
 var NeverPattern = "(?!)";
 function Never(options) {
   return memory_exports.Create({ "~kind": "Never" }, { not: {} }, options);
@@ -91083,7 +91139,7 @@ function IsNever(value) {
   return IsKind(value, "Never");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/_add_optional.mjs
+// node_modules/typebox/build/type/action/_add_optional.mjs
 function AddOptionalDeferred(type, options = {}) {
   return Deferred("AddOptional", [type], options);
 }
@@ -91091,7 +91147,7 @@ function AddOptional(type, options = {}) {
   return AddOptionalAction(type, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/_optional.mjs
+// node_modules/typebox/build/type/types/_optional.mjs
 function Optional(type) {
   return AddOptional(type);
 }
@@ -91099,7 +91155,7 @@ function IsOptional(value) {
   return IsSchema(value) && guard_exports.HasPropertyKey(value, "~optional");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/properties.mjs
+// node_modules/typebox/build/type/types/properties.mjs
 function RequiredArray(properties) {
   return guard_exports.Keys(properties).filter((key) => !IsOptional(properties[key]));
 }
@@ -91110,7 +91166,7 @@ function PropertyValues(properties) {
   return guard_exports.Values(properties);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/object.mjs
+// node_modules/typebox/build/type/types/object.mjs
 function _Object_(properties, options = {}) {
   const requiredKeys = RequiredArray(properties);
   const required2 = requiredKeys.length > 0 ? { required: requiredKeys } : {};
@@ -91123,7 +91179,7 @@ function ObjectOptions(type) {
   return memory_exports.Discard(type, ["~kind", "type", "properties", "required"]);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/unknown.mjs
+// node_modules/typebox/build/type/types/unknown.mjs
 function Unknown(options) {
   return memory_exports.Create({ ["~kind"]: "Unknown" }, {}, options);
 }
@@ -91131,7 +91187,7 @@ function IsUnknown(value) {
   return IsKind(value, "Unknown");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/cyclic.mjs
+// node_modules/typebox/build/type/types/cyclic.mjs
 function Cyclic($defs, $ref, options) {
   const defs = guard_exports.Keys($defs).reduce((result, key) => {
     return { ...result, [key]: memory_exports.Update($defs[key], {}, { $id: key }) };
@@ -91142,7 +91198,7 @@ function IsCyclic(value) {
   return IsKind(value, "Cyclic");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/unsafe.mjs
+// node_modules/typebox/build/type/types/unsafe.mjs
 function Unsafe(schema2) {
   return memory_exports.Update(schema2, { ["~unsafe"]: null }, {});
 }
@@ -91150,7 +91206,7 @@ function IsUnsafe(value) {
   return guard_exports.IsObjectNotArray(value) && guard_exports.HasPropertyKey(value, "~unsafe") && guard_exports.IsNull(value["~unsafe"]);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/system/arguments/arguments.mjs
+// node_modules/typebox/build/system/arguments/arguments.mjs
 var arguments_exports = {};
 __export(arguments_exports, {
   Match: () => Match
@@ -91161,7 +91217,7 @@ function Match(args, match2) {
   })();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/infer.mjs
+// node_modules/typebox/build/type/types/infer.mjs
 function Infer(...args) {
   const [name, extends_] = arguments_exports.Match(args, {
     2: (name2, extends_2) => [name2, extends_2, extends_2],
@@ -91173,7 +91229,7 @@ function IsInfer(value) {
   return IsKind(value, "Infer");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/dependent.mjs
+// node_modules/typebox/build/type/types/dependent.mjs
 function Dependent(if_, then_, else_, options = {}) {
   return memory_exports.Create({ "~kind": "Dependent" }, { if: if_, then: then_, else: else_ }, options);
 }
@@ -91184,7 +91240,7 @@ function DependentOptions(type) {
   return memory_exports.Discard(type, ["~kind", "if", "then", "else"]);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/enum/typescript_enum_to_enum_values.mjs
+// node_modules/typebox/build/type/engine/enum/typescript_enum_to_enum_values.mjs
 function IsTypeScriptEnumLike(value) {
   return guard_exports.IsObjectNotArray(value);
 }
@@ -91193,7 +91249,7 @@ function TypeScriptEnumToEnumValues(type) {
   return keys.reduce((result, key) => [...result, type[key]], []);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/enum.mjs
+// node_modules/typebox/build/type/types/enum.mjs
 function IsEnumValue(value) {
   return guard_exports.IsString(value) || guard_exports.IsNumber(value);
 }
@@ -91205,7 +91261,7 @@ function IsEnum(value) {
   return IsKind(value, "Enum");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/intersect.mjs
+// node_modules/typebox/build/type/types/intersect.mjs
 function Intersect(types3, options = {}) {
   return memory_exports.Create({ "~kind": "Intersect" }, { allOf: types3 }, options);
 }
@@ -91216,14 +91272,14 @@ function IntersectOptions(type) {
   return memory_exports.Discard(type, ["~kind", "allOf"]);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/system/environment/environment.mjs
+// node_modules/typebox/build/system/environment/environment.mjs
 var environment_exports = {};
 __export(environment_exports, {
   CanEvaluate: () => CanEvaluate,
   Evaluate: () => Evaluate
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/system/environment/evaluate.mjs
+// node_modules/typebox/build/system/environment/evaluate.mjs
 var supported = void 0;
 function TryEvaluate() {
   try {
@@ -91242,19 +91298,19 @@ function Evaluate(...args) {
   return new globalThis.Function(...args);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/system/hashing/hash.mjs
+// node_modules/typebox/build/system/hashing/hash.mjs
 var hash_exports = {};
 __export(hash_exports, {
   Hash: () => Hash,
   HashCode: () => HashCode
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/system/unreachable/unreachable.mjs
+// node_modules/typebox/build/system/unreachable/unreachable.mjs
 function Unreachable() {
   throw new Error("Unreachable");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/system/hashing/hash.mjs
+// node_modules/typebox/build/system/hashing/hash.mjs
 function InstanceKeys(value) {
   const propertyKeys = /* @__PURE__ */ new Set();
   let current = value;
@@ -91388,7 +91444,7 @@ function Hash(value) {
   return HashCode(value).toString(16).padStart(16, "0");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/system/locale/en_US.mjs
+// node_modules/typebox/build/system/locale/en_US.mjs
 function en_US(error) {
   switch (error.keyword) {
     case "additionalProperties":
@@ -91459,13 +91515,13 @@ function en_US(error) {
   }
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/system/locale/_config.mjs
+// node_modules/typebox/build/system/locale/_config.mjs
 var locale = en_US;
 function Get2() {
   return locale;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/_codec.mjs
+// node_modules/typebox/build/type/types/_codec.mjs
 var EncodeBuilder = class {
   constructor(type, decode) {
     this.type = type;
@@ -91504,7 +91560,7 @@ function IsCodec(value) {
   return IsSchema(value) && guard_exports.HasPropertyKey(value, "~codec") && guard_exports.IsObject(value["~codec"]) && guard_exports.HasPropertyKey(value["~codec"], "encode") && guard_exports.HasPropertyKey(value["~codec"], "decode");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/_immutable.mjs
+// node_modules/typebox/build/type/types/_immutable.mjs
 function Immutable(type) {
   return AddImmutable(type);
 }
@@ -91512,7 +91568,7 @@ function IsImmutable(value) {
   return IsSchema(value) && guard_exports.HasPropertyKey(value, "~immutable");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/_add_readonly.mjs
+// node_modules/typebox/build/type/action/_add_readonly.mjs
 function AddReadonlyDeferred(type, options = {}) {
   return Deferred("AddReadonly", [type], options);
 }
@@ -91520,7 +91576,7 @@ function AddReadonly(type, options = {}) {
   return AddReadonlyAction(type, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/_readonly.mjs
+// node_modules/typebox/build/type/types/_readonly.mjs
 function Readonly(type) {
   return AddReadonly(type);
 }
@@ -91528,7 +91584,7 @@ function IsReadonly(value) {
   return IsSchema(value) && guard_exports.HasPropertyKey(value, "~readonly");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/_refine.mjs
+// node_modules/typebox/build/type/types/_refine.mjs
 function RefineAdd(type, refinement) {
   const refinements = IsRefine(type) ? [...type["~refine"], refinement] : [refinement];
   return memory_exports.Update(type, { "~refine": refinements }, {});
@@ -91547,7 +91603,7 @@ function IsRefine(value) {
   return IsSchema(value) && guard_exports.HasPropertyKey(value, "~refine") && guard_exports.IsArray(value["~refine"]) && guard_exports.Every(value["~refine"], 0, (value2) => IsRefinement(value2));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/bigint.mjs
+// node_modules/typebox/build/type/types/bigint.mjs
 var BigIntPattern = "-?(?:0|[1-9][0-9]*)n";
 function BigInt2(options) {
   return memory_exports.Create({ "~kind": "BigInt" }, { type: "bigint" }, options);
@@ -91556,7 +91612,7 @@ function IsBigInt3(value) {
   return IsKind(value, "BigInt");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/boolean.mjs
+// node_modules/typebox/build/type/types/boolean.mjs
 function Boolean2(options) {
   return memory_exports.Create({ "~kind": "Boolean" }, { type: "boolean" }, options);
 }
@@ -91564,7 +91620,7 @@ function IsBoolean4(value) {
   return IsKind(value, "Boolean");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/identifier.mjs
+// node_modules/typebox/build/type/types/identifier.mjs
 function Identifier(name) {
   return memory_exports.Create({ "~kind": "Identifier" }, { name });
 }
@@ -91572,7 +91628,7 @@ function IsIdentifier2(value) {
   return IsKind(value, "Identifier");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/integer.mjs
+// node_modules/typebox/build/type/types/integer.mjs
 var IntegerPattern = "-?(?:0|[1-9][0-9]*)";
 function Integer(options) {
   return memory_exports.Create({ "~kind": "Integer" }, { type: "integer" }, options);
@@ -91581,7 +91637,7 @@ function IsInteger3(value) {
   return IsKind(value, "Integer");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/literal.mjs
+// node_modules/typebox/build/type/types/literal.mjs
 var InvalidLiteralValue = class extends Error {
   constructor(value) {
     super(`Invalid Literal value`);
@@ -91620,7 +91676,7 @@ function IsLiteral(value) {
   return IsKind(value, "Literal");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/null.mjs
+// node_modules/typebox/build/type/types/null.mjs
 function Null(options) {
   return memory_exports.Create({ "~kind": "Null" }, { type: "null" }, options);
 }
@@ -91628,7 +91684,7 @@ function IsNull3(value) {
   return IsKind(value, "Null");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/number.mjs
+// node_modules/typebox/build/type/types/number.mjs
 var NumberPattern = "-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?";
 function Number2(options) {
   return memory_exports.Create({ "~kind": "Number" }, { type: "number" }, options);
@@ -91637,7 +91693,7 @@ function IsNumber4(value) {
   return IsKind(value, "Number");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/symbol.mjs
+// node_modules/typebox/build/type/types/symbol.mjs
 function Symbol2(options) {
   return memory_exports.Create({ "~kind": "Symbol" }, { type: "symbol" }, options);
 }
@@ -91645,7 +91701,7 @@ function IsSymbol3(value) {
   return IsKind(value, "Symbol");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/parameter.mjs
+// node_modules/typebox/build/type/types/parameter.mjs
 function Parameter(...args) {
   const [name, extends_, equals] = arguments_exports.Match(args, {
     3: (name2, extends_2, equals2) => [name2, extends_2, equals2],
@@ -91658,7 +91714,7 @@ function IsParameter(value) {
   return IsKind(value, "Parameter");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/string.mjs
+// node_modules/typebox/build/type/types/string.mjs
 var StringPattern = ".*";
 function String2(options) {
   return memory_exports.Create({ "~kind": "String" }, { type: "string" }, options);
@@ -91667,7 +91723,7 @@ function IsString4(value) {
   return IsKind(value, "String");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/union.mjs
+// node_modules/typebox/build/type/types/union.mjs
 function Union(anyOf, options = {}) {
   return memory_exports.Create({ "~kind": "Union" }, { anyOf }, options);
 }
@@ -91678,14 +91734,14 @@ function UnionOptions(type) {
   return memory_exports.Discard(type, ["~kind", "anyOf"]);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/patterns/pattern.mjs
+// node_modules/typebox/build/type/engine/patterns/pattern.mjs
 function ParsePatternIntoTypes(pattern) {
   const parsed = Pattern(pattern);
   const result = guard_exports.IsEqual(parsed.length, 2) ? parsed[0] : [];
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/template_literal/is_finite.mjs
+// node_modules/typebox/build/type/engine/template_literal/is_finite.mjs
 function FromLiteral(_value) {
   return true;
 }
@@ -91704,12 +91760,12 @@ function IsTemplateLiteralFinite(types3) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/template_literal/create.mjs
+// node_modules/typebox/build/type/engine/template_literal/create.mjs
 function TemplateLiteralCreate(pattern) {
   return memory_exports.Create({ ["~kind"]: "TemplateLiteral" }, { type: "string", pattern }, {});
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/template_literal/decode.mjs
+// node_modules/typebox/build/type/engine/template_literal/decode.mjs
 function FromLiteralPush(variants, value, result = []) {
   return guard_exports.ShiftLeft(variants, (left, right) => FromLiteralPush(right, value, [...result, `${left}${value}`]), () => result);
 }
@@ -91752,24 +91808,24 @@ function TemplateLiteralDecode(pattern) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/record/record_create.mjs
+// node_modules/typebox/build/type/engine/record/record_create.mjs
 function CreateRecord(key, value) {
   const type = "object";
   const patternProperties = { [key]: value };
   return memory_exports.Create({ ["~kind"]: "Record" }, { type, patternProperties });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/record/from_key_any.mjs
+// node_modules/typebox/build/type/engine/record/from_key_any.mjs
 function FromAnyKey(value) {
   return CreateRecord(StringKey, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/record/from_key_boolean.mjs
+// node_modules/typebox/build/type/engine/record/from_key_boolean.mjs
 function FromBooleanKey(value) {
   return _Object_({ true: value, false: value });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/tuple.mjs
+// node_modules/typebox/build/type/types/tuple.mjs
 function Tuple(types3, options = {}) {
   const [items, minItems, additionalItems] = [types3, types3.length, false];
   return memory_exports.Create({ ["~kind"]: "Tuple" }, { type: "array", additionalItems, items, minItems }, options);
@@ -91781,7 +91837,7 @@ function TupleOptions(type) {
   return memory_exports.Discard(type, ["~kind", "type", "items", "minItems", "additionalItems"]);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/readonly/instantiate_remove.mjs
+// node_modules/typebox/build/type/engine/readonly/instantiate_remove.mjs
 function RemoveReadonlyOperation(type) {
   return memory_exports.Discard(type, ["~readonly"]);
 }
@@ -91794,7 +91850,7 @@ function RemoveReadonlyInstantiate(context, state3, type, options) {
   return RemoveReadonlyAction(instantiatedType, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/_remove_readonly.mjs
+// node_modules/typebox/build/type/action/_remove_readonly.mjs
 function RemoveReadonlyDeferred(type, options = {}) {
   return Deferred("RemoveReadonly", [type], options);
 }
@@ -91802,7 +91858,7 @@ function RemoveReadonly(type, options = {}) {
   return RemoveReadonlyAction(type, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/optional/instantiate_remove.mjs
+// node_modules/typebox/build/type/engine/optional/instantiate_remove.mjs
 function RemoveOptionalOperation(type) {
   return memory_exports.Discard(type, ["~optional"]);
 }
@@ -91815,7 +91871,7 @@ function RemoveOptionalInstantiate(context, state3, type, options) {
   return RemoveOptionalAction(instantiatedType, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/_remove_optional.mjs
+// node_modules/typebox/build/type/action/_remove_optional.mjs
 function RemoveOptionalDeferred(type, options = {}) {
   return Deferred("RemoveOptional", [type], options);
 }
@@ -91823,7 +91879,7 @@ function RemoveOptional(type, options = {}) {
   return RemoveOptionalAction(type, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/tuple/to_object.mjs
+// node_modules/typebox/build/type/engine/tuple/to_object.mjs
 function TupleElementsToProperties(types3) {
   const result = types3.reduceRight((result2, right, index3) => {
     return { [index3]: right, ...result2 };
@@ -91836,7 +91892,7 @@ function TupleToObject(type) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/evaluate/composite.mjs
+// node_modules/typebox/build/type/engine/evaluate/composite.mjs
 function CanComposite(type) {
   return IsObject3(type) || IsTuple(type);
 }
@@ -91875,7 +91931,7 @@ function Composite(left, right) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/evaluate/narrow.mjs
+// node_modules/typebox/build/type/engine/evaluate/narrow.mjs
 function NarrowCompareRule(left, right) {
   const result = Compare(left, right);
   return guard_exports.IsEqual(result, CompareResultLeftInside) ? left : guard_exports.IsEqual(result, CompareResultRightInside) ? right : guard_exports.IsEqual(result, CompareResultEqual) ? right : Never();
@@ -91889,7 +91945,7 @@ function Narrow(left, right) {
   return IsNever(left) ? left : IsAny(left) ? left : IsUnknown(left) ? right : IsNever(right) ? right : IsAny(right) ? right : IsUnknown(right) ? left : NarrowCompositeRule(left, right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/evaluate/distribute.mjs
+// node_modules/typebox/build/type/engine/evaluate/distribute.mjs
 function ShouldEvaluate(left, right) {
   const result = IsUnion(left) || IsUnion(right);
   return result;
@@ -91911,7 +91967,7 @@ function Distribute(types3, result = []) {
   return guard_exports.ShiftLeft(types3, (left, right) => IsUnion(left) ? Distribute(right, DistributeUnion(left.anyOf, result)) : Distribute(right, DistributeType(left, result)), () => result);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/exclude/operation.mjs
+// node_modules/typebox/build/type/engine/exclude/operation.mjs
 function ExcludeType(left, right) {
   const check = Extends({}, left, right);
   const result = result_exports.IsExtendsTrueLike(check) ? [] : [left];
@@ -91928,7 +91984,7 @@ function ExcludeOperation(left, right) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/evaluate/evaluate.mjs
+// node_modules/typebox/build/type/engine/evaluate/evaluate.mjs
 function EvaluateDependent(if_, then_, else_) {
   const intersected = EvaluateIntersect([if_, then_]);
   const excluded = ExcludeOperation(else_, if_);
@@ -91963,43 +92019,43 @@ function EvaluateUnionFast(types3) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/record/from_key_enum.mjs
+// node_modules/typebox/build/type/engine/record/from_key_enum.mjs
 function FromEnumKey(values, value) {
   const unionKey = EvaluateEnum(values);
   const result = FromKey(unionKey, value);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/record/from_key_integer.mjs
+// node_modules/typebox/build/type/engine/record/from_key_integer.mjs
 function FromIntegerKey(_key, value) {
   const result = CreateRecord(IntegerKey, value);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/record/from_key_intersect.mjs
+// node_modules/typebox/build/type/engine/record/from_key_intersect.mjs
 function FromIntersectKey(types3, value) {
   const evaluatedKey = EvaluateIntersect(types3);
   const result = FromKey(evaluatedKey, value);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/record/from_key_literal.mjs
+// node_modules/typebox/build/type/engine/record/from_key_literal.mjs
 function FromLiteralKey(key, value) {
   return guard_exports.IsString(key) || guard_exports.IsNumber(key) ? _Object_({ [key]: value }) : guard_exports.IsEqual(key, false) ? _Object_({ false: value }) : guard_exports.IsEqual(key, true) ? _Object_({ true: value }) : _Object_({});
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/record/from_key_number.mjs
+// node_modules/typebox/build/type/engine/record/from_key_number.mjs
 function FromNumberKey(_key, value) {
   const result = CreateRecord(NumberKey, value);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/record/from_key_string.mjs
+// node_modules/typebox/build/type/engine/record/from_key_string.mjs
 function FromStringKey(key, value) {
   return guard_exports.HasPropertyKey(key, "pattern") && (guard_exports.IsString(key.pattern) || key.pattern instanceof RegExp) ? CreateRecord(key.pattern.toString(), value) : CreateRecord(StringKey, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/record/from_key_template_literal.mjs
+// node_modules/typebox/build/type/engine/record/from_key_template_literal.mjs
 function FromTemplateKey(pattern, value) {
   const types3 = ParsePatternIntoTypes(pattern);
   const finite = IsTemplateLiteralFinite(types3);
@@ -92007,7 +92063,7 @@ function FromTemplateKey(pattern, value) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/evaluate/flatten.mjs
+// node_modules/typebox/build/type/engine/evaluate/flatten.mjs
 function FlattenType(type) {
   const result = IsUnion(type) ? Flatten(type.anyOf) : [type];
   return result;
@@ -92016,7 +92072,7 @@ function Flatten(types3, result = []) {
   return guard_exports.ShiftLeft(types3, (left, right) => Flatten(right, [...result, ...FlattenType(left)]), () => result);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/record/from_key_union.mjs
+// node_modules/typebox/build/type/engine/record/from_key_union.mjs
 function StringOrNumberCheck(types3) {
   return types3.some((type) => IsString4(type) || IsNumber4(type) || IsInteger3(type));
 }
@@ -92039,13 +92095,13 @@ function FromUnionKey(types3, value) {
   return IsSchema(record) ? record : CreateObject(flattened, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/record/from_key.mjs
+// node_modules/typebox/build/type/engine/record/from_key.mjs
 function FromKey(key, value) {
   const result = IsAny(key) ? FromAnyKey(value) : IsBoolean4(key) ? FromBooleanKey(value) : IsEnum(key) ? FromEnumKey(key.enum, value) : IsInteger3(key) ? FromIntegerKey(key, value) : IsIntersect(key) ? FromIntersectKey(key.allOf, value) : IsLiteral(key) ? FromLiteralKey(key.const, value) : IsNumber4(key) ? FromNumberKey(key, value) : IsUnion(key) ? FromUnionKey(key.anyOf, value) : IsString4(key) ? FromStringKey(key, value) : IsTemplateLiteral(key) ? FromTemplateKey(key.pattern, value) : _Object_({});
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/record/instantiate.mjs
+// node_modules/typebox/build/type/engine/record/instantiate.mjs
 function RecordAction(key, value, options) {
   const result = CanInstantiate([key]) ? memory_exports.Update(FromKey(key, value), {}, options) : RecordDeferred(key, value, options);
   return result;
@@ -92056,7 +92112,7 @@ function RecordInstantiate(context, state3, key, value, options) {
   return RecordAction(instantiatedKey, instantiatedValue, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/record.mjs
+// node_modules/typebox/build/type/types/record.mjs
 var IntegerKey = `^${IntegerPattern}$`;
 var NumberKey = `^${NumberPattern}$`;
 var StringKey = `^${StringPattern}$`;
@@ -92088,7 +92144,7 @@ function IsRecord(value) {
   return IsKind(value, "Record");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/rest.mjs
+// node_modules/typebox/build/type/types/rest.mjs
 function Rest(type) {
   return memory_exports.Create({ "~kind": "Rest" }, { type: "rest", items: type }, {});
 }
@@ -92096,7 +92152,7 @@ function IsRest(value) {
   return IsKind(value, "Rest");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/this.mjs
+// node_modules/typebox/build/type/types/this.mjs
 function This(options) {
   return memory_exports.Create({ ["~kind"]: "This" }, { $ref: "#" }, options);
 }
@@ -92104,7 +92160,7 @@ function IsThis(value) {
   return IsKind(value, "This");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/undefined.mjs
+// node_modules/typebox/build/type/types/undefined.mjs
 function Undefined(options) {
   return memory_exports.Create({ "~kind": "Undefined" }, { type: "undefined" }, options);
 }
@@ -92112,7 +92168,7 @@ function IsUndefined3(value) {
   return IsKind(value, "Undefined");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/void.mjs
+// node_modules/typebox/build/type/types/void.mjs
 function Void(options) {
   return memory_exports.Create({ "~kind": "Void" }, { type: "void" }, options);
 }
@@ -92120,7 +92176,7 @@ function IsVoid(value) {
   return IsKind(value, "Void");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/mapping.mjs
+// node_modules/typebox/build/type/script/mapping.mjs
 function IntrinsicOrCall(ref, parameters) {
   return guard_exports.IsEqual(ref, "Array") ? _Array_(parameters[0]) : guard_exports.IsEqual(ref, "Capitalize") ? CapitalizeDeferred(parameters[0]) : guard_exports.IsEqual(ref, "ConstructorParameters") ? ConstructorParametersDeferred(parameters[0]) : guard_exports.IsEqual(ref, "Evaluate") ? EvaluateDeferred(parameters[0]) : guard_exports.IsEqual(ref, "Exclude") ? ExcludeDeferred(parameters[0], parameters[1]) : guard_exports.IsEqual(ref, "Extract") ? ExtractDeferred(parameters[0], parameters[1]) : guard_exports.IsEqual(ref, "Index") ? IndexDeferred(parameters[0], parameters[1]) : guard_exports.IsEqual(ref, "InstanceType") ? InstanceTypeDeferred(parameters[0]) : guard_exports.IsEqual(ref, "Lowercase") ? LowercaseDeferred(parameters[0]) : guard_exports.IsEqual(ref, "NonNullable") ? NonNullableDeferred(parameters[0]) : guard_exports.IsEqual(ref, "Omit") ? OmitDeferred(parameters[0], parameters[1]) : guard_exports.IsEqual(ref, "Parameters") ? ParametersDeferred(parameters[0]) : guard_exports.IsEqual(ref, "Partial") ? PartialDeferred(parameters[0]) : guard_exports.IsEqual(ref, "Pick") ? PickDeferred(parameters[0], parameters[1]) : guard_exports.IsEqual(ref, "Readonly") ? ReadonlyObjectDeferred(parameters[0]) : guard_exports.IsEqual(ref, "KeyOf") ? KeyOfDeferred(parameters[0]) : guard_exports.IsEqual(ref, "Record") ? RecordDeferred(parameters[0], parameters[1]) : guard_exports.IsEqual(ref, "Required") ? RequiredDeferred(parameters[0]) : guard_exports.IsEqual(ref, "ReturnType") ? ReturnTypeDeferred(parameters[0]) : guard_exports.IsEqual(ref, "Uncapitalize") ? UncapitalizeDeferred(parameters[0]) : guard_exports.IsEqual(ref, "Uppercase") ? UppercaseDeferred(parameters[0]) : CallConstruct(Ref(ref), parameters);
 }
@@ -92548,7 +92604,7 @@ function ScriptMapping(input) {
   return input;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/token/internal/match.mjs
+// node_modules/typebox/build/type/script/token/internal/match.mjs
 function IsMatch(value) {
   return IsEqual(value.length, 2);
 }
@@ -92556,7 +92612,7 @@ function Match2(input, ok, fail2) {
   return IsMatch(input) ? ok(input[0], input[1]) : fail2();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/token/internal/take.mjs
+// node_modules/typebox/build/type/script/token/internal/take.mjs
 function TakeVariant(variant, input) {
   return IsEqual(input.indexOf(variant), 0) ? [variant, input.slice(variant.length)] : [];
 }
@@ -92569,7 +92625,7 @@ function Take(variants, input) {
   return [];
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/token/internal/char.mjs
+// node_modules/typebox/build/type/script/token/internal/char.mjs
 function Range(start, end) {
   return Array.from({ length: end - start + 1 }, (_, i2) => String.fromCharCode(start + i2));
 }
@@ -92589,7 +92645,7 @@ var Dot = ".";
 var DollarSign = "$";
 var Hyphen = "-";
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/token/internal/trim.mjs
+// node_modules/typebox/build/type/script/token/internal/trim.mjs
 var LineComment = "//";
 var OpenComment = "/*";
 var CloseComment = "*/";
@@ -92615,12 +92671,12 @@ function Trim(input) {
   return trimmed.startsWith(OpenComment) ? Trim(DiscardMultilineComment(trimmed.slice(2))) : trimmed.startsWith(LineComment) ? Trim(DiscardLineComment(trimmed.slice(2))) : trimmed;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/token/internal/optional.mjs
+// node_modules/typebox/build/type/script/token/internal/optional.mjs
 function Optional2(value, input) {
   return Match2(Take([value], input), (Optional4, Rest2) => [Optional4, Rest2], () => ["", input]);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/token/internal/many.mjs
+// node_modules/typebox/build/type/script/token/internal/many.mjs
 function IsDiscard(discard2, input) {
   return discard2.includes(input);
 }
@@ -92628,7 +92684,7 @@ function Many(allowed, discard2, input, result = "") {
   return Match2(Take(allowed, input), (Char, Rest2) => IsDiscard(discard2, Char) ? Many(allowed, discard2, Rest2, result) : Many(allowed, discard2, Rest2, `${result}${Char}`), () => [result, input]);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/token/unsigned_integer.mjs
+// node_modules/typebox/build/type/script/token/unsigned_integer.mjs
 function TakeNonZero(input) {
   return Take(NonZero, input);
 }
@@ -92648,7 +92704,7 @@ function UnsignedInteger(input) {
   return TakeUnsignedInteger(Trim(input));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/token/integer.mjs
+// node_modules/typebox/build/type/script/token/integer.mjs
 function TakeSign(input) {
   return Optional2(Hyphen, input);
 }
@@ -92664,7 +92720,7 @@ function Integer2(input) {
   return TakeSignedInteger(Trim(input));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/token/bigint.mjs
+// node_modules/typebox/build/type/script/token/bigint.mjs
 function TakeBigInt(input) {
   return Match2(
     Integer2(input),
@@ -92677,7 +92733,7 @@ function BigInt3(input) {
   return TakeBigInt(input);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/token/const.mjs
+// node_modules/typebox/build/type/script/token/const.mjs
 function TakeConst(const_, input) {
   return Take([const_], input);
 }
@@ -92685,7 +92741,7 @@ function Const(const_, input) {
   return IsEqual(const_, "") ? ["", input] : const_.startsWith(NewLine) ? TakeConst(const_, TrimWhitespace(input)) : const_.startsWith(WhiteSpace) ? TakeConst(const_, input) : TakeConst(const_, Trim(input));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/token/ident.mjs
+// node_modules/typebox/build/type/script/token/ident.mjs
 var Initial = [...Alpha, UnderScore, DollarSign];
 function TakeInitial(input) {
   return Take(Initial, input);
@@ -92706,7 +92762,7 @@ function Ident(input) {
   return TakeIdent(Trim(input));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/token/unsigned_number.mjs
+// node_modules/typebox/build/type/script/token/unsigned_number.mjs
 var AllowedDigits2 = [...Digit, UnderScore];
 function IsLeadingDot(input) {
   return IsMatch(Take([Dot], input));
@@ -92742,7 +92798,7 @@ function UnsignedNumber(input) {
   return TakeUnsignedNumber(Trim(input));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/token/number.mjs
+// node_modules/typebox/build/type/script/token/number.mjs
 function TakeSign2(input) {
   return Optional2(Hyphen, input);
 }
@@ -92758,7 +92814,7 @@ function Number3(input) {
   return TakeSignedNumber(Trim(input));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/token/until.mjs
+// node_modules/typebox/build/type/script/token/until.mjs
 function TakeOne(input) {
   const result = IsEqual(input, "") ? [] : [input.slice(0, 1), input.slice(1)];
   return result;
@@ -92774,7 +92830,7 @@ function Until(end, input, result = "") {
   );
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/token/span.mjs
+// node_modules/typebox/build/type/script/token/span.mjs
 function MultiLine(start, end, input) {
   return Match2(
     Take([start], input),
@@ -92805,7 +92861,7 @@ function Span(start, end, multiLine, input) {
   return multiLine ? MultiLine(start, end, Trim(input)) : SingleLine(start, end, Trim(input));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/token/string.mjs
+// node_modules/typebox/build/type/script/token/string.mjs
 function TakeInitial2(quotes, input) {
   return Take(quotes, input);
 }
@@ -92819,12 +92875,12 @@ function String3(quotes, input) {
   return TakeString(quotes, Trim(input));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/token/until_1.mjs
+// node_modules/typebox/build/type/script/token/until_1.mjs
 function Until_1(end, input) {
   return Match2(Until(end, input), (Until2, UntilRest) => IsEqual(Until2, "") ? [] : [Until2, UntilRest], () => []);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/parser.mjs
+// node_modules/typebox/build/type/script/parser.mjs
 var If2 = (result, left, right = () => []) => result.length === 2 ? left(result) : right();
 var GenericParameterExtendsEquals = (input) => If2(If2(Ident(input), ([_0, input2]) => If2(Const("extends", input2), ([_1, input3]) => If2(Type(input3), ([_2, input4]) => If2(Const("=", input4), ([_3, input5]) => If2(Type(input5), ([_4, input6]) => [[_0, _1, _2, _3, _4], input6]))))), ([_0, input2]) => [GenericParameterExtendsEqualsMapping(_0), input2]);
 var GenericParameterExtends = (input) => If2(If2(Ident(input), ([_0, input2]) => If2(Const("extends", input2), ([_1, input3]) => If2(Type(input3), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [GenericParameterExtendsMapping(_0), input2]);
@@ -92954,14 +93010,14 @@ var ModuleDeclaration = (input) => If2(If2(ExportKeyword(input), ([_0, input2]) 
 var Module = (input) => If2(If2(ModuleDeclaration(input), ([_0, input2]) => If2(ModuleDeclarationList(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [ModuleMapping(_0), input2]);
 var Script = (input) => If2(If2(Module(input), ([_0, input2]) => [_0, input2], () => If2(GenericType(input), ([_0, input2]) => [_0, input2], () => If2(Type(input), ([_0, input2]) => [_0, input2], () => []))), ([_0, input2]) => [ScriptMapping(_0), input2]);
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/patterns/template.mjs
+// node_modules/typebox/build/type/engine/patterns/template.mjs
 function ParseTemplateIntoTypes(template) {
   const parsed = TemplateLiteralTypes(`\`${template}\``);
   const result = guard_exports.IsEqual(parsed.length, 2) ? parsed[0] : Unreachable();
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/template_literal/encode.mjs
+// node_modules/typebox/build/type/engine/template_literal/encode.mjs
 function JoinString(input) {
   return input.join("|");
 }
@@ -93018,7 +93074,7 @@ function TemplateLiteralEncode(types3) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/template_literal/instantiate.mjs
+// node_modules/typebox/build/type/engine/template_literal/instantiate.mjs
 function TemplateLiteralAction(types3, options) {
   const result = CanInstantiate(types3) ? memory_exports.Update(TemplateLiteralEncode(types3), {}, options) : TemplateLiteralDeferred(types3, options);
   return result;
@@ -93028,7 +93084,7 @@ function TemplateLiteralInstantiate(context, state3, types3, options) {
   return TemplateLiteralAction(instantiatedTypes, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/template_literal.mjs
+// node_modules/typebox/build/type/types/template_literal.mjs
 function TemplateLiteralDeferred(types3, options = {}) {
   return Deferred("TemplateLiteral", [types3], options);
 }
@@ -93050,7 +93106,7 @@ function IsTemplateLiteral(value) {
   return IsKind(value, "TemplateLiteral");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/result.mjs
+// node_modules/typebox/build/type/extends/result.mjs
 var result_exports = {};
 __export(result_exports, {
   ExtendsFalse: () => ExtendsFalse,
@@ -93087,7 +93143,7 @@ function Match3(result, true_, false_) {
   return IsExtendsTrueLike(result) ? true_(result.inferred) : false_();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/extends_right.mjs
+// node_modules/typebox/build/type/extends/extends_right.mjs
 function ExtendsRightInfer(inferred, name, left, right) {
   return Match3(ExtendsLeft(inferred, left, right), (checkInferred) => ExtendsTrue(memory_exports.Assign(memory_exports.Assign(inferred, checkInferred), { [name]: left })), () => ExtendsFalse());
 }
@@ -93115,12 +93171,12 @@ function ExtendsRight(inferred, left, right) {
   return IsAny(right) ? ExtendsRightAny(inferred, left) : IsDependent(right) ? ExtendsRightDependent(inferred, left, right.if, right.then, right.else) : IsEnum(right) ? ExtendsRightEnum(inferred, left, right.enum) : IsInfer(right) ? ExtendsRightInfer(inferred, right.name, left, right.extends) : IsIntersect(right) ? ExtendsRightIntersect(inferred, left, right.allOf) : IsTemplateLiteral(right) ? ExtendsRightTemplateLiteral(inferred, left, right.pattern) : IsUnion(right) ? ExtendsRightUnion(inferred, left, right.anyOf) : IsUnknown(right) ? ExtendsTrue(inferred) : ExtendsFalse();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/any.mjs
+// node_modules/typebox/build/type/extends/any.mjs
 function ExtendsAny(inferred, left, right) {
   return IsInfer(right) ? ExtendsRight(inferred, left, right) : IsAny(right) ? ExtendsTrue(inferred) : IsUnknown(right) ? ExtendsTrue(inferred) : ExtendsUnion(inferred);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/array.mjs
+// node_modules/typebox/build/type/extends/array.mjs
 function ExtendsImmutable(left, right) {
   const isImmutableLeft = IsImmutable(left);
   const isImmutableRight = IsImmutable(right);
@@ -93130,17 +93186,17 @@ function ExtendsArray(inferred, arrayLeft, left, right) {
   return IsArray3(right) ? ExtendsImmutable(arrayLeft, right) ? ExtendsLeft(inferred, left, right.items) : ExtendsFalse() : ExtendsRight(inferred, arrayLeft, right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/bigint.mjs
+// node_modules/typebox/build/type/extends/bigint.mjs
 function ExtendsBigInt(inferred, left, right) {
   return IsBigInt3(right) ? ExtendsTrue(inferred) : ExtendsRight(inferred, left, right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/boolean.mjs
+// node_modules/typebox/build/type/extends/boolean.mjs
 function ExtendsBoolean(inferred, left, right) {
   return IsBoolean4(right) ? ExtendsTrue(inferred) : ExtendsRight(inferred, left, right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/parameters.mjs
+// node_modules/typebox/build/type/extends/parameters.mjs
 function ParameterCompare(inferred, left, leftRest, right, rightRest) {
   const checkLeft = IsInfer(right) ? left : right;
   const checkRight = IsInfer(right) ? right : left;
@@ -93158,44 +93214,44 @@ function ExtendsParameters(inferred, left, right) {
   return ParametersLeft(inferred, left, right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/return_type.mjs
+// node_modules/typebox/build/type/extends/return_type.mjs
 function ExtendsReturnType(inferred, left, right) {
   return IsVoid(right) ? ExtendsTrue(inferred) : ExtendsLeft(inferred, left, right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/constructor.mjs
+// node_modules/typebox/build/type/extends/constructor.mjs
 function ExtendsConstructor(inferred, parameters, returnType, right) {
   return IsAny(right) ? ExtendsTrue(inferred) : IsUnknown(right) ? ExtendsTrue(inferred) : IsConstructor3(right) ? Match3(ExtendsParameters(inferred, parameters, right["parameters"]), (inferred2) => ExtendsReturnType(inferred2, returnType, right["instanceType"]), () => ExtendsFalse()) : ExtendsFalse();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/dependent.mjs
+// node_modules/typebox/build/type/extends/dependent.mjs
 function ExtendsDependent(inferred, if_, then_, else_, right) {
   return Match3(ExtendsLeft(inferred, if_, right), () => ExtendsLeft(inferred, then_, right), () => ExtendsLeft(inferred, else_, right));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/enum.mjs
+// node_modules/typebox/build/type/extends/enum.mjs
 function ExtendsEnum(inferred, left, right) {
   const evaluated = EvaluateEnum(left);
   return ExtendsLeft(inferred, evaluated, right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/function.mjs
+// node_modules/typebox/build/type/extends/function.mjs
 function ExtendsFunction(inferred, parameters, returnType, right) {
   return IsAny(right) ? ExtendsTrue(inferred) : IsUnknown(right) ? ExtendsTrue(inferred) : IsFunction3(right) ? Match3(ExtendsParameters(inferred, parameters, right["parameters"]), (inferred2) => ExtendsReturnType(inferred2, returnType, right["returnType"]), () => ExtendsFalse()) : ExtendsFalse();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/integer.mjs
+// node_modules/typebox/build/type/extends/integer.mjs
 function ExtendsInteger(inferred, left, right) {
   return IsInteger3(right) ? ExtendsTrue(inferred) : IsNumber4(right) ? ExtendsTrue(inferred) : ExtendsRight(inferred, left, right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/intersect.mjs
+// node_modules/typebox/build/type/extends/intersect.mjs
 function ExtendsIntersect(inferred, left, right) {
   const evaluated = EvaluateIntersect(left);
   return ExtendsLeft(inferred, evaluated, right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/literal.mjs
+// node_modules/typebox/build/type/extends/literal.mjs
 function ExtendsLiteralValue(inferred, left, right) {
   return left === right ? ExtendsTrue(inferred) : ExtendsFalse();
 }
@@ -93215,22 +93271,22 @@ function ExtendsLiteral(inferred, left, right) {
   return guard_exports.IsBigInt(left.const) ? ExtendsLiteralBigInt(inferred, left.const, right) : guard_exports.IsBoolean(left.const) ? ExtendsLiteralBoolean(inferred, left.const, right) : guard_exports.IsNumber(left.const) ? ExtendsLiteralNumber(inferred, left.const, right) : guard_exports.IsString(left.const) ? ExtendsLiteralString(inferred, left.const, right) : Unreachable();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/never.mjs
+// node_modules/typebox/build/type/extends/never.mjs
 function ExtendsNever(inferred, left, right) {
   return IsInfer(right) ? ExtendsRight(inferred, left, right) : ExtendsTrue(inferred);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/null.mjs
+// node_modules/typebox/build/type/extends/null.mjs
 function ExtendsNull(inferred, left, right) {
   return IsNull3(right) ? ExtendsTrue(inferred) : ExtendsRight(inferred, left, right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/number.mjs
+// node_modules/typebox/build/type/extends/number.mjs
 function ExtendsNumber(inferred, left, right) {
   return IsNumber4(right) ? ExtendsTrue(inferred) : ExtendsRight(inferred, left, right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/object.mjs
+// node_modules/typebox/build/type/extends/object.mjs
 function ExtendsPropertyOptional(inferred, left, right) {
   return IsOptional(left) ? IsOptional(right) ? ExtendsTrue(inferred) : ExtendsFalse() : ExtendsTrue(inferred);
 }
@@ -93281,7 +93337,7 @@ function ExtendsObject(inferred, left, right) {
   return IsRecord(right) ? ExtendsObjectToRecord(inferred, left, RecordPattern(right), RecordValue(right)) : IsObject3(right) ? ExtendsObjectToObject(inferred, left, right.properties) : ExtendsRight(inferred, _Object_(left), right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/record.mjs
+// node_modules/typebox/build/type/extends/record.mjs
 function FromObject3(inferred, properties) {
   return guard_exports.IsEqual(guard_exports.Keys(properties).length, 0) ? ExtendsTrue(inferred) : ExtendsFalse();
 }
@@ -93292,23 +93348,23 @@ function ExtendsRecord(inferred, leftPattern, leftValue, right) {
   return IsRecord(right) ? FromRecord(inferred, RecordPatternToType(leftPattern), leftValue, RecordPatternToType(RecordPattern(right)), RecordValue(right)) : IsObject3(right) ? FromObject3(inferred, right.properties) : IsAny(right) ? ExtendsTrue(inferred) : IsUnknown(right) ? ExtendsTrue(inferred) : ExtendsFalse();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/string.mjs
+// node_modules/typebox/build/type/extends/string.mjs
 function ExtendsString(inferred, left, right) {
   return IsString4(right) ? ExtendsTrue(inferred) : ExtendsRight(inferred, left, right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/symbol.mjs
+// node_modules/typebox/build/type/extends/symbol.mjs
 function ExtendsSymbol(inferred, left, right) {
   return IsSymbol3(right) ? ExtendsTrue(inferred) : ExtendsRight(inferred, left, right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/template_literal.mjs
+// node_modules/typebox/build/type/extends/template_literal.mjs
 function ExtendsTemplateLiteral(inferred, left, right) {
   const evaluated = EvaluateTemplateLiteral(left);
   return ExtendsLeft(inferred, evaluated, right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/inference.mjs
+// node_modules/typebox/build/type/extends/inference.mjs
 function Inferrable(name, type) {
   return memory_exports.Create({ "~kind": "Inferrable" }, { name, type }, {});
 }
@@ -93333,7 +93389,7 @@ function InferUnionResult(inferred, name, left, right) {
   return guard_exports.IsArray(results) ? ExtendsTrue(memory_exports.Assign(inferred, { [name]: Union(results) })) : ExtendsFalse();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/tuple.mjs
+// node_modules/typebox/build/type/extends/tuple.mjs
 function Reverse(types3) {
   return [...types3].reverse();
 }
@@ -93375,12 +93431,12 @@ function ExtendsTuple(inferred, left, right) {
   return IsTuple(right) ? ExtendsTupleToTuple(inferred, instantiatedLeft, right.items) : IsArray3(right) ? ExtendsTupleToArray(inferred, instantiatedLeft, right.items) : ExtendsRight(inferred, Tuple(instantiatedLeft), right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/undefined.mjs
+// node_modules/typebox/build/type/extends/undefined.mjs
 function ExtendsUndefined(inferred, left, right) {
   return IsVoid(right) ? ExtendsTrue(inferred) : IsUndefined3(right) ? ExtendsTrue(inferred) : ExtendsRight(inferred, left, right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/union.mjs
+// node_modules/typebox/build/type/extends/union.mjs
 function ExtendsUnionSome(inferred, type, unionTypes) {
   return guard_exports.ShiftLeft(unionTypes, (head, tail) => Match3(ExtendsLeft(inferred, type, head), (inferred2) => ExtendsTrue(inferred2), () => ExtendsUnionSome(inferred, type, tail)), () => ExtendsFalse());
 }
@@ -93392,22 +93448,22 @@ function ExtendsUnion2(inferred, left, right) {
   return IsInferable(inferrable) ? InferUnionResult(inferred, inferrable.name, left, inferrable.type) : IsUnion(right) ? ExtendsUnionLeft(inferred, left, right.anyOf) : ExtendsUnionLeft(inferred, left, [right]);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/unknown.mjs
+// node_modules/typebox/build/type/extends/unknown.mjs
 function ExtendsUnknown(inferred, left, right) {
   return IsInfer(right) ? ExtendsRight(inferred, left, right) : IsAny(right) ? ExtendsTrue(inferred) : IsUnknown(right) ? ExtendsTrue(inferred) : ExtendsFalse();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/void.mjs
+// node_modules/typebox/build/type/extends/void.mjs
 function ExtendsVoid(inferred, left, right) {
   return IsVoid(right) ? ExtendsTrue(inferred) : ExtendsRight(inferred, left, right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/extends_left.mjs
+// node_modules/typebox/build/type/extends/extends_left.mjs
 function ExtendsLeft(inferred, left, right) {
   return IsAny(left) ? ExtendsAny(inferred, left, right) : IsArray3(left) ? ExtendsArray(inferred, left, left.items, right) : IsBigInt3(left) ? ExtendsBigInt(inferred, left, right) : IsBoolean4(left) ? ExtendsBoolean(inferred, left, right) : IsConstructor3(left) ? ExtendsConstructor(inferred, left.parameters, left.instanceType, right) : IsDependent(left) ? ExtendsDependent(inferred, left.if, left.then, left.else, right) : IsEnum(left) ? ExtendsEnum(inferred, left.enum, right) : IsFunction3(left) ? ExtendsFunction(inferred, left.parameters, left.returnType, right) : IsInteger3(left) ? ExtendsInteger(inferred, left, right) : IsIntersect(left) ? ExtendsIntersect(inferred, left.allOf, right) : IsLiteral(left) ? ExtendsLiteral(inferred, left, right) : IsNever(left) ? ExtendsNever(inferred, left, right) : IsNull3(left) ? ExtendsNull(inferred, left, right) : IsNumber4(left) ? ExtendsNumber(inferred, left, right) : IsObject3(left) ? ExtendsObject(inferred, left.properties, right) : IsRecord(left) ? ExtendsRecord(inferred, RecordPattern(left), RecordValue(left), right) : IsString4(left) ? ExtendsString(inferred, left, right) : IsSymbol3(left) ? ExtendsSymbol(inferred, left, right) : IsTemplateLiteral(left) ? ExtendsTemplateLiteral(inferred, left.pattern, right) : IsTuple(left) ? ExtendsTuple(inferred, left.items, right) : IsUndefined3(left) ? ExtendsUndefined(inferred, left, right) : IsUnion(left) ? ExtendsUnion2(inferred, left.anyOf, right) : IsUnknown(left) ? ExtendsUnknown(inferred, left, right) : IsVoid(left) ? ExtendsVoid(inferred, left, right) : ExtendsFalse();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/interface/instantiate.mjs
+// node_modules/typebox/build/type/engine/interface/instantiate.mjs
 function InterfaceOperation(heritage, properties) {
   const result = EvaluateIntersect([...heritage, _Object_(properties)]);
   return result;
@@ -93422,7 +93478,7 @@ function InterfaceInstantiate(context, state3, heritage, properties, options) {
   return InterfaceAction(instantiatedHeritage, instantiatedProperties, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/interface.mjs
+// node_modules/typebox/build/type/action/interface.mjs
 function InterfaceDeferred(heritage, properties, options = {}) {
   return Deferred("Interface", [heritage, properties], options);
 }
@@ -93433,7 +93489,7 @@ function Interface(heritage, properties, options = {}) {
   return InterfaceAction(heritage, properties, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/cyclic/check.mjs
+// node_modules/typebox/build/type/engine/cyclic/check.mjs
 function FromRef(stack, context, ref) {
   return stack.includes(ref) ? true : FromType3([...stack, ref], context, context[ref]);
 }
@@ -93452,7 +93508,7 @@ function CyclicCheck(stack, context, type) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/cyclic/candidates.mjs
+// node_modules/typebox/build/type/engine/cyclic/candidates.mjs
 function ResolveCandidateKeys(context, keys) {
   return keys.reduce((result, left) => {
     return CyclicCheck([left], context, context[left]) ? [...result, left] : result;
@@ -93464,7 +93520,7 @@ function CyclicCandidates(context) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/cyclic/dependencies.mjs
+// node_modules/typebox/build/type/engine/cyclic/dependencies.mjs
 function FromRef2(context, ref, result) {
   return result.includes(ref) ? result : ref in context ? FromType4(context, context[ref], [...result, ref]) : Unreachable();
 }
@@ -93485,7 +93541,7 @@ function CyclicDependencies(context, key, type) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/cyclic/extends.mjs
+// node_modules/typebox/build/type/engine/cyclic/extends.mjs
 function FromRef3(_ref) {
   return Any();
 }
@@ -93509,7 +93565,7 @@ function CyclicExtends(type) {
   return CyclicAnyFromParameters(type.$defs, type.$ref);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/cyclic/instantiate.mjs
+// node_modules/typebox/build/type/engine/cyclic/instantiate.mjs
 function CyclicInterface(context, heritage, properties) {
   const instantiatedHeritage = InstantiateTypes(context, State([], []), heritage);
   const instantiatedProperties = InstantiateProperties({}, State([], []), properties);
@@ -93531,7 +93587,7 @@ function InstantiateCyclic(context, ref, type) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/cyclic/target.mjs
+// node_modules/typebox/build/type/engine/cyclic/target.mjs
 function Resolve(defs, ref) {
   return ref in defs ? IsRef(defs[ref]) ? Resolve(defs, defs[ref].$ref) : defs[ref] : Never();
 }
@@ -93540,7 +93596,7 @@ function CyclicTarget(defs, ref) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/extends/extends.mjs
+// node_modules/typebox/build/type/extends/extends.mjs
 function Canonical(type) {
   return IsCyclic(type) ? CyclicExtends(type) : IsUnsafe(type) ? Unknown() : type;
 }
@@ -93550,7 +93606,7 @@ function Extends(inferred, left, right) {
   return ExtendsLeft(inferred, canonicalLeft, canonicalRight);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/evaluate/compare.mjs
+// node_modules/typebox/build/type/engine/evaluate/compare.mjs
 var CompareResultEqual = 0;
 var CompareResultDisjoint = 1;
 var CompareResultLeftInside = 2;
@@ -93560,7 +93616,7 @@ function Compare(left, right) {
   return result_exports.IsExtendsTrueLike(extendsCheck[0]) && result_exports.IsExtendsTrueLike(extendsCheck[1]) ? CompareResultEqual : result_exports.IsExtendsTrueLike(extendsCheck[0]) && result_exports.IsExtendsFalse(extendsCheck[1]) ? CompareResultLeftInside : result_exports.IsExtendsFalse(extendsCheck[0]) && result_exports.IsExtendsTrueLike(extendsCheck[1]) ? CompareResultRightInside : CompareResultDisjoint;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/evaluate/broaden.mjs
+// node_modules/typebox/build/type/engine/evaluate/broaden.mjs
 function BroadenFilter(type, types3, result = [], all = types3) {
   return guard_exports.ShiftLeft(types3, (left, right) => {
     const compare = Compare(type, left);
@@ -93592,7 +93648,7 @@ function Broaden(types3) {
   return flattened;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/evaluate/instantiate.mjs
+// node_modules/typebox/build/type/engine/evaluate/instantiate.mjs
 function EvaluateAction(type, options) {
   const result = memory_exports.Update(EvaluateType(type), {}, options);
   return result;
@@ -93602,7 +93658,7 @@ function EvaluateInstantiate(context, state3, type, options) {
   return EvaluateAction(instantiatedType, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/call/distribute_arguments.mjs
+// node_modules/typebox/build/type/engine/call/distribute_arguments.mjs
 function CollectDistributionNames(expression, result = []) {
   return (
     // Conditional
@@ -93642,7 +93698,7 @@ function DistributeArguments(parameters, arguments_, expression) {
   return IsDeferred(expression) && guard_exports.IsEqual(expression.action, "Conditional") ? Distribute2(zippedArguments) : IsDeferred(expression) && guard_exports.IsEqual(expression.action, "Mapped") ? Distribute2(zippedArguments) : [arguments_];
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/call/resolve_target.mjs
+// node_modules/typebox/build/type/engine/call/resolve_target.mjs
 function FromNotResolvable() {
   return ["(not-resolvable)", Never()];
 }
@@ -93662,7 +93718,7 @@ function ResolveTarget(context, target, arguments_) {
   return FromType6(context, "(anonymous)", target, arguments_);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/call/resolve_arguments.mjs
+// node_modules/typebox/build/type/engine/call/resolve_arguments.mjs
 function AssertArgumentExtends(name, type, extends_) {
   if (IsInfer(type) || IsCall(type) || result_exports.IsExtendsTrueLike(Extends({}, type, extends_)))
     return;
@@ -93686,7 +93742,7 @@ function ResolveArgumentsContext(context, state3, parameters, arguments_) {
   return BindParameters(context, state3, parameters, arguments_);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/call/instantiate.mjs
+// node_modules/typebox/build/type/engine/call/instantiate.mjs
 var instantiationDepth = 0;
 var instantiationCount = 0;
 function InstantiationAssert() {
@@ -93743,7 +93799,7 @@ function CallInstantiate(context, state3, target, arguments_) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/types/call.mjs
+// node_modules/typebox/build/type/types/call.mjs
 function CallConstruct(target, arguments_) {
   return memory_exports.Create({ ["~kind"]: "Call" }, { type: "call", target, arguments: arguments_ }, {});
 }
@@ -93754,7 +93810,7 @@ function IsCall(value) {
   return IsKind(value, "Call");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/immutable/instantiate_remove.mjs
+// node_modules/typebox/build/type/engine/immutable/instantiate_remove.mjs
 function RemoveImmutableOperation(type) {
   return memory_exports.Discard(type, ["~immutable"]);
 }
@@ -93767,35 +93823,35 @@ function RemoveImmutableInstantiate(context, state3, type, options) {
   return RemoveImmutableAction(instantiatedType, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/intrinsics/mapping.mjs
+// node_modules/typebox/build/type/engine/intrinsics/mapping.mjs
 function ApplyMapping(mapping, value) {
   return mapping(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/intrinsics/from_literal.mjs
+// node_modules/typebox/build/type/engine/intrinsics/from_literal.mjs
 function FromLiteral3(mapping, value) {
   return guard_exports.IsString(value) ? Literal(ApplyMapping(mapping, value)) : Literal(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/intrinsics/from_template_literal.mjs
+// node_modules/typebox/build/type/engine/intrinsics/from_template_literal.mjs
 function FromTemplateLiteral(mapping, pattern) {
   const evaluated = EvaluateTemplateLiteral(pattern);
   const result = FromType7(mapping, evaluated);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/intrinsics/from_union.mjs
+// node_modules/typebox/build/type/engine/intrinsics/from_union.mjs
 function FromUnion2(mapping, types3) {
   const result = types3.map((type) => FromType7(mapping, type));
   return Union(result);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/intrinsics/from_type.mjs
+// node_modules/typebox/build/type/engine/intrinsics/from_type.mjs
 function FromType7(mapping, type) {
   return IsLiteral(type) ? FromLiteral3(mapping, type.const) : IsTemplateLiteral(type) ? FromTemplateLiteral(mapping, type.pattern) : IsUnion(type) ? FromUnion2(mapping, type.anyOf) : type;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/capitalize.mjs
+// node_modules/typebox/build/type/action/capitalize.mjs
 function CapitalizeDeferred(type, options = {}) {
   return Deferred("Capitalize", [type], options);
 }
@@ -93803,7 +93859,7 @@ function Capitalize(type, options = {}) {
   return CapitalizeAction(type, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/lowercase.mjs
+// node_modules/typebox/build/type/action/lowercase.mjs
 function LowercaseDeferred(type, options = {}) {
   return Deferred("Lowercase", [type], options);
 }
@@ -93811,7 +93867,7 @@ function Lowercase(type, options = {}) {
   return LowercaseAction(type, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/uncapitalize.mjs
+// node_modules/typebox/build/type/action/uncapitalize.mjs
 function UncapitalizeDeferred(type, options = {}) {
   return Deferred("Uncapitalize", [type], options);
 }
@@ -93819,7 +93875,7 @@ function Uncapitalize(type, options = {}) {
   return UncapitalizeAction(type, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/uppercase.mjs
+// node_modules/typebox/build/type/action/uppercase.mjs
 function UppercaseDeferred(type, options = {}) {
   return Deferred("Uppercase", [type], options);
 }
@@ -93827,7 +93883,7 @@ function Uppercase(type, options = {}) {
   return UppercaseAction(type, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/intrinsics/instantiate.mjs
+// node_modules/typebox/build/type/engine/intrinsics/instantiate.mjs
 var CapitalizeMapping = (input) => input[0].toUpperCase() + input.slice(1);
 var LowercaseMapping = (input) => input.toLowerCase();
 var UncapitalizeMapping = (input) => input[0].toLowerCase() + input.slice(1);
@@ -93865,7 +93921,7 @@ function UppercaseInstantiate(context, state3, type, options) {
   return UppercaseAction(instantiatedType, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/conditional.mjs
+// node_modules/typebox/build/type/action/conditional.mjs
 function ConditionalDeferred(left, right, true_, false_, options = {}) {
   return Deferred("Conditional", [left, right, true_, false_], options);
 }
@@ -93873,7 +93929,7 @@ function Conditional(left, right, true_, false_, options = {}) {
   return ConditionalAction({}, State([], []), left, right, true_, false_, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/conditional/instantiate.mjs
+// node_modules/typebox/build/type/engine/conditional/instantiate.mjs
 function ConditionalOperation(context, state3, left, right, true_, false_) {
   const extendsResult = Extends(context, left, right);
   return result_exports.IsExtendsUnion(extendsResult) ? Union([InstantiateType(extendsResult.inferred, state3, true_), InstantiateType(context, state3, false_)]) : result_exports.IsExtendsTrue(extendsResult) ? InstantiateType(extendsResult.inferred, state3, true_) : InstantiateType(context, state3, false_);
@@ -93888,7 +93944,7 @@ function ConditionalInstantiate(context, state3, left, right, true_, false_, opt
   return ConditionalAction(context, state3, instantiatedLeft, instantiatedRight, true_, false_, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/constructor_parameters.mjs
+// node_modules/typebox/build/type/action/constructor_parameters.mjs
 function ConstructorParametersDeferred(type, options = {}) {
   return Deferred("ConstructorParameters", [type], options);
 }
@@ -93896,7 +93952,7 @@ function ConstructorParameters(type, options = {}) {
   return ConstructorParametersAction(type, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/constructor_parameters/instantiate.mjs
+// node_modules/typebox/build/type/engine/constructor_parameters/instantiate.mjs
 function ConstructorParametersOperation(type) {
   const parameters = IsConstructor3(type) ? type["parameters"] : [];
   const instantiatedParameters = InstantiateElements({}, State([], []), parameters);
@@ -93912,7 +93968,7 @@ function ConstructorParametersInstantiate(context, state3, type, options) {
   return ConstructorParametersAction(instantiatedType, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/exclude.mjs
+// node_modules/typebox/build/type/action/exclude.mjs
 function ExcludeDeferred(left, right, options = {}) {
   return Deferred("Exclude", [left, right], options);
 }
@@ -93920,7 +93976,7 @@ function Exclude(left, right, options = {}) {
   return ExcludeAction(left, right, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/exclude/instantiate.mjs
+// node_modules/typebox/build/type/engine/exclude/instantiate.mjs
 function ExcludeAction(left, right, options) {
   const result = CanInstantiate([left, right]) ? memory_exports.Update(ExcludeOperation(left, right), {}, options) : ExcludeDeferred(left, right, options);
   return result;
@@ -93931,7 +93987,7 @@ function ExcludeInstantiate(context, state3, left, right, options) {
   return ExcludeAction(instantiatedLeft, instantiatedRight, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/extract.mjs
+// node_modules/typebox/build/type/action/extract.mjs
 function ExtractDeferred(left, right, options = {}) {
   return Deferred("Extract", [left, right], options);
 }
@@ -93939,7 +93995,7 @@ function Extract(left, right, options = {}) {
   return ExtractAction(left, right, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/extract/operation.mjs
+// node_modules/typebox/build/type/engine/extract/operation.mjs
 function ExtractType(left, right) {
   const check = Extends({}, left, right);
   const result = result_exports.IsExtendsTrueLike(check) ? [left] : [];
@@ -93956,7 +94012,7 @@ function ExtractOperation(left, right) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/extract/instantiate.mjs
+// node_modules/typebox/build/type/engine/extract/instantiate.mjs
 function ExtractAction(left, right, options) {
   const result = CanInstantiate([left, right]) ? memory_exports.Update(ExtractOperation(left, right), {}, options) : ExtractDeferred(left, right, options);
   return result;
@@ -93967,7 +94023,7 @@ function ExtractInstantiate(context, state3, left, right, options) {
   return ExtractAction(instantiatedLeft, instantiatedRight, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/helpers/keys_to_indexer.mjs
+// node_modules/typebox/build/type/engine/helpers/keys_to_indexer.mjs
 function KeysToLiterals(keys) {
   return keys.reduce((result, left) => {
     return IsLiteralValue(left) ? [...result, Literal(left)] : result;
@@ -93979,7 +94035,7 @@ function KeysToIndexer(keys) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/indexed.mjs
+// node_modules/typebox/build/type/action/indexed.mjs
 function IndexDeferred(type, indexer, options = {}) {
   return Deferred("Index", [type, indexer], options);
 }
@@ -93988,21 +94044,21 @@ function Index(type, indexer_or_keys, options = {}) {
   return IndexAction(type, indexer, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/object/from_cyclic.mjs
+// node_modules/typebox/build/type/engine/object/from_cyclic.mjs
 function FromCyclic(defs, ref) {
   const target = CyclicTarget(defs, ref);
   const result = FromType8(target);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/object/from_dependent.mjs
+// node_modules/typebox/build/type/engine/object/from_dependent.mjs
 function FromDependent(if_, then_, else_) {
   const evaluated = EvaluateDependent(if_, then_, else_);
   const result = FromType8(evaluated);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/object/from_intersect.mjs
+// node_modules/typebox/build/type/engine/object/from_intersect.mjs
 function CollapseIntersectProperties(left, right) {
   const leftKeys = guard_exports.Keys(left).filter((key) => !guard_exports.HasPropertyKey(right, key));
   const rightKeys = guard_exports.Keys(right).filter((key) => !guard_exports.HasPropertyKey(left, key));
@@ -94020,19 +94076,19 @@ function FromIntersect(types3) {
   }, {});
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/object/from_object.mjs
+// node_modules/typebox/build/type/engine/object/from_object.mjs
 function FromObject4(properties) {
   return properties;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/object/from_tuple.mjs
+// node_modules/typebox/build/type/engine/object/from_tuple.mjs
 function FromTuple(types3) {
   const object2 = TupleToObject(Tuple(types3));
   const result = FromType8(object2);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/object/from_union.mjs
+// node_modules/typebox/build/type/engine/object/from_union.mjs
 function CollapseUnionProperties(left, right) {
   const sharedKeys = guard_exports.Keys(left).filter((key) => key in right);
   const result = sharedKeys.reduce((result2, key) => {
@@ -94047,26 +94103,26 @@ function FromUnion3(types3) {
   return guard_exports.ShiftLeft(types3, (left, right) => ReduceVariants(right, FromType8(left)), () => Unreachable());
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/object/from_type.mjs
+// node_modules/typebox/build/type/engine/object/from_type.mjs
 function FromType8(type) {
   return IsCyclic(type) ? FromCyclic(type.$defs, type.$ref) : IsDependent(type) ? FromDependent(type.if, type.then, type.else) : IsIntersect(type) ? FromIntersect(type.allOf) : IsUnion(type) ? FromUnion3(type.anyOf) : IsTuple(type) ? FromTuple(type.items) : IsObject3(type) ? FromObject4(type.properties) : {};
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/object/collapse.mjs
+// node_modules/typebox/build/type/engine/object/collapse.mjs
 function CollapseToObject(type) {
   const properties = FromType8(type);
   const result = _Object_(properties);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/helpers/keys.mjs
+// node_modules/typebox/build/type/engine/helpers/keys.mjs
 var integerKeyPattern = new RegExp("^(?:0|[1-9][0-9]*)$");
 function ConvertToIntegerKey(value) {
   const normal = `${value}`;
   return integerKeyPattern.test(normal) ? parseInt(normal) : value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/indexed/from_array.mjs
+// node_modules/typebox/build/type/engine/indexed/from_array.mjs
 function NormalizeLiteral(value) {
   return Literal(ConvertToIntegerKey(value));
 }
@@ -94086,66 +94142,66 @@ function FromArray3(type, indexer) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/indexable/from_cyclic.mjs
+// node_modules/typebox/build/type/engine/indexable/from_cyclic.mjs
 function FromCyclic2(defs, ref) {
   const target = CyclicTarget(defs, ref);
   const result = FromType9(target);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/indexable/from_dependent.mjs
+// node_modules/typebox/build/type/engine/indexable/from_dependent.mjs
 function FromDependent2(if_, then_, else_) {
   const evaluated = EvaluateDependent(if_, then_, else_);
   const result = FromType9(evaluated);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/indexable/from_enum.mjs
+// node_modules/typebox/build/type/engine/indexable/from_enum.mjs
 function FromEnum(values) {
   const evaluated = EvaluateEnum(values);
   const result = FromType9(evaluated);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/indexable/from_intersect.mjs
+// node_modules/typebox/build/type/engine/indexable/from_intersect.mjs
 function FromIntersect2(types3) {
   const evaluated = EvaluateIntersect(types3);
   const result = FromType9(evaluated);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/indexable/from_literal.mjs
+// node_modules/typebox/build/type/engine/indexable/from_literal.mjs
 function FromLiteral4(value) {
   const result = [`${value}`];
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/indexable/from_template_literal.mjs
+// node_modules/typebox/build/type/engine/indexable/from_template_literal.mjs
 function FromTemplateLiteral2(pattern) {
   const evaluated = EvaluateTemplateLiteral(pattern);
   const result = FromType9(evaluated);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/indexable/from_union.mjs
+// node_modules/typebox/build/type/engine/indexable/from_union.mjs
 function FromUnion4(types3) {
   return types3.reduce((result, left) => {
     return [...result, ...FromType9(left)];
   }, []);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/indexable/from_type.mjs
+// node_modules/typebox/build/type/engine/indexable/from_type.mjs
 function FromType9(type) {
   return IsCyclic(type) ? FromCyclic2(type.$defs, type.$ref) : IsDependent(type) ? FromDependent2(type.if, type.then, type.else) : IsEnum(type) ? FromEnum(type.enum) : IsIntersect(type) ? FromIntersect2(type.allOf) : IsLiteral(type) ? FromLiteral4(type.const) : IsTemplateLiteral(type) ? FromTemplateLiteral2(type.pattern) : IsUnion(type) ? FromUnion4(type.anyOf) : [];
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/indexable/to_indexable_keys.mjs
+// node_modules/typebox/build/type/engine/indexable/to_indexable_keys.mjs
 function ToIndexableKeys(type) {
   const result = FromType9(type);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/this/expand_this.mjs
+// node_modules/typebox/build/type/engine/this/expand_this.mjs
 function FromTypes5(properties, types3) {
   return types3.map((type) => FromType10(properties, type));
 }
@@ -94157,7 +94213,7 @@ function ExpandThis(properties, type) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/indexed/from_object.mjs
+// node_modules/typebox/build/type/engine/indexed/from_object.mjs
 function IndexProperty(properties, key) {
   const selectedType = key in properties ? properties[key] : Never();
   const result = ExpandThis(properties, selectedType);
@@ -94191,7 +94247,7 @@ function FromObject5(properties, indexer) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/indexed/array_indexer.mjs
+// node_modules/typebox/build/type/engine/indexed/array_indexer.mjs
 function ConvertLiteral(value) {
   return Literal(ConvertToIntegerKey(value));
 }
@@ -94202,7 +94258,7 @@ function FormatArrayIndexer(type) {
   return IsIntersect(type) ? Intersect(ArrayIndexerTypes(type.allOf)) : IsUnion(type) ? Union(ArrayIndexerTypes(type.anyOf)) : IsLiteral(type) ? ConvertLiteral(type.const) : type;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/indexed/from_tuple.mjs
+// node_modules/typebox/build/type/engine/indexed/from_tuple.mjs
 function IndexElementsWithIndexer(types3, indexer) {
   return types3.reduceRight((result, right, index3) => {
     const check = Extends({}, Literal(index3), indexer);
@@ -94224,12 +94280,12 @@ function FromTuple2(types3, indexer) {
   );
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/indexed/from_type.mjs
+// node_modules/typebox/build/type/engine/indexed/from_type.mjs
 function FromType11(type, indexer) {
   return IsArray3(type) ? FromArray3(type.items, indexer) : IsObject3(type) ? FromObject5(type.properties, indexer) : IsTuple(type) ? FromTuple2(type.items, indexer) : Never();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/indexed/instantiate.mjs
+// node_modules/typebox/build/type/engine/indexed/instantiate.mjs
 function NormalizeType(type) {
   const result = IsCyclic(type) || IsDependent(type) || IsIntersect(type) || IsUnion(type) ? CollapseToObject(type) : type;
   return result;
@@ -94244,7 +94300,7 @@ function IndexInstantiate(context, state3, type, indexer, options) {
   return IndexAction(instantiatedType, instantiatedIndexer, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/instance_type.mjs
+// node_modules/typebox/build/type/action/instance_type.mjs
 function InstanceTypeDeferred(type, options = {}) {
   return Deferred("InstanceType", [type], options);
 }
@@ -94252,7 +94308,7 @@ function InstanceType(type, options = {}) {
   return InstanceTypeAction(type, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/instance_type/instantiate.mjs
+// node_modules/typebox/build/type/engine/instance_type/instantiate.mjs
 function InstanceTypeOperation(type) {
   return IsConstructor3(type) ? type["instanceType"] : Never();
 }
@@ -94265,7 +94321,7 @@ function InstanceTypeInstantiate(context, state3, type, options = {}) {
   return InstanceTypeAction(instantiatedType, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/keyof.mjs
+// node_modules/typebox/build/type/action/keyof.mjs
 function KeyOfDeferred(type, options = {}) {
   return Deferred("KeyOf", [type], options);
 }
@@ -94273,17 +94329,17 @@ function KeyOf2(type, options = {}) {
   return KeyOfAction(type, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/keyof/from_any.mjs
+// node_modules/typebox/build/type/engine/keyof/from_any.mjs
 function FromAny() {
   return Union([Number2(), String2(), Symbol2()]);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/keyof/from_array.mjs
+// node_modules/typebox/build/type/engine/keyof/from_array.mjs
 function FromArray4(_type) {
   return Number2();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/keyof/from_object.mjs
+// node_modules/typebox/build/type/engine/keyof/from_object.mjs
 function FromPropertyKeys(keys) {
   const result = keys.reduce((result2, left) => {
     return IsLiteralValue(left) ? [...result2, Literal(ConvertToIntegerKey(left))] : Unreachable();
@@ -94297,23 +94353,23 @@ function FromObject6(properties) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/keyof/from_record.mjs
+// node_modules/typebox/build/type/engine/keyof/from_record.mjs
 function FromRecord2(type) {
   return RecordKey(type);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/keyof/from_tuple.mjs
+// node_modules/typebox/build/type/engine/keyof/from_tuple.mjs
 function FromTuple3(types3) {
   const result = types3.map((_, index3) => Literal(index3));
   return EvaluateUnionFast(result);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/keyof/from_type.mjs
+// node_modules/typebox/build/type/engine/keyof/from_type.mjs
 function FromType12(type) {
   return IsAny(type) ? FromAny() : IsArray3(type) ? FromArray4(type.items) : IsObject3(type) ? FromObject6(type.properties) : IsRecord(type) ? FromRecord2(type) : IsTuple(type) ? FromTuple3(type.items) : Never();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/keyof/instantiate.mjs
+// node_modules/typebox/build/type/engine/keyof/instantiate.mjs
 function NormalizeType2(type) {
   const result = IsCyclic(type) || IsDependent(type) || IsIntersect(type) || IsUnion(type) ? CollapseToObject(type) : type;
   return result;
@@ -94326,7 +94382,7 @@ function KeyOfInstantiate(context, state3, type, options) {
   return KeyOfAction(instantiatedType, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/mapped.mjs
+// node_modules/typebox/build/type/action/mapped.mjs
 function MappedDeferred(identifier, type, as, property, options = {}) {
   return Deferred("Mapped", [identifier, type, as, property], options);
 }
@@ -94334,7 +94390,7 @@ function Mapped(identifier, type, as, property, options = {}) {
   return MappedAction({}, State([], []), identifier, type, as, property, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/mapped/mapped_variants.mjs
+// node_modules/typebox/build/type/engine/mapped/mapped_variants.mjs
 function FromTemplateLiteral3(pattern) {
   const evaluated = EvaluateTemplateLiteral(pattern);
   const result = FromType13(evaluated);
@@ -94363,7 +94419,7 @@ function MappedVariants(type) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/mapped/mapped_operation.mjs
+// node_modules/typebox/build/type/engine/mapped/mapped_operation.mjs
 function CanonicalAs(instantiatedAs) {
   const result = IsTemplateLiteral(instantiatedAs) ? EvaluateTemplateLiteral(instantiatedAs.pattern) : instantiatedAs;
   return result;
@@ -94393,7 +94449,7 @@ function MappedOperation(context, state3, identifier, type, as, property) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/mapped/instantiate.mjs
+// node_modules/typebox/build/type/engine/mapped/instantiate.mjs
 function MappedAction(context, state3, identifier, type, as, property, options) {
   const result = CanInstantiate([type]) ? memory_exports.Update(MappedOperation(context, state3, identifier, type, as, property), {}, options) : MappedDeferred(identifier, type, as, property, options);
   return result;
@@ -94403,7 +94459,7 @@ function MappedInstantiate(context, state3, identifier, type, as, property, opti
   return MappedAction(context, state3, identifier, instantiatedType, as, property, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/module/instantiate.mjs
+// node_modules/typebox/build/type/engine/module/instantiate.mjs
 function InstantiateCyclics(context, declarations, cyclicKeys) {
   const declarationContext = memory_exports.Assign(context, declarations);
   const declarationKeys = guard_exports.Keys(declarations).filter((key) => cyclicKeys.includes(key));
@@ -94430,7 +94486,7 @@ function ModuleInstantiate(context, _state, declarations, options) {
   return instantiatedModule;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/non_nullable.mjs
+// node_modules/typebox/build/type/action/non_nullable.mjs
 function NonNullableDeferred(type, options = {}) {
   return Deferred("NonNullable", [type], options);
 }
@@ -94438,7 +94494,7 @@ function NonNullable(type, options = {}) {
   return NonNullableAction(type, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/non_nullable/instantiate.mjs
+// node_modules/typebox/build/type/engine/non_nullable/instantiate.mjs
 function NonNullableOperation(type) {
   const excluded = Union([Null(), Undefined()]);
   return ExcludeAction(type, excluded, {});
@@ -94452,7 +94508,7 @@ function NonNullableInstantiate(context, state3, type, options) {
   return NonNullableAction(instantiatedType, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/omit.mjs
+// node_modules/typebox/build/type/action/omit.mjs
 function OmitDeferred(type, indexer, options = {}) {
   return Deferred("Omit", [type, indexer], options);
 }
@@ -94461,14 +94517,14 @@ function Omit(type, indexer_or_keys, options = {}) {
   return OmitAction(type, indexer, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/indexable/to_indexable.mjs
+// node_modules/typebox/build/type/engine/indexable/to_indexable.mjs
 function ToIndexable(type) {
   const collapsed = CollapseToObject(type);
   const result = IsObject3(collapsed) ? collapsed.properties : Unreachable();
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/omit/from_type.mjs
+// node_modules/typebox/build/type/engine/omit/from_type.mjs
 function FromKeys(properties, keys) {
   const result = guard_exports.Keys(properties).reduce((result2, key) => {
     return keys.includes(key) ? result2 : { ...result2, [key]: properties[key] };
@@ -94483,7 +94539,7 @@ function FromType14(type, indexer) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/omit/instantiate.mjs
+// node_modules/typebox/build/type/engine/omit/instantiate.mjs
 function OmitAction(type, indexer, options) {
   const result = CanInstantiate([type, indexer]) ? memory_exports.Update(FromType14(type, indexer), {}, options) : OmitDeferred(type, indexer, options);
   return result;
@@ -94494,7 +94550,7 @@ function OmitInstantiate(context, state3, type, indexer, options) {
   return OmitAction(instantiatedType, instantiatedIndexer, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/parameters.mjs
+// node_modules/typebox/build/type/action/parameters.mjs
 function ParametersDeferred(type, options = {}) {
   return Deferred("Parameters", [type], options);
 }
@@ -94502,7 +94558,7 @@ function Parameters(type, options = {}) {
   return ParametersAction(type, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/parameters/instantiate.mjs
+// node_modules/typebox/build/type/engine/parameters/instantiate.mjs
 function ParametersOperation(type) {
   const parameters = IsFunction3(type) ? type["parameters"] : [];
   const instantiatedParameters = InstantiateElements({}, State([], []), parameters);
@@ -94518,7 +94574,7 @@ function ParametersInstantiate(context, state3, type, options) {
   return ParametersAction(instantiatedType, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/partial.mjs
+// node_modules/typebox/build/type/action/partial.mjs
 function PartialDeferred(type, options = {}) {
   return Deferred("Partial", [type], options);
 }
@@ -94526,7 +94582,7 @@ function Partial(type, options = {}) {
   return PartialAction(type, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/partial/from_cyclic.mjs
+// node_modules/typebox/build/type/engine/partial/from_cyclic.mjs
 function FromCyclic3(defs, ref) {
   const target = CyclicTarget(defs, ref);
   const partial = FromType15(target);
@@ -94534,27 +94590,27 @@ function FromCyclic3(defs, ref) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/partial/from_dependent.mjs
+// node_modules/typebox/build/type/engine/partial/from_dependent.mjs
 function FromDependent3(if_, then_, else_) {
   const evaluated = EvaluateDependent(if_, then_, else_);
   const result = FromType15(evaluated);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/partial/from_intersect.mjs
+// node_modules/typebox/build/type/engine/partial/from_intersect.mjs
 function FromIntersect3(types3) {
   const evaluated = EvaluateIntersect(types3);
   const result = FromType15(evaluated);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/partial/from_union.mjs
+// node_modules/typebox/build/type/engine/partial/from_union.mjs
 function FromUnion6(types3) {
   const result = types3.map((type) => FromType15(type));
   return Union(result);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/partial/from_object.mjs
+// node_modules/typebox/build/type/engine/partial/from_object.mjs
 function FromObject7(properties) {
   const mapped = guard_exports.Keys(properties).reduce((result2, left) => {
     return { ...result2, [left]: AddOptional(properties[left]) };
@@ -94563,12 +94619,12 @@ function FromObject7(properties) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/partial/from_type.mjs
+// node_modules/typebox/build/type/engine/partial/from_type.mjs
 function FromType15(type) {
   return IsCyclic(type) ? FromCyclic3(type.$defs, type.$ref) : IsDependent(type) ? FromDependent3(type.if, type.then, type.else) : IsIntersect(type) ? FromIntersect3(type.allOf) : IsUnion(type) ? FromUnion6(type.anyOf) : IsObject3(type) ? FromObject7(type.properties) : _Object_({});
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/partial/instantiate.mjs
+// node_modules/typebox/build/type/engine/partial/instantiate.mjs
 function PartialAction(type, options) {
   const result = CanInstantiate([type]) ? memory_exports.Update(FromType15(type), {}, options) : PartialDeferred(type, options);
   return result;
@@ -94578,7 +94634,7 @@ function PartialInstantiate(context, state3, type, options) {
   return PartialAction(instantiatedType, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/pick.mjs
+// node_modules/typebox/build/type/action/pick.mjs
 function PickDeferred(type, indexer, options = {}) {
   return Deferred("Pick", [type, indexer], options);
 }
@@ -94587,7 +94643,7 @@ function Pick(type, indexer_or_keys, options = {}) {
   return PickAction(type, indexer, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/pick/from_type.mjs
+// node_modules/typebox/build/type/engine/pick/from_type.mjs
 function FromKeys2(properties, keys) {
   const result = guard_exports.Keys(properties).reduce((result2, key) => {
     return keys.includes(key) ? memory_exports.Assign(result2, { [key]: properties[key] }) : result2;
@@ -94602,7 +94658,7 @@ function FromType16(type, indexer) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/pick/instantiate.mjs
+// node_modules/typebox/build/type/engine/pick/instantiate.mjs
 function PickAction(type, indexer, options) {
   const result = CanInstantiate([type, indexer]) ? memory_exports.Update(FromType16(type, indexer), {}, options) : PickDeferred(type, indexer, options);
   return result;
@@ -94613,7 +94669,7 @@ function PickInstantiate(context, state3, type, indexer, options) {
   return PickAction(instantiatedType, instantiatedIndexer, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/readonly_object.mjs
+// node_modules/typebox/build/type/action/readonly_object.mjs
 function ReadonlyObjectDeferred(type, options = {}) {
   return Deferred("ReadonlyObject", [type], options);
 }
@@ -94622,13 +94678,13 @@ function ReadonlyObject(type, options = {}) {
 }
 var ReadonlyType = ReadonlyObject;
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/readonly_object/from_array.mjs
+// node_modules/typebox/build/type/engine/readonly_object/from_array.mjs
 function FromArray5(type) {
   const result = AddImmutable(_Array_(type));
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/readonly_object/from_cyclic.mjs
+// node_modules/typebox/build/type/engine/readonly_object/from_cyclic.mjs
 function FromCyclic4(defs, ref) {
   const target = CyclicTarget(defs, ref);
   const partial = FromType17(target);
@@ -94636,21 +94692,21 @@ function FromCyclic4(defs, ref) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/readonly_object/from_dependent.mjs
+// node_modules/typebox/build/type/engine/readonly_object/from_dependent.mjs
 function FromDependent4(if_, then_, else_) {
   const evaluated = EvaluateDependent(if_, then_, else_);
   const result = FromType17(evaluated);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/readonly_object/from_intersect.mjs
+// node_modules/typebox/build/type/engine/readonly_object/from_intersect.mjs
 function FromIntersect4(types3) {
   const evaluated = EvaluateIntersect(types3);
   const result = FromType17(evaluated);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/readonly_object/from_object.mjs
+// node_modules/typebox/build/type/engine/readonly_object/from_object.mjs
 function FromObject8(properties) {
   const mapped = guard_exports.Keys(properties).reduce((result2, left) => {
     return { ...result2, [left]: AddReadonly(properties[left]) };
@@ -94659,24 +94715,24 @@ function FromObject8(properties) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/readonly_object/from_tuple.mjs
+// node_modules/typebox/build/type/engine/readonly_object/from_tuple.mjs
 function FromTuple4(types3) {
   const result = AddImmutable(Tuple(types3));
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/readonly_object/from_union.mjs
+// node_modules/typebox/build/type/engine/readonly_object/from_union.mjs
 function FromUnion7(types3) {
   const result = types3.map((type) => FromType17(type));
   return Union(result);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/readonly_object/from_type.mjs
+// node_modules/typebox/build/type/engine/readonly_object/from_type.mjs
 function FromType17(type) {
   return IsArray3(type) ? FromArray5(type.items) : IsCyclic(type) ? FromCyclic4(type.$defs, type.$ref) : IsDependent(type) ? FromDependent4(type.if, type.then, type.else) : IsIntersect(type) ? FromIntersect4(type.allOf) : IsObject3(type) ? FromObject8(type.properties) : IsTuple(type) ? FromTuple4(type.items) : IsUnion(type) ? FromUnion7(type.anyOf) : type;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/readonly_object/instantiate.mjs
+// node_modules/typebox/build/type/engine/readonly_object/instantiate.mjs
 function ReadonlyObjectAction(type, options) {
   const result = CanInstantiate([type]) ? memory_exports.Update(FromType17(type), {}, options) : ReadonlyObjectDeferred(type);
   return result;
@@ -94686,12 +94742,12 @@ function ReadonlyObjectInstantiate(context, state3, type, options) {
   return ReadonlyObjectAction(instantiatedType, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/ref/instantiate.mjs
+// node_modules/typebox/build/type/engine/ref/instantiate.mjs
 function RefInstantiate(context, state3, type, ref) {
   return state3.visited.includes(ref) ? type : ref in context ? InstantiateType(context, State(state3["callstack"], [...state3["visited"], ref]), context[ref]) : type;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/required/from_cyclic.mjs
+// node_modules/typebox/build/type/engine/required/from_cyclic.mjs
 function FromCyclic5(defs, ref) {
   const target = CyclicTarget(defs, ref);
   const partial = FromType18(target);
@@ -94699,27 +94755,27 @@ function FromCyclic5(defs, ref) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/required/from_dependent.mjs
+// node_modules/typebox/build/type/engine/required/from_dependent.mjs
 function FromDependent5(if_, then_, else_) {
   const evaluated = EvaluateDependent(if_, then_, else_);
   const result = FromType18(evaluated);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/required/from_intersect.mjs
+// node_modules/typebox/build/type/engine/required/from_intersect.mjs
 function FromIntersect5(types3) {
   const evaluated = EvaluateIntersect(types3);
   const result = FromType18(evaluated);
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/required/from_union.mjs
+// node_modules/typebox/build/type/engine/required/from_union.mjs
 function FromUnion8(types3) {
   const result = types3.map((type) => FromType18(type));
   return Union(result);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/required/from_object.mjs
+// node_modules/typebox/build/type/engine/required/from_object.mjs
 function FromObject9(properties) {
   const mapped = guard_exports.Keys(properties).reduce((result2, left) => {
     return { ...result2, [left]: RemoveOptional(properties[left]) };
@@ -94728,12 +94784,12 @@ function FromObject9(properties) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/required/from_type.mjs
+// node_modules/typebox/build/type/engine/required/from_type.mjs
 function FromType18(type) {
   return IsCyclic(type) ? FromCyclic5(type.$defs, type.$ref) : IsDependent(type) ? FromDependent5(type.if, type.then, type.else) : IsIntersect(type) ? FromIntersect5(type.allOf) : IsUnion(type) ? FromUnion8(type.anyOf) : IsObject3(type) ? FromObject9(type.properties) : _Object_({});
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/required.mjs
+// node_modules/typebox/build/type/action/required.mjs
 function RequiredDeferred(type, options = {}) {
   return Deferred("Required", [type], options);
 }
@@ -94741,7 +94797,7 @@ function Required(type, options = {}) {
   return RequiredAction(type, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/required/instantiate.mjs
+// node_modules/typebox/build/type/engine/required/instantiate.mjs
 function RequiredAction(type, options) {
   const result = CanInstantiate([type]) ? memory_exports.Update(FromType18(type), {}, options) : RequiredDeferred(type, options);
   return result;
@@ -94751,7 +94807,7 @@ function RequiredInstantiate(context, state3, type, options) {
   return RequiredAction(instaniatedType, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/return_type.mjs
+// node_modules/typebox/build/type/action/return_type.mjs
 function ReturnTypeDeferred(type, options = {}) {
   return Deferred("ReturnType", [type], options);
 }
@@ -94759,7 +94815,7 @@ function ReturnType(type, options = {}) {
   return ReturnTypeAction(type, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/return_type/instantiate.mjs
+// node_modules/typebox/build/type/engine/return_type/instantiate.mjs
 function ReturnTypeOperation(type) {
   return IsFunction3(type) ? type["returnType"] : Never();
 }
@@ -94772,7 +94828,7 @@ function ReturnTypeInstantiate(context, state3, type, options = {}) {
   return ReturnTypeAction(instantiatedType, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/with.mjs
+// node_modules/typebox/build/type/action/with.mjs
 function WithDeferred(type, options) {
   return Deferred("With", [type, options], {});
 }
@@ -94780,7 +94836,7 @@ function With2(type, options) {
   return WithAction(type, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/with/instantiate.mjs
+// node_modules/typebox/build/type/engine/with/instantiate.mjs
 function WithAction(type, options) {
   const result = CanInstantiate([type]) ? memory_exports.Update(type, {}, options) : WithDeferred(type, options);
   return result;
@@ -94790,7 +94846,7 @@ function WithInstantiate(context, state3, type, options) {
   return WithAction(instaniatedType, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/rest/spread.mjs
+// node_modules/typebox/build/type/engine/rest/spread.mjs
 function SpreadElement(type) {
   const result = IsRest(type) ? IsTuple(type.items) ? RestSpread(type.items.items) : IsInfer(type.items) ? [type] : IsRef(type.items) ? [type] : [Never()] : [type];
   return result;
@@ -94802,7 +94858,7 @@ function RestSpread(types3) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/instantiate.mjs
+// node_modules/typebox/build/type/engine/instantiate.mjs
 function State(callstack, visited2) {
   return { callstack, visited: visited2 };
 }
@@ -94850,7 +94906,7 @@ function Instantiate(context, type) {
   return InstantiateType(context, State([], []), type);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/immutable/instantiate_add.mjs
+// node_modules/typebox/build/type/engine/immutable/instantiate_add.mjs
 function AddImmutableOperation(type) {
   return memory_exports.Update(type, { "~immutable": true }, {});
 }
@@ -94863,7 +94919,7 @@ function AddImmutableInstantiate(context, state3, type, options) {
   return AddImmutableAction(instantiatedType, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/_add_immutable.mjs
+// node_modules/typebox/build/type/action/_add_immutable.mjs
 function AddImmutableDeferred(type, options = {}) {
   return Deferred("AddImmutable", [type], options);
 }
@@ -94871,7 +94927,7 @@ function AddImmutable(type, options = {}) {
   return AddImmutableAction(type, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/evaluate.mjs
+// node_modules/typebox/build/type/action/evaluate.mjs
 function EvaluateDeferred(type, options = {}) {
   return Deferred("Evaluate", [type], options);
 }
@@ -94879,7 +94935,7 @@ function Evaluate2(type, options = {}) {
   return EvaluateAction(type, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/action/module.mjs
+// node_modules/typebox/build/type/action/module.mjs
 function ModuleDeferred(declarations, options = {}) {
   return Deferred("Module", [declarations], options);
 }
@@ -94887,7 +94943,7 @@ function Module2(declarations, options = {}) {
   return ModuleInstantiate({}, State([], []), declarations, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/engine/priority/priority.mjs
+// node_modules/typebox/build/type/engine/priority/priority.mjs
 function Comparer(left, right) {
   const compareResult = Compare(left, right);
   return guard_exports.IsEqual(compareResult, CompareResultRightInside) ? 1 : guard_exports.IsEqual(compareResult, CompareResultDisjoint) ? 1 : 0;
@@ -94903,7 +94959,7 @@ function Priority(types3) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/type/script/script.mjs
+// node_modules/typebox/build/type/script/script.mjs
 function Script2(...args) {
   const [context, input, options] = arguments_exports.Match(args, {
     2: (script, options2) => guard_exports.IsString(script) ? [{}, script, options2] : [script, options2, {}],
@@ -94915,7 +94971,7 @@ function Script2(...args) {
   return memory_exports.Update(parsed, {}, options);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/typebox.mjs
+// node_modules/typebox/build/typebox.mjs
 var typebox_exports = {};
 __export(typebox_exports, {
   Any: () => Any,
@@ -95037,12 +95093,12 @@ __export(typebox_exports, {
   With: () => With2
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/index.js
+// node_modules/@earendil-works/pi-ai/dist/index.js
 init_lazy();
 init_context();
 init_credential_store();
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/auth/helpers.js
+// node_modules/@earendil-works/pi-ai/dist/auth/helpers.js
 function envApiKeyAuth(name, envVars) {
   return {
     name,
@@ -95068,7 +95124,7 @@ function envApiKeyAuth(name, envVars) {
   };
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/index.js
+// node_modules/@earendil-works/pi-ai/dist/index.js
 init_models();
 init_models_store();
 init_diagnostics();
@@ -95076,12 +95132,12 @@ init_event_stream();
 init_json_parse();
 init_transcript();
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/_refine.mjs
+// node_modules/typebox/build/schema/types/_refine.mjs
 function IsRefine2(value) {
   return guard_exports.HasPropertyKey(value, "~refine") && guard_exports.IsArray(value["~refine"]) && guard_exports.Every(value["~refine"], 0, (value2) => guard_exports.IsObject(value2) && guard_exports.HasPropertyKey(value2, "check") && guard_exports.HasPropertyKey(value2, "error") && guard_exports.IsFunction(value2.check) && guard_exports.IsFunction(value2.error));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/schema.mjs
+// node_modules/typebox/build/schema/types/schema.mjs
 function IsSchemaObject2(value) {
   return guard_exports.IsObject(value) && !guard_exports.IsArray(value);
 }
@@ -95092,107 +95148,107 @@ function IsSchema2(value) {
   return IsSchemaObject2(value) || IsSchemaBoolean(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/additionalItems.mjs
+// node_modules/typebox/build/schema/types/additionalItems.mjs
 function IsAdditionalItems(schema2) {
   return guard_exports.HasPropertyKey(schema2, "additionalItems") && IsSchema2(schema2.additionalItems);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/additionalProperties.mjs
+// node_modules/typebox/build/schema/types/additionalProperties.mjs
 function IsAdditionalProperties(schema2) {
   return guard_exports.HasPropertyKey(schema2, "additionalProperties") && IsSchema2(schema2.additionalProperties);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/allOf.mjs
+// node_modules/typebox/build/schema/types/allOf.mjs
 function IsAllOf(schema2) {
   return guard_exports.HasPropertyKey(schema2, "allOf") && guard_exports.IsArray(schema2.allOf) && schema2.allOf.every((value) => IsSchema2(value));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/anchor.mjs
+// node_modules/typebox/build/schema/types/anchor.mjs
 function IsAnchor(schema2) {
   return guard_exports.HasPropertyKey(schema2, "$anchor") && guard_exports.IsString(schema2.$anchor);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/anyOf.mjs
+// node_modules/typebox/build/schema/types/anyOf.mjs
 function IsAnyOf(schema2) {
   return guard_exports.HasPropertyKey(schema2, "anyOf") && guard_exports.IsArray(schema2.anyOf) && schema2.anyOf.every((value) => IsSchema2(value));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/const.mjs
+// node_modules/typebox/build/schema/types/const.mjs
 function IsConst(value) {
   return guard_exports.HasPropertyKey(value, "const");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/contains.mjs
+// node_modules/typebox/build/schema/types/contains.mjs
 function IsContains(schema2) {
   return guard_exports.HasPropertyKey(schema2, "contains") && IsSchema2(schema2.contains);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/default.mjs
+// node_modules/typebox/build/schema/types/default.mjs
 function IsDefault(schema2) {
   return guard_exports.HasPropertyKey(schema2, "default");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/dependencies.mjs
+// node_modules/typebox/build/schema/types/dependencies.mjs
 function IsDependencies(schema2) {
   return guard_exports.HasPropertyKey(schema2, "dependencies") && guard_exports.IsObject(schema2.dependencies) && Object.values(schema2.dependencies).every((value) => IsSchema2(value) || guard_exports.IsArray(value) && value.every((value2) => guard_exports.IsString(value2)));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/dependentRequired.mjs
+// node_modules/typebox/build/schema/types/dependentRequired.mjs
 function IsDependentRequired(schema2) {
   return guard_exports.HasPropertyKey(schema2, "dependentRequired") && guard_exports.IsObject(schema2.dependentRequired) && Object.values(schema2.dependentRequired).every((value) => guard_exports.IsArray(value) && value.every((value2) => guard_exports.IsString(value2)));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/dependentSchemas.mjs
+// node_modules/typebox/build/schema/types/dependentSchemas.mjs
 function IsDependentSchemas(schema2) {
   return guard_exports.HasPropertyKey(schema2, "dependentSchemas") && guard_exports.IsObject(schema2.dependentSchemas) && Object.values(schema2.dependentSchemas).every((value) => IsSchema2(value));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/dynamicAnchor.mjs
+// node_modules/typebox/build/schema/types/dynamicAnchor.mjs
 function IsDynamicAnchor(schema2) {
   return guard_exports.HasPropertyKey(schema2, "$dynamicAnchor") && guard_exports.IsString(schema2.$dynamicAnchor);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/dynamicRef.mjs
+// node_modules/typebox/build/schema/types/dynamicRef.mjs
 function IsDynamicRef(schema2) {
   return guard_exports.HasPropertyKey(schema2, "$dynamicRef") && guard_exports.IsString(schema2.$dynamicRef);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/else.mjs
+// node_modules/typebox/build/schema/types/else.mjs
 function IsElse(schema2) {
   return guard_exports.HasPropertyKey(schema2, "else") && IsSchema2(schema2.else);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/enum.mjs
+// node_modules/typebox/build/schema/types/enum.mjs
 function IsEnum2(schema2) {
   return guard_exports.HasPropertyKey(schema2, "enum") && guard_exports.IsArray(schema2.enum);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/exclusiveMaximum.mjs
+// node_modules/typebox/build/schema/types/exclusiveMaximum.mjs
 function IsExclusiveMaximum(schema2) {
   return guard_exports.HasPropertyKey(schema2, "exclusiveMaximum") && (guard_exports.IsNumber(schema2.exclusiveMaximum) || guard_exports.IsBigInt(schema2.exclusiveMaximum));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/exclusiveMinimum.mjs
+// node_modules/typebox/build/schema/types/exclusiveMinimum.mjs
 function IsExclusiveMinimum(schema2) {
   return guard_exports.HasPropertyKey(schema2, "exclusiveMinimum") && (guard_exports.IsNumber(schema2.exclusiveMinimum) || guard_exports.IsBigInt(schema2.exclusiveMinimum));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/format.mjs
+// node_modules/typebox/build/schema/types/format.mjs
 function IsFormat(schema2) {
   return guard_exports.HasPropertyKey(schema2, "format") && guard_exports.IsString(schema2.format);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/id.mjs
+// node_modules/typebox/build/schema/types/id.mjs
 function IsId(schema2) {
   return guard_exports.HasPropertyKey(schema2, "$id") && guard_exports.IsString(schema2.$id);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/if.mjs
+// node_modules/typebox/build/schema/types/if.mjs
 function IsIf(schema2) {
   return guard_exports.HasPropertyKey(schema2, "if") && IsSchema2(schema2.if);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/items.mjs
+// node_modules/typebox/build/schema/types/items.mjs
 function IsItems(schema2) {
   return guard_exports.HasPropertyKey(schema2, "items") && (IsSchema2(schema2.items) || guard_exports.IsArray(schema2.items) && schema2.items.every((value) => {
     return IsSchema2(value);
@@ -95202,97 +95258,97 @@ function IsItemsSized(schema2) {
   return IsItems(schema2) && guard_exports.IsArray(schema2.items);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/maximum.mjs
+// node_modules/typebox/build/schema/types/maximum.mjs
 function IsMaximum(schema2) {
   return guard_exports.HasPropertyKey(schema2, "maximum") && (guard_exports.IsNumber(schema2.maximum) || guard_exports.IsBigInt(schema2.maximum));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/maxContains.mjs
+// node_modules/typebox/build/schema/types/maxContains.mjs
 function IsMaxContains(schema2) {
   return guard_exports.HasPropertyKey(schema2, "maxContains") && guard_exports.IsNumber(schema2.maxContains);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/maxItems.mjs
+// node_modules/typebox/build/schema/types/maxItems.mjs
 function IsMaxItems(schema2) {
   return guard_exports.HasPropertyKey(schema2, "maxItems") && guard_exports.IsNumber(schema2.maxItems);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/maxLength.mjs
+// node_modules/typebox/build/schema/types/maxLength.mjs
 function IsMaxLength4(schema2) {
   return guard_exports.HasPropertyKey(schema2, "maxLength") && guard_exports.IsNumber(schema2.maxLength);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/maxProperties.mjs
+// node_modules/typebox/build/schema/types/maxProperties.mjs
 function IsMaxProperties(schema2) {
   return guard_exports.HasPropertyKey(schema2, "maxProperties") && guard_exports.IsNumber(schema2.maxProperties);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/minimum.mjs
+// node_modules/typebox/build/schema/types/minimum.mjs
 function IsMinimum(schema2) {
   return guard_exports.HasPropertyKey(schema2, "minimum") && (guard_exports.IsNumber(schema2.minimum) || guard_exports.IsBigInt(schema2.minimum));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/minContains.mjs
+// node_modules/typebox/build/schema/types/minContains.mjs
 function IsMinContains(schema2) {
   return guard_exports.HasPropertyKey(schema2, "minContains") && guard_exports.IsNumber(schema2.minContains);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/minItems.mjs
+// node_modules/typebox/build/schema/types/minItems.mjs
 function IsMinItems(schema2) {
   return guard_exports.HasPropertyKey(schema2, "minItems") && guard_exports.IsNumber(schema2.minItems);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/minLength.mjs
+// node_modules/typebox/build/schema/types/minLength.mjs
 function IsMinLength4(schema2) {
   return guard_exports.HasPropertyKey(schema2, "minLength") && guard_exports.IsNumber(schema2.minLength);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/minProperties.mjs
+// node_modules/typebox/build/schema/types/minProperties.mjs
 function IsMinProperties(schema2) {
   return guard_exports.HasPropertyKey(schema2, "minProperties") && guard_exports.IsNumber(schema2.minProperties);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/multipleOf.mjs
+// node_modules/typebox/build/schema/types/multipleOf.mjs
 function IsMultipleOf2(schema2) {
   return guard_exports.HasPropertyKey(schema2, "multipleOf") && (guard_exports.IsNumber(schema2.multipleOf) || guard_exports.IsBigInt(schema2.multipleOf));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/not.mjs
+// node_modules/typebox/build/schema/types/not.mjs
 function IsNot(schema2) {
   return guard_exports.HasPropertyKey(schema2, "not") && IsSchema2(schema2.not);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/oneOf.mjs
+// node_modules/typebox/build/schema/types/oneOf.mjs
 function IsOneOf(schema2) {
   return guard_exports.HasPropertyKey(schema2, "oneOf") && guard_exports.IsArray(schema2.oneOf) && schema2.oneOf.every((value) => IsSchema2(value));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/pattern.mjs
+// node_modules/typebox/build/schema/types/pattern.mjs
 function IsPattern(schema2) {
   return guard_exports.HasPropertyKey(schema2, "pattern") && (guard_exports.IsString(schema2.pattern) || schema2.pattern instanceof RegExp);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/patternProperties.mjs
+// node_modules/typebox/build/schema/types/patternProperties.mjs
 function IsPatternProperties(schema2) {
   return guard_exports.HasPropertyKey(schema2, "patternProperties") && guard_exports.IsObject(schema2.patternProperties) && Object.values(schema2.patternProperties).every((value) => IsSchema2(value));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/prefixItems.mjs
+// node_modules/typebox/build/schema/types/prefixItems.mjs
 function IsPrefixItems(schema2) {
   return guard_exports.HasPropertyKey(schema2, "prefixItems") && guard_exports.IsArray(schema2.prefixItems) && schema2.prefixItems.every((schema3) => IsSchema2(schema3));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/properties.mjs
+// node_modules/typebox/build/schema/types/properties.mjs
 function IsProperties(schema2) {
   return guard_exports.HasPropertyKey(schema2, "properties") && guard_exports.IsObject(schema2.properties) && Object.values(schema2.properties).every((value) => IsSchema2(value));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/propertyNames.mjs
+// node_modules/typebox/build/schema/types/propertyNames.mjs
 function IsPropertyNames(schema2) {
   return guard_exports.HasPropertyKey(schema2, "propertyNames") && (guard_exports.IsObject(schema2.propertyNames) || IsSchema2(schema2.propertyNames));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/recursiveAnchor.mjs
+// node_modules/typebox/build/schema/types/recursiveAnchor.mjs
 function IsRecursiveAnchor(schema2) {
   return guard_exports.HasPropertyKey(schema2, "$recursiveAnchor") && guard_exports.IsBoolean(schema2.$recursiveAnchor);
 }
@@ -95300,47 +95356,47 @@ function IsRecursiveAnchorTrue(schema2) {
   return IsRecursiveAnchor(schema2) && guard_exports.IsEqual(schema2.$recursiveAnchor, true);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/recursiveRef.mjs
+// node_modules/typebox/build/schema/types/recursiveRef.mjs
 function IsRecursiveRef(schema2) {
   return guard_exports.HasPropertyKey(schema2, "$recursiveRef") && guard_exports.IsString(schema2.$recursiveRef);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/ref.mjs
+// node_modules/typebox/build/schema/types/ref.mjs
 function IsRef2(schema2) {
   return guard_exports.HasPropertyKey(schema2, "$ref") && guard_exports.IsString(schema2.$ref);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/required.mjs
+// node_modules/typebox/build/schema/types/required.mjs
 function IsRequired(schema2) {
   return guard_exports.HasPropertyKey(schema2, "required") && guard_exports.IsArray(schema2.required) && schema2.required.every((value) => guard_exports.IsString(value));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/then.mjs
+// node_modules/typebox/build/schema/types/then.mjs
 function IsThen(schema2) {
   return guard_exports.HasPropertyKey(schema2, "then") && IsSchema2(schema2.then);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/type.mjs
+// node_modules/typebox/build/schema/types/type.mjs
 function IsType(schema2) {
   return guard_exports.HasPropertyKey(schema2, "type") && (guard_exports.IsString(schema2.type) || guard_exports.IsArray(schema2.type) && schema2.type.every((value) => guard_exports.IsString(value)));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/uniqueItems.mjs
+// node_modules/typebox/build/schema/types/uniqueItems.mjs
 function IsUniqueItems(schema2) {
   return guard_exports.HasPropertyKey(schema2, "uniqueItems") && guard_exports.IsBoolean(schema2.uniqueItems);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/unevaluatedItems.mjs
+// node_modules/typebox/build/schema/types/unevaluatedItems.mjs
 function IsUnevaluatedItems(schema2) {
   return guard_exports.HasPropertyKey(schema2, "unevaluatedItems") && IsSchema2(schema2.unevaluatedItems);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/types/unevaluatedProperties.mjs
+// node_modules/typebox/build/schema/types/unevaluatedProperties.mjs
 function IsUnevaluatedProperties(schema2) {
   return guard_exports.HasPropertyKey(schema2, "unevaluatedProperties") && IsSchema2(schema2.unevaluatedProperties);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/_context.mjs
+// node_modules/typebox/build/schema/engine/_context.mjs
 function HasUnevaluatedFromObject(value) {
   return IsUnevaluatedItems(value) || IsUnevaluatedProperties(value) || guard_exports.Some(guard_exports.Keys(value), (key) => HasUnevaluatedFromUnknown(value[key]));
 }
@@ -95446,7 +95502,7 @@ var ErrorContext = class extends CheckContext {
   }
 };
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/_externals.mjs
+// node_modules/typebox/build/schema/engine/_externals.mjs
 var state = {
   identifier: "External",
   variables: []
@@ -95463,7 +95519,7 @@ function GetExternal() {
   return { ...state };
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/_refine.mjs
+// node_modules/typebox/build/schema/engine/_refine.mjs
 function BuildRefine(_stack, _context, schema2, value) {
   const refinements = CreateVariable(schema2["~refine"].map((refinement) => refinement));
   return emit_exports.Every(refinements, emit_exports.Constant(0), ["refinement", "_"], emit_exports.Call(emit_exports.Member("refinement", "check"), [value]));
@@ -95482,13 +95538,13 @@ function ErrorRefine(_stack, context, schemaPath, instancePath, schema2, value) 
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/_unique.mjs
+// node_modules/typebox/build/schema/engine/_unique.mjs
 var index = 0;
 function Unique() {
   return `var_${index++}`;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/additionalItems.mjs
+// node_modules/typebox/build/schema/engine/additionalItems.mjs
 function IsValid(schema2) {
   return IsItems(schema2) && guard_exports.IsArray(schema2.items);
 }
@@ -95529,12 +95585,12 @@ function ErrorAdditionalItems(stack, context, schemaPath, instancePath, schema2,
   return isAdditionalItems;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/_regexp.mjs
+// node_modules/typebox/build/schema/engine/_regexp.mjs
 function UnicodeRegExp(pattern) {
   return new RegExp(pattern, "u");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/additionalProperties.mjs
+// node_modules/typebox/build/schema/engine/additionalProperties.mjs
 function IsAdditionalPropertiesIgnored(context, additionalProperties) {
   return !context.UseUnevaluated() && (guard_exports.IsEqual(additionalProperties, true) || guard_exports.IsObject(additionalProperties) && guard_exports.IsEqual(guard_exports.Keys(additionalProperties).length, 0));
 }
@@ -95597,7 +95653,7 @@ function ErrorAdditionalProperties(stack, context, schemaPath, instancePath, sch
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/_reducer.mjs
+// node_modules/typebox/build/schema/engine/_reducer.mjs
 function Reducer(stack, context, schemas, value, check) {
   const results = emit_exports.ConstDeclaration("results", "[]");
   const context_n = schemas.map((_schema, index3) => emit_exports.ConstDeclaration(`context_${index3}`, emit_exports.New("CheckContext", [])));
@@ -95607,7 +95663,7 @@ function Reducer(stack, context, schemas, value, check) {
   return emit_exports.Call(emit_exports.ArrowFunction([], emit_exports.Statements([results, ...context_n, ...condition_n, ...checks, returns])), []);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/allOf.mjs
+// node_modules/typebox/build/schema/engine/allOf.mjs
 function BuildAllOfStandard(stack, context, schema2, value) {
   return Reducer(stack, context, schema2.allOf, value, emit_exports.IsEqual(emit_exports.Member("results", "length"), emit_exports.Constant(schema2.allOf.length)));
 }
@@ -95640,7 +95696,7 @@ function ErrorAllOf(stack, context, schemaPath, instancePath, schema2, value) {
   return isAllOf;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/anyOf.mjs
+// node_modules/typebox/build/schema/engine/anyOf.mjs
 function BuildAnyOfStandard(stack, context, schema2, value) {
   return Reducer(stack, context, schema2.anyOf, value, emit_exports.IsGreaterThan(emit_exports.Member("results", "length"), emit_exports.Constant(0)));
 }
@@ -95678,7 +95734,7 @@ function ErrorAnyOf(stack, context, schemaPath, instancePath, schema2, value) {
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/boolean.mjs
+// node_modules/typebox/build/schema/engine/boolean.mjs
 function BuildSchemaBoolean(_stack, _context, schema2, _value) {
   return schema2 ? emit_exports.Constant(true) : emit_exports.Constant(false);
 }
@@ -95694,7 +95750,7 @@ function ErrorSchemaBoolean(stack, context, schemaPath, instancePath, schema2, v
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/const.mjs
+// node_modules/typebox/build/schema/engine/const.mjs
 function BuildConst(_stack, _context, schema2, value) {
   return guard_exports.IsValueLike(schema2.const) ? emit_exports.IsEqual(value, emit_exports.Constant(schema2.const)) : emit_exports.IsDeepEqual(value, CreateVariable(schema2.const));
 }
@@ -95710,7 +95766,7 @@ function ErrorConst(stack, context, schemaPath, instancePath, schema2, value) {
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/contains.mjs
+// node_modules/typebox/build/schema/engine/contains.mjs
 function IsValid2(schema2) {
   return !(IsMinContains(schema2) && guard_exports.IsEqual(schema2.minContains, 0));
 }
@@ -95747,7 +95803,7 @@ function ErrorContains(stack, context, schemaPath, instancePath, schema2, value)
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/dependencies.mjs
+// node_modules/typebox/build/schema/engine/dependencies.mjs
 function BuildDependencies(stack, context, schema2, value) {
   const isLength = emit_exports.IsEqual(emit_exports.Member(emit_exports.Keys(value), "length"), emit_exports.Constant(0));
   const isEveryDependency = emit_exports.ReduceAnd(guard_exports.Entries(schema2.dependencies).map(([key, schema3]) => {
@@ -95779,7 +95835,7 @@ function ErrorDependencies(stack, context, schemaPath, instancePath, schema2, va
   return isLength || isEvery;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/dependentRequired.mjs
+// node_modules/typebox/build/schema/engine/dependentRequired.mjs
 function BuildDependentRequired(_stack, _context, schema2, value) {
   const isLength = emit_exports.IsEqual(emit_exports.Member(emit_exports.Keys(value), "length"), emit_exports.Constant(0));
   const isEvery = emit_exports.ReduceAnd(guard_exports.Entries(schema2.dependentRequired).map(([key, keys]) => {
@@ -95809,7 +95865,7 @@ function ErrorDependentRequired(_stack, context, schemaPath, instancePath, schem
   return isLength || isEveryEntry;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/dependentSchemas.mjs
+// node_modules/typebox/build/schema/engine/dependentSchemas.mjs
 function BuildDependentSchemas(stack, context, schema2, value) {
   const isLength = emit_exports.IsEqual(emit_exports.Member(emit_exports.Keys(value), "length"), emit_exports.Constant(0));
   const isEvery = emit_exports.ReduceAnd(guard_exports.Entries(schema2.dependentSchemas).map(([key, schema3]) => {
@@ -95835,7 +95891,7 @@ function ErrorDependentSchemas(stack, context, schemaPath, instancePath, schema2
   return isLength || isEvery;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/dynamicRef.mjs
+// node_modules/typebox/build/schema/engine/dynamicRef.mjs
 function BuildDynamicRef(stack, context, schema2, value) {
   const target = stack.DynamicRef(schema2) ?? false;
   return CreateFunction(stack, context, target, value);
@@ -95849,7 +95905,7 @@ function ErrorDynamicRef(stack, context, _schemaPath, instancePath, schema2, val
   return IsSchema2(target) && ErrorSchema(stack, context, "#", instancePath, target, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/enum.mjs
+// node_modules/typebox/build/schema/engine/enum.mjs
 function BuildEnum(_stack, _context, schema2, value) {
   return emit_exports.ReduceOr(schema2.enum.map((option) => {
     if (guard_exports.IsValueLike(option))
@@ -95870,7 +95926,7 @@ function ErrorEnum(stack, context, schemaPath, instancePath, schema2, value) {
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/exclusiveMaximum.mjs
+// node_modules/typebox/build/schema/engine/exclusiveMaximum.mjs
 function BuildExclusiveMaximum(_stack, _context, schema2, value) {
   return emit_exports.IsLessThan(value, emit_exports.Constant(schema2.exclusiveMaximum));
 }
@@ -95886,7 +95942,7 @@ function ErrorExclusiveMaximum(stack, context, schemaPath, instancePath, schema2
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/exclusiveMinimum.mjs
+// node_modules/typebox/build/schema/engine/exclusiveMinimum.mjs
 function BuildExclusiveMinimum(_stack, _context, schema2, value) {
   return emit_exports.IsGreaterThan(value, emit_exports.Constant(schema2.exclusiveMinimum));
 }
@@ -95902,7 +95958,7 @@ function ErrorExclusiveMinimum(stack, context, schemaPath, instancePath, schema2
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/format.mjs
+// node_modules/typebox/build/format/format.mjs
 var format_exports = {};
 __export(format_exports, {
   Clear: () => Clear,
@@ -95935,7 +95991,7 @@ __export(format_exports, {
   Test: () => Test
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/date.mjs
+// node_modules/typebox/build/format/date.mjs
 var DAYS = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 var DATE = /^(\d\d\d\d)-(\d\d)-(\d\d)$/;
 function IsLeapYear(year) {
@@ -95951,7 +96007,7 @@ function IsDate2(value) {
   return month >= 1 && month <= 12 && day >= 1 && day <= (month === 2 && IsLeapYear(year) ? 29 : DAYS[month]);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/time.mjs
+// node_modules/typebox/build/format/time.mjs
 var TIME = /^(\d\d):(\d\d):(\d\d)(?:\.\d+)?(?:([Zz])|([+-])(\d\d):(\d\d))?$/;
 function IsTime(value, strictTimeZone = true) {
   const matches = TIME.exec(value);
@@ -95979,25 +96035,25 @@ function IsTime(value, strictTimeZone = true) {
   return (totalUtcMin % 1440 + 1440) % 1440 === 1439;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/date_time.mjs
+// node_modules/typebox/build/format/date_time.mjs
 function IsDateTime(value) {
   const dateTime = value.split(/T/i);
   return dateTime.length === 2 && IsDate2(dateTime[0]) && IsTime(dateTime[1]);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/duration.mjs
+// node_modules/typebox/build/format/duration.mjs
 var Duration = /^P((\d+Y(\d+M(\d+D)?)?|\d+M(\d+D)?|\d+D)(T(\d+H(\d+M(\d+S)?)?|\d+M(\d+S)?|\d+S))?|T(\d+H(\d+M(\d+S)?)?|\d+M(\d+S)?|\d+S)|\d+W)$/;
 function IsDuration(value) {
   return Duration.test(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/email.mjs
+// node_modules/typebox/build/format/email.mjs
 var Email = /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[^"\\]|\\[\x20-\x7e])*")@(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*|\[(?:IPv6:[a-f0-9:]+|(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(?:\.(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3})\])$/i;
 function IsEmail(value) {
   return Email.test(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/idna/pattern/pattern.mjs
+// node_modules/typebox/build/format/idna/pattern/pattern.mjs
 var RE_RULE_HYPHEN_PLACEMENT = /^(?!-).*(?<!-)$/;
 var RE_RULE_NOT_RESERVED_ACE = /^(?!..--)/;
 var RE_ASCII_LDH = /^[a-zA-Z0-9-]*$/;
@@ -96037,12 +96093,12 @@ var RE_PERMITTED_CATEGORY = new RegExp([
   RE_PVALID_EXCEPTIONS
 ].map((regexp) => regexp.source).join("|"), "u");
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/idna/label/ascii.mjs
+// node_modules/typebox/build/format/idna/label/ascii.mjs
 function IsAsciiLabel(value) {
   return RE_RULE_HYPHEN_PLACEMENT.test(value) && RE_RULE_NOT_RESERVED_ACE.test(value) && RE_ASCII_LDH.test(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/idna/format/puny.mjs
+// node_modules/typebox/build/format/idna/format/puny.mjs
 var PUNYCODE_BASE = 36;
 var PUNYCODE_TMIN = 1;
 var PUNYCODE_TMAX = 26;
@@ -96158,7 +96214,7 @@ function Encode2(input) {
   return result.join("");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/idna/format/bidi.mjs
+// node_modules/typebox/build/format/idna/format/bidi.mjs
 var RE_RTL_ALLOWED = /^(?:R|AL|AN|EN|ES|CS|ET|ON|BN|NSM)$/;
 var RE_LTR_ALLOWED = /^(?:L|EN|ES|CS|ET|ON|BN|NSM)$/;
 var RE_RTL_CLASSES = /^(?:R|AL|AN)$/;
@@ -96213,7 +96269,7 @@ function SatisfiesBidiRule(value) {
   return true;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/idna/label/unicode.mjs
+// node_modules/typebox/build/format/idna/label/unicode.mjs
 function ExceedsMaxALabelLength(value) {
   return RE_NON_ASCII.test(value) && Encode2(value).length + 4 > 63;
 }
@@ -96279,7 +96335,7 @@ function IsUnicodeLabel(value) {
   return true;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/idna/label/puny.mjs
+// node_modules/typebox/build/format/idna/label/puny.mjs
 function IsPunyLabel(value) {
   if (!IsAcePrefixed(value))
     return false;
@@ -96296,7 +96352,7 @@ function IsPunyLabel(value) {
   }
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/idna/hostname.mjs
+// node_modules/typebox/build/format/idna/hostname.mjs
 function IsValidLabelLength(value) {
   return value.length > 0 && value.length <= 63;
 }
@@ -96311,7 +96367,7 @@ function IsHostname(value) {
   return value.split(".").every((label) => IsLabel(label));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/idna/idn-hostname.mjs
+// node_modules/typebox/build/format/idna/idn-hostname.mjs
 function IsValidLabelLength2(value) {
   return value.length > 0 && value.length <= 63;
 }
@@ -96332,42 +96388,42 @@ function IsIdnHostname(value) {
   return labels.every((label) => IsLabel2(label) && (!hasBidiChars || SatisfiesBidiRule(label)));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/hostname.mjs
+// node_modules/typebox/build/format/hostname.mjs
 function IsHostname2(value) {
   return IsHostname(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/idn_email.mjs
+// node_modules/typebox/build/format/idn_email.mjs
 var IdnEmail = /^(?:[A-Za-z0-9!#$%&'*+\/=?^_`{|}~\u{0080}-\u{10FFFF}-]+(?:\.[A-Za-z0-9!#$%&'*+\/=?^_`{|}~\u{0080}-\u{10FFFF}-]+)*|"(?:[^"\\]|\\.)*")@[\p{L}\p{N}](?:[\p{L}\p{N}-]{0,62})(?<!-)(?:\.[\p{L}\p{N}](?:[\p{L}\p{N}-]{0,62})(?<!-))*$/iu;
 function IsIdnEmail(value) {
   return IdnEmail.test(value.normalize("NFC"));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/idn_hostname.mjs
+// node_modules/typebox/build/format/idn_hostname.mjs
 function IsIdnHostname2(value) {
   return IsIdnHostname(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/ipv4.mjs
+// node_modules/typebox/build/format/ipv4.mjs
 var IPv4 = /^(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)$/;
 function IsIPv4(value) {
   return IPv4.test(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/ipv6.mjs
+// node_modules/typebox/build/format/ipv6.mjs
 var IPv6 = /^(?:(?:(?:[0-9a-f]{1,4}:){6}|::(?:[0-9a-f]{1,4}:){5}|(?:[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){4}|(?:(?:[0-9a-f]{1,4}:)?[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){3}|(?:(?:[0-9a-f]{1,4}:){0,2}[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){2}|(?:(?:[0-9a-f]{1,4}:){0,3}[0-9a-f]{1,4})?::[0-9a-f]{1,4}:|(?:(?:[0-9a-f]{1,4}:){0,4}[0-9a-f]{1,4})?::)(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|(?:(?:[0-9a-f]{1,4}:){0,5}[0-9a-f]{1,4})?::[0-9a-f]{1,4}|(?:(?:[0-9a-f]{1,4}:){0,6}[0-9a-f]{1,4})?::)$/i;
 function IsIPv6(value) {
   return IPv6.test(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/iri_reference.mjs
+// node_modules/typebox/build/format/iri_reference.mjs
 var InvalidIriChars = /[\x00-\x20\x7F\\]|%(?![0-9a-fA-F]{2})/;
 var MalformedScheme = /^[a-zA-Z][a-zA-Z0-9+\-.]*\/\//;
 function IsIriReference(value) {
   return !InvalidIriChars.test(value) && !MalformedScheme.test(value) && URL.canParse(value, "http://example.com");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/iri.mjs
+// node_modules/typebox/build/format/iri.mjs
 var IpvFutureMatchMaxLength = 2048;
 var IpvFutureMatch = /\[[vV][0-9a-fA-F]+\.[^\]]+\]/;
 var InvalidIriChars2 = /[\x00-\x20<>\^`{|}\\]/;
@@ -96383,19 +96439,19 @@ function IsIri(value) {
   return URL.canParse(NarrowIpvFuture(value));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/json_pointer_uri_fragment.mjs
+// node_modules/typebox/build/format/json_pointer_uri_fragment.mjs
 var JsonPointerUriFragment = /^#(?:\/(?:[a-z0-9_\-.!$&'()*+,;:=@]|%[0-9a-f]{2}|~0|~1)*)*$/i;
 function IsJsonPointerUriFragment(value) {
   return JsonPointerUriFragment.test(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/json_pointer.mjs
+// node_modules/typebox/build/format/json_pointer.mjs
 var JsonPointer = /^(?:\/(?:[^~/]|~0|~1)*)*$/;
 function IsJsonPointer(value) {
   return JsonPointer.test(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/regex.mjs
+// node_modules/typebox/build/format/regex.mjs
 function IsRegex(value) {
   try {
     new RegExp(value, "u");
@@ -96405,42 +96461,42 @@ function IsRegex(value) {
   }
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/relative_json_pointer.mjs
+// node_modules/typebox/build/format/relative_json_pointer.mjs
 var RelativeJsonPointer = /^(?:0|[1-9][0-9]*)(?:#|(?:\/(?:[^~/]|~0|~1)*)*)$/;
 function IsRelativeJsonPointer(value) {
   return RelativeJsonPointer.test(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/uri_reference.mjs
+// node_modules/typebox/build/format/uri_reference.mjs
 var UriReference = /^(?:[a-z][a-z0-9+\-.]*:(?:\/\/(?:(?:[-a-z0-9._~!$&'()*+,;=:]|%[0-9a-f]{2})*@)?(?:\[(?:(?:(?:[\da-f]{1,4}:){6}(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|::(?:[\da-f]{1,4}:){5}(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|(?:[\da-f]{1,4})?::(?:[\da-f]{1,4}:){4}(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|(?:(?:[\da-f]{1,4}:){0,1}[\da-f]{1,4})?::(?:[\da-f]{1,4}:){3}(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|(?:(?:[\da-f]{1,4}:){0,2}[\da-f]{1,4})?::(?:[\da-f]{1,4}:){2}(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|(?:(?:[\da-f]{1,4}:){0,3}[\da-f]{1,4})?::[\da-f]{1,4}:(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|(?:(?:[\da-f]{1,4}:){0,4}[\da-f]{1,4})?::(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|(?:(?:[\da-f]{1,4}:){0,5}[\da-f]{1,4})?::[\da-f]{1,4}|(?:(?:[\da-f]{1,4}:){0,6}[\da-f]{1,4})?::)|v[0-9a-f]+\.[-a-z0-9._~!$&'()*+,;=:]+)\]|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)|(?:[-a-z0-9._~!$&'()*+,;=]|%[0-9a-f]{2})*)(?::\d*)?(?:\/(?:[-a-z0-9._~!$&'()*+,;=:@]|%[0-9a-f]{2})*)*|\/(?:(?:[-a-z0-9._~!$&'()*+,;=:@]|%[0-9a-f]{2})+(?:\/(?:[-a-z0-9._~!$&'()*+,;=:@]|%[0-9a-f]{2})*)*)?|(?:[-a-z0-9._~!$&'()*+,;=:@]|%[0-9a-f]{2})+(?:\/(?:[-a-z0-9._~!$&'()*+,;=:@]|%[0-9a-f]{2})*)*)?|(?:\/\/(?:(?:[-a-z0-9._~!$&'()*+,;=:]|%[0-9a-f]{2})*@)?(?:\[(?:(?:(?:[\da-f]{1,4}:){6}(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|::(?:[\da-f]{1,4}:){5}(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|(?:[\da-f]{1,4})?::(?:[\da-f]{1,4}:){4}(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|(?:(?:[\da-f]{1,4}:){0,1}[\da-f]{1,4})?::(?:[\da-f]{1,4}:){3}(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|(?:(?:[\da-f]{1,4}:){0,2}[\da-f]{1,4})?::(?:[\da-f]{1,4}:){2}(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|(?:(?:[\da-f]{1,4}:){0,3}[\da-f]{1,4})?::[\da-f]{1,4}:(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|(?:(?:[\da-f]{1,4}:){0,4}[\da-f]{1,4})?::(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|(?:(?:[\da-f]{1,4}:){0,5}[\da-f]{1,4})?::[\da-f]{1,4}|(?:(?:[\da-f]{1,4}:){0,6}[\da-f]{1,4})?::)|v[0-9a-f]+\.[-a-z0-9._~!$&'()*+,;=:]+)\]|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)|(?:[-a-z0-9._~!$&'()*+,;=]|%[0-9a-f]{2})*)(?::\d*)?(?:\/(?:[-a-z0-9._~!$&'()*+,;=:@]|%[0-9a-f]{2})*)*|\/(?:(?:[-a-z0-9._~!$&'()*+,;=:@]|%[0-9a-f]{2})+(?:\/(?:[-a-z0-9._~!$&'()*+,;=:@]|%[0-9a-f]{2})*)*)?|(?:[-a-z0-9._~!$&'()*+,;=@]|%[0-9a-f]{2})+(?:\/(?:[-a-z0-9._~!$&'()*+,;=:@]|%[0-9a-f]{2})*)*)?)(?:\?(?:[-a-z0-9._~!$&'()*+,;=:@/?]|%[0-9a-f]{2})*)?(?:#(?:[-a-z0-9._~!$&'()*+,;=:@/?]|%[0-9a-f]{2})*)?$/i;
 function IsUriReference(value) {
   return UriReference.test(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/uri_template.mjs
+// node_modules/typebox/build/format/uri_template.mjs
 var UriTemplate = /^(?:(?:[^\x00-\x20"<>%\\^`{|}\x7f]|%[0-9a-f]{2})|\{[+#./;?&=,!@|]?(?:[a-z0-9_]|%[0-9a-f]{2})+(?:\.(?:[a-z0-9_]|%[0-9a-f]{2})+)*(?::[1-9]\d{0,3}|\*)?(?:,(?:[a-z0-9_]|%[0-9a-f]{2})+(?:\.(?:[a-z0-9_]|%[0-9a-f]{2})+)*(?::[1-9]\d{0,3}|\*)?)*\})*$/i;
 function IsUriTemplate(value) {
   return UriTemplate.test(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/uri.mjs
+// node_modules/typebox/build/format/uri.mjs
 var Uri = /^[a-z][a-z0-9+\-.]*:(?:\/\/(?:(?:[-a-z0-9._~!$&'()*+,;=:]|%[0-9a-f]{2})*@)?(?:\[(?:(?:(?:[\da-f]{1,4}:){6}(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|::(?:[\da-f]{1,4}:){5}(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|(?:[\da-f]{1,4})?::(?:[\da-f]{1,4}:){4}(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|(?:(?:[\da-f]{1,4}:){0,1}[\da-f]{1,4})?::(?:[\da-f]{1,4}:){3}(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|(?:(?:[\da-f]{1,4}:){0,2}[\da-f]{1,4})?::(?:[\da-f]{1,4}:){2}(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|(?:(?:[\da-f]{1,4}:){0,3}[\da-f]{1,4})?::[\da-f]{1,4}:(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|(?:(?:[\da-f]{1,4}:){0,4}[\da-f]{1,4})?::(?:[\da-f]{1,4}:[\da-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))|(?:(?:[\da-f]{1,4}:){0,5}[\da-f]{1,4})?::[\da-f]{1,4}|(?:(?:[\da-f]{1,4}:){0,6}[\da-f]{1,4})?::)|v[0-9a-f]+\.[-a-z0-9._~!$&'()*+,;=:]+)\]|(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)|(?:[-a-z0-9._~!$&'()*+,;=]|%[0-9a-f]{2})*)(?::\d*)?(?:\/(?:[-a-z0-9._~!$&'()*+,;=:@]|%[0-9a-f]{2})*)*|\/(?:(?:[-a-z0-9._~!$&'()*+,;=:@]|%[0-9a-f]{2})+(?:\/(?:[-a-z0-9._~!$&'()*+,;=:@]|%[0-9a-f]{2})*)*)?|(?:[-a-z0-9._~!$&'()*+,;=:@]|%[0-9a-f]{2})+(?:\/(?:[-a-z0-9._~!$&'()*+,;=:@]|%[0-9a-f]{2})*)*)?(?:\?(?:[-a-z0-9._~!$&'()*+,;=:@/?]|%[0-9a-f]{2})*)?(?:#(?:[-a-z0-9._~!$&'()*+,;=:@/?]|%[0-9a-f]{2})*)?$/i;
 function IsUri(value) {
   return Uri.test(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/url.mjs
+// node_modules/typebox/build/format/url.mjs
 function IsUrl(value) {
   return URL.canParse(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/uuid.mjs
+// node_modules/typebox/build/format/uuid.mjs
 var Uuid = /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i;
 function IsUuid(value) {
   return Uuid.test(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/format/_registry.mjs
+// node_modules/typebox/build/format/_registry.mjs
 var formats = /* @__PURE__ */ new Map();
 function Clear() {
   formats.clear();
@@ -96486,7 +96542,7 @@ function Reset2() {
 }
 Reset2();
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/format.mjs
+// node_modules/typebox/build/schema/engine/format.mjs
 function BuildFormat(_stack, _context, schema2, value) {
   return emit_exports.Call(emit_exports.Member("Format", "Test"), [emit_exports.Constant(schema2.format), value]);
 }
@@ -96502,7 +96558,7 @@ function ErrorFormat(stack, context, schemaPath, instancePath, schema2, value) {
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/if.mjs
+// node_modules/typebox/build/schema/engine/if.mjs
 function BuildIf(stack, context, schema2, value) {
   const thenSchema = IsThen(schema2) ? schema2.then : true;
   const elseSchema = IsElse(schema2) ? schema2.else : true;
@@ -96533,7 +96589,7 @@ function ErrorIf(stack, context, schemaPath, instancePath, schema2, value) {
   return isIf;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/items.mjs
+// node_modules/typebox/build/schema/engine/items.mjs
 function BuildItemsSizedStandard(stack, context, schema2, value) {
   return emit_exports.ReduceAnd(schema2.items.map((schema3, index3) => {
     const isLength = emit_exports.IsLessEqualThan(emit_exports.Member(value, "length"), emit_exports.Constant(index3));
@@ -96602,7 +96658,7 @@ function ErrorItems(stack, context, schemaPath, instancePath, schema2, value) {
   return IsItemsSized(schema2) ? ErrorItemsSized(stack, context, schemaPath, instancePath, schema2, value) : ErrorItemsUnsized(stack, context, schemaPath, instancePath, schema2, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/maxContains.mjs
+// node_modules/typebox/build/schema/engine/maxContains.mjs
 function IsValid3(schema2) {
   return IsContains(schema2);
 }
@@ -96629,7 +96685,7 @@ function ErrorMaxContains(stack, context, schemaPath, instancePath, schema2, val
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/maximum.mjs
+// node_modules/typebox/build/schema/engine/maximum.mjs
 function BuildMaximum(_stack, _context, schema2, value) {
   return emit_exports.IsLessEqualThan(value, emit_exports.Constant(schema2.maximum));
 }
@@ -96645,7 +96701,7 @@ function ErrorMaximum(stack, context, schemaPath, instancePath, schema2, value) 
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/maxItems.mjs
+// node_modules/typebox/build/schema/engine/maxItems.mjs
 function BuildMaxItems(_stack, _context, schema2, value) {
   return emit_exports.IsLessEqualThan(emit_exports.Member(value, "length"), emit_exports.Constant(schema2.maxItems));
 }
@@ -96661,7 +96717,7 @@ function ErrorMaxItems(stack, context, schemaPath, instancePath, schema2, value)
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/maxLength.mjs
+// node_modules/typebox/build/schema/engine/maxLength.mjs
 function BuildMaxLength(_stack, _context, schema2, value) {
   return emit_exports.IsMaxLength(value, emit_exports.Constant(schema2.maxLength));
 }
@@ -96677,7 +96733,7 @@ function ErrorMaxLength(stack, context, schemaPath, instancePath, schema2, value
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/maxProperties.mjs
+// node_modules/typebox/build/schema/engine/maxProperties.mjs
 function BuildMaxProperties(_stack, _context, schema2, value) {
   return emit_exports.IsLessEqualThan(emit_exports.Member(emit_exports.Keys(value), "length"), emit_exports.Constant(schema2.maxProperties));
 }
@@ -96693,7 +96749,7 @@ function ErrorMaxProperties(stack, context, schemaPath, instancePath, schema2, v
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/minContains.mjs
+// node_modules/typebox/build/schema/engine/minContains.mjs
 function IsValid4(schema2) {
   return IsContains(schema2);
 }
@@ -96727,7 +96783,7 @@ function ErrorMinContains(stack, context, schemaPath, instancePath, schema2, val
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/minimum.mjs
+// node_modules/typebox/build/schema/engine/minimum.mjs
 function BuildMinimum(_stack, _context, schema2, value) {
   return emit_exports.IsGreaterEqualThan(value, emit_exports.Constant(schema2.minimum));
 }
@@ -96743,7 +96799,7 @@ function ErrorMinimum(stack, context, schemaPath, instancePath, schema2, value) 
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/minItems.mjs
+// node_modules/typebox/build/schema/engine/minItems.mjs
 function BuildMinItems(_stack, _context, schema2, value) {
   return emit_exports.IsGreaterEqualThan(emit_exports.Member(value, "length"), emit_exports.Constant(schema2.minItems));
 }
@@ -96759,7 +96815,7 @@ function ErrorMinItems(stack, context, schemaPath, instancePath, schema2, value)
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/minLength.mjs
+// node_modules/typebox/build/schema/engine/minLength.mjs
 function BuildMinLength(_stack, _context, schema2, value) {
   return emit_exports.IsMinLength(value, emit_exports.Constant(schema2.minLength));
 }
@@ -96775,7 +96831,7 @@ function ErrorMinLength(stack, context, schemaPath, instancePath, schema2, value
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/minProperties.mjs
+// node_modules/typebox/build/schema/engine/minProperties.mjs
 function BuildMinProperties(_stack, _context, schema2, value) {
   return emit_exports.IsGreaterEqualThan(emit_exports.Member(emit_exports.Keys(value), "length"), emit_exports.Constant(schema2.minProperties));
 }
@@ -96791,7 +96847,7 @@ function ErrorMinProperties(stack, context, schemaPath, instancePath, schema2, v
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/multipleOf.mjs
+// node_modules/typebox/build/schema/engine/multipleOf.mjs
 function BuildMultipleOf(_stack, _context, schema2, value) {
   return emit_exports.MultipleOf(value, emit_exports.Constant(schema2.multipleOf));
 }
@@ -96807,7 +96863,7 @@ function ErrorMultipleOf(stack, context, schemaPath, instancePath, schema2, valu
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/not.mjs
+// node_modules/typebox/build/schema/engine/not.mjs
 function BuildNotStandard(stack, context, schema2, value) {
   return Reducer(stack, context, [schema2.not], value, emit_exports.Not(emit_exports.IsEqual(emit_exports.Member("results", "length"), emit_exports.Constant(1))));
 }
@@ -96832,7 +96888,7 @@ function ErrorNot(stack, context, schemaPath, instancePath, schema2, value) {
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/oneOf.mjs
+// node_modules/typebox/build/schema/engine/oneOf.mjs
 function BuildOneOfStandard(stack, context, schema2, value) {
   return Reducer(stack, context, schema2.oneOf, value, emit_exports.IsEqual(emit_exports.Member("results", "length"), emit_exports.Constant(1)));
 }
@@ -96876,7 +96932,7 @@ function ErrorOneOf(stack, context, schemaPath, instancePath, schema2, value) {
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/pattern.mjs
+// node_modules/typebox/build/schema/engine/pattern.mjs
 function BuildPattern(_stack, _context, schema2, value) {
   const regexp = CreateVariable(guard_exports.IsString(schema2.pattern) ? UnicodeRegExp(schema2.pattern) : schema2.pattern);
   return emit_exports.Call(emit_exports.Member(regexp, "test"), [value]);
@@ -96894,7 +96950,7 @@ function ErrorPattern(stack, context, schemaPath, instancePath, schema2, value) 
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/patternProperties.mjs
+// node_modules/typebox/build/schema/engine/patternProperties.mjs
 function BuildPatternProperties(stack, context, schema2, value) {
   return emit_exports.ReduceAnd(guard_exports.Entries(schema2.patternProperties).map(([pattern, schema3]) => {
     const [key, prop] = [Unique(), Unique()];
@@ -96926,7 +96982,7 @@ function ErrorPatternProperties(stack, context, schemaPath, instancePath, schema
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/prefixItems.mjs
+// node_modules/typebox/build/schema/engine/prefixItems.mjs
 function BuildPrefixItems(stack, context, schema2, value) {
   return emit_exports.ReduceAnd(schema2.prefixItems.map((schema3, index3) => {
     const isLength = emit_exports.IsLessEqualThan(emit_exports.Member(value, "length"), emit_exports.Constant(index3));
@@ -96949,7 +97005,7 @@ function ErrorPrefixItems(stack, context, schemaPath, instancePath, schema2, val
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/_exact_optional.mjs
+// node_modules/typebox/build/schema/engine/_exact_optional.mjs
 function IsExactOptional(required2, key) {
   return required2.includes(key) || settings_exports.Get().exactOptionalPropertyTypes;
 }
@@ -96960,7 +97016,7 @@ function InexactOptionalCheck(value, key) {
   return guard_exports.IsUndefined(value[key]);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/properties.mjs
+// node_modules/typebox/build/schema/engine/properties.mjs
 function BuildProperties(stack, context, schema2, value) {
   const required2 = IsRequired(schema2) ? schema2.required : [];
   const everyKey = guard_exports.Entries(schema2.properties).map(([key, schema3]) => {
@@ -96992,7 +97048,7 @@ function ErrorProperties(stack, context, schemaPath, instancePath, schema2, valu
   return isProperties;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/propertyNames.mjs
+// node_modules/typebox/build/schema/engine/propertyNames.mjs
 function BuildPropertyNames(stack, context, schema2, value) {
   const [key, _index] = [Unique(), Unique()];
   return emit_exports.Every(emit_exports.Keys(value), emit_exports.Constant(0), [key, _index], BuildSchema(stack, context, schema2.propertyNames, key));
@@ -97018,7 +97074,7 @@ function ErrorPropertyNames(stack, context, schemaPath, instancePath, schema2, v
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/recursiveRef.mjs
+// node_modules/typebox/build/schema/engine/recursiveRef.mjs
 function BuildRecursiveRef(stack, context, schema2, value) {
   const target = stack.RecursiveRef(schema2) ?? false;
   return CreateFunction(stack, context, target, value);
@@ -97032,7 +97088,7 @@ function ErrorRecursiveRef(stack, context, _schemaPath, instancePath, schema2, v
   return IsSchema2(target) && ErrorSchema(stack, context, "#", instancePath, target, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/ref.mjs
+// node_modules/typebox/build/schema/engine/ref.mjs
 function BuildRefStandard(stack, context, target, value) {
   const interior = emit_exports.ArrowFunction(["context", "value"], CreateFunction(stack, context, target, "value"));
   const exterior = emit_exports.ArrowFunction(["context", "value"], emit_exports.Statements([
@@ -97069,7 +97125,7 @@ function ErrorRef(stack, context, _schemaPath, instancePath, schema2, value) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/required.mjs
+// node_modules/typebox/build/schema/engine/required.mjs
 function BuildRequired(_stack, _context, schema2, value) {
   return emit_exports.ReduceAnd(schema2.required.map((key) => emit_exports.HasPropertyKey(value, emit_exports.Constant(key))));
 }
@@ -97092,7 +97148,7 @@ function ErrorRequired(_stack, context, schemaPath, instancePath, schema2, value
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/type.mjs
+// node_modules/typebox/build/schema/engine/type.mjs
 function BuildTypeName(_stack, _context, type, value) {
   return (
     // jsonschema
@@ -97133,7 +97189,7 @@ function ErrorType(stack, context, schemaPath, instancePath, schema2, value) {
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/unevaluatedItems.mjs
+// node_modules/typebox/build/schema/engine/unevaluatedItems.mjs
 function BuildUnevaluatedItems(stack, context, schema2, value) {
   const [index3, item] = [Unique(), Unique()];
   const indices = emit_exports.Call(emit_exports.Member("context", "GetIndices"), []);
@@ -97170,7 +97226,7 @@ function ErrorUnevaluatedItems(stack, context, schemaPath, instancePath, schema2
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/unevaluatedProperties.mjs
+// node_modules/typebox/build/schema/engine/unevaluatedProperties.mjs
 function BuildUnevaluatedProperties(stack, context, schema2, value) {
   const [key, prop] = [Unique(), Unique()];
   const keys = emit_exports.Call(emit_exports.Member("context", "GetKeys"), []);
@@ -97207,7 +97263,7 @@ function ErrorUnevaluatedProperties(stack, context, schemaPath, instancePath, sc
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/uniqueItems.mjs
+// node_modules/typebox/build/schema/engine/uniqueItems.mjs
 function IsValid5(schema2) {
   return !guard_exports.IsEqual(schema2.uniqueItems, false);
 }
@@ -97245,7 +97301,7 @@ function ErrorUniqueItems(_stack, context, schemaPath, instancePath, schema2, va
   });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/schema.mjs
+// node_modules/typebox/build/schema/engine/schema.mjs
 function HasTypeName(schema2, typename) {
   return IsType(schema2) && (guard_exports.IsArray(schema2.type) && guard_exports.IsGreaterThan(schema2.type.length, 0) && guard_exports.Every(schema2.type, 0, (type) => guard_exports.IsEqual(type, typename)) || guard_exports.IsEqual(schema2.type, typename));
 }
@@ -97414,7 +97470,7 @@ function ErrorSchema(stack, context, schemaPath, instancePath, schema2, value) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/_functions.mjs
+// node_modules/typebox/build/schema/engine/_functions.mjs
 var index2 = [0];
 var names = /* @__PURE__ */ new Map();
 var funcs = /* @__PURE__ */ new Map();
@@ -97456,7 +97512,7 @@ function CreateFunction(stack, context, schema2, value) {
   return call;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/resolve/resolve.mjs
+// node_modules/typebox/build/schema/resolve/resolve.mjs
 var resolve_exports = {};
 __export(resolve_exports, {
   Base: () => Base2,
@@ -97469,7 +97525,7 @@ __export(resolve_exports, {
   Resource: () => Resource
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/pointer/pointer.mjs
+// node_modules/typebox/build/schema/pointer/pointer.mjs
 var pointer_exports = {};
 __export(pointer_exports, {
   Delete: () => Delete,
@@ -97556,7 +97612,7 @@ function Delete(value, pointer) {
   return value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/resolve/resolve.mjs
+// node_modules/typebox/build/schema/resolve/resolve.mjs
 var DefaultBase = "https://json-schema.org";
 function FindDynamicAnchor(schema2, name) {
   if (guard_exports.IsObject(schema2) && IsDynamicAnchor(schema2) && guard_exports.IsEqual(schema2.$dynamicAnchor, name)) {
@@ -97772,7 +97828,7 @@ function ResolveDynamicRef(stackframe, dynamicRef) {
   return DynamicRef(stackframe.context, stackframe.root, stackframe.lexicalBase, stackframe.lexicalSchema, dynamicRef, stackframe.dynamicAnchors);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/engine/_stack.mjs
+// node_modules/typebox/build/schema/engine/_stack.mjs
 var __classPrivateFieldGet = function(receiver, state3, kind, f3) {
   if (kind === "a" && !f3) throw new TypeError("Private accessor was defined without a getter");
   if (typeof state3 === "function" ? receiver !== state3 || !f3 : !state3.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
@@ -97986,7 +98042,7 @@ _Stack_instances = /* @__PURE__ */ new WeakSet(), _Stack_StackFrame = function _
   this.resolvedResources.delete(target);
 };
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/build.mjs
+// node_modules/typebox/build/schema/build.mjs
 function CreateCode(build) {
   const functions = build.Functions().join(";\n");
   const statements = build.UseUnevaluated() ? ["const context = new CheckContext({}, {})", `return ${build.Entry()}`] : [`return ${build.Entry()}`];
@@ -98075,7 +98131,7 @@ function Build(...args) {
   return new BuildResult(context, schema2, externals, functions, call, build.UseUnevaluated());
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/errors.mjs
+// node_modules/typebox/build/schema/errors.mjs
 function Errors(...args) {
   const [context, schema2, value] = arguments_exports.Match(args, {
     3: (context2, schema3, value2) => [context2, schema3, value2],
@@ -98090,7 +98146,7 @@ function Errors(...args) {
   return [result, localized];
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/schema/check.mjs
+// node_modules/typebox/build/schema/check.mjs
 function Check(...args) {
   const [context, schema2, value] = arguments_exports.Match(args, {
     3: (context2, schema3, value2) => [context2, schema3, value2],
@@ -98101,7 +98157,7 @@ function Check(...args) {
   return CheckSchema(stack, checkContext, schema2, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/check/check.mjs
+// node_modules/typebox/build/value/check/check.mjs
 function Check2(...args) {
   const [context, type, value] = arguments_exports.Match(args, {
     3: (context2, type2, value2) => [context2, type2, value2],
@@ -98110,7 +98166,7 @@ function Check2(...args) {
   return Check(context, type, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/errors/errors.mjs
+// node_modules/typebox/build/value/errors/errors.mjs
 function Errors2(...args) {
   const [context, type, value] = arguments_exports.Match(args, {
     3: (context2, type2, value2) => [context2, type2, value2],
@@ -98120,7 +98176,7 @@ function Errors2(...args) {
   return errors;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/assert/assert.mjs
+// node_modules/typebox/build/value/assert/assert.mjs
 var AssertError = class extends Error {
   constructor(source2, value, errors) {
     super(source2);
@@ -98142,19 +98198,19 @@ function Assert(...args) {
     throw new AssertError("Assert", value, Errors2(context, type, value));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/clean/from_array.mjs
+// node_modules/typebox/build/value/clean/from_array.mjs
 function FromArray7(context, type, value) {
   if (!guard_exports.IsArray(value))
     return value;
   return value.map((value2) => FromType19(context, type.items, value2));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/clean/from_cyclic.mjs
+// node_modules/typebox/build/value/clean/from_cyclic.mjs
 function FromCyclic6(context, type, value) {
   return FromType19({ ...context, ...type.$defs }, Ref(type.$ref), value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/clean/from_intersect.mjs
+// node_modules/typebox/build/value/clean/from_intersect.mjs
 function EvaluateIntersection(context, type) {
   const additionalProperties = guard_exports.HasPropertyKey(type, "unevaluatedProperties") ? { additionalProperties: type.unevaluatedProperties } : {};
   const instantiated = Instantiate(context, type);
@@ -98166,13 +98222,13 @@ function FromIntersect6(context, type, value) {
   return FromType19(context, evaluated, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/clean/additional.mjs
+// node_modules/typebox/build/value/clean/additional.mjs
 function GetAdditionalProperties(type) {
   const additionalProperties = guard_exports.HasPropertyKey(type, "additionalProperties") ? type.additionalProperties : void 0;
   return additionalProperties;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/clean/from_object.mjs
+// node_modules/typebox/build/value/clean/from_object.mjs
 function FromObject11(context, type, value) {
   if (!guard_exports.IsObject(value) || guard_exports.IsArray(value))
     return value;
@@ -98195,7 +98251,7 @@ function FromObject11(context, type, value) {
   return value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/clean/from_record.mjs
+// node_modules/typebox/build/value/clean/from_record.mjs
 function FromRecord3(context, type, value) {
   if (!guard_exports.IsObject(value))
     return value;
@@ -98219,12 +98275,12 @@ function FromRecord3(context, type, value) {
   return value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/clean/from_ref.mjs
+// node_modules/typebox/build/value/clean/from_ref.mjs
 function FromRef5(context, type, value) {
   return guard_exports.HasPropertyKey(context, type.$ref) ? FromType19(context, context[type.$ref], value) : value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/clean/from_tuple.mjs
+// node_modules/typebox/build/value/clean/from_tuple.mjs
 function FromTuple5(context, schema2, value) {
   if (!guard_exports.IsArray(value))
     return value;
@@ -98235,12 +98291,12 @@ function FromTuple5(context, schema2, value) {
   return guard_exports.IsGreaterThan(value.length, length) ? value.slice(0, length) : value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/clone/clone.mjs
+// node_modules/typebox/build/value/clone/clone.mjs
 function Clone2(value) {
   return Clone(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/clean/from_union.mjs
+// node_modules/typebox/build/value/clean/from_union.mjs
 function FromUnion9(context, type, value) {
   for (const schema2 of type.anyOf) {
     const clean = FromType19(context, schema2, Clone2(value));
@@ -98250,12 +98306,12 @@ function FromUnion9(context, type, value) {
   return value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/clean/from_type.mjs
+// node_modules/typebox/build/value/clean/from_type.mjs
 function FromType19(context, type, value) {
   return IsArray3(type) ? FromArray7(context, type, value) : IsCyclic(type) ? FromCyclic6(context, type, value) : IsIntersect(type) ? FromIntersect6(context, type, value) : IsObject3(type) ? FromObject11(context, type, value) : IsRecord(type) ? FromRecord3(context, type, value) : IsRef(type) ? FromRef5(context, type, value) : IsTuple(type) ? FromTuple5(context, type, value) : IsUnion(type) ? FromUnion9(context, type, value) : value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/shared/union_priority_sort.mjs
+// node_modules/typebox/build/value/shared/union_priority_sort.mjs
 function Modifiers(type, next) {
   for (const key of guard_default.Keys(type)) {
     if (guard_default.HasPropertyKey(next, key))
@@ -98285,7 +98341,7 @@ function UnionPrioritySort(type) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/clean/clean.mjs
+// node_modules/typebox/build/value/clean/clean.mjs
 function Clean(...args) {
   const [context, type, value] = arguments_exports.Match(args, {
     3: (context2, type2, value2) => [context2, type2, value2],
@@ -98295,7 +98351,7 @@ function Clean(...args) {
   return FromType19(context, sorted, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/try/try.mjs
+// node_modules/typebox/build/value/convert/try/try.mjs
 var try_exports = {};
 __export(try_exports, {
   Fail: () => Fail,
@@ -98310,7 +98366,7 @@ __export(try_exports, {
   TryUndefined: () => TryUndefined
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/try/try_result.mjs
+// node_modules/typebox/build/value/convert/try/try_result.mjs
 function IsOk(value) {
   return guard_exports.IsObject(value) && guard_exports.HasPropertyKey(value, "value");
 }
@@ -98321,12 +98377,12 @@ function Fail() {
   return void 0;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/try/try_array.mjs
+// node_modules/typebox/build/value/convert/try/try_array.mjs
 function TryArray(value) {
   return guard_exports.IsArray(value) ? Ok(value) : Ok([value]);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/try/try_bigint.mjs
+// node_modules/typebox/build/value/convert/try/try_bigint.mjs
 function FromBoolean2(value) {
   return guard_exports.IsEqual(value, true) ? Ok(BigInt(1)) : Ok(BigInt(0));
 }
@@ -98350,7 +98406,7 @@ function TryBigInt(value) {
   return guard_exports.IsBigInt(value) ? Ok(value) : guard_exports.IsBoolean(value) ? FromBoolean2(value) : guard_exports.IsNumber(value) ? Ok(BigInt(Math.trunc(value))) : guard_exports.IsNull(value) ? Ok(BigInt(0)) : guard_exports.IsString(value) ? FromString2(value) : guard_exports.IsUndefined(value) ? Ok(BigInt(0)) : Fail();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/try/try_boolean.mjs
+// node_modules/typebox/build/value/convert/try/try_boolean.mjs
 function FromBigInt2(value) {
   return guard_exports.IsEqual(value, BigInt(0)) ? Ok(false) : guard_exports.IsEqual(value, BigInt(1)) ? Ok(true) : Fail();
 }
@@ -98364,7 +98420,7 @@ function TryBoolean(value) {
   return guard_exports.IsBigInt(value) ? FromBigInt2(value) : guard_exports.IsBoolean(value) ? Ok(value) : guard_exports.IsNumber(value) ? FromNumber2(value) : guard_exports.IsNull(value) ? Ok(false) : guard_exports.IsString(value) ? FromString3(value) : guard_exports.IsUndefined(value) ? Ok(false) : Fail();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/try/try_null.mjs
+// node_modules/typebox/build/value/convert/try/try_null.mjs
 function FromBigInt3(value) {
   return guard_exports.IsEqual(value, BigInt(0)) ? Ok(null) : Fail();
 }
@@ -98383,7 +98439,7 @@ function TryNull(value) {
   return guard_exports.IsBigInt(value) ? FromBigInt3(value) : guard_exports.IsBoolean(value) ? FromBoolean3(value) : guard_exports.IsNumber(value) ? FromNumber3(value) : guard_exports.IsNull(value) ? Ok(null) : guard_exports.IsString(value) ? FromString4(value) : guard_exports.IsUndefined(value) ? Ok(null) : Fail();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/try/try_number.mjs
+// node_modules/typebox/build/value/convert/try/try_number.mjs
 var maxBigInt = BigInt(Number.MAX_SAFE_INTEGER);
 var minBigInt = BigInt(Number.MIN_SAFE_INTEGER);
 function FromBigInt4(value) {
@@ -98410,12 +98466,12 @@ function TryNumber(value) {
   return guard_exports.IsBigInt(value) ? FromBigInt4(value) : guard_exports.IsBoolean(value) ? FromBoolean4(value) : guard_exports.IsNumber(value) ? Ok(value) : guard_exports.IsNull(value) ? Ok(0) : guard_exports.IsString(value) ? FromString5(value) : guard_exports.IsUndefined(value) ? Ok(0) : Fail();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/try/try_string.mjs
+// node_modules/typebox/build/value/convert/try/try_string.mjs
 function TryString(value) {
   return guard_exports.IsBigInt(value) ? Ok(value.toString()) : guard_exports.IsBoolean(value) ? Ok(value.toString()) : guard_exports.IsNumber(value) ? Ok(value.toString()) : guard_exports.IsNull(value) ? Ok("null") : guard_exports.IsString(value) ? Ok(value) : guard_exports.IsUndefined(value) ? Ok("") : Fail();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/try/try_undefined.mjs
+// node_modules/typebox/build/value/convert/try/try_undefined.mjs
 function FromBigInt5(value) {
   return guard_exports.IsEqual(value, BigInt(0)) ? Ok(void 0) : Fail();
 }
@@ -98434,48 +98490,48 @@ function TryUndefined(value) {
   return guard_exports.IsBigInt(value) ? FromBigInt5(value) : guard_exports.IsBoolean(value) ? FromBoolean5(value) : guard_exports.IsNumber(value) ? FromNumber4(value) : guard_exports.IsNull(value) ? Ok(void 0) : guard_exports.IsString(value) ? FromString6(value) : guard_exports.IsUndefined(value) ? Ok(value) : Fail();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_array.mjs
+// node_modules/typebox/build/value/convert/from_array.mjs
 function FromArray8(context, type, value) {
   const result = try_exports.TryArray(value);
   return result.value.map((value2) => FromType21(context, type.items, value2));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_bigint.mjs
+// node_modules/typebox/build/value/convert/from_bigint.mjs
 function FromBigInt6(_context, _type, value) {
   const result = try_exports.TryBigInt(value);
   return try_exports.IsOk(result) ? result.value : value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_boolean.mjs
+// node_modules/typebox/build/value/convert/from_boolean.mjs
 function FromBoolean6(_context, _type, value) {
   const result = try_exports.TryBoolean(value);
   return try_exports.IsOk(result) ? result.value : value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_cyclic.mjs
+// node_modules/typebox/build/value/convert/from_cyclic.mjs
 function FromCyclic7(context, type, value) {
   return FromType21({ ...context, ...type.$defs }, Ref(type.$ref), value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_enum.mjs
+// node_modules/typebox/build/value/convert/from_enum.mjs
 function FromEnum3(context, type, value) {
   return FromType21(context, Evaluate2(type), value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_integer.mjs
+// node_modules/typebox/build/value/convert/from_integer.mjs
 function FromInteger(_context, _type, value) {
   const result = try_exports.TryNumber(value);
   return try_exports.IsOk(result) ? Math.trunc(result.value) : value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_intersect.mjs
+// node_modules/typebox/build/value/convert/from_intersect.mjs
 function FromIntersect7(context, type, value) {
   const instantiated = Instantiate(context, type);
   const evaluated = Evaluate2(instantiated);
   return FromType21(context, evaluated, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_literal.mjs
+// node_modules/typebox/build/value/convert/from_literal.mjs
 function FromLiteralBigInt(_context, type, value) {
   const result = try_exports.TryBigInt(value);
   return try_exports.IsOk(result) && guard_exports.IsEqual(type.const, result.value) ? result.value : value;
@@ -98498,19 +98554,19 @@ function FromLiteral6(context, type, value) {
   return IsLiteralBigInt(type) ? FromLiteralBigInt(context, type, value) : IsLiteralBoolean(type) ? FromLiteralBoolean(context, type, value) : IsLiteralNumber(type) ? FromLiteralNumber(context, type, value) : IsLiteralString(type) ? FromLiteralString(context, type, value) : Unreachable();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_null.mjs
+// node_modules/typebox/build/value/convert/from_null.mjs
 function FromNull2(_context, _type, value) {
   const result = try_exports.TryNull(value);
   return try_exports.IsOk(result) ? result.value : value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_number.mjs
+// node_modules/typebox/build/value/convert/from_number.mjs
 function FromNumber5(_context, _type, value) {
   const result = try_exports.TryNumber(value);
   return try_exports.IsOk(result) ? result.value : value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_additional.mjs
+// node_modules/typebox/build/value/convert/from_additional.mjs
 function FromAdditionalProperties(context, entries, additionalProperties, value) {
   const keys = guard_exports.Keys(value);
   for (const [regexp, _] of entries) {
@@ -98523,12 +98579,12 @@ function FromAdditionalProperties(context, entries, additionalProperties, value)
   return value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/shared/optional_undefined.mjs
+// node_modules/typebox/build/value/shared/optional_undefined.mjs
 function IsOptionalUndefined(property, key, value) {
   return IsOptional(property) && guard_exports.IsUndefined(value[key]);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_object.mjs
+// node_modules/typebox/build/value/convert/from_object.mjs
 function FromProperties5(context, type, value) {
   const entries = guard_exports.EntriesRegExp(type.properties);
   const keys = guard_exports.Keys(value);
@@ -98545,7 +98601,7 @@ function FromObject12(context, type, value) {
   return guard_exports.IsObjectNotArray(value) ? FromProperties5(context, type, value) : value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_record.mjs
+// node_modules/typebox/build/value/convert/from_record.mjs
 function FromPatternProperties(context, type, value) {
   const entries = guard_exports.EntriesRegExp(type.patternProperties);
   const keys = guard_exports.Keys(value);
@@ -98562,23 +98618,23 @@ function FromRecord4(context, type, value) {
   return guard_exports.IsObjectNotArray(value) ? FromPatternProperties(context, type, value) : value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_ref.mjs
+// node_modules/typebox/build/value/convert/from_ref.mjs
 function FromRef6(context, type, value) {
   return guard_exports.HasPropertyKey(context, type.$ref) ? FromType21(context, context[type.$ref], value) : value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_string.mjs
+// node_modules/typebox/build/value/convert/from_string.mjs
 function FromString7(_context, _type, value) {
   const result = try_exports.TryString(value);
   return try_exports.IsOk(result) ? result.value : value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_template_literal.mjs
+// node_modules/typebox/build/value/convert/from_template_literal.mjs
 function FromTemplateLiteral4(context, type, value) {
   return FromType21(context, Evaluate2(type), value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_tuple.mjs
+// node_modules/typebox/build/value/convert/from_tuple.mjs
 function FromTuple6(context, type, value) {
   if (!guard_exports.IsArray(value))
     return value;
@@ -98588,13 +98644,13 @@ function FromTuple6(context, type, value) {
   return value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_undefined.mjs
+// node_modules/typebox/build/value/convert/from_undefined.mjs
 function FromUndefined2(_context, _type, value) {
   const result = try_exports.TryUndefined(value);
   return try_exports.IsOk(result) ? result.value : value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_union.mjs
+// node_modules/typebox/build/value/convert/from_union.mjs
 function FromUnion10(context, type, value) {
   const matched = type.anyOf.some((type2) => Check2(context, type2, value));
   if (matched)
@@ -98604,18 +98660,18 @@ function FromUnion10(context, type, value) {
   return guard_exports.IsUndefined(selected) ? value : selected;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_void.mjs
+// node_modules/typebox/build/value/convert/from_void.mjs
 function FromVoid(_context, _type, value) {
   const result = try_exports.TryUndefined(value);
   return try_exports.IsOk(result) ? void 0 : value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/from_type.mjs
+// node_modules/typebox/build/value/convert/from_type.mjs
 function FromType21(context, type, value) {
   return IsArray3(type) ? FromArray8(context, type, value) : IsBigInt3(type) ? FromBigInt6(context, type, value) : IsBoolean4(type) ? FromBoolean6(context, type, value) : IsCyclic(type) ? FromCyclic7(context, type, value) : IsEnum(type) ? FromEnum3(context, type, value) : IsInteger3(type) ? FromInteger(context, type, value) : IsIntersect(type) ? FromIntersect7(context, type, value) : IsLiteral(type) ? FromLiteral6(context, type, value) : IsNull3(type) ? FromNull2(context, type, value) : IsNumber4(type) ? FromNumber5(context, type, value) : IsObject3(type) ? FromObject12(context, type, value) : IsRecord(type) ? FromRecord4(context, type, value) : IsRef(type) ? FromRef6(context, type, value) : IsString4(type) ? FromString7(context, type, value) : IsTemplateLiteral(type) ? FromTemplateLiteral4(context, type, value) : IsTuple(type) ? FromTuple6(context, type, value) : IsUndefined3(type) ? FromUndefined2(context, type, value) : IsUnion(type) ? FromUnion10(context, type, value) : IsVoid(type) ? FromVoid(context, type, value) : value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/convert/convert.mjs
+// node_modules/typebox/build/value/convert/convert.mjs
 function Convert(...args) {
   const [context, type, value] = arguments_exports.Match(args, {
     3: (context2, type2, value2) => [context2, type2, value2],
@@ -98624,7 +98680,7 @@ function Convert(...args) {
   return FromType21(context, type, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/default/from_array.mjs
+// node_modules/typebox/build/value/default/from_array.mjs
 function FromArray9(context, type, value) {
   if (!guard_exports.IsArray(value))
     return value;
@@ -98634,26 +98690,26 @@ function FromArray9(context, type, value) {
   return value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/default/from_cyclic.mjs
+// node_modules/typebox/build/value/default/from_cyclic.mjs
 function FromCyclic8(context, type, value) {
   return FromType22({ ...context, ...type.$defs }, Ref(type.$ref), value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/default/from_default.mjs
+// node_modules/typebox/build/value/default/from_default.mjs
 function FromDefault(type, value) {
   if (!guard_exports.IsUndefined(value))
     return value;
   return guard_exports.IsFunction(type.default) ? type.default() : Clone2(type.default);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/default/from_intersect.mjs
+// node_modules/typebox/build/value/default/from_intersect.mjs
 function FromIntersect8(context, type, value) {
   const instantiated = Instantiate(context, type);
   const evaluated = Evaluate2(instantiated);
   return FromType22(context, evaluated, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/default/from_object.mjs
+// node_modules/typebox/build/value/default/from_object.mjs
 function FromObject13(context, type, value) {
   if (!guard_exports.IsObject(value))
     return value;
@@ -98675,7 +98731,7 @@ function FromObject13(context, type, value) {
   return value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/default/from_record.mjs
+// node_modules/typebox/build/value/default/from_record.mjs
 function FromRecord5(context, type, value) {
   if (!guard_exports.IsObject(value))
     return value;
@@ -98695,12 +98751,12 @@ function FromRecord5(context, type, value) {
   return value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/default/from_ref.mjs
+// node_modules/typebox/build/value/default/from_ref.mjs
 function FromRef7(context, type, value) {
   return guard_exports.HasPropertyKey(context, type.$ref) ? FromType22(context, context[type.$ref], value) : value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/default/from_tuple.mjs
+// node_modules/typebox/build/value/default/from_tuple.mjs
 function FromTuple7(context, schema2, value) {
   if (!guard_exports.IsArray(value))
     return value;
@@ -98712,7 +98768,7 @@ function FromTuple7(context, schema2, value) {
   return value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/default/from_union.mjs
+// node_modules/typebox/build/value/default/from_union.mjs
 function FromUnion11(context, schema2, value) {
   for (const inner of schema2.anyOf) {
     const result = FromType22(context, inner, Clone2(value));
@@ -98723,13 +98779,13 @@ function FromUnion11(context, schema2, value) {
   return value;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/default/from_type.mjs
+// node_modules/typebox/build/value/default/from_type.mjs
 function FromType22(context, type, value) {
   const defaulted = IsDefault(type) ? FromDefault(type, value) : value;
   return IsArray3(type) ? FromArray9(context, type, defaulted) : IsCyclic(type) ? FromCyclic8(context, type, defaulted) : IsIntersect(type) ? FromIntersect8(context, type, defaulted) : IsObject3(type) ? FromObject13(context, type, defaulted) : IsRecord(type) ? FromRecord5(context, type, defaulted) : IsRef(type) ? FromRef7(context, type, defaulted) : IsTuple(type) ? FromTuple7(context, type, defaulted) : IsUnion(type) ? FromUnion11(context, type, defaulted) : defaulted;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/default/default.mjs
+// node_modules/typebox/build/value/default/default.mjs
 function Default(...args) {
   const [context, type, value] = arguments_exports.Match(args, {
     3: (context2, type2, value2) => [context2, type2, value2],
@@ -98738,7 +98794,7 @@ function Default(...args) {
   return FromType22(context, type, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/pipeline/pipeline.mjs
+// node_modules/typebox/build/value/pipeline/pipeline.mjs
 function Pipeline(pipeline2) {
   return (...args) => {
     const [context, type, value] = arguments_exports.Match(args, {
@@ -98749,7 +98805,7 @@ function Pipeline(pipeline2) {
   };
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/codec/callback.mjs
+// node_modules/typebox/build/value/codec/callback.mjs
 function Decode3(_context, type, value) {
   return type["~codec"].decode(value);
 }
@@ -98762,7 +98818,7 @@ function Callback(direction, context, type, value) {
   return guard_exports.IsEqual(direction, "Decode") ? Decode3(context, type, value) : Encode3(context, type, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/codec/from_array.mjs
+// node_modules/typebox/build/value/codec/from_array.mjs
 function Decode4(direction, context, type, value) {
   if (!guard_exports.IsArray(value))
     return value;
@@ -98784,13 +98840,13 @@ function FromArray10(direction, context, type, value) {
   return guard_exports.IsEqual(direction, "Decode") ? Decode4(direction, context, type, value) : Encode4(direction, context, type, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/codec/from_cyclic.mjs
+// node_modules/typebox/build/value/codec/from_cyclic.mjs
 function FromCyclic9(direction, context, type, value) {
   value = FromType23(direction, { ...context, ...type.$defs }, Ref(type.$ref), value);
   return Callback(direction, context, type, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/codec/from_intersect.mjs
+// node_modules/typebox/build/value/codec/from_intersect.mjs
 function MergeInteriors(interiors) {
   return interiors.reduce((results, interior) => ({ ...results, ...interior }), {});
 }
@@ -98822,7 +98878,7 @@ function FromIntersect9(direction, context, type, value) {
   return guard_exports.IsEqual(direction, "Decode") ? Decode5(direction, context, type, value) : Encode5(direction, context, type, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/codec/from_object.mjs
+// node_modules/typebox/build/value/codec/from_object.mjs
 function Decode6(direction, context, type, value) {
   if (!guard_exports.IsObjectNotArray(value))
     return value;
@@ -98848,7 +98904,7 @@ function FromObject14(direction, context, type, value) {
   return guard_exports.IsEqual(direction, "Decode") ? Decode6(direction, context, type, value) : Encode6(direction, context, type, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/codec/from_record.mjs
+// node_modules/typebox/build/value/codec/from_record.mjs
 function Decode7(direction, context, type, value) {
   if (!guard_exports.IsObjectNotArray(value))
     return value;
@@ -98876,7 +98932,7 @@ function FromRecord6(direction, context, type, value) {
   return guard_exports.IsEqual(direction, "Decode") ? Decode7(direction, context, type, value) : Encode7(direction, context, type, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/codec/from_ref.mjs
+// node_modules/typebox/build/value/codec/from_ref.mjs
 function ResolveRef2(direction, context, type, value) {
   return guard_exports.HasPropertyKey(context, type.$ref) ? FromType23(direction, context, context[type.$ref], value) : value;
 }
@@ -98884,7 +98940,7 @@ function FromRef8(direction, context, type, value) {
   return guard_exports.IsEqual(direction, "Decode") ? Callback(direction, context, type, ResolveRef2(direction, context, type, value)) : ResolveRef2(direction, context, type, Callback(direction, context, type, value));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/codec/from_tuple.mjs
+// node_modules/typebox/build/value/codec/from_tuple.mjs
 function Decode8(direction, context, type, value) {
   if (!guard_exports.IsArray(value))
     return value;
@@ -98906,7 +98962,7 @@ function FromTuple8(direction, context, type, value) {
   return guard_exports.IsEqual(direction, "Decode") ? Decode8(direction, context, type, value) : Encode8(direction, context, type, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/codec/from_union.mjs
+// node_modules/typebox/build/value/codec/from_union.mjs
 function Decode9(direction, context, type, value) {
   for (const schema2 of type.anyOf) {
     if (!Check2(context, schema2, value))
@@ -98930,12 +98986,12 @@ function FromUnion12(direction, context, type, value) {
   return guard_exports.IsEqual(direction, "Decode") ? Decode9(direction, context, type, value) : Encode9(direction, context, type, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/codec/from_type.mjs
+// node_modules/typebox/build/value/codec/from_type.mjs
 function FromType23(direction, context, type, value) {
   return IsArray3(type) ? FromArray10(direction, context, type, value) : IsCyclic(type) ? FromCyclic9(direction, context, type, value) : IsIntersect(type) ? FromIntersect9(direction, context, type, value) : IsObject3(type) ? FromObject14(direction, context, type, value) : IsRecord(type) ? FromRecord6(direction, context, type, value) : IsRef(type) ? FromRef8(direction, context, type, value) : IsTuple(type) ? FromTuple8(direction, context, type, value) : IsUnion(type) ? FromUnion12(direction, context, type, value) : Callback(direction, context, type, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/codec/decode.mjs
+// node_modules/typebox/build/value/codec/decode.mjs
 var DecodeError = class extends AssertError {
   constructor(value, errors) {
     super("Decode", value, errors);
@@ -98966,7 +99022,7 @@ function Decode10(...args) {
   return Decoder(context, type, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/codec/encode.mjs
+// node_modules/typebox/build/value/codec/encode.mjs
 var EncodeError = class extends AssertError {
   constructor(value, errors) {
     super("Encode", value, errors);
@@ -98997,7 +99053,7 @@ function Encode10(...args) {
   return Encoder(context, type, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/codec/has.mjs
+// node_modules/typebox/build/value/codec/has.mjs
 function FromArray11(context, type) {
   return IsCodec(type) || FromType24(context, type.items);
 }
@@ -99040,7 +99096,7 @@ function HasCodec(...args) {
   return FromType24(context, type);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/error.mjs
+// node_modules/typebox/build/value/create/error.mjs
 var CreateError = class extends Error {
   constructor(type, message) {
     super(message);
@@ -99048,12 +99104,12 @@ var CreateError = class extends Error {
   }
 };
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_default.mjs
+// node_modules/typebox/build/value/create/from_default.mjs
 function FromDefault2(_context, schema2) {
   return guard_exports.IsFunction(schema2.default) ? schema2.default(schema2) : guard_exports.IsObject(schema2.default) ? Clone2(schema2.default) : schema2.default;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_array.mjs
+// node_modules/typebox/build/value/create/from_array.mjs
 function FromArray12(context, type) {
   if (IsUniqueItems(type) && !IsDefault(type))
     throw new CreateError(type, "Arrays with uniqueItems constraints must specify a default annotation");
@@ -99061,17 +99117,17 @@ function FromArray12(context, type) {
   return Array.from({ length }, () => FromType25(context, type.items));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_bigint.mjs
+// node_modules/typebox/build/value/create/from_bigint.mjs
 function FromBigInt7(_context, type) {
   return IsExclusiveMinimum(type) ? BigInt(type.exclusiveMinimum) + BigInt(1) : IsMinimum(type) ? BigInt(type.minimum) : BigInt(0);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_boolean.mjs
+// node_modules/typebox/build/value/create/from_boolean.mjs
 function FromBoolean7(_context, _type) {
   return false;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_constructor.mjs
+// node_modules/typebox/build/value/create/from_constructor.mjs
 function FromConstructor2(context, type) {
   const instanceType = FromType25(context, type.instanceType);
   return class {
@@ -99081,55 +99137,55 @@ function FromConstructor2(context, type) {
   };
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_cyclic.mjs
+// node_modules/typebox/build/value/create/from_cyclic.mjs
 function FromCyclic11(context, type) {
   return FromType25({ ...context, ...type.$defs }, Ref(type.$ref));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_enum.mjs
+// node_modules/typebox/build/value/create/from_enum.mjs
 function FromEnum4(context, type) {
   return FromType25(context, Evaluate2(type));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_function.mjs
+// node_modules/typebox/build/value/create/from_function.mjs
 function FromFunction2(context, type) {
   const returnType = FromType25(context, type.returnType);
   return () => returnType;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_integer.mjs
+// node_modules/typebox/build/value/create/from_integer.mjs
 function FromInteger2(_context, type) {
   return IsExclusiveMinimum(type) && guard_exports.IsNumber(type.exclusiveMinimum) ? type.exclusiveMinimum + 1 : IsMinimum(type) ? type.minimum : 0;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_intersect.mjs
+// node_modules/typebox/build/value/create/from_intersect.mjs
 function FromIntersect11(context, type) {
   const instantiated = Instantiate(context, type);
   const evaluated = Evaluate2(instantiated);
   return FromType25(context, evaluated);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_literal.mjs
+// node_modules/typebox/build/value/create/from_literal.mjs
 function FromLiteral7(_context, type) {
   return type.const;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_never.mjs
+// node_modules/typebox/build/value/create/from_never.mjs
 function FromNever(_context, type) {
   throw new CreateError(type, "Cannot create TNever types");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_null.mjs
+// node_modules/typebox/build/value/create/from_null.mjs
 function FromNull3(_context, _type) {
   return null;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_number.mjs
+// node_modules/typebox/build/value/create/from_number.mjs
 function FromNumber6(_context, type) {
   return IsExclusiveMinimum(type) && guard_exports.IsNumber(type.exclusiveMinimum) ? type.exclusiveMinimum + 1 : IsMinimum(type) ? type.minimum : 0;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_object.mjs
+// node_modules/typebox/build/value/create/from_object.mjs
 function FromObject16(context, type) {
   const required2 = guard_exports.IsUndefined(type.required) ? [] : type.required;
   return required2.reduce((result, key) => {
@@ -99137,21 +99193,21 @@ function FromObject16(context, type) {
   }, {});
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_record.mjs
+// node_modules/typebox/build/value/create/from_record.mjs
 function FromRecord8(_context, type) {
   if (IsMinProperties(type) && !IsDefault(type))
     throw new CreateError(type, "Record with the minProperties constraint must have a default annotation");
   return {};
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_ref.mjs
+// node_modules/typebox/build/value/create/from_ref.mjs
 function FromRef10(context, type) {
   return guard_exports.HasPropertyKey(context, type.$ref) ? FromType25(context, context[type.$ref]) : (() => {
     throw new CreateError(type, "Unable to deref Ref");
   })();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_string.mjs
+// node_modules/typebox/build/value/create/from_string.mjs
 function FromString8(_context, type) {
   const needsDefault = (IsPattern(type) || IsFormat(type)) && !IsDefault(type);
   if (needsDefault)
@@ -99160,12 +99216,12 @@ function FromString8(_context, type) {
   return "".padEnd(minLength);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_symbol.mjs
+// node_modules/typebox/build/value/create/from_symbol.mjs
 function FromSymbol2(_context, _type) {
   return /* @__PURE__ */ Symbol();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_template_literal.mjs
+// node_modules/typebox/build/value/create/from_template_literal.mjs
 function FromTemplateLiteral5(context, type) {
   const decoded = TemplateLiteralDecode(type.pattern);
   if (IsString4(decoded))
@@ -99173,17 +99229,17 @@ function FromTemplateLiteral5(context, type) {
   return FromType25(context, decoded);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_tuple.mjs
+// node_modules/typebox/build/value/create/from_tuple.mjs
 function FromTuple10(context, type) {
   return Array.from({ length: type.minItems }, (_, i2) => FromType25(context, type.items[i2]));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_undefined.mjs
+// node_modules/typebox/build/value/create/from_undefined.mjs
 function FromUndefined3(_context, _type) {
   return void 0;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_union.mjs
+// node_modules/typebox/build/value/create/from_union.mjs
 function FromUnion14(context, type) {
   if (guard_exports.IsEqual(type.anyOf.length, 0)) {
     throw Error("Unable to create Union with no variants");
@@ -99191,12 +99247,12 @@ function FromUnion14(context, type) {
   return FromType25(context, type.anyOf[0]);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_void.mjs
+// node_modules/typebox/build/value/create/from_void.mjs
 function FromVoid2(_context, _type) {
   return void 0;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/from_type.mjs
+// node_modules/typebox/build/value/create/from_type.mjs
 function FromType25(context, type) {
   return (
     // -----------------------------------------------------
@@ -99211,7 +99267,7 @@ function FromType25(context, type) {
   );
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/create/create.mjs
+// node_modules/typebox/build/value/create/create.mjs
 function Create2(...args) {
   const [context, type] = arguments_exports.Match(args, {
     2: (context2, type2) => [context2, type2],
@@ -99220,17 +99276,17 @@ function Create2(...args) {
   return FromType25(context, type);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/equal/equal.mjs
+// node_modules/typebox/build/value/equal/equal.mjs
 function Equal(left, right) {
   return guard_exports.IsDeepEqual(left, right);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/hash/hash.mjs
+// node_modules/typebox/build/value/hash/hash.mjs
 function Hash2(value) {
   return hash_exports.Hash(value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/parse/parse.mjs
+// node_modules/typebox/build/value/parse/parse.mjs
 var ParseError = class extends AssertError {
   constructor(value, errors) {
     super("Parse", value, errors);
@@ -99261,7 +99317,7 @@ function Parse(...args) {
   throw new ParseError(value, Errors2(context, type, value));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/delta/diff.mjs
+// node_modules/typebox/build/value/delta/diff.mjs
 function CreateUpdate(path11, value) {
   return { type: "update", path: path11, value };
 }
@@ -99348,7 +99404,7 @@ function Diff(current, next) {
   return [...FromValue4("", current, next)];
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/delta/edit.mjs
+// node_modules/typebox/build/value/delta/edit.mjs
 var Insert2 = _Object_({
   type: Literal("insert"),
   path: String2(),
@@ -99365,7 +99421,7 @@ var Delete2 = _Object_({
 });
 var Edit = Union([Insert2, Update2, Delete2]);
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/delta/patch.mjs
+// node_modules/typebox/build/value/delta/patch.mjs
 function IsRoot(edits) {
   return edits.length > 0 && edits[0].path === "" && edits[0].type === "update";
 }
@@ -99397,7 +99453,7 @@ function Patch(current, edits) {
   return clone2;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/repair/error.mjs
+// node_modules/typebox/build/value/repair/error.mjs
 var RepairError = class extends Error {
   constructor(context, type, value, message) {
     super(message);
@@ -99407,7 +99463,7 @@ var RepairError = class extends Error {
   }
 };
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/repair/from_array.mjs
+// node_modules/typebox/build/value/repair/from_array.mjs
 function MakeUnique(values) {
   const [hashes, result] = [/* @__PURE__ */ new Set(), []];
   for (const value of values) {
@@ -99434,19 +99490,19 @@ function FromArray14(context, type, value) {
   return unique;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/repair/from_enum.mjs
+// node_modules/typebox/build/value/repair/from_enum.mjs
 function FromEnum5(context, type, value) {
   return FromType26(context, Evaluate2(type), value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/repair/from_intersect.mjs
+// node_modules/typebox/build/value/repair/from_intersect.mjs
 function FromIntersect12(context, type, value) {
   const instantiated = Instantiate(context, type);
   const evaluated = Evaluate2(instantiated);
   return FromType26(context, evaluated, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/repair/from_object.mjs
+// node_modules/typebox/build/value/repair/from_object.mjs
 function FromObject18(context, type, value) {
   if (Check2(context, type, value))
     return value;
@@ -99470,7 +99526,7 @@ function FromObject18(context, type, value) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/repair/from_record.mjs
+// node_modules/typebox/build/value/repair/from_record.mjs
 function FromRecord9(context, type, value) {
   if (Check2(context, type, value))
     return value;
@@ -99496,20 +99552,20 @@ function FromRecord9(context, type, value) {
   return result;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/repair/from_ref.mjs
+// node_modules/typebox/build/value/repair/from_ref.mjs
 function FromRef11(context, type, value) {
   return guard_exports.HasPropertyKey(context, type.$ref) ? FromType26(context, context[type.$ref], value) : (() => {
     throw new RepairError(context, type, value, "Unable to de-reference target type");
   })();
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/repair/from_template_literal.mjs
+// node_modules/typebox/build/value/repair/from_template_literal.mjs
 function FromTemplateLiteral6(context, type, value) {
   const decoded = TemplateLiteralDecode(type.pattern);
   return FromType26(context, decoded, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/repair/from_tuple.mjs
+// node_modules/typebox/build/value/repair/from_tuple.mjs
 function FromTuple11(context, schema2, value) {
   if (Check2(context, schema2, value))
     return value;
@@ -99518,7 +99574,7 @@ function FromTuple11(context, schema2, value) {
   return schema2.items.map((schema3, index3) => FromType26(context, schema3, value[index3]));
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/shared/union_score_select.mjs
+// node_modules/typebox/build/value/shared/union_score_select.mjs
 function Deref(context, type, value) {
   return IsRef(type) ? guard_exports.HasPropertyKey(context, type.$ref) ? Deref(context, context[type.$ref], value) : (() => {
     throw new Error("Unable to Deref target");
@@ -99549,7 +99605,7 @@ function UnionScoreSelect(context, type, value) {
   return select;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/repair/from_union.mjs
+// node_modules/typebox/build/value/repair/from_union.mjs
 function RepairUnion(context, type, value) {
   const union = Union(Flatten(type.anyOf));
   const schema2 = UnionScoreSelect(context, union, value);
@@ -99563,7 +99619,7 @@ function FromUnion15(context, type, value) {
   return RepairUnion(context, type, value);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/repair/from_unknown.mjs
+// node_modules/typebox/build/value/repair/from_unknown.mjs
 function FromUnknown2(context, type, value) {
   if (Check2(context, type, value))
     return value;
@@ -99573,7 +99629,7 @@ function FromUnknown2(context, type, value) {
   return Create2(context, type);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/repair/from_type.mjs
+// node_modules/typebox/build/value/repair/from_type.mjs
 function AssertRepairableValue(context, type, value) {
   const unsupported = globals_exports.IsDate(value) || globals_exports.IsMap(value) || globals_exports.IsSet(value) || globals_exports.IsTypeArray(value) || guard_exports.IsConstructor(value) || guard_exports.IsFunction(value);
   if (unsupported) {
@@ -99600,7 +99656,7 @@ function FromType26(context, type, value) {
   return FinalizeRepair(context, type, repaired);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/repair/repair.mjs
+// node_modules/typebox/build/value/repair/repair.mjs
 function Repair(...args) {
   const [context, type, value] = arguments_exports.Match(args, {
     3: (context2, type2, value2) => [context2, type2, value2],
@@ -99611,7 +99667,7 @@ function Repair(...args) {
   return repaired;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/value/value.mjs
+// node_modules/typebox/build/value/value.mjs
 var value_exports = {};
 __export(value_exports, {
   Assert: () => Assert,
@@ -99634,7 +99690,7 @@ __export(value_exports, {
   Repair: () => Repair
 });
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/compile/validator.mjs
+// node_modules/typebox/build/compile/validator.mjs
 var Validator = class {
   /** Constructs a Validator. */
   constructor(context, type) {
@@ -99720,7 +99776,7 @@ var Validator = class {
   }
 };
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/typebox/build/compile/compile.mjs
+// node_modules/typebox/build/compile/compile.mjs
 function Compile(...args) {
   const [context, type] = arguments_exports.Match(args, {
     2: (context2, type2) => [context2, type2],
@@ -99729,7 +99785,7 @@ function Compile(...args) {
   return new Validator(context, type);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/utils/validation.js
+// node_modules/@earendil-works/pi-ai/dist/utils/validation.js
 var validatorCache = /* @__PURE__ */ new WeakMap();
 var TYPEBOX_KIND = /* @__PURE__ */ Symbol.for("TypeBox.Kind");
 function getSchemaTypes(schema2) {
@@ -100010,7 +100066,7 @@ ${JSON.stringify(toolCall.arguments, null, 2)}`;
   throw new Error(errorMessage);
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-agent-core/dist/stream-fn.js
+// node_modules/@earendil-works/pi-agent-core/dist/stream-fn.js
 var defaultStreamFn;
 function getDefaultStreamFn() {
   if (!defaultStreamFn) {
@@ -100019,7 +100075,7 @@ function getDefaultStreamFn() {
   return defaultStreamFn;
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-agent-core/dist/agent-loop.js
+// node_modules/@earendil-works/pi-agent-core/dist/agent-loop.js
 async function runAgentLoop(prompts, context, config, emit, signal, streamFn) {
   const initialMessages = declareToolChanges(context, prompts);
   const newMessages = [...initialMessages];
@@ -100563,7 +100619,7 @@ async function emitToolResultMessage(toolResultMessage, emit) {
   await emit({ type: "message_end", message: toolResultMessage });
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-agent-core/dist/agent.js
+// node_modules/@earendil-works/pi-agent-core/dist/agent.js
 function defaultConvertToLlm(messages) {
   return messages.filter((message) => message.role === "system" || message.role === "user" || message.role === "assistant" || message.role === "toolResult");
 }
@@ -100985,29 +101041,29 @@ var Agent = class {
   }
 };
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/anthropic-messages.lazy.js
+// node_modules/@earendil-works/pi-ai/dist/api/anthropic-messages.lazy.js
 init_lazy();
 var anthropicMessagesApi = () => lazyApi(() => Promise.resolve().then(() => (init_anthropic_messages(), anthropic_messages_exports)));
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/google-generative-ai.lazy.js
+// node_modules/@earendil-works/pi-ai/dist/api/google-generative-ai.lazy.js
 init_lazy();
 var googleGenerativeAIApi = () => lazyApi(() => Promise.resolve().then(() => (init_google_generative_ai(), google_generative_ai_exports)));
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/openai-completions.lazy.js
+// node_modules/@earendil-works/pi-ai/dist/api/openai-completions.lazy.js
 init_lazy();
 var openAICompletionsApi = () => lazyApi(() => Promise.resolve().then(() => (init_openai_completions(), openai_completions_exports)));
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/api/openai-responses.lazy.js
+// node_modules/@earendil-works/pi-ai/dist/api/openai-responses.lazy.js
 init_lazy();
 var openAIResponsesApi = () => lazyApi(() => Promise.resolve().then(() => (init_openai_responses(), openai_responses_exports)));
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/providers/opencode-go.js
+// node_modules/@earendil-works/pi-ai/dist/providers/opencode-go.js
 init_models();
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/providers/data/opencode-go.json
+// node_modules/@earendil-works/pi-ai/dist/providers/data/opencode-go.json
 var opencode_go_default = { "anthropic-messages": { "chat:claude-haiku-5-5": { id: "claude-haiku-5-5", name: "Claude Haiku 5.5", api: "anthropic-messages", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go", reasoning: true, input: ["text", "image"], cost: { input: 0.1, output: 0.5, cacheRead: 0.01, cacheWrite: 0.125, tiers: [{ inputTokensAbove: 1e5, input: 0.5, output: 2.5, cacheRead: 0.05, cacheWrite: 0.625 }] }, contextWindow: 1e6, maxTokens: 128e3, thinkingLevelMap: { xhigh: "xhigh", max: "max" }, compat: { forceAdaptiveThinking: true, supportsTemperature: false }, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" }, "chat:minimax-m3": { id: "minimax-m3", name: "MiniMax-M3", api: "anthropic-messages", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go", reasoning: true, input: ["text", "image"], cost: { input: 0.3, output: 1.2, cacheRead: 0.06, cacheWrite: 0, tiers: [{ inputTokensAbove: 512e3, input: 0.6, output: 2.4, cacheRead: 0.12, cacheWrite: 0 }] }, contextWindow: 1e6, maxTokens: 131072, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" }, "chat:qwen3.7-plus": { id: "qwen3.7-plus", name: "Qwen3.7 Plus", api: "anthropic-messages", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go", reasoning: true, input: ["text", "image"], cost: { input: 0.4, output: 1.6, cacheRead: 0.04, cacheWrite: 0.5, tiers: [{ inputTokensAbove: 256e3, input: 1.2, output: 4.8, cacheRead: 0.12, cacheWrite: 1.5 }] }, contextWindow: 1e6, maxTokens: 65536, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" }, "chat:qwen3.8-flash": { id: "qwen3.8-flash", name: "Qwen3.8 Flash", api: "anthropic-messages", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go", reasoning: true, input: ["text", "image"], cost: { input: 0.15, output: 0.47, cacheRead: 0.016, cacheWrite: 0.2 }, contextWindow: 1e6, maxTokens: 131072, compat: { allowEmptySignature: true }, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" }, "chat:qwen3.8-max": { id: "qwen3.8-max", name: "Qwen3.8 Max", api: "anthropic-messages", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go", reasoning: true, input: ["text", "image"], cost: { input: 2, output: 6, cacheRead: 0.25, cacheWrite: 2.5 }, contextWindow: 1e6, maxTokens: 131072, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" } }, "google-generative-ai": { "chat:gemini-4-argon-contributor": { id: "gemini-4-argon-contributor", name: "Gemini 4 Argon Contributor", api: "google-generative-ai", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, thinkingLevelMap: { off: null, minimal: null, low: "low", medium: "medium", high: "high", xhigh: null, max: null }, input: ["text", "image"], cost: { input: 4, output: 20, cacheRead: 0.2, cacheWrite: 0 }, contextWindow: 1048576, maxTokens: 65536, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" } }, "openai-completions": { "chat:cat-jam-free": { id: "cat-jam-free", name: "Cat Jam Free", api: "openai-completions", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text"], cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 }, compat: { supportsStore: false, supportsDeveloperRole: false, supportsStrictMode: true, maxTokensField: "max_tokens" }, contextWindow: 262144, maxTokens: 131072, thinkingLevelMap: { off: null, minimal: null, low: "low", medium: "medium", high: "high", xhigh: "xhigh", max: "max" }, type: "chat" }, "chat:deepseek-v4-pro": { id: "deepseek-v4-pro", name: "DeepSeek V4 Pro (New)", api: "openai-completions", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text"], cost: { input: 0.66, output: 1.98, cacheRead: 0.022, cacheWrite: 0 }, compat: { supportsStore: false, supportsDeveloperRole: false, supportsStrictMode: true, maxTokensField: "max_tokens", requiresReasoningContentOnAssistantMessages: true, thinkingFormat: "deepseek" }, contextWindow: 1e6, maxTokens: 384e3, thinkingLevelMap: { minimal: null, low: null, medium: null, high: "high", max: "max" }, type: "chat" }, "chat:deepseek-v4.1-flash": { id: "deepseek-v4.1-flash", name: "DeepSeek V4.1 Flash", api: "openai-completions", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, thinkingLevelMap: { off: null, minimal: null, low: "low", medium: null, high: "high", xhigh: null, max: "max" }, input: ["text", "image"], cost: { input: 0.15, output: 0.6, cacheRead: 3e-3, cacheWrite: 0 }, compat: { supportsStore: false, supportsDeveloperRole: false, supportsStrictMode: true, maxTokensField: "max_tokens", requiresReasoningContentOnAssistantMessages: true, thinkingFormat: "deepseek" }, contextWindow: 1e6, maxTokens: 384e3, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" }, "chat:glm-5.2": { id: "glm-5.2", name: "GLM-5.2", api: "openai-completions", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text"], cost: { input: 1.4, output: 4.4, cacheRead: 0.26, cacheWrite: 0 }, compat: { supportsStore: false, supportsDeveloperRole: false, supportsStrictMode: true, maxTokensField: "max_tokens" }, contextWindow: 1e6, maxTokens: 131072, thinkingLevelMap: { off: null, minimal: null, low: null, medium: null, high: "high", xhigh: null, max: "max" }, type: "chat" }, "chat:glm-5.3": { id: "glm-5.3", name: "GLM-5.3", api: "openai-completions", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text"], cost: { input: 1.4, output: 4.4, cacheRead: 0.26, cacheWrite: 0 }, compat: { supportsStore: false, supportsDeveloperRole: false, supportsStrictMode: true, maxTokensField: "max_tokens" }, contextWindow: 1e6, maxTokens: 131072, thinkingLevelMap: { off: null, minimal: null, low: "low", medium: null, high: "high", xhigh: null, max: "max" }, type: "chat" }, "chat:glm-5.3-flash": { id: "glm-5.3-flash", name: "GLM-5.3-Flash", api: "openai-completions", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text", "image"], cost: { input: 0.15, output: 0.5, cacheRead: 0.03, cacheWrite: 0 }, compat: { supportsStore: false, supportsDeveloperRole: false, supportsStrictMode: true, maxTokensField: "max_tokens" }, contextWindow: 1e6, maxTokens: 131072, thinkingLevelMap: { off: null, minimal: null, low: "low", medium: null, high: "high", xhigh: null, max: "max" }, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" }, "chat:hy3": { id: "hy3", name: "Hy3", api: "openai-completions", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text"], cost: { input: 0.14, output: 0.58, cacheRead: 0.035, cacheWrite: 0 }, compat: { supportsStore: false, supportsDeveloperRole: false, supportsStrictMode: true, maxTokensField: "max_tokens" }, contextWindow: 256e3, maxTokens: 128e3, thinkingLevelMap: { off: "none", minimal: null, low: "low", medium: null, high: "high", xhigh: null, max: null }, type: "chat" }, "chat:hy4-preview": { id: "hy4-preview", name: "Hy4 preview", api: "openai-completions", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text"], cost: { input: 0.834, output: 2.501, cacheRead: 0.042, cacheWrite: 0 }, compat: { supportsStore: false, supportsDeveloperRole: false, supportsStrictMode: true, maxTokensField: "max_tokens" }, contextWindow: 1024e3, maxTokens: 64e3, thinkingLevelMap: { off: "none", minimal: null, low: null, medium: null, high: "high", xhigh: null, max: null }, type: "chat" }, "chat:kimi-k2.7-code": { id: "kimi-k2.7-code", name: "Kimi K2.7 Code", api: "openai-completions", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text", "image"], cost: { input: 0.95, output: 4, cacheRead: 0.19, cacheWrite: 0 }, compat: { supportsStore: false, supportsDeveloperRole: false, supportsStrictMode: true, maxTokensField: "max_tokens" }, contextWindow: 262144, maxTokens: 262144, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" }, "chat:kimi-k3": { id: "kimi-k3", name: "Kimi K3", api: "openai-completions", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text", "image"], cost: { input: 3, output: 15, cacheRead: 0.3, cacheWrite: 0 }, compat: { supportsStore: false, supportsDeveloperRole: false, supportsStrictMode: true, maxTokensField: "max_tokens", supportsMidConvoSystemMessages: true, supportsMidConvoToolAdditions: true }, contextWindow: 1048576, maxTokens: 131072, thinkingLevelMap: { off: null, minimal: null, low: null, medium: null, high: null, xhigh: null, max: "max" }, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" }, "chat:longcat-2.0": { id: "longcat-2.0", name: "LongCat-2.0", api: "openai-completions", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text"], cost: { input: 0.3, output: 1.2, cacheRead: 6e-3, cacheWrite: 0 }, compat: { supportsStore: false, supportsDeveloperRole: false, supportsStrictMode: true, maxTokensField: "max_tokens" }, contextWindow: 1e6, maxTokens: 131072, type: "chat" }, "chat:longcat-2.5-preview-free": { id: "longcat-2.5-preview-free", name: "LongCat 2.5 Preview Free", api: "openai-completions", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text", "image"], cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 }, compat: { supportsStore: false, supportsDeveloperRole: false, supportsStrictMode: true, maxTokensField: "max_tokens" }, contextWindow: 1e6, maxTokens: 131072, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" }, "chat:mimo-v2.5": { id: "mimo-v2.5", name: "MiMo V2.5", api: "openai-completions", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text", "image"], cost: { input: 0.14, output: 0.28, cacheRead: 28e-4, cacheWrite: 0 }, compat: { supportsStore: false, supportsDeveloperRole: false, supportsStrictMode: true, maxTokensField: "max_tokens" }, contextWindow: 1e6, maxTokens: 128e3, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" }, "chat:mimo-v2.5-pro": { id: "mimo-v2.5-pro", name: "MiMo V2.5 Pro", api: "openai-completions", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text"], cost: { input: 0.435, output: 0.87, cacheRead: 3625e-6, cacheWrite: 0 }, compat: { supportsStore: false, supportsDeveloperRole: false, supportsStrictMode: true, maxTokensField: "max_tokens" }, contextWindow: 1048576, maxTokens: 128e3, type: "chat" }, "chat:mimo-v2.6-flash": { id: "mimo-v2.6-flash", name: "MiMo-V2.6-Flash", api: "openai-completions", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text", "image"], cost: { input: 0.14, output: 0.28, cacheRead: 28e-4, cacheWrite: 0 }, compat: { supportsStore: false, supportsDeveloperRole: false, supportsStrictMode: true, maxTokensField: "max_tokens" }, contextWindow: 1048576, maxTokens: 131072, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" }, "chat:mimo-v2.6-pro": { id: "mimo-v2.6-pro", name: "MiMo-V2.6-Pro", api: "openai-completions", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text", "image"], cost: { input: 0.435, output: 0.87, cacheRead: 3625e-6, cacheWrite: 0 }, compat: { supportsStore: false, supportsDeveloperRole: false, supportsStrictMode: true, maxTokensField: "max_tokens" }, contextWindow: 1048576, maxTokens: 131072, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" }, "chat:space-bunny": { id: "space-bunny", name: "Space Bunny", api: "openai-completions", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text", "image"], cost: { input: 0.15, output: 0.6, cacheRead: 0.03, cacheWrite: 0 }, compat: { supportsStore: false, supportsDeveloperRole: false, supportsStrictMode: true, maxTokensField: "max_tokens" }, contextWindow: 1048576, maxTokens: 524288, thinkingLevelMap: { off: null, minimal: null, low: "low", medium: "medium", high: "high", xhigh: "xhigh", max: "max" }, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" }, "chat:step-5-preview-free": { id: "step-5-preview-free", name: "Step 5 Preview Free", api: "openai-completions", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text", "image"], cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 }, compat: { supportsStore: false, supportsDeveloperRole: false, supportsStrictMode: true, maxTokensField: "max_tokens" }, contextWindow: 1e6, maxTokens: 65536, thinkingLevelMap: { off: null, minimal: null, low: "low", medium: "medium", high: "high", xhigh: null, max: null }, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" } }, "openai-responses": { "chat:gpt-5.6-luna": { id: "gpt-5.6-luna", name: "GPT-5.6 Luna", api: "openai-responses", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text", "image"], cost: { input: 0.2, output: 1.2, cacheRead: 0.02, cacheWrite: 0.25, tiers: [{ inputTokensAbove: 272e3, input: 0.4, output: 1.8, cacheRead: 0.04, cacheWrite: 0.5 }] }, compat: { sessionAffinityFormat: "openai-nosession", supportsMidConvoSystemMessages: true, supportsAdditionalTools: true }, contextWindow: 105e4, maxTokens: 128e3, thinkingLevelMap: { off: null, minimal: null, low: "low", medium: "medium", high: "high", xhigh: "xhigh", max: "max" }, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" }, "chat:gpt-6-luna": { id: "gpt-6-luna", name: "GPT-6 Luna", api: "openai-responses", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text", "image"], cost: { input: 0.1, output: 0.5, cacheRead: 0.01, cacheWrite: 0.125, tiers: [{ inputTokensAbove: 272e3, input: 0.2, output: 0.75, cacheRead: 0.02, cacheWrite: 0.25 }] }, compat: { sessionAffinityFormat: "openai-nosession", supportsMidConvoSystemMessages: true, supportsAdditionalTools: true }, contextWindow: 105e4, maxTokens: 128e3, thinkingLevelMap: { off: "none", minimal: null, low: "low", medium: "medium", high: "high", xhigh: "xhigh", max: "max" }, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" }, "chat:grok-4.7": { id: "grok-4.7", name: "Grok 4.7", api: "openai-responses", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text", "image"], cost: { input: 2, output: 6, cacheRead: 0.5, cacheWrite: 0, tiers: [{ inputTokensAbove: 2e5, input: 4, output: 12, cacheRead: 1, cacheWrite: 0 }] }, compat: { sessionAffinityFormat: "openai-nosession" }, contextWindow: 5e5, maxTokens: 5e5, thinkingLevelMap: { off: null, minimal: null, low: "low", medium: "medium", high: "high", xhigh: "xhigh", max: null }, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" }, "chat:muse-spark-1.2-contributor": { id: "muse-spark-1.2-contributor", name: "Muse Spark 1.2 Contributor", api: "openai-responses", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text", "image"], cost: { input: 0.1, output: 0.2, cacheRead: 2e-3, cacheWrite: 0 }, compat: { sessionAffinityFormat: "openai-nosession" }, contextWindow: 1048576, maxTokens: 131072, thinkingLevelMap: { off: null, minimal: "minimal", low: "low", medium: "medium", high: "high", xhigh: "xhigh", max: null }, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" }, "chat:muse-spark-1.3-contributor": { id: "muse-spark-1.3-contributor", name: "Muse Spark 1.3 Contributor", api: "openai-responses", provider: "opencode-go", baseUrl: "https://opencode.ai/inference/go/v1", reasoning: true, input: ["text", "image"], cost: { input: 0.1, output: 0.2, cacheRead: 2e-3, cacheWrite: 0 }, compat: { sessionAffinityFormat: "openai-nosession" }, contextWindow: 1048576, maxTokens: 131072, thinkingLevelMap: { off: null, minimal: "minimal", low: "low", medium: "medium", high: "high", xhigh: "xhigh", max: null }, inputLimits: { images: { resize: { maxWidth: 2e3, maxHeight: 2e3, maxBytes: 4718592, jpegQuality: 80 } } }, type: "chat" } } };
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/model-catalog.js
+// node_modules/@earendil-works/pi-ai/dist/model-catalog.js
 function flattenModelCatalog(groups, type) {
   return Object.fromEntries(Object.values(groups).flatMap((models) => Object.values(models)).filter((model) => model.type === type).map((model) => [model.id, model]));
 }
@@ -101021,12 +101077,12 @@ function flattenClassifierModelCatalog(_provider, groups) {
   return flattenModelCatalog(groups, "classifier");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/providers/opencode-go.models.js
+// node_modules/@earendil-works/pi-ai/dist/providers/opencode-go.models.js
 var OPENCODE_GO_MODELS = flattenChatModelCatalog("opencode-go", opencode_go_default);
 var OPENCODE_GO_IMAGE_MODELS = flattenImageModelCatalog("opencode-go", opencode_go_default);
 var OPENCODE_GO_CLASSIFIER_MODELS = flattenClassifierModelCatalog("opencode-go", opencode_go_default);
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/providers/opencode-headers.js
+// node_modules/@earendil-works/pi-ai/dist/providers/opencode-headers.js
 var OPENCODE_SESSION_HEADER = "x-opencode-session";
 function hasHeader4(headers, name) {
   const expected = name.toLowerCase();
@@ -101048,7 +101104,7 @@ function withOpenCodeSessionHeader(streams) {
   };
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-ai/dist/providers/opencode-go.js
+// node_modules/@earendil-works/pi-ai/dist/providers/opencode-go.js
 function opencodeGoProvider() {
   return createProvider({
     id: "opencode-go",
@@ -101077,7 +101133,7 @@ import crypto9 from "node:crypto";
 import { spawn as spawn3 } from "node:child_process";
 import { pathToFileURL } from "node:url";
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-mcp/dist/protocol/jsonrpc.js
+// node_modules/@earendil-works/pi-mcp/dist/protocol/jsonrpc.js
 var JSON_RPC_ERROR_CODES = {
   parseError: -32700,
   invalidRequest: -32600,
@@ -101145,11 +101201,11 @@ function parseJsonRpcMessage(value) {
   throw new McpError(JSON_RPC_ERROR_CODES.invalidRequest, "Invalid JSON-RPC message");
 }
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-mcp/dist/protocol/types.js
+// node_modules/@earendil-works/pi-mcp/dist/protocol/types.js
 var LATEST_PROTOCOL_VERSION = "2025-11-25";
 var SUPPORTED_PROTOCOL_VERSIONS = [LATEST_PROTOCOL_VERSION, "2025-06-18", "2025-03-26", "2024-11-05"];
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-mcp/dist/client.js
+// node_modules/@earendil-works/pi-mcp/dist/client.js
 var DEFAULT_REQUEST_TIMEOUT_MS = 3e4;
 var MAX_LIST_PAGES = 1e3;
 function validateInitializeResult(value) {
@@ -101577,12 +101633,12 @@ var McpClient = class {
   }
 };
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-mcp/dist/transports/stdio.js
+// node_modules/@earendil-works/pi-mcp/dist/transports/stdio.js
 var import_cross_spawn = __toESM(require_cross_spawn(), 1);
 import { spawn as spawn2 } from "node:child_process";
 import process2 from "node:process";
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-mcp/dist/transports/transport.js
+// node_modules/@earendil-works/pi-mcp/dist/transports/transport.js
 var DEFAULT_MAX_MESSAGE_BYTES = 16 * 1024 * 1024;
 var TransportEvents = class {
   messageListeners = /* @__PURE__ */ new Set();
@@ -101619,7 +101675,7 @@ var TransportEvents = class {
   }
 };
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-mcp/dist/transports/stdio.js
+// node_modules/@earendil-works/pi-mcp/dist/transports/stdio.js
 var DEFAULT_MAX_STDERR_BYTES = 64 * 1024;
 var DEFAULT_CLOSE_TIMEOUT_MS = 2e3;
 var STDIN_CLOSE_GRACE_MS = 500;
@@ -101808,7 +101864,7 @@ var StdioTransport = class extends TransportEvents {
   }
 };
 
-// ../../home/box/projects/TaoAgent/taoagent/node_modules/@earendil-works/pi-mcp/dist/transports/streamable-http.js
+// node_modules/@earendil-works/pi-mcp/dist/transports/streamable-http.js
 var MAX_ERROR_BODY_BYTES = 8 * 1024;
 var ERROR_MESSAGE_BODY_CHARS = 500;
 var DEFAULT_RECONNECT_INITIAL_DELAY_MS = 1e3;
@@ -102287,20 +102343,8 @@ async function effectLock(key, signal) {
 function durableEffectLock(store) {
   const directory = store.file(".tool-lock"), owner = path9.join(directory, "owner.json");
   if (fs12.existsSync(directory)) {
-    let stale = false;
-    try {
-      const record = JSON.parse(fs12.readFileSync(owner, "utf8"));
-      if (Number.isSafeInteger(record.pid) && record.pid > 0) {
-        try {
-          process.kill(record.pid, 0);
-        } catch (error) {
-          stale = error.code === "ESRCH";
-        }
-      }
-    } catch {
-    }
-    if (!stale) throw new HttpError(409, "\u53E6\u4E00\u4E2A\u670D\u52A1\u6B63\u5728\u6267\u884C\u5916\u90E8\u64CD\u4F5C\uFF0C\u8BF7\u5B8C\u6210\u540E\u91CD\u8BD5\uFF1B\u5C1A\u672A\u6267\u884C\u672C\u64CD\u4F5C");
-    fs12.unlinkSync(owner);
+    if (!staleLockDirectory(directory, owner)) throw new HttpError(409, "\u53E6\u4E00\u4E2A\u670D\u52A1\u6B63\u5728\u6267\u884C\u5916\u90E8\u64CD\u4F5C\uFF0C\u8BF7\u5B8C\u6210\u540E\u91CD\u8BD5\uFF1B\u5C1A\u672A\u6267\u884C\u672C\u64CD\u4F5C");
+    if (fs12.existsSync(owner)) fs12.unlinkSync(owner);
     fs12.rmdirSync(directory);
   }
   try {
@@ -102384,7 +102428,15 @@ function redactText(value, secrets) {
   }
   return output + value.slice(cursor);
 }
+var credentialCache = /* @__PURE__ */ new Map();
 function credentialValues(store) {
+  const signature2 = ["models.json", "provider-keys.json", "integrations.json"].map((name) => fileSignature(store.file(name))).join("|"), cached = credentialCache.get(store.root);
+  if (cached?.signature === signature2) return [...cached.values];
+  const values = readCredentialValues(store);
+  credentialCache.set(store.root, { signature: signature2, values });
+  return [...values];
+}
+function readCredentialValues(store) {
   return [...new Set([...store.models().map((model) => model.apiKey), ...Object.values(store.providerKeys()), ...integrations(store).map((item) => item.token || "")].filter((secret) => secret.length >= 6))].sort((a, b) => b.length - a.length);
 }
 function streamRedactor(store, emit) {
@@ -102446,7 +102498,7 @@ function workspacePath(store, key, raw) {
 async function processRun(command, args, cwd, signal, onOutput, shell = false, timeoutMs = 12e4, env2 = process.env) {
   return await new Promise((resolve2, reject) => {
     const child = spawn3(command, args, { cwd, shell, env: env2, windowsHide: true, detached: process.platform !== "win32", stdio: ["ignore", "pipe", "pipe"] }), timer = setTimeout(() => stop(), timeoutMs);
-    let output = "", stopped = false;
+    let output = "", stopped = false, forceKill;
     function stop() {
       if (stopped) return;
       stopped = true;
@@ -102462,11 +102514,24 @@ async function processRun(command, args, cwd, signal, onOutput, shell = false, t
         } catch {
           child.kill("SIGTERM");
         }
+        const pid = child.pid;
+        forceKill = setTimeout(() => {
+          try {
+            process.kill(-pid, "SIGKILL");
+          } catch {
+            try {
+              child.kill("SIGKILL");
+            } catch {
+            }
+          }
+        }, 5e3);
+        forceKill.unref();
       } else child.kill("SIGTERM");
     }
     signal.addEventListener("abort", stop, { once: true });
     const cleanup = () => {
       clearTimeout(timer);
+      clearTimeout(forceKill);
       signal.removeEventListener("abort", stop);
     };
     child.stdout.setEncoding("utf8");
@@ -102579,6 +102644,8 @@ async function executeExternal(store, key, agentId, turnId, eventId, name, args,
   let releaseDurable;
   try {
     releaseDurable = durableEffectLock(store);
+    const settled = actions(store, key).find((item) => item.id === signature2);
+    if (settled?.status === "complete" || settled?.status === "failed") return { historicalExecution: true, status: settled.status, result: settled.result, notice: "\u8FD9\u662F\u5DF2\u6267\u884C\u56DE\u6267\uFF0C\u4E0D\u4F1A\u81EA\u52A8\u91CD\u590D\u526F\u4F5C\u7528" };
     if (store.requireActiveSession(key).lifecycleRevision !== action.sessionRevision) throw new HttpError(409, "\u7FA4\u804A\u751F\u547D\u5468\u671F\u5DF2\u66F4\u6539\uFF0C\u65E7\u5BA1\u6279\u4E0D\u518D\u6267\u884C");
     if (action.automaticSessionId) {
       const session = improvementSession(store, key);
@@ -103053,20 +103120,8 @@ function unfinished(turn) {
 function locked(store, operation) {
   const directory = store.file(".work-lock"), owner = store.file(".work-lock", "owner.json");
   if (fs13.existsSync(directory)) {
-    let stale = false;
-    try {
-      const record = object(JSON.parse(fs13.readFileSync(owner, "utf8")));
-      if (Number.isSafeInteger(record.pid) && Number(record.pid) > 0) {
-        try {
-          process.kill(Number(record.pid), 0);
-        } catch (error) {
-          stale = error.code === "ESRCH";
-        }
-      }
-    } catch {
-    }
-    if (!stale) throw new HttpError(409, "\u5DE5\u4F5C\u5E93\u6B63\u5728\u66F4\u65B0\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5");
-    fs13.unlinkSync(owner);
+    if (!staleLockDirectory(directory, owner)) throw new HttpError(409, "\u5DE5\u4F5C\u5E93\u6B63\u5728\u66F4\u65B0\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5");
+    if (fs13.existsSync(owner)) fs13.unlinkSync(owner);
     fs13.rmdirSync(directory);
   }
   try {
@@ -103177,7 +103232,7 @@ function createRoutineScheduler(store, active, canRun = () => true) {
       const claimed = locked(store, () => {
         const data = read2(store);
         let changed = false;
-        for (const routine3 of data.routines.filter((item) => item.enabled && store.session(item.sessionId).archivedAt)) {
+        for (const routine3 of data.routines.filter((item) => item.enabled && (!fs13.existsSync(store.file("chats", id(item.sessionId), "session.json")) || store.session(item.sessionId).archivedAt))) {
           routine3.enabled = false;
           routine3.pauseReason = "\u76EE\u6807\u7FA4\u804A\u5DF2\u5220\u9664\uFF0C\u6062\u590D\u540E\u9700\u624B\u52A8\u542F\u7528";
           routine3.revision = crypto10.randomUUID();
@@ -105003,6 +105058,15 @@ function groupDetails(input) {
   if (input.componentKind !== void 0 && !["emergent", "chat", "task", "city"].includes(String(input.componentKind))) throw new HttpError(400, "\u672A\u77E5\u7EC4\u4EF6\u7C7B\u578B");
   return { ...input.componentKind === void 0 ? {} : { componentKind: input.componentKind }, ...input.runtimeLimits === void 0 ? {} : { runtimeLimits: runtimeLimits(input.runtimeLimits) }, ...input.purpose === void 0 ? {} : { purpose: string(input.purpose) }, ...roles ? { memberRoles: roles } : {}, ...mode ? { replyMode: mode } : {}, ...input.discussionMode === void 0 ? {} : { discussionMode: input.discussionMode }, ...input.coordinatorId === void 0 ? {} : { coordinatorId: string(input.coordinatorId) } };
 }
+function logFailure(store, where, error) {
+  let text2 = error instanceof Error ? error.stack || error.message : String(error);
+  try {
+    text2 = redact(store, text2);
+  } catch {
+    text2 = error instanceof Error ? error.name : "error";
+  }
+  console.error(`[${(/* @__PURE__ */ new Date()).toISOString()}] ${where}: ${text2}`);
+}
 function createApp(home = path10.join(ROOT, "home"), options = {}) {
   const store = new Store2(home);
   if (options.seed !== false) seedTeam(store);
@@ -105647,6 +105711,7 @@ function createApp(home = path10.join(ROOT, "home"), options = {}) {
       }
       throw new HttpError(404, "\u8DEF\u5F84\u4E0D\u5B58\u5728");
     } catch (error) {
+      if (!(error instanceof HttpError) || error.status >= 500) logFailure(store, (req.method || "GET") + " " + (req.url || "/").split("?")[0], error);
       if (!res.headersSent) send(res, { error: error instanceof HttpError ? error.message : "\u8BFB\u53D6\u6216\u5199\u5165\u5931\u8D25\uFF0C\u8BF7\u68C0\u67E5\u6570\u636E\u683C\u5F0F\u4E0E\u76EE\u5F55\u6743\u9650" }, error instanceof HttpError ? error.status : 500);
       else res.end();
     }
@@ -105695,6 +105760,7 @@ if (process.argv[1] && path10.resolve(process.argv[1]) === fileURLToPath2(import
     }
   });
   app.server.listen(port, "127.0.0.1");
+  process.on("unhandledRejection", (reason) => logFailure(app.store, "unhandled rejection", reason));
   const shutdown = () => {
     for (const controller of app.active.values()) controller.abort();
     app.server.close();
@@ -105705,5 +105771,6 @@ if (process.argv[1] && path10.resolve(process.argv[1]) === fileURLToPath2(import
   if (process.platform === "win32") process.once("SIGBREAK", shutdown);
 }
 export {
-  createApp
+  createApp,
+  logFailure
 };
