@@ -106,3 +106,32 @@ test('an approved action already executed elsewhere while waiting for the operat
     assert.equal(actions(store, chat.id).find(item => item.id === target.id)?.status, 'complete')
   } finally { fs.rmSync(root, { recursive: true, force: true }) }
 })
+
+test('archived members return to their groups on restore even after the group kept talking or changed model', () => {
+  const { root, store } = fixture()
+  try {
+    for (const agent of ['peer', 'leaver']) store.saveAgent({ id: agent, name: agent, modelId: '' }, 'r', '')
+    const model = store.saveModel({ name: 'm', model: 'm', baseUrl: 'http://127.0.0.1:1' })
+    const group = store.saveGroup('team', ['main', 'peer', 'leaver'], undefined, { coordinatorId: 'leaver' })
+    store.archiveAgent('leaver', 'temporary')
+    assert.deepEqual(store.groupMembers(group.id), ['main', 'peer'])
+    store.append(group.id, 'user', 'while away')
+    store.saveGroupModel(group.id, model.id)
+    store.restoreAgent('leaver')
+    assert.deepEqual(store.groupMembers(group.id), ['main', 'peer', 'leaver'])
+    assert.equal(store.session(group.id).coordinatorId, 'leaver')
+    assert.equal(store.session(group.id).modelId, model.id)
+  } finally { fs.rmSync(root, { recursive: true, force: true }) }
+})
+
+test('creating a group again with an existing creation ID keeps that group and its history', () => {
+  const { root, store } = fixture()
+  try {
+    store.saveAgent({ id: 'peer', name: 'peer', modelId: '' }, 'r', '')
+    const first = store.saveGroup('formed', ['main', 'peer'], undefined, {}, 'emergent-fixed')
+    store.append(first.id, 'user', 'kept history')
+    const again = store.saveGroup('formed', ['main', 'peer'], undefined, {}, 'emergent-fixed')
+    assert.equal(again.id, first.id)
+    assert.deepEqual(store.messages(first.id).map(message => message.content), ['kept history'])
+  } finally { fs.rmSync(root, { recursive: true, force: true }) }
+})

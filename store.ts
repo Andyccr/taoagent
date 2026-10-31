@@ -327,9 +327,10 @@ export class Store {
       if (session.kind !== 'group' || (modelId && !this.models().some(model => model.id === modelId))) throw new HttpError(400,'请选择有效的群模型')
       if (expectedModelId !== undefined && expectedModelId !== session.modelId) throw new HttpError(409,'群模型已在其他窗口更改，请重新载入后选择')
       if (modelId === session.modelId) return session
-      const updated = {...session,modelId,updatedAt:new Date(Math.max(Date.now(),Date.parse(session.updatedAt)+1)).toISOString()}
-      json(this.file('chats',key,'session.json'),updated)
-      return updated
+      const updatedAt = new Date(Math.max(Date.now(),Date.parse(session.updatedAt)+1)).toISOString()
+      // Persist the stored record, not the active-member view, so archived members return when restored.
+      json(this.file('chats',key,'session.json'),{...this.storedSession(key),modelId,updatedAt})
+      return {...session,modelId,updatedAt}
     })
   }
   private saveAgentUnlocked(agent: Agent, rules: string, memory: string) {
@@ -360,6 +361,7 @@ export class Store {
     }
     return session
   }
+  private storedSession(key: string): Session { return read<Session>(this.file('chats', id(key), 'session.json'), this.root) }
   requireActiveSession(key:string) { const session=this.session(key);if(session.archivedAt)throw new HttpError(410,'此群聊已删除，请先恢复再继续');return session }
   groupVersion(key:string) {
     const session=read<Session>(this.file('chats',id(key),'session.json'), this.root)
@@ -439,6 +441,8 @@ export class Store {
     const minimum=city?1:details.spaceKind==='solo'||(key&&this.session(key).spaceKind==='solo')?1:2
     if(members.length<minimum||(!city&&members.length>12))throw new HttpError(400,minimum===1?'请选择 1–12 个 Agent':'请选择 2–12 个 Agent')
     for (const member of members) this.requireActiveAgent(member)
+    // A creation retry with a known ID returns the group it created instead of resetting its history.
+    if (!key && fs.existsSync(this.file('chats', creationId, 'session.json')) && !this.session(creationId).archivedAt) return this.session(creationId)
     const existing = key ? this.session(key) : undefined
     if(existing?.archivedAt||!key&&fs.existsSync(this.file('chats',creationId,'session.json'))&&this.session(creationId).archivedAt)throw new HttpError(410,'群聊已删除，编辑或创建不能恢复它')
     if (expected !== undefined && expected !== existing?.updatedAt) throw new HttpError(409, '群设置已在另一窗口更新，你的编辑仍保留，请重新载入对照')
@@ -816,9 +820,11 @@ export class Store {
     const file = this.file('chats', id(key), 'messages.jsonl')
     const message: Message = { id: messageId ? id(messageId) : crypto.randomUUID(), role, content, at, status, ...extra }
     atomic(file, this.text('chats', key, 'messages.jsonl') + JSON.stringify(message) + '\n')
-    session.updatedAt = at
-    if (session.title === '新对话' && role === 'user') session.title = content.replace(/\s+/g, ' ').slice(0, 42)
-    json(this.file('chats', key, 'session.json'), session)
+    // Persist the stored record, not the active-member view, so archived members return when restored.
+    const stored = this.storedSession(key)
+    stored.updatedAt = at
+    if (stored.title === '新对话' && role === 'user') stored.title = content.replace(/\s+/g, ' ').slice(0, 42)
+    json(this.file('chats', key, 'session.json'), stored)
     return message
     })
   }
