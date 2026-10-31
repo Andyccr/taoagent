@@ -88,7 +88,7 @@ export function buildColosseum() {
     if (spH > 0.05) g.box(ow, spH, WALL_D, 0, spring + r, wallZ, col);
 
     g.arch(r, 0.24, WALL_D + 0.3, 0, spring, wallZ + 0.15, TRAV_HI, 4);
-    g.box(ow * 0.92, spring + r - 0.12, 0.9, 0, y0 + 0.06, -WALL_D + 0.1, VOID);
+    g.box(ow * 0.92, spring - y0 + r - 0.12, 0.9, 0, y0 + 0.06, -WALL_D + 0.1, VOID);
 
     const px = ds / 2 - pierW / 2;
     for (let s = -1; s <= 1; s += 2) column(g, s * px, y0, TIER_H - CORNICE, t);
