@@ -246,6 +246,11 @@ export function createCity(container, roster, opts = {}) {
     addUnit(p.bot, b, g, approachRoute(p), p.angle);
   }
   const city = buildMetropolis(scene, { claimedLots: new Set((layout.claimed || []).map((p) => p.id)), quality: lowPower ? 'low' : opts.quality || 'medium', pickables });
+  // Without WEBGL_multi_draw three draws every batched instance separately: pull the LOD ranges in so older
+  // browsers/GPUs keep a sane draw-call count (about half the instances).
+  const multiDraw = !!renderer.extensions.has('WEBGL_multi_draw');
+  const baseLodScale = multiDraw ? 1 : 0.7;
+  city.setLodScale(baseLodScale);
 
   // ---------- night street lamps + chinese lanterns ----------
   const lamps = new THREE.Group(); lamps.name = 'lamps'; lamps.visible = false; scene.add(lamps);
@@ -413,7 +418,7 @@ export function createCity(container, roster, opts = {}) {
   }
 
   // ---------- camera framing ----------
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.5, 3200);
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.5, 5200);
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true; controls.dampingFactor = 0.08;
   controls.maxPolarAngle = Math.PI * 0.44; controls.minDistance = 12;
@@ -816,13 +821,13 @@ export function createCity(container, roster, opts = {}) {
     tourWonders, tourAgents, stopTour, setMinimap, bindMinimap,
     get tour() { return tour; },
     wonders: () => city.wonders.map((w) => ({ id: w.id, name: w.name })),
-    perf: () => ({ calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, geometries: renderer.info.memory.geometries, frameMs: +frameMs.toFixed(2), composer: !!composer, lod: city.lodStats(), ...city.stats, lots: plan.lots.length, claimable: plan.lots.filter((l) => l.claimable).length }),
+    perf: () => ({ calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, geometries: renderer.info.memory.geometries, frameMs: +frameMs.toFixed(2), composer: !!composer, multiDraw, lod: city.lodStats(), ...city.stats, lots: plan.lots.length, claimable: plan.lots.filter((l) => l.claimable).length }),
     // Debug/screenshot helper: put the camera at an exact spot looking at a target.
     view: (pos, target) => {
       tween = null; userMoved = true; camera.position.set(...pos); controls.target.set(...target); controls.maxDistance = 2000; controls.update();
       const dist = camera.position.distanceTo(controls.target); scene.fog.near = Math.max(90, dist * 0.95); scene.fog.far = Math.max(340, dist * 2.35);
     },
-    setLodScale: (k) => city.setLodScale(Number(k) || 1),
+    setLodScale: (k) => city.setLodScale((Number(k) || 1) * baseLodScale),
     drawStats: () => {
       const by = {}; let total = 0, cast = 0;
       scene.traverseVisible((o) => { if (!o.isMesh && !o.isSprite && !o.isLine && !o.isPoints) return; total++; if (o.castShadow) cast++; let top = o; while (top.parent && top.parent !== scene) top = top.parent; const k = top.name || (top.type + (top.children.length > 8 ? ':' + top.uuid.slice(0, 4) : '')); by[k] = (by[k] || 0) + 1; });
@@ -840,6 +845,7 @@ export function createCity(container, roster, opts = {}) {
       cancelAnimationFrame(raf); ro.disconnect(); controls.dispose();
       el.removeEventListener('pointermove', onMove); el.removeEventListener('pointerdown', onDown);
       el.removeEventListener('pointerup', onUp); el.removeEventListener('pointerleave', onLeave);
+      try { city.dispose?.(); } catch (error) { console.warn('city dispose failed', error); }
       skyDay.dispose(); skyNight.dispose(); for (const m of nightWonderMats.values()) m.dispose();
       renderer.dispose(); renderer.forceContextLoss?.(); tip.remove(); el.remove();
     },

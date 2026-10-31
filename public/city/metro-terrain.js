@@ -140,6 +140,7 @@ export function terrainGeometry(plan) {
   const grass = new THREE.Color(0x9fb27c), forest = new THREE.Color(0x6f8a58), rock = new THREE.Color(0x9a9183), snow = new THREE.Color(0xf1efe8);
   const c = new THREE.Color();
   for (const [hi, h] of plan.hills.entries()) {
+    if (h.mountain) continue; // the far range is metro-mountains.js
     const rings = h.mountain ? 9 : 6, segs = h.mountain ? 22 : 16;
     const base = new THREE.RingGeometry(0.0001, 1, segs, rings);
     base.rotateX(-Math.PI / 2);

@@ -20,10 +20,13 @@ import { MODERN_EXTRA } from './fillers-modern-extra.js';
 import { COMMON_EXTRA } from './fillers-common-extra.js';
 import { STREET_PROPS } from './street-props.js';
 import { antenna, chimneyPot } from './detail-props.js';
-import { createLodBatch, treeProxyGeometry } from './metro-batch.js';
+import { createLodBatch, createBatchMaterial, treeProxyGeometry } from './metro-batch.js';
 import { scatterProps } from './metro-scatter.js';
 import { riverGeometry, wallGeometry, terrainGeometry, quayGeometry } from './metro-terrain.js';
 import { buildLife, buildNightLights } from './metro-life.js';
+import { createWaterMaterial, updateWater, disposeWater } from './metro-water.js';
+import { buildSky } from './metro-sky.js';
+import { mountainRangeGeometry } from './metro-mountains.js';
 import { buildPalace } from './wonder-palace.js';
 import { buildGreatPagoda } from './wonder-pagoda.js';
 import { buildAcropolis } from './wonder-acropolis.js';
@@ -192,6 +195,60 @@ function crosswalkGeometry(plan) {
 }
 
 let sharedStatic = null;
+const LAND_R = 2450, SEA_FAR = 2440;
+// Open sea: the harbour arc (where the sea wall stands) widening into a bay with ragged headlands out to the horizon.
+function seaGeometry(plan) {
+  const { shore, from, to } = plan.sea, far = SEA_FAR, pts = [];
+  const wob = (r, k) => 2.2 * Math.sin(r / 37 + k) + 1.3 * Math.sin(r / 13 + k * 2.1);
+  const side = (deg, dir, r) => deg + dir * (14 * THREE.MathUtils.smoothstep(r, shore + 40, 1150) + wob(r, dir + 2) * Math.min(1, (r - shore) / 120));
+  for (let i = 0; i <= 40; i++) { const a = from + (to - from) * (i / 40); const p = polar(shore, a); pts.push([p.x, p.z]); }
+  for (let r = shore + 15; r <= far; r += 30) { const p = polar(r, side(to, 1, r)); pts.push([p.x, p.z]); }
+  for (let i = 0; i <= 24; i++) { const a = to + 14 - (to - from + 28) * (i / 24); const p = polar(far, a); pts.push([p.x, p.z]); }
+  for (let r = far; r >= shore + 15; r -= 30) { const p = polar(r, side(from, -1, r)); pts.push([p.x, p.z]); }
+  const outline = pts.map(([x, z]) => new THREE.Vector2(x, -z));
+  const g = new THREE.ShapeGeometry(new THREE.Shape(outline), 1).rotateX(-Math.PI / 2);
+  g.deleteAttribute('uv');
+  g.userData.outline = outline;
+  return g;
+}
+
+// Land disc with the sea cut out (no land under the water, so nothing can z-fight with it far away).
+function landGeometry(sea) {
+  const land = new THREE.Shape();
+  land.absarc(0, 0, LAND_R, 0, Math.PI * 2, false);
+  land.holes.push(new THREE.Path(sea.userData.outline.slice().reverse()));
+  const g = new THREE.ShapeGeometry(land, 160).rotateX(-Math.PI / 2);
+  g.deleteAttribute('uv');
+  return g;
+}
+
+// Open land: a gentle patchwork of meadow, crop and woodland tones by world position (no texture, fades with distance).
+function groundMaterial() {
+  const m = new THREE.MeshStandardMaterial({ color: '#aeb89a', roughness: 1, polygonOffset: true, polygonOffsetFactor: 2, polygonOffsetUnits: 8 });
+  m.customProgramCacheKey = () => 'city-ground-v1';
+  m.onBeforeCompile = (sh) => {
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vGroundW;')
+      .replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\n  vGroundW = ( modelMatrix * vec4( transformed, 1.0 ) ).xyz;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>
+varying vec3 vGroundW;
+float gHash( vec2 p ) { return fract( sin( dot( p, vec2( 127.1, 311.7 ) ) ) * 43758.5453 ); }
+float gNoise( vec2 p ) { vec2 i = floor( p ), f = fract( p ); vec2 u = f * f * ( 3.0 - 2.0 * f );
+  return mix( mix( gHash( i ), gHash( i + vec2( 1, 0 ) ), u.x ), mix( gHash( i + vec2( 0, 1 ) ), gHash( i + vec2( 1, 1 ) ), u.x ), u.y ); }`)
+      .replace('#include <color_fragment>', `#include <color_fragment>
+  {
+    vec2 p = vGroundW.xz;
+    float n1 = gNoise( p * 0.012 ), n2 = gNoise( p * 0.045 + 17.0 ), n3 = gNoise( p * 0.16 + 3.0 );
+    vec3 meadow = vec3( 0.36, 0.45, 0.22 ), wood = vec3( 0.23, 0.32, 0.15 ), crop = vec3( 0.5, 0.45, 0.22 );
+    vec3 c = mix( meadow, wood, smoothstep( 0.55, 0.75, n1 ) );
+    c = mix( c, crop, smoothstep( 0.62, 0.7, n2 ) * ( 1.0 - smoothstep( 0.5, 0.7, n1 ) ) * 0.8 );
+    float fine = 1.0 - smoothstep( 80.0, 260.0, length( vViewPosition ) );
+    c *= 0.94 + 0.12 * mix( 0.5, n3, fine );
+    diffuseColor.rgb = c;
+  }`);
+  };
+  return m;
+}
+
 function staticGeometry() {
   if (sharedStatic) return sharedStatic;
   const plan = computeMetropolis();
@@ -222,12 +279,12 @@ function staticGeometry() {
   const waterGeo = ribbon(canalPts, canal.half * 2, true);
   const kerbs = mergeGeometries([-1, 1].map((side) => ribbon(offsetPolyline(canalPts, side * canal.half, true), 0.7, true)));
 
-  const sea = new THREE.RingGeometry(plan.sea.shore, plan.outerR + 900, 64, 1,
-    THREE.MathUtils.degToRad(90 - plan.sea.to), THREE.MathUtils.degToRad(plan.sea.to - plan.sea.from)).rotateX(-Math.PI / 2);
+  const sea = seaGeometry(plan), land = landGeometry(sea);
 
   sharedStatic = {
-    roads, waterGeo, kerbs, sea, crosswalks: crosswalkGeometry(plan), bridge: bridgeWithRail(canal.half * 2 + 1.5, 5.2),
+    roads, waterGeo, kerbs, sea, land, crosswalks: crosswalkGeometry(plan), bridge: bridgeWithRail(canal.half * 2 + 1.5, 5.2),
     riverBridge: bridge(plan.river.half * 2 + 2, 6.4), wall: wallGeometry(plan), terrain: terrainGeometry(plan), quay: quayGeometry(plan),
+    mountains: mountainRangeGeometry({ inner: 1050, outer: 2300, seaFrom: plan.sea.from, seaTo: plan.sea.to }),
   };
   return sharedStatic;
 }
@@ -242,7 +299,7 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
   const st = staticGeometry();
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), sc = new THREE.Vector3(1, 1, 1), pos = new THREE.Vector3();
 
-  const base = new THREE.Mesh(new THREE.CircleGeometry(plan.outerR + 1100, 96).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: '#aeb89a', roughness: 1, polygonOffset: true, polygonOffsetFactor: 2, polygonOffsetUnits: 8 }));
+  const base = new THREE.Mesh(st.land, groundMaterial());
   base.position.y = 0.002; base.receiveShadow = quality !== 'low'; root.add(base);
 
   const patchGroups = new Map();
@@ -275,11 +332,13 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
     root.add(mesh);
   }
 
-  const sea = new THREE.Mesh(st.sea, cityMaterial('water')); sea.position.y = 0.04; root.add(sea);
+  const waterMat = createWaterMaterial({ color: '#4f86a3', deep: '#2d5f7a', opacity: 0.9 });
+  const seaMat = createWaterMaterial({ color: '#3f7896', deep: '#1f4c66', opacity: 0.96, scale: 2.2 });
+  const sea = new THREE.Mesh(st.sea, seaMat); sea.position.y = 0.04; root.add(sea);
 
   for (const r of st.roads) { const m = new THREE.Mesh(r.geo, new THREE.MeshStandardMaterial({ color: r.color, roughness: 0.95 })); m.position.y = r.y; m.receiveShadow = quality !== 'low'; root.add(m); }
   if (st.crosswalks) { const m = new THREE.Mesh(st.crosswalks, new THREE.MeshStandardMaterial({ color: '#eae6da', roughness: 0.9 })); m.position.y = 0.045; m.receiveShadow = quality !== 'low'; root.add(m); }
-  const water = new THREE.Mesh(st.waterGeo, cityMaterial('water')); water.position.y = 0.03; root.userData.water = water; root.add(water);
+  const water = new THREE.Mesh(st.waterGeo, waterMat); water.position.y = 0.03; root.userData.water = water; root.add(water);
   const edges = new THREE.Mesh(st.kerbs, new THREE.MeshStandardMaterial({ color: '#b9b2a2', roughness: 0.9 })); edges.position.y = 0.15; root.add(edges);
 
   // Bridges over the canal.
@@ -289,7 +348,8 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
 
   // Fillers: one distance-LOD BatchedMesh for every unclaimed lot (near: full model, far: two-tone proxy).
   const lod = LOD[quality] || LOD.medium;
-  const fillers = createLodBatch(solid, { name: 'fillers', castShadow: quality === 'high', receiveShadow: quality !== 'low' });
+  const fillerMat = createBatchMaterial(solid, { detail: true }), propMat = createBatchMaterial(solid);
+  const fillers = createLodBatch(fillerMat, { name: 'fillers', castShadow: quality === 'high', receiveShadow: quality !== 'low', surface: 'detail' });
   const tint = new THREE.Color();
   for (const lot of plan.lots) {
     if (claimedLots.has(lot.id)) continue;
@@ -337,7 +397,7 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
 
   // Street-level dressing (trees by district, lamps, stalls, signs, carts, moored boats, townsfolk) plus rooftop
   // micro-props, all in one distance-culled batch.
-  const props = createLodBatch(solid, { name: 'props', castShadow: false, receiveShadow: false });
+  const props = createLodBatch(propMat, { name: 'props', castShadow: false, receiveShadow: false });
   const placed = scatterProps(plan, { claimedLots, quality });
   const range = { tree: lod.treeCull, prop: lod.props, boat: lod.props * 1.6, people: lod.people };
   for (const p of placed) {
@@ -370,7 +430,7 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
 
   // River, quays and towpaths; city wall with gates; hills and mountains.
   const river = riverGeometry(plan);
-  const riverWater = new THREE.Mesh(river.water, cityMaterial('water')); riverWater.position.y = 0.035; root.add(riverWater);
+  const riverWater = new THREE.Mesh(river.water, waterMat); riverWater.position.y = 0.035; root.add(riverWater);
   const quay = new THREE.Mesh(mergeGeometries([river.quay, river.path]), new THREE.MeshStandardMaterial({ color: '#bdb39f', roughness: 0.95 })); quay.receiveShadow = quality !== 'low'; root.add(quay);
   if (plan.riverBridges.length) {
     const rb = new THREE.InstancedMesh(st.riverBridge, solid, plan.riverBridges.length);
@@ -380,7 +440,12 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
   const seaWall = new THREE.Mesh(st.quay, solid); seaWall.receiveShadow = quality !== 'low'; root.add(seaWall);
   const wall = new THREE.Mesh(st.wall, solid); wall.name = 'cityWall'; wall.castShadow = quality === 'high'; wall.receiveShadow = quality !== 'low'; root.add(wall);
   if (st.terrain.hills) { const hills = new THREE.Mesh(st.terrain.hills, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, flatShading: true })); hills.name = 'hills'; root.add(hills); }
-  if (st.terrain.mountains) { const range = new THREE.Mesh(st.terrain.mountains, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, flatShading: true, fog: false })); range.name = 'mountains'; root.add(range); }
+  // Distant mountain range: one smooth-shaded ring of ridged peaks, colours pre-hazed for aerial perspective.
+  const peaks = new THREE.Mesh(st.mountains, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, metalness: 0, fog: false }));
+  peaks.name = 'mountains'; peaks.matrixAutoUpdate = false; root.add(peaks);
+  // Clouds and bird flocks (none on low).
+  const sky = buildSky({ quality, radius: 1500 });
+  if (sky) root.add(sky);
 
   // Ambient life and night lights.
   const life = buildLife(plan, solid, { quality });
@@ -416,12 +481,33 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
 
   scene.add(root);
   // Per frame: refresh LOD/culling of the batches (only does work when the camera moved) and animate life.
-  let lodScale = 1;
+  let lodScale = 1, elapsed = 0, nightOn = false;
   function update(camera, dt) {
+    elapsed += dt;
     for (const b of batches) { b.userData.lod.setScale(lodScale); b.userData.lod.update(camera); }
     if (life) life.userData.life.update(dt, camera);
+    if (sky) sky.userData.update(dt, elapsed);
+    updateWater(elapsed, nightOn);
   }
-  function setNight(on) { night.visible = !!on; }
+  function setNight(on) {
+    nightOn = !!on; night.visible = nightOn; fillerMat.userData.uniforms.uNight.value = nightOn ? 1 : 0;
+    if (sky) sky.userData.setNight(nightOn);
+  }
+  // Free everything this build created on the GPU (shared geometry/material caches stay for the next build).
+  function dispose() {
+    const keep = new Set([solid, cityMaterial('glass')]);
+    const shared = new Set(Object.values(st).flatMap((v) => (v && v.isBufferGeometry ? [v] : v && typeof v === 'object' ? Object.values(v).filter((x) => x && x.isBufferGeometry) : [])));
+    for (const r of st.roads) shared.add(r.geo);
+    root.traverse((o) => {
+      if (o.isBatchedMesh || o.isInstancedMesh) o.dispose();
+      else if (o.geometry && !shared.has(o.geometry) && !o.userData.sharedGeometry) o.geometry.dispose();
+      const mats = Array.isArray(o.material) ? o.material : o.material ? [o.material] : [];
+      for (const m of mats) if (!keep.has(m)) m.dispose();
+    });
+    if (sky) sky.userData.dispose();
+    disposeWater();
+    scene.remove(root);
+  }
   function lodStats() { return Object.fromEntries(batches.map((b) => [b.name, b.userData.lod.stats()])); }
-  return { root, plan, wonders, update, setNight, lodStats, setLodScale: (k) => { lodScale = k; }, stats: { ...stats, fillerKinds: [...stats.fillerKinds] } };
+  return { root, plan, wonders, update, setNight, lodStats, dispose, setLodScale: (k) => { lodScale = k; }, stats: { ...stats, fillerKinds: [...stats.fillerKinds] } };
 }
