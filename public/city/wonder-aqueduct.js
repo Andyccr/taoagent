@@ -1,150 +1,195 @@
 import { createGeo } from './geo.js';
 
-const A = 0xd2c29c;
-const B = 0xc8b68e;
-const C = 0xbfae86;
-const HI = 0xdfd2ae;
-const DK = 0x9a8a6c;
-const WATER = 0x6f9bb3;
-const ROCK = 0x8f8a7c;
-const ROCK_DK = 0x7a7568;
+const S1 = 0xd8c59a;
+const S2 = 0xc9b285;
+const S3 = 0xe2d2ad;
+const SK = 0xa69068;
+const SD = 0x8a7856;
+const BRN = 0x6b573a;
+const SKN = 0xd8b48c;
+const GRN = 0x3c5a3f;
+const GRD = 0x2a4632;
+const TRK = 0x59462f;
+const WAT = 0x6f9bb3;
 const SOIL = 0x8a7a5e;
-const CYPRESS = 0x2f4a33;
-const CYPRESS_DK = 0x253c29;
-const TRUNK = 0x5a4632;
-const IRON = 0x47423c;
-const TUNIC = 0x8a4a3a;
-const SKIN = 0xd9b48c;
+
+const stone = (i) => [S1, S2, S3][((i % 3) + 3) % 3];
 
 export function buildGreatAqueduct() {
   const g = createGeo();
-  const L = 150;
-  const Z0 = -L / 2;
-  const WALL = 6;
-  const HX = WALL / 2;
 
-  const tiers = [
-    { n: 6, pier: 5, t: 1.1, base: 0, top: 16, spring: 5, seg: 12 },
-    { n: 10, pier: 3, t: 0.9, base: 16, top: 28, spring: 18, seg: 9 },
-    { n: 20, pier: 1.5, t: 0.6, base: 28, top: 34, spring: 29, seg: 6 },
-  ];
+  const L = 200;
+  const bW = 8, bSpring = 0, bTop = 17;
+  const mW = 7, mBase = 18, mTop = 34;
+  const tW = 6, tBase = 35, tTop = 40;
 
-  g.box(9, 0.7, L + 2, 0, 0, 0, DK);
+  const bPiers = [-100, -60, -20, 20, 60, 100];
+  const mPiers = [-100, -60, -20, 20, 60, 100];
+  const tPiers = [];
+  for (let i = 0; i <= 16; i++) tPiers.push(-100 + i * 12.5);
 
-  tiers.forEach((T, ti) => {
-    const bay = L / T.n;
-    const span = bay - T.pier;
-    const r = span / 2;
-    const archCol = ti === 1 ? B : HI;
-    for (let i = 0; i <= T.n; i++) {
-      const zc = Z0 + i * bay;
-      g.box(WALL, T.top - T.base, T.pier, 0, T.base, zc, [A, B, C][i % 3]);
-      if (ti < 2) g.box(WALL + 0.4, 0.5, T.pier + 0.5, 0, T.spring, zc, HI);
+  const arch = (zc, r, t, w, spring, seg, c) => {
+    g.arch(r, t, w, 0, spring, zc, c, seg, { ry: Math.PI / 2 });
+  };
+
+  const pier = (zc, w, hd, baseY, topY, idx, opts = {}) => {
+    const h = topY - baseY;
+    g.box(w, h, hd * 2, 0, baseY, zc, stone(idx));
+    g.box(w + 0.7, 0.6, hd * 2 + 0.5, 0, baseY, zc, SK);
+    g.box(w + 0.5, 0.5, hd * 2 + 0.4, 0, topY - 0.5, zc, S3);
+    if (opts.course !== false) {
+      for (let y = baseY + 1.3; y < topY - 0.9; y += 1.5) {
+        g.box(w + 0.06, 0.12, hd * 2 + 0.06, 0, y, zc, y % 3 < 1 ? S3 : SK);
+      }
     }
-    for (let i = 0; i < T.n; i++) {
-      const zc = Z0 + (i + 0.5) * bay;
-      g.arch(r, T.t, WALL, 0, T.spring, zc, archCol, T.seg, { ry: Math.PI / 2 });
-      if (ti < 2) g.arch(r + 0.12, 0.14, WALL + 0.15, 0, T.spring, zc, HI, T.seg, { ry: Math.PI / 2 });
-      if (ti < 2) g.box(WALL + 0.2, 1.0, T.t + 0.4, 0, T.spring + r - 0.4, zc, DK);
+    if (opts.bossage) {
+      for (let y = baseY + 1.0; y < topY - 1.1; y += 1.7) {
+        g.box(1.4, 0.85, 0.24, 0, y, zc + hd + 0.02, stone(idx + 2));
+        g.box(1.4, 0.85, 0.24, 0, y, zc - hd - 0.02, stone(idx + 1));
+      }
     }
-    g.box(WALL, T.top - (T.spring + r), L, 0, T.spring + r, 0, ti === 0 ? B : ti === 1 ? C : B);
-    g.box(WALL + 0.7, 0.5, L + 1.6, 0, T.top - 0.5, 0, HI);
+    if (opts.columns) {
+      for (const sx of [-1, 1]) {
+        g.cyl(0.4, 0.5, h - 1.2, sx * (w / 2 - 1.0), baseY + 0.6, zc + hd + 0.12, S3, 8);
+        g.cyl(0.4, 0.5, h - 1.2, sx * (w / 2 - 1.0), baseY + 0.6, zc - hd - 0.12, S3, 8);
+      }
+    }
+  };
+
+  const cornice = (w, y, k) => {
+    const sp = 1.2;
+    for (let z = -L / 2; z <= L / 2; z += sp) {
+      g.box(0.5, 0.4, 0.34, w / 2 - 0.15, y, z, SK);
+      g.box(0.5, 0.4, 0.34, -(w / 2 - 0.15), y, z, SK);
+    }
+    g.box(w + 0.3, 0.38, L, 0, y, 0, stone(k));
+    g.box(w + 0.9, 0.38, L, 0, y + 0.38, 0, stone(k + 1));
+    g.box(w + 0.4, 0.26, L, 0, y + 0.76, 0, S3);
+  };
+
+  const centralPier = () => {
+    const w = 10, hd = 5, topY = 17;
+    g.box(w, topY, hd * 2, 0, 0, 0, S1);
+    g.box(w + 1, 1.2, hd * 2 + 1, 0, 0, 0, SK);
+    g.box(w + 0.4, 0.8, hd * 2 + 0.4, 0, topY - 1.0, 0, S2);
+    g.box(w + 0.7, 0.6, hd * 2 + 0.7, 0, topY - 0.2, 0, S3);
+    for (const cx of [-w / 2 + 1.1, w / 2 - 1.1]) {
+      g.box(0.95, topY - 1.4, 0.7, cx, 1.2, hd + 0.05, S3);
+    }
+    g.box(4.2, 3.0, 0.5, 0, 5.0, hd - 0.3, SD);
+    g.box(3.8, 2.5, 0.12, 0, 5.25, hd + 0.02, BRN);
+    g.box(4.6, 0.35, 0.4, 0, 8.1, hd + 0.05, BRN);
+  };
+
+  const specus = () => {
+    const y = 40, w = 6;
+    g.box(w, 0.5, L, 0, y, 0, S2);
+    g.box(0.5, 0.8, L, -(w / 2 - 0.25), y + 0.5, 0, S1);
+    g.box(0.5, 0.8, L, w / 2 - 0.25, y + 0.5, 0, S1);
+    g.box(w - 1.0, 0.16, L, 0, y + 0.5, 0, WAT);
+    g.box(w + 0.8, 0.5, L, 0, y + 1.3, 0, S3);
+    g.box(1.2, 0.4, L, 0, y + 1.8, 0, S2);
+    g.box(0.35, 0.9, L, -(w / 2 - 0.2), y + 0.8, 0, S1);
+    g.box(0.35, 0.9, L, w / 2 - 0.2, y + 0.8, 0, S1);
+    for (let z = -L / 2; z <= L / 2; z += 2) {
+      g.box(0.3, 0.7, 0.3, -(w / 2 + 0.4), y + 1.1, z, S3);
+      g.box(0.3, 0.7, 0.3, w / 2 + 0.4, y + 1.1, z, S3);
+    }
+  };
+
+  const terminalTower = (s) => {
+    const zc = s * 98, tw = 12, td = 10, th = 30;
+    g.box(tw, th, td, 0, 0, zc, S1);
+    g.box(tw + 1.2, 1.8, td + 1.2, 0, 0, zc, SK);
+    g.box(tw + 0.6, 0.8, td + 0.6, 0, th, zc, S3);
+    g.box(tw - 2.5, 4.5, td - 2.5, 0, th + 0.8, zc, S2);
+    g.box(tw - 4.5, 0.5, td - 4.5, 0, th + 5.3, zc, WAT);
+    for (const cx of [-3.5, 0, 3.5]) {
+      g.cyl(0.38, 0.5, 4.5, cx, th + 0.8, zc - s * (td / 2 - 2.5), S3, 8);
+    }
+    g.gable(tw - 1, 3.0, td - 1, 0, th + 5.8, zc, S1);
+    for (const cx of [-tw / 2 + 2, 0, tw / 2 - 2]) {
+      g.cyl(0.55, 0.65, th - 1.5, cx, 1.8, zc + s * (td / 2 - 0.3), S3, 8);
+    }
+    g.box(2.2, 3.5, 0.4, 0, 1.8, zc + s * (td / 2 + 0.15), SD);
+  };
+
+  const statue = (x, y, z, robe, ry) => {
+    g.group({ x, y, z, ry }, () => {
+      g.box(0.7, 0.35, 0.7, 0, 0, 0, SK);
+      g.cyl(0.2, 0.34, 0.95, 0, 0.35, 0, robe, 7);
+      g.box(0.46, 0.6, 0.3, 0, 1.15, 0, robe);
+      g.sphere(0.16, 0, 1.95, 0, SKN, 6);
+      g.box(0.13, 0.55, 0.13, 0.24, 1.35, 0, SKN);
+    });
+  };
+
+  const ground = () => {
+    for (let k = -7; k <= 7; k++) {
+      const zc = k * 12.5;
+      const s = 0.8 + ((k + 7) % 3) * 0.18;
+      for (const sx of [-1, 1]) {
+        const x = 8.0 * sx;
+        g.cyl(0.14 * s, 0.2 * s, 1.5 * s, x, 0, zc, TRK, 6);
+        g.cone(0.95 * s, 3.8 * s, x, 1.3 * s, zc, GRD, 8);
+        g.cone(0.72 * s, 3.0 * s, x, 4.1 * s, zc, GRN, 8);
+        g.cone(0.45 * s, 2.2 * s, x, 6.2 * s, zc, GRN, 8);
+      }
+    }
+    const rocks = [[-5, -80, 0.55], [5, -40, 0.6], [-5, 40, 0.5], [5, 80, 0.6], [-5, -45, 0.45], [5, 45, 0.45]];
+    for (const [rx, rz, s] of rocks) g.sphere(s, rx, 0.25, rz, SK, 6);
+    for (let z = -80; z <= 80; z += 5) {
+      g.box(1.1, 0.4, 1.1, -6.5, 0, z, SOIL);
+      g.box(1.1, 0.4, 1.1, 6.5, 0, z, SOIL);
+      g.sphere(0.5, -6.5, 0.3, z, GRD, 6);
+      g.sphere(0.5, 6.5, 0.3, z, GRD, 6);
+    }
+  };
+
+  // bottom tier
+  bPiers.forEach((zc, i) => pier(zc, bW, 3, bSpring, bTop, i, { bossage: true, columns: true }));
+  for (let i = 0; i < bPiers.length - 1; i++) {
+    const c1 = bPiers[i], c2 = bPiers[i + 1];
+    arch((c1 + 3 + c2 - 3) / 2, (c2 - 3 - c1 - 3) / 2, 1.2, bW, bSpring, 12, stone(i + 1));
+  }
+  centralPier();
+  arch(-11, 6, 0.9, bW, bSpring, 8, S1);
+  arch(11, 6, 0.9, bW, bSpring, 8, S1);
+  bPiers.forEach((zc) => {
+    g.prism([[bW / 2, zc - 3], [bW / 2, zc + 3], [bW / 2 + 2.6, zc]], bTop, 0, SK);
+    g.prism([[-bW / 2, zc - 3], [-bW / 2, zc + 3], [-bW / 2 - 2.6, zc]], bTop, 0, SK);
   });
 
-  // cutwater buttresses at the base of bottom piers
-  for (let i = 0; i <= 6; i++) {
-    const zc = Z0 + i * 25;
-    g.prism([[HX, zc - 2.4], [8.4, zc], [HX, zc + 2.4]], 4.6, 0, C);
-    g.prism([[-HX, zc - 2.4], [-8.4, zc], [-HX, zc + 2.4]], 4.6, 0, C);
+  // cornice 1
+  cornice(bW + 1.2, bTop, 0);
+
+  // middle tier
+  mPiers.forEach((zc, i) => pier(zc, mW, 3.5, mBase, mTop, i + 5, { bossage: true }));
+  for (let i = 0; i < mPiers.length - 1; i++) {
+    const c1 = mPiers[i], c2 = mPiers[i + 1];
+    arch((c1 + 3.5 + c2 - 3.5) / 2, (c2 - 3.5 - c1 - 3.5) / 2, 1.0, mW, mBase, 10, stone(i + 3));
   }
 
-  // stone river / valley bed under the middle
-  g.box(18, 0.4, 16, 0, -0.4, 0, ROCK_DK);
-  g.box(14, 0.2, 12, 0, -0.1, 0, WATER);
-  g.box(18, 0.9, 1.4, 0, -0.2, -7.2, ROCK);
-  g.box(18, 0.9, 1.4, 0, -0.2, 7.2, ROCK);
+  // cornice 2
+  cornice(mW + 1.2, mTop, 1);
 
-  const rocks = [
-    [-7.5, -6, 0.7], [-8, -2, 0.9], [-7, 4, 0.6], [-8.2, 1, 0.5], [-7.5, -8, 0.7],
-    [7.5, -6, 0.7], [8, -2, 0.9], [7, 4, 0.6], [8.2, 1, 0.5], [7.5, -8, 0.7],
-    [-6.5, 7, 0.5], [6.5, 7, 0.5], [-6.5, -7, 0.5], [6.5, -7, 0.5], [-8, 6, 0.4], [8, 6, 0.4],
-  ];
-  for (const [rx, rz, s] of rocks) g.sphere(s, rx, -0.1, rz, ROCK, 7);
-
-  // covered water channel (specus) on top
-  const SY = 34;
-  g.box(WALL + 0.4, 0.6, L, 0, SY, 0, A);
-  g.box(0.5, 1.8, L, -1.6, SY + 0.6, 0, B);
-  g.box(0.5, 1.8, L, 1.6, SY + 0.6, 0, B);
-  g.box(2.4, 0.3, L, 0, SY + 1.1, 0, WATER);
-  g.box(WALL + 0.9, 0.5, L + 1, 0, SY + 1.9, 0, A);
-  g.box(0.8, 0.5, L + 1, 0, SY + 2.4, 0, HI);
-
-  // +z castellum aquae (distribution house)
-  const CB = 75;
-  g.box(12, 14, 12, 0, 0, CB + 6, A);
-  g.box(13, 0.7, 13, 0, 14, CB + 6, HI);
-  g.box(8, 1.2, 8, 0, 14.7, CB + 6, C);
-  g.box(6.4, 0.6, 6.4, 0, 15.3, CB + 6, WATER);
-  g.gable(13, 2.2, 1.6, 0, 14.7, CB + 11.4, B);
-  g.box(2.4, 3.2, 0.6, 0, 0, CB + 11.7, DK);
-  for (const x of [-4.5, -1.5, 1.5, 4.5]) g.box(0.6, 14, 0.7, x, 0, CB + 11.6, HI);
-
-  // -z hillside ramp-down and inspection tower
-  for (let k = 0; k < 7; k++) {
-    g.box(18, 5 * (k + 1), 4, 0, 0, Z0 - 2 - k * 4, SOIL);
-  }
-  g.box(4, 10, 4, 6.5, 0, -80, A);
-  g.box(4.6, 0.5, 4.6, 6.5, 10, -80, HI);
-  g.gable(4.6, 2, 4.6, 6.5, 10.5, -80, B);
-  g.box(0.8, 1.4, 0.3, 6.5, 4.5, -77.7, DK);
-  g.box(0.8, 1, 0.3, 6.5, 8, -77.7, DK);
-
-  // stair access up the +x face
-  for (let k = 0; k < 12; k++) {
-    g.box(1.4, 0.4, 1.3, 3.4, k * 1.3, -44 + k * 0.65, C);
+  // top tier
+  tPiers.forEach((zc, i) => {
+    g.box(tW, tTop - tBase, 2.5, 0, tBase, zc, stone(i));
+    g.box(tW + 0.4, 0.4, 2.9, 0, tTop - 0.4, zc, S3);
+  });
+  for (let i = 0; i < tPiers.length - 1; i++) {
+    arch((tPiers[i] + tPiers[i + 1]) / 2, 5, 0.55, tW, tBase, 6, S1);
   }
 
-  // iron clamp hints on piers
-  for (const zc of [-25, 0, 25, 50]) {
-    for (const yc of [3, 7, 11, 15]) {
-      g.box(0.1, 0.14, 0.5, HX + 0.02, yc, zc, IRON);
-      g.box(0.1, 0.14, 0.5, -HX - 0.02, yc, zc, IRON);
-    }
-  }
-
-  // stone course bands on bottom piers
-  for (let i = 0; i <= 6; i++) {
-    const zc = Z0 + i * 25;
-    for (let yc = 2; yc <= 15; yc += 2.2) {
-      g.box(WALL + 0.1, 0.16, 5.15, 0, yc, zc, i % 2 ? DK : C);
-    }
-  }
-
-  // cypress trees along both sides
-  for (let k = -5; k <= 5; k++) {
-    const zc = k * 12;
-    const s = 0.8 + ((k + 5) % 3) * 0.15;
-    for (const sx of [-1, 1]) {
-      const x = 7.5 * sx;
-      g.cyl(0.16 * s, 0.2 * s, 1.6 * s, x, 0, zc, TRUNK, 6);
-      g.cone(1.0 * s, 4.2 * s, x, 1.4 * s, zc, CYPRESS_DK, 8);
-      g.cone(0.78 * s, 3.4 * s, x, 4.4 * s, zc, CYPRESS, 8);
-      g.cone(0.5 * s, 2.4 * s, x, 7.0 * s, zc, CYPRESS, 8);
-    }
-  }
-
-  // worker figures and a cart by the river
-  g.box(1.6, 0.5, 2.2, 5, 0.9, 3, TRUNK);
-  g.box(0.2, 1.0, 0.2, 5, 0.8, 4.1, TRUNK);
-  g.cyl(0.45, 0.45, 0.3, 4.2, 0.45, 2.6, IRON, 8, { rz: Math.PI / 2 });
-  g.cyl(0.45, 0.45, 0.3, 5.8, 0.45, 2.6, IRON, 8, { rz: Math.PI / 2 });
-  for (const wx of [-5, -6.2]) {
-    g.box(0.5, 1.2, 0.4, wx, 0.6, 4, TUNIC);
-    g.sphere(0.24, wx, 1.45, 4, SKIN, 6);
-  }
+  specus();
+  terminalTower(1);
+  terminalTower(-1);
+  statue(2, 18, 0, BRN, 0);
+  statue(-2, 18, 0, BRN, 0);
+  ground();
 
   const solid = g.build();
   solid.computeBoundingBox();
-  return { solid, glass: null, name: '大渡槽', height: 38, radius: 80 };
+  return { solid, glass: null, name: '大渡槽', height: 42, radius: 104 };
 }

@@ -842,7 +842,8 @@ export function createCity(container, roster, opts = {}) {
     const out = new THREE.Vector3(w.x, 0, w.z); if (out.lengthSq() < 1) out.set(0, 0, 1); out.normalize();
     const side = new THREE.Vector3(-out.z, 0, out.x).multiplyScalar(0.45);
     const dir = out.add(side).normalize().multiplyScalar(Math.cos(0.5)).setY(Math.sin(0.5));
-    glide(new THREE.Vector3(w.x, (w.group?.position.y || 0) + Math.min(w.height, 60) * 0.35, w.z), Math.min(240, Math.max(70, w.radius * 3.4, Math.min(w.height, 180) * 1.35)), dir);
+    // Aim at ~40% of the height and back off enough to keep the crown of tall wonders in frame.
+    glide(new THREE.Vector3(w.x, (w.group?.position.y || 0) + Math.min(w.height, 240) * 0.4, w.z), Math.min(320, Math.max(70, w.radius * 3.4, Math.min(w.height, 240) * 1.55)), dir);
     return true;
   }
   function focusWonderByIndex(i) { const w = city.wonders[i]; if (!w) return false; pendingFlash = new THREE.Vector3(w.x, 0.2, w.z); return focusWonder(w.id); }

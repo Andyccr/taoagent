@@ -8,7 +8,7 @@ export function buildColossus() {
   const C = {
     rock1: 0x8a8175, rock2: 0x746d62, rock3: 0x625d54, rock4: 0x9a9183, rock5: 0x555149,
     marble: 0xe8e1d0, marble2: 0xd9d0bb, marble3: 0xc8bda4, marbleEdge: 0xf1ebdd,
-    bronze: 0xb5874a, bronzeLight: 0xc99a5b, bronzeDark: 0x7e5a30,
+    bronze: 0xb5874a, bronzeLight: 0xc99a5b, bronzeDark: 0x7e5a30, bronzeHi: 0xcf9f5e, gild: 0xe0b84a,
     cloth: 0x96713f, clothDark: 0x6c4d27, gold: 0xd8ab55, goldLight: 0xe7c273,
     quay: 0xb0a58e, quayDark: 0x8f8470, quayLight: 0xc4b99f,
     wood: 0x6b4a2a, woodDark: 0x50351f,
@@ -178,102 +178,137 @@ export function buildColossus() {
     }
 
     const F = 17.3;
-    // Feet, legs and knee joints.
+    const BRZ = C.bronze, HI = C.bronzeHi, SH = C.bronzeDark;
+    // Per-axis scaled sphere (chest pecs, skull, lats).
+    const ssphere = (r, x, y, z, hex, sx, sy, sz, seg = 9) => {
+      const geo = new p.THREE.SphereGeometry(r, seg, Math.max(4, seg >> 1));
+      geo.scale(sx, sy, sz);
+      p.raw(geo, hex, x, y, z);
+    };
+
+    // Feet with toes — weight leg on -x (straight), relaxed leg on +x.
     for (const s of [-1, 1]) {
-      p.box(2.7, 0.75, 4.2, s * 2.2, F, 0.55, C.bronzeDark);
-      p.box(2.8, 0.18, 0.9, s * 2.2, F + 0.75, 2.45, C.bronzeLight);
-      p.box(0.55, 0.45, 0.7, s * 2.2, F + 0.32, -1.25, C.bronzeDark);
-      p.cyl(0.8, 0.95, 1.0, s * 2.2, F + 0.25, 0.0, C.bronze, 8);
-      p.sphere(0.85, s * 2.2, F + 1.15, 0.15, C.bronze, 8);
-      limb(p, s * 2.2, F + 1.25, s * 2.35, 30.8, 0.15, 0.8, 1.25, C.bronze, 10);
-      p.sphere(1.25, s * 2.35, 30.9, 0.2, C.bronze, 10);
-      p.sphere(1.05, s * 2.3, 25.8, 0.55, C.bronze, 8);
-      limb(p, s * 2.35, 30.9, s * 2.05, 41.7, 0.0, 1.25, 1.75, C.bronze, 10);
-      p.sphere(1.5, s * 2.0, 40.5, 0.1, C.bronze, 9);
+      const fx = s * 2.25;
+      p.box(1.2, 1.15, 4.4, fx, F, 0.55, BRZ);
+      p.box(1.28, 0.55, 1.0, fx, F + 0.6, 2.9, HI);
+      for (let t = 0; t < 3; t++) p.box(0.36, 0.42, 0.55, fx + (t - 1) * 0.44, F + 0.2, 3.42, BRZ);
+      p.cyl(0.72, 0.95, 1.15, fx, F + 1.0, 0.15, BRZ, 8);
+      p.sphere(0.8, fx, F + 1.15, 0.1, HI, 8);
     }
 
-    // Short tunic with vertical folds, belt and buckle.
-    p.cyl(3.0, 4.4, 7.4, 0, 35.0, 0, C.cloth, 12);
-    p.cyl(4.35, 4.6, 0.45, 0, 34.8, 0, C.clothDark, 12);
-    for (let i = 0; i < 12; i++) {
-      const a = TAU * i / 12;
-      p.box(0.34, 6.6, 0.4, Math.sin(a) * 3.85, 35.2, Math.cos(a) * 3.85, i % 2 ? C.clothDark : C.cloth, { ry: a });
-    }
-    p.cyl(3.25, 3.25, 0.65, 0, 41.8, 0, C.bronzeDark, 12);
-    p.box(0.9, 0.55, 0.32, 0, 41.85, 3.22, C.gold);
-    p.sphere(0.18, 0, 42.1, 3.4, C.goldLight, 6);
+    // Legs: tapered shins + thighs with knee spheres (contrapposto bend on +x).
+    limb(p, -2.25, 19.0, -2.3, 29.8, 0.15, 0.85, 1.0, BRZ, 10);
+    p.sphere(1.15, -2.3, 29.8, 0.2, HI, 9);
+    limb(p, -2.3, 29.8, -2.1, 40.5, 0.1, 1.0, 1.75, BRZ, 10);
+    limb(p, 2.25, 19.0, 2.5, 29.8, 0.4, 0.85, 0.95, BRZ, 10);
+    p.sphere(1.1, 2.5, 29.8, 0.4, HI, 9);
+    limb(p, 2.5, 29.8, 2.15, 40.2, 0.1, 0.95, 1.7, BRZ, 10);
+    p.sphere(0.6, 2.45, 29.6, 0.55, HI, 8);
 
-    // Torso, chest, abdomen and shoulders.
-    p.cyl(3.85, 3.0, 12.0, 0, 42.3, 0, C.bronze, 12);
-    p.sphere(1.35, -1.45, 51.8, 1.55, C.bronze, 10);
-    p.sphere(1.35, 1.45, 51.8, 1.55, C.bronze, 10);
-    for (let i = 0; i < 3; i++) {
-      for (const s of [-1, 1]) p.box(0.55, 0.7, 0.35, s * 0.55, 45.2 + i * 1.5, 2.85, C.bronzeDark);
-    }
-    p.sphere(0.13, 0, 44.7, 2.98, C.bronzeDark, 6);
-    p.sphere(1.8, -3.65, 53.4, 0, C.bronze, 10);
-    p.sphere(1.8, 3.65, 53.4, 0, C.bronze, 10);
-    p.sphere(1.05, -1.9, 54.1, 0.2, C.bronze, 8);
-    p.sphere(1.05, 1.9, 54.1, 0.2, C.bronze, 8);
-    p.cyl(1.35, 1.55, 2.6, 0, 54.0, 0, C.bronze, 10);
+    // Hips / pelvis.
+    p.cyl(2.6, 3.0, 3.3, 0, 39.6, 0, BRZ, 10);
+    ssphere(1.3, 0, 40.2, -1.2, BRZ, 1.5, 0.8, 0.8, 9);
+    p.box(2.4, 0.5, 1.0, 0, 42.0, -1.3, SH);
 
-    // Head, hair, beard and face.
-    p.sphere(2.35, 0, 59.0, 0.1, C.bronze, 12);
-    p.sphere(1.55, 0, 57.4, 0.9, C.bronze, 10);
-    p.sphere(1.25, 0, 56.7, 1.7, C.bronzeDark, 8);
-    p.box(0.5, 0.85, 0.55, 0, 58.9, 2.35, C.bronzeDark);
-    p.box(1.8, 0.28, 0.4, 0, 59.6, 2.2, C.bronzeDark);
-    p.box(0.38, 0.22, 0.14, -0.75, 59.1, 2.3, C.door);
-    p.box(0.38, 0.22, 0.14, 0.75, 59.1, 2.3, C.door);
-    p.sphere(0.55, -2.2, 59.0, 0.1, C.bronze, 7);
-    p.sphere(0.55, 2.2, 59.0, 0.1, C.bronze, 7);
-    p.dome(2.42, 0, 59.25, 0.1, C.bronzeDark, 10);
-    p.sphere(1.1, 0, 58.2, -1.9, C.bronzeDark, 8);
-    p.cyl(2.55, 2.7, 0.5, 0, 61.2, 0.1, C.gold, 12);
-    for (let i = 0; i < 7; i++) {
-      const a = TAU * i / 7;
-      p.cone(0.42, 4.2 + (i % 3) * 0.5, Math.sin(a) * 2.25, 61.7, Math.cos(a) * 2.25 + 0.1, i % 2 ? C.gold : C.goldLight, 6, { rx: 0.16 * Math.cos(a), rz: -0.16 * Math.sin(a) });
+    // Short pleated chiton skirt: flared core + ring of slanted pleat slabs.
+    p.cyl(2.5, 3.1, 5.4, 0, 37.0, 0, C.cloth, 12);
+    p.cyl(3.1, 3.35, 0.4, 0, 36.8, 0, C.clothDark, 12);
+    for (let i = 0; i < 14; i++) {
+      const a = TAU * i / 14 + 0.08;
+      const rx = Math.cos(a), rz = Math.sin(a);
+      p.box(0.3, 4.7, 0.42, rx * 3.0, 37.4, rz * 3.0, i % 2 ? C.clothDark : C.cloth, { ry: a, rx: 0.2 });
     }
 
-    // Raised right arm and torch.
-    limb(p, -3.65, 53.2, -6.1, 59.8, 0.2, 1.55, 1.1, C.bronze, 10);
-    p.sphere(1.35, -4.9, 56.7, 0.2, C.bronze, 9);
-    p.sphere(1.1, -6.1, 59.9, 0.25, C.bronze, 9);
-    limb(p, -6.1, 59.9, -5.55, 65.0, 0.65, 1.1, 0.78, C.bronze, 10);
-    p.sphere(0.95, -5.55, 65.6, 0.7, C.bronze, 9);
-    p.sphere(0.7, -5.55, 66.1, 0.7, C.bronzeDark, 7);
-    for (let i = 0; i < 3; i++) p.box(0.22, 0.75, 0.22, -5.85 + i * 0.3, 65.2, 1.05, C.bronzeDark);
-    p.cyl(0.26, 0.34, 6.9, -5.55, 62.3, 0.7, C.bronzeDark, 8);
-    p.ring(0.34, 0.08, -5.55, 64.2, 0.7, C.gold, 10);
-    p.cyl(1.0, 0.6, 1.2, -5.55, 69.2, 0.7, C.bronzeDark, 10);
-    p.cyl(1.12, 0.9, 0.25, -5.55, 70.4, 0.7, C.gold, 10);
+    // Belt and buckle at the waist.
+    p.cyl(2.35, 2.35, 0.6, 0, 42.2, 0, SH, 12);
+    p.box(0.9, 0.55, 0.32, 0, 42.3, 2.32, C.gold);
+    p.sphere(0.16, 0, 42.55, 2.45, C.goldLight, 6);
+
+    // Torso: V-shaped abdomen to chest, with scaled pecs.
+    p.cyl(2.6, 3.0, 5.0, 0, 42.6, 0, BRZ, 12);
+    for (let i = 0; i < 3; i++) for (const s of [-1, 1]) p.box(0.5, 0.6, 0.3, s * 0.55, 43.6 + i * 1.4, 2.35, SH);
+    p.sphere(0.12, 0, 42.9, 2.55, SH, 6);
+    p.cyl(3.3, 2.7, 6.0, 0, 47.4, 0, BRZ, 12);
+    ssphere(1.25, -1.35, 51.2, 1.55, HI, 1.1, 0.9, 0.62, 9);
+    ssphere(1.25, 1.35, 51.2, 1.55, HI, 1.1, 0.9, 0.62, 9);
+    // Back: lats and trapezius.
+    ssphere(1.2, -1.3, 50.5, -1.4, SH, 0.9, 1.0, 0.55, 9);
+    ssphere(1.2, 1.3, 50.5, -1.4, SH, 0.9, 1.0, 0.55, 9);
+    p.box(3.4, 1.0, 1.0, 0, 52.9, -1.3, SH);
+
+    // Shoulders (deltoids).
+    p.sphere(1.9, -3.6, 53.6, 0, HI, 10);
+    p.sphere(1.9, 3.6, 53.6, 0, HI, 10);
+
+    // Cloak draped from the left shoulder down the back as tapering folds.
+    p.box(2.4, 1.1, 1.2, 3.35, 53.0, -0.7, C.cloth);
+    for (let i = 0; i < 6; i++) {
+      const yy = 51.5 - i * 3.9;
+      const zz = -1.15 - i * 0.66;
+      const xx = 3.45 - i * 0.27;
+      const w = 2.7 - i * 0.24;
+      p.box(w, 4.1, 0.42, xx, yy, zz, i % 2 ? C.clothDark : C.cloth, { rx: 0.26 + i * 0.035, ry: 0.2 });
+    }
+
+    // Right arm raised high holding the torch.
+    limb(p, -3.6, 53.4, -5.6, 59.0, 0.1, 1.35, 1.0, BRZ, 10);
+    p.sphere(1.15, -5.6, 59.0, 0.1, HI, 9);
+    limb(p, -5.6, 59.0, -5.35, 65.2, 0.6, 1.0, 0.72, BRZ, 10);
+    p.sphere(0.95, -5.35, 65.2, 0.6, HI, 9);
+    p.sphere(0.72, -5.35, 66.0, 0.6, SH, 7);
+    p.cyl(0.22, 0.28, 5.0, -5.35, 63.9, 0.6, SH, 8);
+    p.cyl(0.9, 0.55, 1.3, -5.35, 68.6, 0.6, SH, 10);
+    p.ring(0.88, 0.09, -5.35, 68.4, 0.6, C.gild, 10);
+    p.cyl(1.05, 0.85, 0.25, -5.35, 69.8, 0.6, C.gild, 10);
     for (let i = 0; i < 4; i++) {
       const a = TAU * i / 4 + 0.4;
-      p.cone(0.22, 0.9, -5.55 + Math.sin(a) * 0.7, 70.4, 0.7 + Math.cos(a) * 0.7, C.gold, 5);
+      p.cone(0.2, 0.9, -5.35 + Math.sin(a) * 0.68, 69.9, 0.6 + Math.cos(a) * 0.68, C.gild, 5);
     }
 
-    // Left arm holding spear, with cloak falling behind.
-    limb(p, 3.65, 53.2, 5.1, 46.0, 0.15, 1.55, 1.1, C.bronze, 10);
-    p.sphere(1.3, 4.6, 50.5, 0.1, C.bronze, 9);
-    p.sphere(1.1, 5.1, 46.0, 0.2, C.bronze, 9);
-    limb(p, 5.1, 46.0, 4.5, 38.8, 0.5, 1.1, 0.78, C.bronze, 10);
-    p.sphere(0.95, 4.5, 38.2, 0.5, C.bronze, 9);
-    p.cyl(0.17, 0.21, 39.5, 4.9, 17.6, 0.6, C.wood, 6);
-    p.cone(0.38, 3.2, 4.9, 57.1, 0.6, C.gold, 6);
-    p.sphere(0.28, 4.9, 60.1, 0.6, C.gold, 6);
-    p.ring(0.25, 0.07, 4.9, 57.0, 0.6, C.bronzeDark, 8);
-    p.cyl(2.15, 3.8, 24, 3.1, 29.0, -1.9, C.clothDark, 10, { sz: 0.42 });
-    p.cyl(3.9, 4.0, 0.5, 3.1, 28.7, -1.9, C.cloth, 10, { sz: 0.42 });
-    p.box(3.6, 1.1, 1.6, 3.4, 52.5, -0.6, C.cloth);
-    for (let i = 0; i < 5; i++) {
-      p.box(0.35, 23, 0.35, 1.7 + i * 0.7, 29.3, -2.1, i % 2 ? C.clothDark : C.cloth, { rz: 0.02 * (i - 2) });
+    // Left arm lowered holding a long spear.
+    limb(p, 3.6, 53.4, 4.7, 48.8, 0.1, 1.35, 1.0, BRZ, 10);
+    p.sphere(1.1, 4.7, 48.8, 0.1, HI, 9);
+    limb(p, 4.7, 48.8, 4.6, 43.6, 0.55, 1.0, 0.72, BRZ, 10);
+    p.sphere(0.9, 4.6, 43.6, 0.55, HI, 9);
+    p.sphere(0.72, 4.6, 43.0, 0.55, SH, 7);
+    p.cyl(0.16, 0.2, 26.0, 4.6, 44.0, 0.55, C.wood, 6);
+    p.cyl(0.22, 0.22, 0.3, 4.6, 56.8, 0.55, C.bronzeDark, 6);
+    p.cone(0.4, 3.6, 4.6, 57.1, 0.55, C.gold, 6);
+    p.sphere(0.28, 4.6, 60.5, 0.55, C.gild, 6);
+    p.sphere(0.24, 4.6, 31.2, 0.55, SH, 6);
+
+    // Neck and head.
+    p.cyl(1.15, 1.3, 2.3, 0, 53.8, 0.05, BRZ, 10);
+    ssphere(2.25, 0, 59.0, 0.15, BRZ, 1.0, 1.08, 1.0, 12);
+    p.sphere(1.5, 0, 57.0, 1.1, HI, 9);
+    p.box(1.0, 0.8, 0.6, 0, 56.3, 2.1, SH);
+    p.box(0.5, 0.9, 0.85, 0, 58.6, 2.55, BRZ);
+    p.box(1.7, 0.28, 0.4, 0, 59.9, 2.2, SH);
+    p.box(0.34, 0.2, 0.1, -0.7, 58.9, 2.4, C.door);
+    p.box(0.34, 0.2, 0.1, 0.7, 58.9, 2.4, C.door);
+    p.sphere(0.5, -2.15, 58.8, 0.1, BRZ, 7);
+    p.sphere(0.5, 2.15, 58.8, 0.1, BRZ, 7);
+    // Curly hair.
+    p.dome(2.32, 0, 59.4, 0.1, SH, 10);
+    for (let i = 0; i < 10; i++) {
+      const a = TAU * i / 10 + 0.15;
+      p.sphere(0.6, Math.sin(a) * 2.3, 60.0 + (i % 3) * 0.2, Math.cos(a) * 2.3 + 0.1, SH, 7);
+    }
+    p.sphere(1.0, 0, 58.1, -2.0, SH, 8);
+
+    // Radiant gilded crown: band + 7 long tapered spikes.
+    p.cyl(2.4, 2.5, 0.45, 0, 63.6, 0.1, C.gild, 12);
+    for (let i = 0; i < 7; i++) {
+      const a = TAU * i / 7 + TAU / 14;
+      const len = 5.2 + (i % 3) * 0.7;
+      p.cone(0.4, len, Math.sin(a) * 2.1, 64.0, Math.cos(a) * 2.1 + 0.1, i % 2 ? C.gild : C.goldLight, 6, { rx: 0.18 * Math.cos(a), rz: -0.18 * Math.sin(a) });
     }
   });
 
   // Glass fire in the raised brazier.
-  glass.sphere(1.0, -5.55, 70.6, PZ + 0.7, 0xffd27a, 8);
-  glass.cone(0.78, 2.0, -5.55, 69.9, PZ + 0.7, 0xff9f3d, 8);
-  glass.sphere(0.45, -5.55, 71.4, PZ + 0.7, 0xfff1c0, 6);
+  glass.sphere(1.0, -5.35, 70.6, PZ + 0.6, 0xffb050, 8);
+  glass.cone(0.82, 2.3, -5.35, 69.9, PZ + 0.6, 0xff9f3d, 8);
+  glass.sphere(0.48, -5.35, 71.5, PZ + 0.6, 0xfff1c0, 6);
 
   // --- Ceremonial harbour pier on the +z side ---
   g.box(7, 1, 9.2, 0, -0.05, 16.5, C.quay);
