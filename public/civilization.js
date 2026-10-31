@@ -13,7 +13,7 @@ const copy = {
 }
 const q = selector => document.querySelector(selector)
 const node = (tag, className, text) => { const element = document.createElement(tag); if (className) element.className = className; if (text) element.textContent = text; return element }
-let view, stage, banner, statusNode, usageNode, rosterNode, taskNode, detailNode, presetNode, settingsNode, teamNode, eventNode, searchNode, searchToggle, searchInput, filterSelect, legendNode, minimapButton, minimapCanvas, tourWondersBtn, tourAgentsBtn, hintNode, replayTimer = 0, replaying = false, offline = false
+let chatPreview, cityTitle='', view, stage, banner, statusNode, usageNode, rosterNode, taskNode, detailNode, presetNode, settingsNode, teamNode, eventNode, searchNode, searchToggle, searchInput, filterSelect, legendNode, minimapButton, minimapCanvas, tourWondersBtn, tourAgentsBtn, hintNode, replayTimer = 0, replaying = false, offline = false
 let city, real = null, shown = null, sim = false, settings = loadSettings(), selection = null, poll = 0, simTimer = 0, previousHash = '', finger = '', rosterQuery = '', rosterFilter = 'all', minimapOn = false, activeTour = null
 
 function loadSettings() {
@@ -95,6 +95,7 @@ async function loadLive() {
   if (!response.ok) throw new Error('Unavailable')
   const body = await response.json()
   if (body.source !== 'live' || body.llmCalls !== 0 || !Array.isArray(body.citizens)) throw new Error('Unavailable')
+  await refreshCityText()
   return body
 }
 function render() {
@@ -148,7 +149,7 @@ function render() {
   if (!events.length) eventNode.append(node('p', 'civ-note', text.noEvents))
   for (const event of events) { const line = node('button', 'civ-event', eventLine(event)); line.type = 'button'; line.onclick = () => choose({ type: 'agent', id: event.agentId }); eventNode.append(line) }
   const titles = view.querySelectorAll('.civ-side > h2')
-  ;[text.usage, text.districts, text.roster, text.teams, text.events, text.tasks].forEach((label, index) => { if (titles[index]) titles[index].textContent = label })
+  ;[settings.language==='en'?'City chat':'城市聊天室',text.usage, text.districts, text.roster, text.teams, text.events, text.tasks].forEach((label, index) => { if (titles[index]) titles[index].textContent = label })
   renderDetail()
 }
 function renderDetail() {
@@ -271,7 +272,7 @@ function paintChrome() {
   q('#civ-sim').textContent = text.sim
   q('#civ-reset').textContent = text.cameraReset
   q('#civ-replay').textContent = text.replay
-  q('#civ-title').textContent = text.title
+  q('#civ-title').textContent = cityTitle || text.title
   paintFilters()
   paintTour()
   paintHint()
@@ -338,6 +339,16 @@ function closeView(restore) {
   q('main').inert = false
   if (restore) history.replaceState(null, '', previousHash && previousHash !== '#civilization' ? previousHash : location.pathname + location.search)
 }
+async function refreshCityText(){
+  const response=await fetch('/api/city');if(!response.ok)return
+  const value=await response.json();cityTitle=value.config.name
+  q('#civ-title').textContent=cityTitle
+  const fingerprint=JSON.stringify(value.messages)
+  if(chatPreview.dataset.fingerprint===fingerprint)return
+  chatPreview.dataset.fingerprint=fingerprint;chatPreview.replaceChildren()
+  if(!value.messages.length)chatPreview.append(node('p','civ-note','还没有城市聊天。进入聊天室，与居民开始交流。'))
+  for(const message of value.messages.slice(-6)){const item=node('article');item.append(node('strong','',message.agentName||(message.role==='user'?'你':'Bot')),node('p','',message.content));chatPreview.append(item)}
+}
 function init() {
   view = node('section', 'civ-view')
   view.id = 'civ-view'
@@ -363,7 +374,8 @@ function init() {
   tourAgentsBtn.id = 'civ-tour-agents'
   minimapButton = button(copy.zh.minimap, () => toggleMinimap())
   minimapButton.id = 'civ-minimap'
-  actions.append(button('☰', () => q('#menu').click()), back, replay, simButton, tourWondersBtn, tourAgentsBtn, minimapButton, reset)
+  const chatButton=button('文字聊天室',()=>q('#city-chat-open').click());chatButton.id='civ-chat-open'
+  actions.append(chatButton,button('☰', () => q('#menu').click()), back, replay, simButton, tourWondersBtn, tourAgentsBtn, minimapButton, reset)
   const title = node('strong', '', copy.zh.title)
   title.id = 'civ-title'
   bar.append(title, actions)
@@ -404,16 +416,19 @@ function init() {
   searchNode.append(searchToggle, controls)
   legendNode = node('div', 'civ-legend')
   hintNode = node('p', 'civ-hint')
-  side.append(node('h2', '', copy.zh.usage), usageNode, node('h2', '', copy.zh.districts), presetNode, node('h2', '', copy.zh.roster), searchNode, rosterNode, legendNode, node('h2', '', copy.zh.teams), teamNode, node('h2', '', copy.zh.events), eventNode, node('h2', '', copy.zh.tasks), taskNode, detailNode, settingsNode, hintNode)
+  chatPreview=node('div','civ-chat-preview');chatPreview.setAttribute('aria-label','城市公共聊天预览')
+  side.append(node('h2','','城市聊天室'),chatPreview,button('进入文字交流',()=>q('#city-chat-open').click()),node('h2', '', copy.zh.usage), usageNode, node('h2', '', copy.zh.districts), presetNode, node('h2', '', copy.zh.roster), searchNode, rosterNode, legendNode, node('h2', '', copy.zh.teams), teamNode, node('h2', '', copy.zh.events), eventNode, node('h2', '', copy.zh.tasks), taskNode, detailNode, settingsNode, hintNode)
   body.append(stage, side)
   view.append(bar, statusNode, body)
   document.body.append(view)
   q('#civ-open').onclick = () => openView()
   q('#settings-civ').onclick = () => { q('#settings').close(); openView() }
   window.addEventListener('hashchange', () => { if ((location.hash === '#civilization' || location.hash === '#empire-city') && view.hidden) openView() })
+  window.addEventListener('tao-components-open',()=>{if(!view.hidden)closeView(true)})
+  window.addEventListener('tao-roster-open',()=>{if(!view.hidden)closeView(true)})
   window.addEventListener('tao-town-open', () => { if (!view.hidden) closeView(false) })
   window.addEventListener('tao-target-changed', () => { if (!view.hidden) closeView(false) })
-  window.addEventListener('resize', syncNavigation)
+  window.addEventListener('tao-layout-changed',syncNavigation);window.addEventListener('resize', syncNavigation)
   document.addEventListener('visibilitychange', () => { if (!view.hidden) watch() })
   window.addEventListener('pagehide', () => city?.dispose())
   document.addEventListener('keydown', onKeydown)

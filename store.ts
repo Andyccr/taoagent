@@ -26,7 +26,10 @@ export function runtimeLimits(value:unknown = {}):RuntimeLimits {
 }
 const membershipListeners=new Map<string,Set<()=>void>>()
 export function watchMembers(store:Store,key:string,listener:()=>void){const identity=store.root+':'+key,set=membershipListeners.get(identity)||new Set<()=>void>();set.add(listener);membershipListeners.set(identity,set);return ()=>{set.delete(listener);if(!set.size)membershipListeners.delete(identity)}}
-export interface Session { id: string; title: string; agentId: string; modelId: string; kind?: 'direct' | 'group' | 'consult'; spaceKind?: 'solo'|'social'; memberIds?: string[]; createdAt: string; updatedAt: string; originSessionId?: string; purpose?: string; memberRoles?: Record<string, string>; replyMode?: 'round' | 'coordinated' | 'collective'; discussionMode?: 'open'|'directed'|'brainstorm'; coordinatorId?: string; runtimeLimits?: RuntimeLimits; archivedAt?:string; archivedBy?:string; archiveReason?:string; lifecycleRevision?:string }
+export type ComponentKind = 'emergent' | 'chat' | 'task' | 'city'
+function existingKind(store: Store, key?: string) { return key ? store.session(key).componentKind : undefined }
+export function componentKind(session: Session): ComponentKind { return session.componentKind || (session.discussionMode === 'directed' || session.replyMode !== 'collective' ? 'task' : 'emergent') }
+export interface Session { componentKind?: ComponentKind; id: string; title: string; agentId: string; modelId: string; kind?: 'direct' | 'group' | 'consult'; spaceKind?: 'solo'|'social'; memberIds?: string[]; createdAt: string; updatedAt: string; originSessionId?: string; purpose?: string; memberRoles?: Record<string, string>; replyMode?: 'round' | 'coordinated' | 'collective'; discussionMode?: 'open'|'directed'|'brainstorm'; coordinatorId?: string; runtimeLimits?: RuntimeLimits; archivedAt?:string; archivedBy?:string; archiveReason?:string; lifecycleRevision?:string }
 export type DiscussionPhase = 'discuss' | 'review' | 'synthesis'
 export interface Message { id: string; role: 'user' | 'assistant'; content: string; at: string; agentId?: string; agentName?: string; kind?: 'activity'; status?: 'complete' | 'interrupted'; turnId?: string; phase?: DiscussionPhase; contextMessageIds?: string[]; concurrentMessageIds?: string[]; replyToMessageId?:string; responseIntent?:MessageIntent }
 export interface PromptMessage { role: 'system' | 'user' | 'assistant'; content: string }
@@ -103,6 +106,7 @@ export class Store {
       return value
     })
   }
+  updateCityConfig<T>(action:()=>T):T { return this.withMemoryLock(this.file('empire-city.json'),action) }
   private memoryLocks = new Set<string>()
   private withMemoryLock<T>(file: string, action: () => T): T {
     const dir = path.dirname(file), lock = path.join(dir, '.memory-lock')
@@ -317,7 +321,7 @@ export class Store {
     if (!fs.existsSync(file)) throw new HttpError(404, '对话不存在')
     const session=read<Session>(file)
     if(session.kind==='group'){
-      const active=new Set(this.agents().map(agent=>agent.id)),members=(session.memberIds||[]).filter(member=>active.has(member))
+      const active=new Set(this.agents().map(agent=>agent.id)),members=(session.componentKind==='city'?[...active]:session.memberIds||[]).filter(member=>active.has(member))
       return {...session,memberIds:members,agentId:members[0]||session.agentId,coordinatorId:members.includes(session.coordinatorId||'')?session.coordinatorId:members[0]}
     }
     return session
@@ -388,15 +392,18 @@ export class Store {
     json(this.file('chats', session.id, 'session.json'), session)
     return session
   }
-  saveGroup(name: string, memberIds: string[], key?: string, details: Pick<Session, 'purpose' | 'memberRoles' | 'replyMode' | 'coordinatorId' | 'discussionMode' | 'runtimeLimits' | 'spaceKind'> = {}, creationId?: string, expected?: string): Session {
+  saveGroup(name: string, memberIds: string[], key?: string, details: Pick<Session, 'purpose' | 'memberRoles' | 'replyMode' | 'coordinatorId' | 'discussionMode' | 'runtimeLimits' | 'spaceKind' | 'componentKind'> = {}, creationId?: string, expected?: string): Session {
     const targetId = id(key || creationId || crypto.randomUUID())
     return this.withMemoryLock(this.file('chats', targetId, 'MEMORY.md'), () => this.saveGroupUnlocked(name, memberIds, key, details, targetId, expected))
   }
-  private saveGroupUnlocked(name: string, memberIds: string[], key: string | undefined, details: Pick<Session, 'purpose' | 'memberRoles' | 'replyMode' | 'coordinatorId' | 'discussionMode' | 'runtimeLimits' | 'spaceKind'>, creationId: string, expected?: string): Session {
+  private saveGroupUnlocked(name: string, memberIds: string[], key: string | undefined, details: Pick<Session, 'purpose' | 'memberRoles' | 'replyMode' | 'coordinatorId' | 'discussionMode' | 'runtimeLimits' | 'spaceKind' | 'componentKind'>, creationId: string, expected?: string): Session {
     const members = [...new Set(memberIds)]
     if (name.length > 80) throw new HttpError(400, '群名称最多80个字符')
-    const minimum=details.spaceKind==='solo'||(key&&this.session(key).spaceKind==='solo')?1:2
-    if(members.length<minimum||members.length>12)throw new HttpError(400,minimum===1?'请选择 1–12 个 Agent':'请选择 2–12 个 Agent')
+    const city=(details.componentKind??existingKind(this,key))==='city'
+    if(city&&(key||creationId)!=='city-public')throw new HttpError(400,'City 使用唯一的城市聊天室')
+    if(key&&existingKind(this,key)==='city'&&details.componentKind&&details.componentKind!=='city')throw new HttpError(400,'城市聊天室不能转换为其他组件')
+    const minimum=city?1:details.spaceKind==='solo'||(key&&this.session(key).spaceKind==='solo')?1:2
+    if(members.length<minimum||(!city&&members.length>12))throw new HttpError(400,minimum===1?'请选择 1–12 个 Agent':'请选择 2–12 个 Agent')
     for (const member of members) this.requireActiveAgent(member)
     const existing = key ? this.session(key) : undefined
     if(existing?.archivedAt||!key&&fs.existsSync(this.file('chats',creationId,'session.json'))&&this.session(creationId).archivedAt)throw new HttpError(410,'群聊已删除，编辑或创建不能恢复它')
@@ -406,14 +413,16 @@ export class Store {
     const purpose = details.purpose ?? existing?.purpose ?? ''
     const roles = details.memberRoles ?? existing?.memberRoles ?? {}
     const memberRoles = Object.fromEntries(Object.entries(roles).filter(([member]) => members.includes(member)))
-    const replyMode = details.replyMode ?? existing?.replyMode ?? 'round'
-    const discussionMode=details.discussionMode??existing?.discussionMode??(existing?'open':'directed')
+    const kind=details.componentKind??existing?.componentKind
+    if(kind&&!['emergent','chat','task','city'].includes(kind))throw new HttpError(400,'未知组件类型')
+    const replyMode = kind ? kind==='task'?'coordinated':kind==='chat'?'round':'collective' : details.replyMode ?? existing?.replyMode ?? 'round'
+    const discussionMode=kind==='task'||kind==='chat'?'directed':kind?(details.discussionMode??existing?.discussionMode)==='brainstorm'?'brainstorm':'open':details.discussionMode??existing?.discussionMode??(existing?'open':'directed')
     if(!['open','directed','brainstorm'].includes(discussionMode))throw new HttpError(400,'请选择自然讨论、头脑风暴或定向协作')
     const coordinatorId = details.coordinatorId || (members.includes(existing?.coordinatorId || '') ? existing!.coordinatorId! : members[0])
     if (purpose.length > 6000 || Object.values(memberRoles).some(role => typeof role !== 'string' || role.length > 1000)) throw new HttpError(400, '群目标或成员职责过长')
     if (!['round', 'coordinated', 'collective'].includes(replyMode)) throw new HttpError(400, '未知的群协作模式')
     if (!members.includes(coordinatorId)) throw new HttpError(400, '负责人必须在本群')
-    const group: Session = {spaceKind:details.spaceKind??existing?.spaceKind, id: existing?.id || (creationId ? id(creationId) : crypto.randomUUID()), title: name.trim()||(discussionMode==='brainstorm'?'头脑风暴':'随便聊聊'), kind: 'group', agentId: members[0], memberIds: members, modelId: existing?.modelId || '', createdAt: existing?.createdAt || now, updatedAt: now, purpose, memberRoles, replyMode, discussionMode, coordinatorId, runtimeLimits:runtimeLimits(details.runtimeLimits??existing?.runtimeLimits),...(existing?.lifecycleRevision?{lifecycleRevision:existing.lifecycleRevision}:{}) }
+    const group: Session = {componentKind:kind, spaceKind:details.spaceKind??existing?.spaceKind, id: existing?.id || (creationId ? id(creationId) : crypto.randomUUID()), title: name.trim()||(discussionMode==='brainstorm'?'头脑风暴':'随便聊聊'), kind: 'group', agentId: members[0], memberIds: members, modelId: existing?.modelId || '', createdAt: existing?.createdAt || now, updatedAt: now, purpose, memberRoles, replyMode, discussionMode, coordinatorId, runtimeLimits:runtimeLimits(details.runtimeLimits??existing?.runtimeLimits),...(existing?.lifecycleRevision?{lifecycleRevision:existing.lifecycleRevision}:{}) }
     json(this.file('chats', group.id, 'session.json'), group)
     if (existing) for (const turn of this.turns(group.id)) {
       let changed = false
@@ -426,7 +435,7 @@ export class Store {
     for(const listener of membershipListeners.get(this.root+':'+group.id)||[])listener()
     return group
   }
-  groupMembers(key: string): string[] { const session = this.session(key),active=new Set(this.agents().map(agent=>agent.id)); return session.archivedAt?[]:(session.kind === 'group' ? session.memberIds || [] : [session.agentId]).filter(member=>active.has(member)) }
+  groupMembers(key: string): string[] { const session = this.session(key),active=new Set(this.agents().map(agent=>agent.id)); return session.archivedAt?[]:(session.kind === 'group' ? session.componentKind==='city'?[...active]:session.memberIds || [] : [session.agentId]).filter(member=>active.has(member)) }
   consultSession(senderId: string, receiverId: string, origin?: string): Session {
     const sender = this.agent(senderId), receiver = this.agent(receiverId)
     const stableId = origin ? 'consult-' + crypto.createHash('sha256').update(JSON.stringify([origin, senderId, receiverId])).digest('hex').slice(0, 24) : ''

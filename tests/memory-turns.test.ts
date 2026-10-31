@@ -1,3 +1,4 @@
+import {actions,decide} from '../execution.ts'
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
@@ -74,10 +75,10 @@ test('retry reuses persisted tool receipts instead of creating a second group',a
  const upstream=http.createServer(async(req,res)=>{let raw='';for await(const chunk of req)raw+=chunk;const body=JSON.parse(raw) as {messages:{role:string}[]};if(!body.messages.some(item=>item.role==='tool'))tool(res,'create_group',{name:'工具创建',memberIds:['reviewer']});else if(fail){res.writeHead(500);res.end()}else reply(res)})
  try{
   const url=await listen(upstream),base=await listen(app.server);app.store.saveModel({name:'main',model:'main',baseUrl:url});app.store.saveAgent({id:'reviewer',name:'审阅员'},'review','')
-  const dm=app.store.directSession('main');await(await api(base,`/api/chats/${dm.id}/chat`,'POST',{content:'建群'})).text()
+  const dm=app.store.directSession('main');const approvalTimer=setInterval(()=>{for(const action of actions(app.store,dm.id))if(action.status==='pending')decide(app.store,dm.id,action.id,true)},10);approvalTimer.unref();try{await(await api(base,`/api/chats/${dm.id}/chat`,'POST',{content:'建群'})).text()
   const turn=app.store.turns(dm.id).at(-1)!;assert.equal(turn.speakers[0].status,'failed');assert.equal(app.store.sessions().filter(item=>item.kind==='group').length,1)
   fail=false;await(await api(base,`/api/chats/${dm.id}/retry`,'POST',{turnId:turn.id})).text()
-  assert.equal(app.store.sessions().filter(item=>item.kind==='group').length,1);assert.equal(app.store.turns(dm.id).at(-1)!.speakers[0].status,'complete')
+  assert.equal(app.store.sessions().filter(item=>item.kind==='group').length,1);assert.equal(app.store.turns(dm.id).at(-1)!.speakers[0].status,'complete')}finally{clearInterval(approvalTimer)}
  }finally{await close(app.server);await close(upstream);fs.rmSync(root,{recursive:true,force:true})}
 })
 

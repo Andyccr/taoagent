@@ -37,6 +37,7 @@ export function createLifeScheduler(store:Store,active:Map<string,AbortControlle
       const groups=store.sessions().filter(item=>item.kind==='group'&&!item.archivedAt&&(!requestedKey||item.id===requestedKey))
       for(const session of groups){
         const key=session.id;if(active.has(key)||store.isRunning(key)||!canRun(key))continue
+        if(session.componentKind==='chat')continue
         const state=lifeState(store,key)
         // Recovered operations are never replayed automatically.
         const abandoned=state.runs.find(run=>run.status==='running'&&(!alive(run.pid)||run.pid===process.pid&&!lifeRunOwned(run.id)))

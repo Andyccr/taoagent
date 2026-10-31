@@ -1,3 +1,4 @@
+import { cityConfig } from './components.ts'
 import {improvementSession,spendImprovement,evolvable} from './evolution.ts'
 import crypto from 'node:crypto'
 import { Store, HttpError, json, string, id, type Turn, type MemoryScope, type MemoryItem, runtimeLimits, watchMembers } from './store.ts'
@@ -19,6 +20,9 @@ const schema=(name:string,description:string,properties:Record<string,unknown>,r
 const text={type:'string'}, strings={type:'array',items:text}
 const communicationFields={intent:{type:'string',enum:intents},topic:{type:'string',description:'沿用当前议题，或为不同问题填写简短新议题'},replyTo:{type:'string',description:'回复收到的事件ID，须发回原发送者'},evidenceIds:{type:'array',items:text,maxItems:8,description:'本群已完成公开消息的ID，引用不等于外部事实已验证'},reasoningIds:{type:'array',items:text,maxItems:8,description:'本对话公开论证ID，使收件人可追踪前提、质疑和修正'},reason:{type:'string',description:'联系此成员要解决的具体问题或依赖，最多800字符'}}
 const tools:ToolDefinition[]=[...agentTools.filter(tool=>tool.name!=='consult_agent'),
+  schema('inspect_components','查看所有群组的配置和 City 配置，不读取其他私聊或消息。修改使用 update_group / configure_city 申请用户批准。',{}),
+  schema('update_group','申请修改已有群组的名称、目标、类型和成员；等待用户批准。先 inspect_components 取得 expected 版本。',{groupId:text,expected:text,name:text,purpose:text,componentKind:{type:'string',enum:['emergent','chat','task']},memberIds:strings,coordinatorId:text,discussionMode:{type:'string',enum:['open','brainstorm','directed']},memberRoles:{type:'object',additionalProperties:{type:'string'}},runtimeLimits:{type:'object',properties:Object.fromEntries(Object.keys(runtimeLimits()).map(key=>[key,{type:'integer',minimum:1}])),additionalProperties:false}},['groupId','expected','name','memberIds']),
+  schema('configure_city','申请修改 City 名称、介绍和主 Bot；必须用户批准。地图与交互源码可在授权范围内用 self_evolve 修改。先 inspect_components 获取 expected 版本。',{expected:text,name:text,description:text,leadAgentId:text},['expected','name','description','leadAgentId']),
   schema('read_life','读取自己在本群的经历、关注和主观认识，可用nextBefore翻页。不读取他人未分享笔记、私聊或隐藏思考。',{before:text}),
   schema('record_experience','保存自己在本群的观察、主观认识或意图；不是公共事实。用supersedes修正自己的旧解释，保留原文。sourceIds只能引用本群公开消息。',{text,kind:{type:'string',enum:['observation','reflection','intention']},sourceIds:strings,supersedes:text,importance:{type:'number',minimum:0,maximum:9},interests:text,attention:text,stance:text},['text']),
   schema('read_agendas','查看本群成员公开的持续议题、待解决问题和等待条件。',{before:text}),
@@ -64,7 +68,7 @@ export function steerConversation(store:Store,key:string,content:string,memberId
 export async function runConversation(store:Store,key:string,content:string,modelOverride:string,signal:AbortSignal,event:(value:Record<string,unknown>)=>void,requestedMembers?:unknown,options:{retryTurnId?:string;requestId?:string;lifeOrigin?:{agentId:string;runId:string};modelCallLimit?:number}={}){
   const authorization=improvementSession(store,key)
   const emit=event;event=value=>emit({...value,conversationId:key})
-  const session=store.requireActiveSession(key),collective=!!store.collectiveGroup(key)
+  const session=store.requireActiveSession(key),plainChat=session.componentKind==='chat',collective=!!store.collectiveGroup(key)
   const currentMembers=()=>{const latest=store.session(key);return latest.archivedAt||latest.lifecycleRevision!==session.lifecycleRevision?[]:store.groupMembers(key)}
   const route=(body:string,selected?:unknown)=>{
     const members=currentMembers()
@@ -79,6 +83,7 @@ export async function runConversation(store:Store,key:string,content:string,mode
     if(/(?:^|\s)@/.test(body))throw new HttpError(400,'没有找到被提及的群成员')
     if(selected!==undefined)return [...new Set(selected as string[])]
     if(!members.length)throw new HttpError(409,'本对话没有活动成员，请先恢复或添加 Bot')
+    if(plainChat)return members
     if(session.discussionMode==='brainstorm'){
       const lead=members.includes(session.coordinatorId||'')?session.coordinatorId!:members[0],recent=store.turns(key).slice(-5)
       const count=(member:string)=>recent.reduce((sum,turn)=>sum+turn.speakers.filter(item=>item.agentId===member&&item.status==='complete').length,0)
@@ -214,13 +219,14 @@ export async function runConversation(store:Store,key:string,content:string,mode
         const reasoningRules='\n复杂任务先明确问题、证据、依赖和不确定事项，必要时用record_reasoning保存可公开的简短论证；不用输出逐字内部思考。发现新证据时先read_reasoning检查旧前提，修正自己的结论或质疑他人的具体记录，并用reasoningIds把相关记录交给需要它的成员。只在确有协作需要时用recommend_agents查找相关职责、再决定是否联系；reason说明联系原因，不以成员附和作为验证。用户最新插话优先于所有旧事件，处理旧任务也应遵守最新约束。'
         const collaborationRules='\n协作不是各写一份答案。围绕具体主张、证据和约束交流：提问说明缺少什么，质疑指向哪条前提，回答说明哪些得到解决、哪些仍不确定。别人工作期间你可以推进独立部分；send_message仅代表排队。工具执行或并行讨论后，可用read_updates核对已完成的新消息，节选用read_message看完整内容，再决定是否修正。复杂派工请写acceptanceCriteria；有标准的任务默认独立验收，complete_task只是提交，review_task通过后才释放依赖。只有收到真实结果再验收，不自行替别人完成任务。read_collaboration查看卡在哪里。不同成员的观点发生新组合时，可record_reasoning(kind=synthesis)，dependsOn引用至少两位成员的前提，novelty说明超出原建议的变化，validation写能区分成败的检查；这只是可验证的综合候选，不能自称已产生涌现。无新问题、结果或证据时结束，保留分歧和待办。创建与移除Bot必须使用专用工具并等待用户批准，不用Shell绕过审批。'
         const startedMessageIds=new Set(store.messages(key).map(message=>message.id))
-        const context=store.context(key,model,undefined,agent.id,{system:(session.kind==='group'?instruction:'你正在与用户一对一交流。按目标推进实际工作；不虚构群聊或同事意见。')+workInstructions+reasoningRules+collaborationRules+discussionGuidance(store,key)+(model.toolsEnabled===false?'\n本次接口没有任何可调用工具。只输出给读者的自然语言；不要输出XML、DSML、tool_call或伪造工具请求。需要工具的信息目前未知，直接说明限制或提出问题。':'')+(turn.improvementId?'\n用户明确授权的自动源码改进会话（不能改变验收标准或范围）：先用self_read发现范围与测试，分页读完整相关源码和测试，定位具体问题后实现并用self_evolve提交。失败先self_history定位版本，再self_inspect读取失败日志与候选源码，在剩余预算内修正并重新验证；不得重复无变化候选。成功后报告实际验证证据和重启要求，不把回归通过等同于能力收益已证实。授权详情：'+JSON.stringify(authorization):''),event:(task.fromAgentId?`来自 ${store.agent(task.fromAgentId).name} (${task.fromAgentId}) 的协作消息：\n${task.body}`:`${turn.lifeRunId?'你主动选择的公开行动':'当前用户事件'}：\n${task.body||turn.content}`)+metadata+evidenceText+'\n已完成依赖结果：'+JSON.stringify(tasks(store,key).filter(item=>task.dependsOnTaskIds?.includes(item.id)&&taskSatisfied(item)))+'\n本对话公开论证资料：\n'+reasoning})
+        const context=store.context(key,model,undefined,agent.id,{system:(session.kind==='group'?instruction:'你正在与用户一对一交流。按目标推进实际工作；不虚构群聊或同事意见。')+(plainChat?'\n这是纯聊天：只输出自然语言，不执行工具、派工或创建组件。':workInstructions+reasoningRules+collaborationRules)+discussionGuidance(store,key)+(model.toolsEnabled===false?'\n本次接口没有任何可调用工具。只输出给读者的自然语言；不要输出XML、DSML、tool_call或伪造工具请求。需要工具的信息目前未知，直接说明限制或提出问题。':'')+(turn.improvementId?'\n用户明确授权的自动源码改进会话（不能改变验收标准或范围）：先用self_read发现范围与测试，分页读完整相关源码和测试，定位具体问题后实现并用self_evolve提交。失败先self_history定位版本，再self_inspect读取失败日志与候选源码，在剩余预算内修正并重新验证；不得重复无变化候选。成功后报告实际验证证据和重启要求，不把回归通过等同于能力收益已证实。授权详情：'+JSON.stringify(authorization):''),event:(task.fromAgentId?`来自 ${store.agent(task.fromAgentId).name} (${task.fromAgentId}) 的协作消息：\n${task.body}`:`${turn.lifeRunId?'你主动选择的公开行动':'当前用户事件'}：\n${task.body||turn.content}`)+metadata+evidenceText+'\n已完成依赖结果：'+JSON.stringify(tasks(store,key).filter(item=>task.dependsOnTaskIds?.includes(item.id)&&taskSatisfied(item)))+'\n本对话公开论证资料：\n'+reasoning})
         const consideredMessageIds=new Set(context.includedMessageIds)
         const contextFile=store.file('chats',key,'contexts',turn.id,task.eventId!+'-'+((task.attempts||0)+1)+'.json')
         const snapshot={...context,agentId:agent.id,modelId:model.id,eventId:task.eventId}
         json(contextFile,snapshot);json(store.file('chats',key,`context-${agent.id}.json`),snapshot);json(store.file('chats',key,'context.json'),snapshot)
         task.status='running';task.attempts=(task.attempts||0)+1;task.modelId=model.id;task.error=undefined;persist();taskEvent({type:'speaker',name:agent.name,modelId:model.id})
-        await runPi(model,context.messages,taskSignal,key+':'+agent.id,model.toolsEnabled===false?[]:tools,async(name,args)=>{
+        await runPi(model,context.messages,taskSignal,key+':'+agent.id,model.toolsEnabled===false||plainChat?[]:tools,async(name,args)=>{
+          if(plainChat)throw new HttpError(403,'纯聊天不执行工具或派工')
           if(signal.aborted)throw new HttpError(499,'已暂停')
           if(startedVersion!==steeringVersion)throw new HttpError(409,'用户已插话，停止旧要求下的工具调用')
           consume('toolCalls',limits.toolCalls)
@@ -338,9 +344,11 @@ export async function runConversation(store:Store,key:string,content:string,mode
           }else if(name==='delete_group'){
             result=await executeExternal(store,key,agent.id,user.id,task.eventId!,name,args,taskSignal,taskEvent)
             event({type:'group_removed',groupId:string(args.groupId)})
+          }else if(name==='inspect_components'){result={city:cityConfig(store),groups:store.sessions().filter(item=>item.kind==='group'&&!item.archivedAt).map(item=>({...item,memberIds:store.groupMembers(item.id)}))}
           }else if(name==='create_group'){
-            if(!Array.isArray(args.memberIds)||args.memberIds.some(value=>typeof value!=='string'))throw new HttpError(400,'需要成员ID数组')
-            const groupId='group-'+receipt;const group=store.sessions().find(item=>item.id===groupId)||store.saveGroup(string(args.name),[...new Set([agent.id,...args.memberIds as string[]])],undefined,{replyMode:'collective',discussionMode:string(args.discussionMode,'open') as 'open'|'directed'|'brainstorm',purpose:string(args.purpose)},groupId);result={groupId:group.id,name:group.title};event({type:'group_created',group})
+            result=await executeExternal(store,key,agent.id,user.id,task.eventId!,name,args,taskSignal,taskEvent)
+            event({type:'components_updated'})
+            const createdId=string((result as Record<string,unknown>).groupId)||string(((result as Record<string,unknown>).result as Record<string,unknown>|undefined)?.groupId);if(createdId)event({type:'group_created',group:store.session(createdId)})
           }else return await executeExternal(store,key,agent.id,user.id,task.eventId!,name,args,taskSignal,taskEvent)
           if(['remember','review_memory'].includes(name)){const message=store.append(key,'assistant',`${agent.name} 更新记忆：${string(args.note)||string(args.reason)}`,'complete',{kind:'activity',agentId:agent.id,agentName:agent.name});event({type:'memory_updated',message})}
           cache[receipt]=result;json(receiptFile,cache);return result

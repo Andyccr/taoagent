@@ -96,7 +96,7 @@ if (!driverPath || !chrome) {
         return c ? c.debug().units : []
       })
       assert.equal(initialUnits.find((unit) => unit.id === 'coder')?.state, 'idle')
-      assert.equal(await page.textContent('#civ-title'), '帝国之城')
+      assert.equal(await page.textContent('#civ-title'), 'City · 共同生活')
 
       const now = new Date().toISOString()
       json(store.file('chats', group.id, 'turns.json'), [{

@@ -1,10 +1,11 @@
+import { cityConfig, saveCity } from './components.ts'
 import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
 import { spawn } from 'node:child_process'
 import { pathToFileURL } from 'node:url'
 import { McpClient, StdioTransport, StreamableHttpTransport } from '@earendil-works/pi-mcp'
-import { Store, HttpError, json, atomic, string, object, id } from './store.ts'
+import { Store, HttpError, json, atomic, string, object, id, runtimeLimits } from './store.ts'
 import { readSource, evolve, evolutionHistory, readEvolutionEvidence, rollbackEvolution, automaticCandidate, improvementSession } from './evolution.ts'
 
 export interface Action { id: string; agentId: string; name: string; args: Record<string,unknown>; preview?: {name:string;version:string;notice:string}; sessionRevision?:string; automaticSessionId?:string; target?: Omit<Integration,'token'>; status: 'pending'|'approved'|'running'|'complete'|'failed'|'denied'|'uncertain'; at: string; result?: unknown }
@@ -141,11 +142,14 @@ export async function executeExternal(store: Store,key: string,agentId: string,t
   if(name==='read_file'){const file=workspacePath(store,key,string(args.path));if(fs.statSync(file).size>256000)throw new HttpError(400,'文件超过 256KB，请指定较小文件');return {text:redact(store,fs.readFileSync(file,'utf8'))}}
   if(name==='list_files'){return fs.readdirSync(workspacePath(store,key,string(args.path)),{withFileTypes:true}).slice(0,200).map(item=>({name:item.name,directory:item.isDirectory(),link:item.isSymbolicLink()}))}
   if(name==='list_mcp_servers')return integrations(store).map(({id,command,url})=>({id,transport:url?'http':'stdio',command,url:url?new URL(url).origin:undefined}))
-  if(!['create_agent','delete_agent','delete_group','self_rollback','self_evolve','write_file','shell','run_cli','mcp'].includes(name))throw new HttpError(400,'未知的操作，未执行')
+  if(!['create_group','update_group','configure_city','create_agent','delete_agent','delete_group','self_rollback','self_evolve','write_file','shell','run_cli','mcp'].includes(name))throw new HttpError(400,'未知的操作，未执行')
   if(name==='create_agent'){
     if(!string(args.name).trim()||string(args.name).length>80||!string(args.rules).trim()||string(args.rules).length>80000)throw new HttpError(400,'请提供有效的名称和身份规则')
-    if(args.joinGroup===true&&store.session(key).kind==='group'&&store.groupMembers(key).length>=12)throw new HttpError(400,'本群成员已满')
+    if(args.joinGroup===true&&store.session(key).kind==='group'&&store.session(key).componentKind!=='city'&&store.groupMembers(key).length>=12)throw new HttpError(400,'本群成员已满')
   }
+  const editedGroup=name==='update_group'?store.requireActiveSession(string(args.groupId)):undefined
+  if(editedGroup&&(editedGroup.kind!=='group'||editedGroup.componentKind==='city'))throw new HttpError(400,'请通过 configure_city 管理 City')
+  if(['create_group','update_group'].includes(name)&&(!Array.isArray(args.memberIds)||args.memberIds.some(value=>typeof value!=='string')))throw new HttpError(400,'需要成员 ID 数组')
   const deletion=name==='delete_agent'?store.agent(string(args.agentId)):undefined
   if(deletion&&(deletion.id==='main'||deletion.id===agentId))throw new HttpError(403,'不能删除主助手或发起操作的自己')
   if(deletion&&(!string(args.reason).trim()||string(args.reason).length>2000))throw new HttpError(400,'请填写移除原因')
@@ -161,6 +165,8 @@ export async function executeExternal(store: Store,key: string,agentId: string,t
   const signature=crypto.createHash('sha256').update(JSON.stringify(identity)).digest('hex').slice(0,32)
   let all=actions(store,key),action=all.find(item=>item.id===signature)
   if(action?.status==='complete'||action?.status==='failed')return {historicalExecution:true,status:action.status,result:action.result,notice:'这是已执行回执，不会自动重复副作用'}
+  if(editedGroup&&args.expected!==editedGroup.updatedAt)throw new HttpError(409,'群设置已更新，请重新读取')
+  if(name==='configure_city'&&args.expected!==cityConfig(store).revision)throw new HttpError(409,'City 配置已更新，请重新读取')
   const sessionRevision=store.requireActiveSession(key).lifecycleRevision
   if(action&&action.sessionRevision!==sessionRevision)throw new HttpError(409,'群聊已删除或恢复，旧操作审批失效，请重新提出请求')
   if(!action){const target=server?(({token,...target})=>target)(server):undefined;const preview=deletion?{name:deletion.name,version:deletionVersion!,notice:'从活动成员和群协作中移除；完整历史与记忆保留，可恢复。'}:deletedGroup?{name:deletedGroup.title,version:store.groupVersion(deletedGroup.id),notice:'删除该群聊并停止其后续执行，关联例行任务暂停；历史、记忆、文件与审批回执保留，可恢复。'}:undefined;action=JSON.parse(sanitize(JSON.stringify({id:signature,agentId,name,args,sessionRevision,...(preview?{preview}:{}),...(target?{target}:{}),status:'pending',at:new Date().toISOString()}))) as Action;all.push(action);json(store.file('chats',key,'actions.json'),all)}
@@ -200,6 +206,16 @@ export async function executeExternal(store: Store,key: string,agentId: string,t
       if(!action.preview?.version)throw new HttpError(409,'删除群聊审批缺少目标版本，请重新申请')
       const archived=store.archiveGroup(string(args.groupId),string(args.reason),agentId,action.preview.version)
       result={groupId:archived.id,title:archived.title,archivedAt:archived.archivedAt,historyPreserved:true,approved:true}
+    }
+    else if(name==='configure_city')result={...saveCity(store,args),approved:true}
+    else if(name==='create_group'||name==='update_group'){
+      const kind=args.componentKind
+      if(kind!==undefined&&!['emergent','chat','task'].includes(String(kind)))throw new HttpError(400,'未知群组类型')
+      const groupId=name==='update_group'?string(args.groupId):undefined
+      if(groupId&&(store.isRunning(groupId)||groupId===key))throw new HttpError(409,'请在群组空闲时从其他对话修改')
+      const members=[...new Set([...(name==='create_group'?[agentId]:[]),...args.memberIds as string[]])]
+      const group=store.saveGroup(string(args.name),members,groupId,{componentKind:(kind??(name==='create_group'?(args.discussionMode==='directed'?'task':'emergent'):undefined)) as 'emergent'|'chat'|'task'|undefined,purpose:typeof args.purpose==='string'?args.purpose:undefined,coordinatorId:typeof args.coordinatorId==='string'?args.coordinatorId:undefined,replyMode:name==='create_group'?'collective':undefined,discussionMode:args.discussionMode==='brainstorm'?'brainstorm':args.discussionMode==='open'?'open':args.discussionMode==='directed'?'directed':undefined,memberRoles:args.memberRoles===undefined?undefined:object(args.memberRoles) as Record<string,string>,runtimeLimits:args.runtimeLimits===undefined?undefined:runtimeLimits(args.runtimeLimits)},name==='create_group'?'group-'+signature:undefined,groupId?string(args.expected):undefined)
+      result={...group,groupId:group.id,approved:true}
     }
     else if(name==='self_rollback')result=rollbackEvolution(store,string(args.runId))
     else if(name==='self_evolve') {

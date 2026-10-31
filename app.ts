@@ -1,3 +1,4 @@
+import { cityOverview, cityRoom, saveCity } from './components.ts'
 import {authorizeImprovement,improvementSession,stopImprovement,evolutionHistory,recoverEvolution,rollbackEvolution,evolvable,readSource} from './evolution.ts'
 import http from 'node:http'
 import fs from 'node:fs'
@@ -31,13 +32,14 @@ function groupDetails(input: Record<string, unknown>): Pick<Session, 'purpose' |
   const mode = input.replyMode
   if (mode !== undefined && mode !== 'round' && mode !== 'coordinated' && mode !== 'collective') throw new HttpError(400, '未知协作模式')
   if(input.discussionMode!==undefined&&!['open','directed','brainstorm'].includes(String(input.discussionMode)))throw new HttpError(400,'请选择自然讨论、头脑风暴或定向协作')
-  return { ...(input.runtimeLimits===undefined?{}:{runtimeLimits:runtimeLimits(input.runtimeLimits)}), ...(input.purpose === undefined ? {} : { purpose: string(input.purpose) }), ...(roles ? { memberRoles: roles as Record<string, string> } : {}), ...(mode ? { replyMode: mode } : {}), ...(input.discussionMode===undefined?{}:{discussionMode:input.discussionMode as 'open'|'directed'|'brainstorm'}), ...(input.coordinatorId === undefined ? {} : { coordinatorId: string(input.coordinatorId) }) }
+  if(input.componentKind!==undefined&&!['emergent','chat','task','city'].includes(String(input.componentKind)))throw new HttpError(400,'未知组件类型')
+  return { ...(input.componentKind===undefined?{}:{componentKind:input.componentKind as import('./store.ts').ComponentKind}), ...(input.runtimeLimits===undefined?{}:{runtimeLimits:runtimeLimits(input.runtimeLimits)}), ...(input.purpose === undefined ? {} : { purpose: string(input.purpose) }), ...(roles ? { memberRoles: roles as Record<string, string> } : {}), ...(mode ? { replyMode: mode } : {}), ...(input.discussionMode===undefined?{}:{discussionMode:input.discussionMode as 'open'|'directed'|'brainstorm'}), ...(input.coordinatorId === undefined ? {} : { coordinatorId: string(input.coordinatorId) }) }
 }
 
 export function createApp(home = path.join(ROOT, 'home'), options: {seed?: boolean} = {}) {
   const store = new Store(home)
   if(options.seed!==false)seedTeam(store)
-  const assets = new Map(['index.html', 'client.js', 'style.css', 'appearance-boot.js', 'town.js', 'town.css', 'product.css', 'square.js', 'civilization.js', 'civilization.css', 'city.bundle.js', 'favicon.svg'].map(file => [file, fs.readFileSync(path.join(ROOT, 'public', file))]))
+  const assets = new Map(['index.html', 'client.js', 'style.css', 'appearance-boot.js', 'town.js', 'town.css', 'product.css', 'square.js', 'civilization.js', 'civilization.css', 'city.bundle.js', 'components.css', 'sidebar.css', 'sidebar.js', 'workbench.css', 'workbench.js', 'favicon.svg'].map(file => [file, fs.readFileSync(path.join(ROOT, 'public', file))]))
   const version = string(object(JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'))).version)
   const assetVersions = new Map([...assets].map(([name, bytes]) => [name, {etag: 'W/"' + crypto.createHash('sha256').update(bytes).digest('hex') + '"', gzip: gzipSync(bytes)}]))
   const startedAt = Date.now()
@@ -117,8 +119,11 @@ export function createApp(home = path.join(ROOT, 'home'), options: {seed?: boole
         try { input = object(JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}')) }
         catch { throw new HttpError(400, 'JSON 格式无效') }
       }
+      if(route==='/api/city'&&method==='GET'){send(res,JSON.parse(redact(store,JSON.stringify(cityOverview(store)))));return}
+      if(route==='/api/city'&&method==='PUT'){send(res,saveCity(store,input));return}
+      if(route==='/api/city/room'&&method==='POST'){send(res,cityRoom(store));return}
       if(route==='/api/town'&&method==='GET'){
-        send(res,{spaces:store.sessions().filter(item=>item.kind==='group'&&!item.archivedAt).map(item=>({id:item.id,title:item.title,memberIds:store.groupMembers(item.id),adopted:!!store.text('chats',item.id,'social','state.json'),enabled:lifeState(store,item.id).policy.enabled,running:busy(item.id)})),agents:store.agents().filter(item=>!item.archivedAt).map(item=>({id:item.id,name:item.name,background:item.background,responsibilities:item.responsibilities}))});return
+        send(res,{spaces:store.sessions().filter(item=>item.kind==='group'&&!item.archivedAt&&item.componentKind!=='chat'&&item.componentKind!=='task').map(item=>({id:item.id,title:item.title,memberIds:store.groupMembers(item.id),adopted:!!store.text('chats',item.id,'social','state.json'),enabled:lifeState(store,item.id).policy.enabled,running:busy(item.id)})),agents:store.agents().filter(item=>!item.archivedAt).map(item=>({id:item.id,name:item.name,background:item.background,responsibilities:item.responsibilities}))});return
       }
       if(route==='/api/town/create'&&method==='POST'){
         if(!Array.isArray(input.memberIds)||!input.memberIds.length||input.memberIds.some(value=>typeof value!=='string'))throw new HttpError(400,'请选择至少一位成员')
@@ -183,13 +188,13 @@ export function createApp(home = path.join(ROOT, 'home'), options: {seed?: boole
       if (route === '/api/skills' && method === 'PUT') { send(res, saveSkill(store, input)); return }
       if (route === '/api/routines' && method === 'PUT') { send(res, saveRoutine(store, input)); return }
       if (route === '/api/state' && method === 'GET') {
-        const sessions = store.sessions().map(session=>store.session(session.id))
+        const sessions = store.sessions().map(session=>({...store.session(session.id),...(session.componentKind==='city'?{memberIds:store.groupMembers(session.id)}:{})}))
         const revisions = Object.fromEntries(sessions.filter(session => session.kind !== 'consult').map(session => {
           const file = store.file('chats', session.id, 'messages.jsonl')
           return [session.id, session.updatedAt + ':' + (fs.existsSync(file) ? fs.statSync(file).size : 0)]
         }))
         const running = [...new Set([...active.keys(), ...sessions.filter(session => store.isRunning(session.id)).map(session => session.id)])]
-        send(res, { version, models: store.models().map(safeModel), account: store.account(), agents: store.agents(), groups: sessions.filter(s => s.kind === 'group').map(group=>({...group,groupVersion:store.groupVersion(group.id)})), revisions, running, conversations: workspaceConversations(store, running).map(item=>({...item,queue:queueSummary(store,item.id)})), navigation: store.navigation() }); return
+        send(res, { version, models: store.models().map(safeModel), account: store.account(), agents: store.agents(), groups: sessions.filter(s => s.kind === 'group').map(group=>({...group,groupVersion:store.groupVersion(group.id)})), revisions, running, conversations: workspaceConversations(store, running, createRedactor(store)).map(item=>({...item,queue:queueSummary(store,item.id)})), navigation: store.navigation() }); return
       }
       if (route === '/api/account' && method === 'PUT') { send(res, store.saveAccount(string(input.defaultModelId), typeof input.expectedModelId === 'string' ? input.expectedModelId : undefined)); return }
       if(route==='/api/integrations'&&method==='GET'){send(res,integrations(store).map(({token,...server})=>({...server,hasToken:!!token})));return}
@@ -281,7 +286,7 @@ export function createApp(home = path.join(ROOT, 'home'), options: {seed?: boole
       }
       const match = route.match(/^\/api\/chats\/([a-zA-Z0-9_-]+)(?:\/(chat|retry|stop|steer|actions|tasks|context|memory|memory-item|search|message|summarize|preferences|communication|reasoning|relations|improvement))?$/)
       if (match) {
-        const key = match[1]; const action = match[2]; const session = store.session(key)
+        const key = match[1]; const action = match[2]; const storedSession = store.session(key); const session = {...storedSession,...(storedSession.componentKind==='city'?{memberIds:store.groupMembers(key)}:{})}
         if(session.archivedAt&&method!=='GET'&&action!=='stop')throw new HttpError(410,'群聊已删除，请先恢复')
         const agentId = string(input.agentId) || url.searchParams.get('agentId') || session.agentId
         if(action==='improvement'){

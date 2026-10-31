@@ -107,7 +107,7 @@ test('blank title and purpose support casual chat and brainstorm; brainstorm sta
  try{
   const casual=group(store);assert.equal(casual.title,'随便聊聊');assert.equal(casual.purpose,'');assert(openDiscussion(store,casual.id));assert(discussionGuidance(store,casual.id).includes('自由交流'))
   store.saveModel({name:'mock',model:'mock',baseUrl:await listen(upstream),maxOutputTokens:4096});const target=group(store,'brainstorm');assert.equal(target.title,'头脑风暴')
-  await runConversation(store,target.id,'随便聊聊，没有主题','',AbortSignal.timeout(15000),()=>{})
+  await runConversation(store,target.id,'随便聊聊，没有主题','',AbortSignal.timeout(15000),event=>{if(event.type==='approval'&&(event.action as Action).status==='pending')setImmediate(()=>decide(store,origin.id,(event.action as Action).id,true))})
   assert.equal(speeches,2);assert(listeners<=2);assert.equal(store.turns(target.id)[0].speakers.filter(item=>item.status==='complete').length,2)
  }finally{await close(upstream);fs.rmSync(home,{recursive:true,force:true})}
 })
@@ -117,8 +117,8 @@ test('Bot can create an untitled brainstorm group without a purpose or predefine
  const upstream=http.createServer(async(req,res)=>{await body(req);if(++calls===1)reply(res,'',{name:'create_group',args:{memberIds:['peer'],discussionMode:'brainstorm'}});else reply(res,'群已创建，可以随便聊聊')})
  try{
   store.saveModel({name:'mock',model:'mock',baseUrl:await listen(upstream)});const origin=store.directSession('main')
-  await runConversation(store,origin.id,'建个没有主题的头脑风暴群','',AbortSignal.timeout(15000),()=>{})
-  const target=store.sessions().find(item=>item.kind==='group');assert(target);assert.equal(target.title,'头脑风暴');assert.equal(target.purpose,'');assert.equal(target.discussionMode,'brainstorm')
+  await runConversation(store,origin.id,'建个没有主题的头脑风暴群','',AbortSignal.timeout(15000),event=>{if(event.type==='approval'&&(event.action as Action).status==='pending')setImmediate(()=>decide(store,origin.id,(event.action as Action).id,true))})
+  const target=store.sessions().find(item=>item.kind==='group');assert(target);assert.equal(target.title,'头脑风暴');assert.equal(target.purpose,'');assert.equal(target.discussionMode,'brainstorm');assert.equal(target.componentKind,'emergent')
  }finally{await close(upstream);fs.rmSync(home,{recursive:true,force:true})}
 })
 

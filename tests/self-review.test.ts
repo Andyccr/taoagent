@@ -1,3 +1,4 @@
+import {actions,decide} from '../execution.ts'
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
@@ -33,8 +34,8 @@ test('agent tools create a group, list colleagues and append visible backed-up m
     const upstreamUrl = await listen(upstream), base = await listen(app.server)
     app.store.saveModel({ name: 'model', model: 'model', baseUrl: upstreamUrl }); app.store.saveAgent({ id: 'reviewer', name: '审阅员' }, 'review', '')
     atomic(app.store.file('agents', 'main', 'MEMORY.md'), 'ORIGINAL_MEMORY')
-    const dm = app.store.directSession('main'), result = await api(base, `/api/chats/${dm.id}/chat`, 'POST', { content: '记住中文偏好，并和审阅员建群' })
-    const events = (await result.text()).trim().split('\n').map(line => JSON.parse(line))
+    const dm = app.store.directSession('main');const approvalTimer=setInterval(()=>{for(const action of actions(app.store,dm.id))if(action.status==='pending')decide(app.store,dm.id,action.id,true)},10);approvalTimer.unref();const result = await api(base, `/api/chats/${dm.id}/chat`, 'POST', { content: '记住中文偏好，并和审阅员建群' })
+    const events = (await result.text()).trim().split('\n').map(line => JSON.parse(line));clearInterval(approvalTimer)
     assert.equal(events.at(-1).type, 'done'); assert.equal(events.filter(event => event.type === 'memory_updated').length, 1)
     assert.equal(events.filter(event => event.type === 'group_created').length, 1)
     const group = app.store.sessions().find(session => session.kind === 'group'); assert(group); assert.deepEqual(group.memberIds, ['main', 'reviewer'])

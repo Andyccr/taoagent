@@ -1941,7 +1941,7 @@ var init_query = __esm({
 var node_exports = {};
 __export(node_exports, {
   child_process: () => child_process,
-  crypto: () => crypto6,
+  crypto: () => crypto7,
   fs: () => fs6,
   os: () => os,
   path: () => path4,
@@ -1949,7 +1949,7 @@ __export(node_exports, {
   util: () => util
 });
 import * as child_process from "node:child_process";
-import * as crypto6 from "node:crypto";
+import * as crypto7 from "node:crypto";
 import * as fs6 from "node:fs";
 import * as os from "node:os";
 import * as path4 from "node:path";
@@ -2405,13 +2405,13 @@ var uuid4;
 var init_uuid = __esm({
   "node_modules/@anthropic-ai/sdk/internal/utils/uuid.mjs"() {
     uuid4 = function() {
-      const { crypto: crypto16 } = globalThis;
-      if (crypto16?.randomUUID) {
-        uuid4 = crypto16.randomUUID.bind(crypto16);
-        return crypto16.randomUUID();
+      const { crypto: crypto17 } = globalThis;
+      if (crypto17?.randomUUID) {
+        uuid4 = crypto17.randomUUID.bind(crypto17);
+        return crypto17.randomUUID();
       }
       const u8 = new Uint8Array(1);
-      const randomByte = crypto16 ? () => crypto16.getRandomValues(u8)[0] : () => Math.random() * 255 & 255;
+      const randomByte = crypto17 ? () => crypto17.getRandomValues(u8)[0] : () => Math.random() * 255 & 255;
       return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c) => (+c ^ randomByte() & 15 >> +c / 4).toString(16));
     };
   }
@@ -6877,7 +6877,7 @@ async function confineToRoot(root, p, opts) {
 }
 async function atomicWriteFile(targetPath, content) {
   const dir = path4.dirname(targetPath);
-  const tempPath = path4.join(dir, `.tmp-${process.pid}-${crypto6.randomUUID()}`);
+  const tempPath = path4.join(dir, `.tmp-${process.pid}-${crypto7.randomUUID()}`);
   const existingMode = await fs7.stat(targetPath).then((st) => st.mode & 511, () => void 0);
   let handle;
   try {
@@ -7187,7 +7187,7 @@ async function makeDirsBelowRoot(root, dir) {
 }
 async function replaceViaTemp(dest, data, isExecutable) {
   const mode = isExecutable ? OWNER_ONLY_EXEC_MODE : OWNER_ONLY_FILE_MODE;
-  const tmp = path4.join(path4.dirname(dest), `.fs-${crypto6.randomBytes(8).toString("hex")}.tmp`);
+  const tmp = path4.join(path4.dirname(dest), `.fs-${crypto7.randomBytes(8).toString("hex")}.tmp`);
   let handle;
   try {
     handle = await fsp.open(tmp, C.O_WRONLY | C.O_CREAT | C.O_EXCL | O_NOFOLLOW, mode);
@@ -7227,7 +7227,7 @@ async function openRegularFile(relPath, dest) {
   return handle;
 }
 async function hashFile(full) {
-  const digest2 = crypto6.createHash("sha256");
+  const digest2 = crypto7.createHash("sha256");
   const handle = await openRegularFile(path4.basename(full), full);
   const buf = new Uint8Array(1024 * 1024);
   try {
@@ -7586,7 +7586,7 @@ var init_file_store = __esm({
 
 // node_modules/@anthropic-ai/sdk/tools/agent-toolset/memories.mjs
 function markerSha(memoryStoreId) {
-  return crypto6.createHash("sha256").update(`version ${MARKER_VERSION}
+  return crypto7.createHash("sha256").update(`version ${MARKER_VERSION}
 ${memoryStoreId}`, "utf-8").digest("hex");
 }
 function isErrno(e2) {
@@ -8327,7 +8327,7 @@ import * as fs9 from "node:fs/promises";
 import * as fssync from "node:fs";
 import * as path6 from "node:path";
 import * as cp from "node:child_process";
-import * as crypto7 from "node:crypto";
+import * as crypto8 from "node:crypto";
 import * as readline2 from "node:readline";
 function resolveMaxBytes(configured) {
   return configured === void 0 ? DEFAULT_MAX_FILE_BYTES : configured;
@@ -8870,7 +8870,7 @@ var init_node2 = __esm({
           signal?.throwIfAborted();
           __classPrivateFieldSet(this, _BashSession_buf, "", "f");
           __classPrivateFieldSet(this, _BashSession_truncated, false, "f");
-          const sentinel3 = `__ANT_CMD_${crypto7.randomUUID()}_DONE__`;
+          const sentinel3 = `__ANT_CMD_${crypto8.randomUUID()}_DONE__`;
           const sentinelSplit = `${sentinel3.slice(0, 8)}''${sentinel3.slice(8)}`;
           const wrapped = `{ ${command}
 } </dev/null 2>&1; printf '\\n${sentinelSplit}%d\\n' $?
@@ -31801,22 +31801,22 @@ var require_crypto2 = __commonJS({
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.NodeCrypto = void 0;
-    var crypto16 = __require("crypto");
+    var crypto17 = __require("crypto");
     var NodeCrypto = class {
       async sha256DigestBase64(str) {
-        return crypto16.createHash("sha256").update(str).digest("base64");
+        return crypto17.createHash("sha256").update(str).digest("base64");
       }
       randomBytesBase64(count) {
-        return crypto16.randomBytes(count).toString("base64");
+        return crypto17.randomBytes(count).toString("base64");
       }
       async verify(pubkey, data, signature2) {
-        const verifier = crypto16.createVerify("RSA-SHA256");
+        const verifier = crypto17.createVerify("RSA-SHA256");
         verifier.update(data);
         verifier.end();
         return verifier.verify(pubkey, signature2, "base64");
       }
       async sign(privateKey, data) {
-        const signer = crypto16.createSign("RSA-SHA256");
+        const signer = crypto17.createSign("RSA-SHA256");
         signer.update(data);
         signer.end();
         return signer.sign(privateKey, "base64");
@@ -31834,7 +31834,7 @@ var require_crypto2 = __commonJS({
        *   string in hexadecimal encoding.
        */
       async sha256DigestHex(str) {
-        return crypto16.createHash("sha256").update(str).digest("hex");
+        return crypto17.createHash("sha256").update(str).digest("hex");
       }
       /**
        * Computes the HMAC hash of a message using the provided crypto key and the
@@ -31846,7 +31846,7 @@ var require_crypto2 = __commonJS({
        */
       async signWithHmacSha256(key, msg) {
         const cryptoKey = typeof key === "string" ? key : toBuffer(key);
-        return toArrayBuffer(crypto16.createHmac("sha256", cryptoKey).update(msg).digest());
+        return toArrayBuffer(crypto17.createHmac("sha256", cryptoKey).update(msg).digest());
       }
     };
     exports.NodeCrypto = NodeCrypto;
@@ -32759,10 +32759,10 @@ var require_oauth2client = __commonJS({
        * https://github.com/googleapis/google-auth-library-nodejs/blob/main/samples/oauth2-codeVerifier.js
        */
       async generateCodeVerifierAsync() {
-        const crypto16 = (0, crypto_1.createCrypto)();
-        const randomString = crypto16.randomBytesBase64(96);
+        const crypto17 = (0, crypto_1.createCrypto)();
+        const randomString = crypto17.randomBytesBase64(96);
         const codeVerifier = randomString.replace(/\+/g, "~").replace(/=/g, "_").replace(/\//g, "-");
-        const unencodedCodeChallenge = await crypto16.sha256DigestBase64(codeVerifier);
+        const unencodedCodeChallenge = await crypto17.sha256DigestBase64(codeVerifier);
         const codeChallenge = unencodedCodeChallenge.split("=")[0].replace(/\+/g, "-").replace(/\//g, "_");
         return { codeVerifier, codeChallenge };
       }
@@ -33203,7 +33203,7 @@ var require_oauth2client = __commonJS({
        * @return Returns a promise resolving to LoginTicket on verification.
        */
       async verifySignedJwtWithCertsAsync(jwt, certs, requiredAudience, issuers, maxExpiry) {
-        const crypto16 = (0, crypto_1.createCrypto)();
+        const crypto17 = (0, crypto_1.createCrypto)();
         if (!maxExpiry) {
           maxExpiry = _OAuth2Client.DEFAULT_MAX_TOKEN_LIFETIME_SECS_;
         }
@@ -33216,7 +33216,7 @@ var require_oauth2client = __commonJS({
         let envelope2;
         let payload;
         try {
-          envelope2 = JSON.parse(crypto16.decodeBase64StringUtf8(segments[0]));
+          envelope2 = JSON.parse(crypto17.decodeBase64StringUtf8(segments[0]));
         } catch (err) {
           if (err instanceof Error) {
             err.message = `Can't parse token envelope: ${segments[0]}': ${err.message}`;
@@ -33227,7 +33227,7 @@ var require_oauth2client = __commonJS({
           throw new Error("Can't parse token envelope: " + segments[0]);
         }
         try {
-          payload = JSON.parse(crypto16.decodeBase64StringUtf8(segments[1]));
+          payload = JSON.parse(crypto17.decodeBase64StringUtf8(segments[1]));
         } catch (err) {
           if (err instanceof Error) {
             err.message = `Can't parse token payload '${segments[0]}`;
@@ -33244,7 +33244,7 @@ var require_oauth2client = __commonJS({
         if (envelope2.alg === "ES256") {
           signature2 = formatEcdsa.joseToDer(signature2, "ES256").toString("base64");
         }
-        const verified = await crypto16.verify(cert, signed, signature2);
+        const verified = await crypto17.verify(cert, signed, signature2);
         if (!verified) {
           throw new Error("Invalid token signature: " + jwt);
         }
@@ -33619,14 +33619,14 @@ var require_buffer_equal_constant_time = __commonJS({
 var require_jwa = __commonJS({
   "node_modules/jwa/index.js"(exports, module) {
     var Buffer4 = require_safe_buffer().Buffer;
-    var crypto16 = __require("crypto");
+    var crypto17 = __require("crypto");
     var formatEcdsa = require_ecdsa_sig_formatter();
     var util2 = __require("util");
     var MSG_INVALID_ALGORITHM = '"%s" is not a valid algorithm.\n  Supported algorithms are:\n  "HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512" and "none".';
     var MSG_INVALID_SECRET = "secret must be a string or buffer";
     var MSG_INVALID_VERIFIER_KEY = "key must be a string or a buffer";
     var MSG_INVALID_SIGNER_KEY = "key must be a string, a buffer or an object";
-    var supportsKeyObjects = typeof crypto16.createPublicKey === "function";
+    var supportsKeyObjects = typeof crypto17.createPublicKey === "function";
     if (supportsKeyObjects) {
       MSG_INVALID_VERIFIER_KEY += " or a KeyObject";
       MSG_INVALID_SECRET += "or a KeyObject";
@@ -33716,17 +33716,17 @@ var require_jwa = __commonJS({
       return function sign(thing, secret) {
         checkIsSecretKey(secret);
         thing = normalizeInput(thing);
-        var hmac = crypto16.createHmac("sha" + bits, secret);
+        var hmac = crypto17.createHmac("sha" + bits, secret);
         var sig = (hmac.update(thing), hmac.digest("base64"));
         return fromBase643(sig);
       };
     }
     var bufferEqual;
-    var timingSafeEqual = "timingSafeEqual" in crypto16 ? function timingSafeEqual2(a, b) {
+    var timingSafeEqual = "timingSafeEqual" in crypto17 ? function timingSafeEqual2(a, b) {
       if (a.byteLength !== b.byteLength) {
         return false;
       }
-      return crypto16.timingSafeEqual(a, b);
+      return crypto17.timingSafeEqual(a, b);
     } : function timingSafeEqual2(a, b) {
       if (!bufferEqual) {
         bufferEqual = require_buffer_equal_constant_time();
@@ -33743,7 +33743,7 @@ var require_jwa = __commonJS({
       return function sign(thing, privateKey) {
         checkIsPrivateKey(privateKey);
         thing = normalizeInput(thing);
-        var signer = crypto16.createSign("RSA-SHA" + bits);
+        var signer = crypto17.createSign("RSA-SHA" + bits);
         var sig = (signer.update(thing), signer.sign(privateKey, "base64"));
         return fromBase643(sig);
       };
@@ -33753,7 +33753,7 @@ var require_jwa = __commonJS({
         checkIsPublicKey(publicKey);
         thing = normalizeInput(thing);
         signature2 = toBase64(signature2);
-        var verifier = crypto16.createVerify("RSA-SHA" + bits);
+        var verifier = crypto17.createVerify("RSA-SHA" + bits);
         verifier.update(thing);
         return verifier.verify(publicKey, signature2, "base64");
       };
@@ -33762,11 +33762,11 @@ var require_jwa = __commonJS({
       return function sign(thing, privateKey) {
         checkIsPrivateKey(privateKey);
         thing = normalizeInput(thing);
-        var signer = crypto16.createSign("RSA-SHA" + bits);
+        var signer = crypto17.createSign("RSA-SHA" + bits);
         var sig = (signer.update(thing), signer.sign({
           key: privateKey,
-          padding: crypto16.constants.RSA_PKCS1_PSS_PADDING,
-          saltLength: crypto16.constants.RSA_PSS_SALTLEN_DIGEST
+          padding: crypto17.constants.RSA_PKCS1_PSS_PADDING,
+          saltLength: crypto17.constants.RSA_PSS_SALTLEN_DIGEST
         }, "base64"));
         return fromBase643(sig);
       };
@@ -33776,12 +33776,12 @@ var require_jwa = __commonJS({
         checkIsPublicKey(publicKey);
         thing = normalizeInput(thing);
         signature2 = toBase64(signature2);
-        var verifier = crypto16.createVerify("RSA-SHA" + bits);
+        var verifier = crypto17.createVerify("RSA-SHA" + bits);
         verifier.update(thing);
         return verifier.verify({
           key: publicKey,
-          padding: crypto16.constants.RSA_PKCS1_PSS_PADDING,
-          saltLength: crypto16.constants.RSA_PSS_SALTLEN_DIGEST
+          padding: crypto17.constants.RSA_PKCS1_PSS_PADDING,
+          saltLength: crypto17.constants.RSA_PSS_SALTLEN_DIGEST
         }, signature2, "base64");
       };
     }
@@ -36357,14 +36357,14 @@ var require_awsrequestsigner = __commonJS({
       }
     };
     exports.AwsRequestSigner = AwsRequestSigner;
-    async function sign(crypto16, key, msg) {
-      return await crypto16.signWithHmacSha256(key, msg);
+    async function sign(crypto17, key, msg) {
+      return await crypto17.signWithHmacSha256(key, msg);
     }
-    async function getSigningKey(crypto16, key, dateStamp, region, serviceName) {
-      const kDate = await sign(crypto16, `AWS4${key}`, dateStamp);
-      const kRegion = await sign(crypto16, kDate, region);
-      const kService = await sign(crypto16, kRegion, serviceName);
-      const kSigning = await sign(crypto16, kService, "aws4_request");
+    async function getSigningKey(crypto17, key, dateStamp, region, serviceName) {
+      const kDate = await sign(crypto17, `AWS4${key}`, dateStamp);
+      const kRegion = await sign(crypto17, kDate, region);
+      const kService = await sign(crypto17, kRegion, serviceName);
+      const kSigning = await sign(crypto17, kService, "aws4_request");
       return kSigning;
     }
     async function generateAuthenticationHeaderMap(options) {
@@ -37330,7 +37330,7 @@ var require_gdchclient = __commonJS({
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.GdchClient = exports.GDCH_SERVICE_ACCOUNT_TYPE = void 0;
-    var crypto16 = __require("crypto");
+    var crypto17 = __require("crypto");
     var fs16 = __require("fs");
     var https2 = __require("https");
     var oauth2client_1 = require_oauth2client();
@@ -37521,7 +37521,7 @@ var require_gdchclient = __commonJS({
         const encodedHeader = this.base64UrlEncode(JSON.stringify(header));
         const encodedPayload = this.base64UrlEncode(JSON.stringify(payload));
         const signingInput = `${encodedHeader}.${encodedPayload}`;
-        const signature2 = crypto16.sign("sha256", Buffer.from(signingInput), {
+        const signature2 = crypto17.sign("sha256", Buffer.from(signingInput), {
           key: this.privateKey,
           dsaEncoding: "ieee-p1363"
         });
@@ -38384,24 +38384,24 @@ var require_googleauth = __commonJS({
           const signed = await client.sign(data);
           return signed.signedBlob;
         }
-        const crypto16 = (0, crypto_1.createCrypto)();
+        const crypto17 = (0, crypto_1.createCrypto)();
         if (client instanceof jwtclient_1.JWT && client.key) {
-          const sign = await crypto16.sign(client.key, data);
+          const sign = await crypto17.sign(client.key, data);
           return sign;
         }
         const creds = await this.getCredentials();
         if (!creds.client_email) {
           throw new Error("Cannot sign data without `client_email`.");
         }
-        return this.signBlob(crypto16, creds.client_email, data, endpoint);
+        return this.signBlob(crypto17, creds.client_email, data, endpoint);
       }
-      async signBlob(crypto16, emailOrUniqueId, data, endpoint) {
+      async signBlob(crypto17, emailOrUniqueId, data, endpoint) {
         const url = new URL(endpoint + `${emailOrUniqueId}:signBlob`);
         const res = await this.request({
           method: "POST",
           url: url.href,
           data: {
-            payload: crypto16.encodeBase64StringUtf8(data)
+            payload: crypto17.encodeBase64StringUtf8(data)
           },
           retry: true,
           retryConfig: {
@@ -65447,13 +65447,13 @@ var uuid42;
 var init_uuid2 = __esm({
   "node_modules/openai/internal/utils/uuid.mjs"() {
     uuid42 = function() {
-      const { crypto: crypto16 } = globalThis;
-      if (crypto16?.randomUUID) {
-        uuid42 = crypto16.randomUUID.bind(crypto16);
-        return crypto16.randomUUID();
+      const { crypto: crypto17 } = globalThis;
+      if (crypto17?.randomUUID) {
+        uuid42 = crypto17.randomUUID.bind(crypto17);
+        return crypto17.randomUUID();
       }
       const u8 = new Uint8Array(1);
-      const randomByte = crypto16 ? () => crypto16.getRandomValues(u8)[0] : () => Math.random() * 255 & 255;
+      const randomByte = crypto17 ? () => crypto17.getRandomValues(u8)[0] : () => Math.random() * 255 & 255;
       return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c) => (+c ^ randomByte() & 15 >> +c / 4).toString(16));
     };
   }
@@ -88169,9 +88169,7 @@ var require_cross_spawn = __commonJS({
   }
 });
 
-// evolution.ts
-import fs4 from "node:fs";
-import path3 from "node:path";
+// components.ts
 import crypto4 from "node:crypto";
 
 // store.ts
@@ -88265,6 +88263,7 @@ function lifeSources(store, key, value) {
   return [...new Set(value)];
 }
 function saveLifePolicy(store, key, input) {
+  if (input.enabled === true && store.session(key).componentKind === "chat") throw new HttpError(400, "\u7EAF\u804A\u5929\u4E0D\u542F\u52A8\u81EA\u4E3B\u65E5\u5E38\uFF0C\u8BF7\u4F7F\u7528\u6D8C\u73B0\u7FA4\u804A\u6216 City");
   return changeLife(store, key, (state3) => {
     if (input.expectedPolicy !== void 0 ? input.expectedPolicy !== (state3.policyRevision || "new") : input.expected !== state3.revision) throw new HttpError(409, "\u65E5\u5E38\u8BBE\u7F6E\u5DF2\u66F4\u65B0\uFF0C\u8BF7\u91CD\u65B0\u8F7D\u5165");
     const policy = { ...state3.policy };
@@ -88547,6 +88546,9 @@ function watchMembers(store, key, listener) {
     if (!set.size) membershipListeners.delete(identity);
   };
 }
+function existingKind(store, key) {
+  return key ? store.session(key).componentKind : void 0;
+}
 function normalizedNote(value) {
   return value.trim().replace(/\s+/g, " ");
 }
@@ -88634,6 +88636,9 @@ var Store2 = class {
       json(this.file("workspace-navigation.json"), value);
       return value;
     });
+  }
+  updateCityConfig(action) {
+    return this.withMemoryLock(this.file("empire-city.json"), action);
   }
   memoryLocks = /* @__PURE__ */ new Set();
   withMemoryLock(file, action) {
@@ -88896,7 +88901,7 @@ var Store2 = class {
     if (!fs2.existsSync(file)) throw new HttpError(404, "\u5BF9\u8BDD\u4E0D\u5B58\u5728");
     const session = read(file);
     if (session.kind === "group") {
-      const active = new Set(this.agents().map((agent) => agent.id)), members = (session.memberIds || []).filter((member2) => active.has(member2));
+      const active = new Set(this.agents().map((agent) => agent.id)), members = (session.componentKind === "city" ? [...active] : session.memberIds || []).filter((member2) => active.has(member2));
       return { ...session, memberIds: members, agentId: members[0] || session.agentId, coordinatorId: members.includes(session.coordinatorId || "") ? session.coordinatorId : members[0] };
     }
     return session;
@@ -88988,8 +88993,11 @@ var Store2 = class {
   saveGroupUnlocked(name, memberIds2, key, details, creationId, expected) {
     const members = [...new Set(memberIds2)];
     if (name.length > 80) throw new HttpError(400, "\u7FA4\u540D\u79F0\u6700\u591A80\u4E2A\u5B57\u7B26");
-    const minimum = details.spaceKind === "solo" || key && this.session(key).spaceKind === "solo" ? 1 : 2;
-    if (members.length < minimum || members.length > 12) throw new HttpError(400, minimum === 1 ? "\u8BF7\u9009\u62E9 1\u201312 \u4E2A Agent" : "\u8BF7\u9009\u62E9 2\u201312 \u4E2A Agent");
+    const city = (details.componentKind ?? existingKind(this, key)) === "city";
+    if (city && (key || creationId) !== "city-public") throw new HttpError(400, "City \u4F7F\u7528\u552F\u4E00\u7684\u57CE\u5E02\u804A\u5929\u5BA4");
+    if (key && existingKind(this, key) === "city" && details.componentKind && details.componentKind !== "city") throw new HttpError(400, "\u57CE\u5E02\u804A\u5929\u5BA4\u4E0D\u80FD\u8F6C\u6362\u4E3A\u5176\u4ED6\u7EC4\u4EF6");
+    const minimum = city ? 1 : details.spaceKind === "solo" || key && this.session(key).spaceKind === "solo" ? 1 : 2;
+    if (members.length < minimum || !city && members.length > 12) throw new HttpError(400, minimum === 1 ? "\u8BF7\u9009\u62E9 1\u201312 \u4E2A Agent" : "\u8BF7\u9009\u62E9 2\u201312 \u4E2A Agent");
     for (const member2 of members) this.requireActiveAgent(member2);
     const existing = key ? this.session(key) : void 0;
     if (existing?.archivedAt || !key && fs2.existsSync(this.file("chats", creationId, "session.json")) && this.session(creationId).archivedAt) throw new HttpError(410, "\u7FA4\u804A\u5DF2\u5220\u9664\uFF0C\u7F16\u8F91\u6216\u521B\u5EFA\u4E0D\u80FD\u6062\u590D\u5B83");
@@ -88999,14 +89007,16 @@ var Store2 = class {
     const purpose = details.purpose ?? existing?.purpose ?? "";
     const roles = details.memberRoles ?? existing?.memberRoles ?? {};
     const memberRoles = Object.fromEntries(Object.entries(roles).filter(([member2]) => members.includes(member2)));
-    const replyMode = details.replyMode ?? existing?.replyMode ?? "round";
-    const discussionMode = details.discussionMode ?? existing?.discussionMode ?? (existing ? "open" : "directed");
+    const kind = details.componentKind ?? existing?.componentKind;
+    if (kind && !["emergent", "chat", "task", "city"].includes(kind)) throw new HttpError(400, "\u672A\u77E5\u7EC4\u4EF6\u7C7B\u578B");
+    const replyMode = kind ? kind === "task" ? "coordinated" : kind === "chat" ? "round" : "collective" : details.replyMode ?? existing?.replyMode ?? "round";
+    const discussionMode = kind === "task" || kind === "chat" ? "directed" : kind ? (details.discussionMode ?? existing?.discussionMode) === "brainstorm" ? "brainstorm" : "open" : details.discussionMode ?? existing?.discussionMode ?? (existing ? "open" : "directed");
     if (!["open", "directed", "brainstorm"].includes(discussionMode)) throw new HttpError(400, "\u8BF7\u9009\u62E9\u81EA\u7136\u8BA8\u8BBA\u3001\u5934\u8111\u98CE\u66B4\u6216\u5B9A\u5411\u534F\u4F5C");
     const coordinatorId = details.coordinatorId || (members.includes(existing?.coordinatorId || "") ? existing.coordinatorId : members[0]);
     if (purpose.length > 6e3 || Object.values(memberRoles).some((role) => typeof role !== "string" || role.length > 1e3)) throw new HttpError(400, "\u7FA4\u76EE\u6807\u6216\u6210\u5458\u804C\u8D23\u8FC7\u957F");
     if (!["round", "coordinated", "collective"].includes(replyMode)) throw new HttpError(400, "\u672A\u77E5\u7684\u7FA4\u534F\u4F5C\u6A21\u5F0F");
     if (!members.includes(coordinatorId)) throw new HttpError(400, "\u8D1F\u8D23\u4EBA\u5FC5\u987B\u5728\u672C\u7FA4");
-    const group = { spaceKind: details.spaceKind ?? existing?.spaceKind, id: existing?.id || (creationId ? id(creationId) : crypto3.randomUUID()), title: name.trim() || (discussionMode === "brainstorm" ? "\u5934\u8111\u98CE\u66B4" : "\u968F\u4FBF\u804A\u804A"), kind: "group", agentId: members[0], memberIds: members, modelId: existing?.modelId || "", createdAt: existing?.createdAt || now, updatedAt: now, purpose, memberRoles, replyMode, discussionMode, coordinatorId, runtimeLimits: runtimeLimits(details.runtimeLimits ?? existing?.runtimeLimits), ...existing?.lifecycleRevision ? { lifecycleRevision: existing.lifecycleRevision } : {} };
+    const group = { componentKind: kind, spaceKind: details.spaceKind ?? existing?.spaceKind, id: existing?.id || (creationId ? id(creationId) : crypto3.randomUUID()), title: name.trim() || (discussionMode === "brainstorm" ? "\u5934\u8111\u98CE\u66B4" : "\u968F\u4FBF\u804A\u804A"), kind: "group", agentId: members[0], memberIds: members, modelId: existing?.modelId || "", createdAt: existing?.createdAt || now, updatedAt: now, purpose, memberRoles, replyMode, discussionMode, coordinatorId, runtimeLimits: runtimeLimits(details.runtimeLimits ?? existing?.runtimeLimits), ...existing?.lifecycleRevision ? { lifecycleRevision: existing.lifecycleRevision } : {} };
     json(this.file("chats", group.id, "session.json"), group);
     if (existing) for (const turn of this.turns(group.id)) {
       let changed = false;
@@ -89026,7 +89036,7 @@ var Store2 = class {
   }
   groupMembers(key) {
     const session = this.session(key), active = new Set(this.agents().map((agent) => agent.id));
-    return session.archivedAt ? [] : (session.kind === "group" ? session.memberIds || [] : [session.agentId]).filter((member2) => active.has(member2));
+    return session.archivedAt ? [] : (session.kind === "group" ? session.componentKind === "city" ? [...active] : session.memberIds || [] : [session.agentId]).filter((member2) => active.has(member2));
   }
   consultSession(senderId, receiverId, origin) {
     const sender = this.agent(senderId), receiver = this.agent(receiverId);
@@ -89513,13 +89523,49 @@ ${anchor.content}`, id: anchor.id });
   }
 };
 
+// components.ts
+var CITY_ROOM = "city-public";
+function cityConfig(store) {
+  const raw = object(JSON.parse(store.text("empire-city.json") || "{}"));
+  const revision2 = crypto4.createHash("sha256").update(JSON.stringify(raw)).digest("hex");
+  return { name: string(raw.name, "City \xB7 \u5171\u540C\u751F\u6D3B"), description: string(raw.description, "\u6240\u6709 Bot \u90FD\u751F\u6D3B\u5728\u8FD9\u91CC\u3002\u89C2\u770B\u771F\u5B9E\u52A8\u6001\uFF0C\u6216\u8FDB\u5165\u57CE\u5E02\u804A\u5929\u5BA4\u3002"), leadAgentId: string(raw.leadAgentId, "main"), revision: revision2 };
+}
+function saveCity(store, input) {
+  return store.updateCityConfig(() => saveCityUnlocked(store, input));
+}
+function saveCityUnlocked(store, input) {
+  const previous = cityConfig(store);
+  if (input.expected !== previous.revision) throw new HttpError(409, "City \u5DF2\u66F4\u65B0\uFF0C\u8BF7\u91CD\u65B0\u8BFB\u53D6\u540E\u4FEE\u6539");
+  if (typeof input.name !== "string" || !input.name.trim() || input.name.length > 80 || typeof input.description !== "string" || input.description.length > 6e3 || typeof input.leadAgentId !== "string") throw new HttpError(400, "\u8BF7\u586B\u5199\u6709\u6548\u7684 City \u540D\u79F0\u3001\u4ECB\u7ECD\u548C\u4E3B Bot");
+  store.requireActiveAgent(input.leadAgentId);
+  const raw = object(JSON.parse(store.text("empire-city.json") || "{}"));
+  json(store.file("empire-city.json"), { ...raw, name: input.name.trim(), description: input.description, leadAgentId: input.leadAgentId });
+  return cityConfig(store);
+}
+function cityRoom(store) {
+  const existing = store.sessions(true).find((item) => item.id === CITY_ROOM);
+  if (existing?.archivedAt) throw new HttpError(410, "\u57CE\u5E02\u804A\u5929\u5BA4\u5DF2\u5F52\u6863\uFF0C\u8BF7\u5728\u8BBE\u7F6E\u4E2D\u6062\u590D");
+  const config = cityConfig(store);
+  const room = existing || store.saveGroup("\u57CE\u5E02\u804A\u5929\u5BA4", store.agents().map((agent) => agent.id), void 0, { componentKind: "city", spaceKind: "social", purpose: config.description, discussionMode: "open" }, CITY_ROOM);
+  return { ...room, memberIds: store.groupMembers(room.id) };
+}
+function cityOverview(store) {
+  const room = store.sessions().find((item) => item.id === CITY_ROOM);
+  return { config: cityConfig(store), memberIds: store.agents().map((agent) => agent.id), room: room ? { ...room, memberIds: store.groupMembers(room.id) } : null, messages: room ? store.messages(room.id).filter((message) => !message.kind).slice(-20) : [] };
+}
+
+// evolution.ts
+import fs4 from "node:fs";
+import path3 from "node:path";
+import crypto5 from "node:crypto";
+
 // portable.ts
 import fs3 from "node:fs";
 import path2 from "node:path";
 import { fileURLToPath } from "node:url";
 var moduleRoot = path2.dirname(fileURLToPath(import.meta.url));
 var ROOT = path2.basename(moduleRoot) === "release" ? path2.dirname(moduleRoot) : moduleRoot;
-var sources = ["VALIDATION-4.4.0.md", "civilization.ts", "build-city.mjs", "docs", "REAL-SQUARE-4.3.0.json", "VALIDATION-4.3.0.md", "REAL-ROLEPLAY-4.2.1.json", "roleplay.ts", "ROLEPLAY-GUIDE.md", "VALIDATION-4.2.1.md", "REAL-SPACE-4.2.0.json", "space.ts", "SPACE-DESIGN.md", "VALIDATION-4.2.0.md", "VALIDATION-4.1.0.md", "REAL-UNIFIED-4.1.0.json", "social-state.ts", "social.ts", "TOWN-GUIDE.md", "VALIDATION-4.0.0.md", "REAL-DAILY-4.0.0.json", "EMERGENT-GROUP-CHAT-DESIGN.md", "app.ts", "workspace.ts", "queue.ts", "work.ts", "collaboration.ts", "context.ts", "audience.ts", "communication.ts", "reasoning.ts", "COMMUNICATION.md", "COLLABORATION-RELEASE.md", "opencode-go.ts", "store.ts", "models.ts", "runtime.ts", "pi.ts", "execution.ts", "evolution.ts", "defaults.ts", "portable.ts", "migrate.ts", "build.mjs", "pack-windows.mjs", "launcher.mjs", "Taoagent.exe", "windows", "windows-release.json", "Start Taoagent.cmd", "Stop Taoagent.cmd", "Check Taoagent.cmd", "WINDOWS-README.md", "VALIDATION-3.14.0.md", "package.json", "package-lock.json", "README.md", "OPENBOT-OPTIMIZATION.md", "VALIDATION-3.13.0.md", "AUDIT.md", "AGENTS.md", "CLAUDE.md", "LICENSE", "NOTICE", "\u542F\u52A8 Taoagent.cmd", "\u542F\u52A8.sh", "public", "tests", "release", "runtime"];
+var sources = ["components.ts", "VALIDATION-4.4.0.md", "civilization.ts", "build-city.mjs", "docs", "REAL-SQUARE-4.3.0.json", "VALIDATION-4.3.0.md", "REAL-ROLEPLAY-4.2.1.json", "roleplay.ts", "ROLEPLAY-GUIDE.md", "VALIDATION-4.2.1.md", "REAL-SPACE-4.2.0.json", "space.ts", "SPACE-DESIGN.md", "VALIDATION-4.2.0.md", "VALIDATION-4.1.0.md", "REAL-UNIFIED-4.1.0.json", "social-state.ts", "social.ts", "TOWN-GUIDE.md", "VALIDATION-4.0.0.md", "REAL-DAILY-4.0.0.json", "EMERGENT-GROUP-CHAT-DESIGN.md", "app.ts", "workspace.ts", "queue.ts", "work.ts", "collaboration.ts", "context.ts", "audience.ts", "communication.ts", "reasoning.ts", "COMMUNICATION.md", "COLLABORATION-RELEASE.md", "opencode-go.ts", "store.ts", "models.ts", "runtime.ts", "pi.ts", "execution.ts", "evolution.ts", "defaults.ts", "portable.ts", "migrate.ts", "build.mjs", "pack-windows.mjs", "launcher.mjs", "Taoagent.exe", "windows", "windows-release.json", "Start Taoagent.cmd", "Stop Taoagent.cmd", "Check Taoagent.cmd", "WINDOWS-README.md", "VALIDATION-3.14.0.md", "package.json", "package-lock.json", "README.md", "OPENBOT-OPTIMIZATION.md", "VALIDATION-3.13.0.md", "AUDIT.md", "AGENTS.md", "CLAUDE.md", "LICENSE", "NOTICE", "\u542F\u52A8 Taoagent.cmd", "\u542F\u52A8.sh", "public", "tests", "release", "runtime"];
 var crcTable = Uint32Array.from({ length: 256 }, (_, value) => {
   let crc = value;
   for (let bit = 0; bit < 8; bit++) crc = crc >>> 1 ^ (crc & 1 ? 3988292384 : 0);
@@ -89630,12 +89676,12 @@ if (process.argv[1] && path2.basename(process.argv[1]) === "portable.ts" && path
 }
 
 // evolution.ts
-var evolvable = ["context.ts", "audience.ts", "communication.ts", "reasoning.ts", "defaults.ts", "public/client.js", "public/index.html", "public/style.css", "app.ts", "runtime.ts", "store.ts", "pi.ts", "models.ts", "opencode-go.ts", "portable.ts", "migrate.ts"];
+var evolvable = ["public/workbench.js", "public/workbench.css", "public/sidebar.js", "public/sidebar.css", "components.ts", "civilization.ts", "public/civilization.js", "public/civilization.css", "public/components.css", "public/product.css", "public/town.js", "public/town.css", "public/square.js", "public/city-entry.js", "build-city.mjs", ...fs4.readdirSync(path3.join(ROOT, "public", "city")).filter((name) => name.endsWith(".js")).map((name) => "public/city/" + name), "context.ts", "audience.ts", "communication.ts", "reasoning.ts", "defaults.ts", "public/client.js", "public/index.html", "public/style.css", "app.ts", "runtime.ts", "store.ts", "pi.ts", "models.ts", "opencode-go.ts", "portable.ts", "migrate.ts"];
 var protectedReadableFiles = ["execution.ts", "evolution.ts", "build.mjs", "package.json", "package-lock.json", "README.md", "AGENTS.md", "CLAUDE.md"];
 var testPath = (name) => /^tests\/[a-zA-Z0-9_-]+\.test\.(ts|mjs)$/.test(name);
-var digest = (text2) => crypto4.createHash("sha256").update(text2).digest("hex");
+var digest = (text2) => crypto5.createHash("sha256").update(text2).digest("hex");
 function fingerprint(root) {
-  const hash = crypto4.createHash("sha256");
+  const hash = crypto5.createHash("sha256");
   const visit = (name) => {
     const file = path3.join(root, name);
     if (!fs4.existsSync(file)) return;
@@ -89731,7 +89777,7 @@ async function evolve(store, args, signal, verify, root = ROOT) {
   if (new Set(changes.map((c) => c.path)).size !== changes.length) throw new HttpError(400, "\u91CD\u590D\u6587\u4EF6");
   if (busy.has(root)) throw new HttpError(409, "\u5DF2\u6709\u8FDB\u5316\u4EFB\u52A1\u5728\u9A8C\u8BC1");
   busy.add(root);
-  const runId = crypto4.randomUUID(), record = store.file("evolution", runId, "record.json"), candidate = store.file("evolution", runId, "candidate");
+  const runId = crypto5.randomUUID(), record = store.file("evolution", runId, "record.json"), candidate = store.file("evolution", runId, "candidate");
   const originals = {};
   const check = () => {
     for (const c of changes) if (digest(fs4.readFileSync(source(root, c.path), "utf8")) !== c.sha256) throw new HttpError(409, "\u6E90\u7801\u5DF2\u53D8\u5316\uFF0C\u8BF7\u91CD\u65B0\u8BFB\u53D6\uFF1A" + c.path);
@@ -89771,7 +89817,7 @@ async function evolve(store, args, signal, verify, root = ROOT) {
     if (signal.aborted) throw new HttpError(499, "\u5DF2\u6682\u505C");
     const protectedFiles = sources.filter((name) => !["release", "runtime"].includes(name) && !changes.some((change) => change.path === name));
     const protectedHash = () => {
-      const hash = crypto4.createHash("sha256");
+      const hash = crypto5.createHash("sha256");
       for (const name of protectedFiles) {
         const visit = (file) => {
           if (!fs4.existsSync(file)) return;
@@ -89779,7 +89825,7 @@ async function evolve(store, args, signal, verify, root = ROOT) {
           if (stat4.isSymbolicLink()) throw new HttpError(400, "\u9A8C\u8BC1\u6587\u4EF6\u4E0D\u80FD\u662F\u94FE\u63A5");
           if (stat4.isDirectory()) {
             for (const child of fs4.readdirSync(file).sort()) visit(path3.join(file, child));
-          } else hash.update(path3.relative(candidate, file)).update(fs4.readFileSync(file));
+          } else if (path3.relative(candidate, file).replaceAll(path3.sep, "/") !== "public/city.bundle.js") hash.update(path3.relative(candidate, file)).update(fs4.readFileSync(file));
         };
         visit(path3.join(candidate, name));
       }
@@ -89797,6 +89843,24 @@ async function evolve(store, args, signal, verify, root = ROOT) {
       const relative = "release/" + name;
       originals[relative] = fs4.readFileSync(path3.join(root, relative), "utf8");
       outputs[relative] = fs4.readFileSync(path3.join(candidate, relative), "utf8");
+    }
+    const cityBundle = "public/city.bundle.js";
+    if (fs4.existsSync(path3.join(root, cityBundle)) && fs4.existsSync(path3.join(candidate, cityBundle))) {
+      originals[cityBundle] = fs4.readFileSync(path3.join(root, cityBundle), "utf8");
+      outputs[cityBundle] = fs4.readFileSync(path3.join(candidate, cityBundle), "utf8");
+    }
+    const manifestFile = path3.join(root, "windows-release.json");
+    if (fs4.existsSync(manifestFile)) {
+      originals["windows-release.json"] = fs4.readFileSync(manifestFile, "utf8");
+      const manifest = JSON.parse(originals["windows-release.json"]);
+      for (const [name, content] of Object.entries(outputs)) {
+        const bytes = Buffer.from(content), entry = manifest.files.find((item) => item.path === name);
+        if (entry) {
+          entry.bytes = bytes.length;
+          entry.sha256 = digest(content);
+        }
+      }
+      outputs["windows-release.json"] = JSON.stringify(manifest, null, 2) + "\n";
     }
     json(record, { runId, reason, expectedBenefit, acceptanceCriteria, acceptanceTests, at, baselineHash, validation, status: "applying", changes, originals, outputs });
     applied = true;
@@ -89860,7 +89924,7 @@ function rollbackEvolution(store, runId, root = ROOT) {
     const record = JSON.parse(fs4.readFileSync(file, "utf8"));
     if (record.status !== "applied") throw new HttpError(409, "\u53EA\u80FD\u56DE\u6EDA\u5DF2\u6210\u529F\u5E94\u7528\u7684\u7248\u672C");
     for (const [name, output] of Object.entries(record.outputs)) {
-      if (!evolvable.includes(name) && !["release/server.mjs", "release/server.mjs.LEGAL.txt", "release/build.json", "release/THIRD-PARTY-NOTICES.txt"].includes(name)) throw new HttpError(400, "\u65E0\u6548\u6062\u590D\u8DEF\u5F84");
+      if (!evolvable.includes(name) && !["public/city.bundle.js", "windows-release.json", "release/server.mjs", "release/server.mjs.LEGAL.txt", "release/build.json", "release/THIRD-PARTY-NOTICES.txt"].includes(name)) throw new HttpError(400, "\u65E0\u6548\u6062\u590D\u8DEF\u5F84");
       let current = root;
       for (const part of name.split("/")) {
         current = path3.join(current, part);
@@ -89893,7 +89957,7 @@ function authorizeImprovement(store, key, args) {
   const objective = string(args.objective), acceptanceCriteria = string(args.acceptanceCriteria);
   if (!objective.trim() || !acceptanceCriteria.trim() || objective.length > 4e3 || acceptanceCriteria.length > 8e3) throw new HttpError(400, "\u9700\u8981\u76EE\u6807\u548C\u9A8C\u6536\u6807\u51C6");
   if (!Array.isArray(args.acceptanceTests) || !args.acceptanceTests.length || args.acceptanceTests.length > 8 || args.acceptanceTests.some((name) => typeof name !== "string" || !/^tests\/[a-zA-Z0-9_-]+\.test\.(ts|mjs)$/.test(name) || !fs4.existsSync(path3.join(ROOT, name)))) throw new HttpError(400, "\u8BF7\u9009\u62E9\u5DF2\u5B58\u5728\u7684\u53D7\u4FDD\u62A4\u9A8C\u6536\u6D4B\u8BD5\u6587\u4EF6");
-  const session = { id: crypto4.randomUUID(), status: "active", scope: [...new Set(args.scope)], objective, acceptanceCriteria, acceptanceTests: args.acceptanceTests, maxIterations: bounded2("maxIterations", 10), maxModelCalls: bounded2("maxModelCalls", 200), maxToolCalls: bounded2("maxToolCalls", 500), maxTokens: bounded2("maxTokens", 2e6), expiresAt: Date.now() + bounded2("maxMinutes", 120) * 6e4, iterations: 0, modelCalls: 0, toolCalls: 0, reservedTokens: 0, at: (/* @__PURE__ */ new Date()).toISOString() };
+  const session = { id: crypto5.randomUUID(), status: "active", scope: [...new Set(args.scope)], objective, acceptanceCriteria, acceptanceTests: args.acceptanceTests, maxIterations: bounded2("maxIterations", 10), maxModelCalls: bounded2("maxModelCalls", 200), maxToolCalls: bounded2("maxToolCalls", 500), maxTokens: bounded2("maxTokens", 2e6), expiresAt: Date.now() + bounded2("maxMinutes", 120) * 6e4, iterations: 0, modelCalls: 0, toolCalls: 0, reservedTokens: 0, at: (/* @__PURE__ */ new Date()).toISOString() };
   json(store.file("chats", key, "improvement.json"), session);
   return session;
 }
@@ -89943,7 +90007,7 @@ function recoverEvolution(store, runId, root = ROOT) {
   const file = store.file("evolution", id(runId), "record.json");
   const record = JSON.parse(fs4.readFileSync(file, "utf8"));
   if (!["applying", "recovering", "validating", "applied", "rolled_back"].includes(record.status)) throw new HttpError(409, "\u6B64\u7248\u672C\u4E0D\u9700\u8981\u6062\u590D");
-  const allowed = [...evolvable, "release/server.mjs", "release/server.mjs.LEGAL.txt", "release/build.json", "release/THIRD-PARTY-NOTICES.txt"];
+  const allowed = [...evolvable, "public/city.bundle.js", "windows-release.json", "release/server.mjs", "release/server.mjs.LEGAL.txt", "release/build.json", "release/THIRD-PARTY-NOTICES.txt"];
   for (const [name, original] of Object.entries(record.originals)) {
     if (!allowed.includes(name)) throw new HttpError(400, "\u65E0\u6548\u6062\u590D\u8DEF\u5F84");
     const target = path3.join(root, name);
@@ -89972,15 +90036,43 @@ function recoverEvolution(store, runId, root = ROOT) {
 import http3 from "node:http";
 import fs15 from "node:fs";
 import path10 from "node:path";
-import crypto15 from "node:crypto";
+import crypto16 from "node:crypto";
 import { gzipSync } from "node:zlib";
 
 // workspace.ts
 import fs5 from "node:fs";
 import readline from "node:readline";
-import crypto5 from "node:crypto";
+import crypto6 from "node:crypto";
 import { setImmediate as setImmediate2 } from "node:timers/promises";
-function workspaceConversations(store, running) {
+function conversationPreview(store, key, sanitize = (text2) => text2) {
+  const file = store.file("chats", key, "messages.jsonl");
+  if (!fs5.existsSync(file)) return { preview: "", previewAt: "", previewAuthor: "", previewTruncated: false };
+  const size = fs5.statSync(file).size, length = Math.min(size, 65536), buffer = Buffer.alloc(length), fd = fs5.openSync(file, "r");
+  try {
+    fs5.readSync(fd, buffer, 0, length, size - length);
+  } finally {
+    fs5.closeSync(fd);
+  }
+  let tail = buffer.toString("utf8");
+  if (size > length) tail = tail.slice(tail.indexOf("\n") + 1);
+  for (const line of tail.trimEnd().split("\n").reverse()) {
+    let raw;
+    try {
+      raw = JSON.parse(line);
+    } catch {
+      continue;
+    }
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) continue;
+    const message = raw;
+    if (!["user", "assistant"].includes(String(message.role)) || message.kind || message.status !== void 0 && message.status !== "complete" || typeof message.content !== "string") continue;
+    const content = sanitize(message.content).replace(/\s+/gu, " ").trim();
+    if (!content) continue;
+    const points = Array.from(content), truncated = points.length > 140;
+    return { preview: points.slice(0, 140).join("") + (truncated ? "\u2026" : ""), previewAt: typeof message.at === "string" ? message.at : "", previewAuthor: sanitize(message.role === "user" ? "\u4F60" : typeof message.agentName === "string" ? message.agentName : "Bot"), previewTruncated: truncated };
+  }
+  return { preview: size ? "\u6253\u5F00\u67E5\u770B\u5B8C\u6574\u4EA4\u6D41" : "", previewAt: "", previewAuthor: "", previewTruncated: !!size };
+}
+function workspaceConversations(store, running, sanitize = (text2) => text2) {
   const agents = new Map(store.agents().map((agent) => [agent.id, agent]));
   return store.sessions().filter((session) => session.kind !== "consult" && (session.kind === "group" || agents.has(session.agentId))).map((session) => {
     const file = store.file("chats", session.id, "messages.jsonl");
@@ -89991,7 +90083,7 @@ function workspaceConversations(store, running) {
     const waiting = actions2.filter((action) => ["pending", "uncertain"].includes(action.status)).length;
     const working = running.includes(session.id);
     const failed = !working && latest?.speakers.some((speaker) => speaker.status === "failed");
-    return { id: session.id, target: { type: session.kind === "group" ? "group" : "agent", id: session.kind === "group" ? session.id : session.agentId }, title: session.kind === "group" ? session.title : agents.get(session.agentId)?.name || session.title, updatedAt: session.updatedAt, revision: revision2, hasMessages: bytes > 0, status: waiting ? "waiting" : working ? "running" : failed ? "failed" : "idle", waiting };
+    return { ...conversationPreview(store, session.id, sanitize), id: session.id, target: { type: session.kind === "group" ? "group" : "agent", id: session.kind === "group" ? session.id : session.agentId }, title: session.kind === "group" ? session.title : agents.get(session.agentId)?.name || session.title, updatedAt: session.updatedAt, revision: revision2, hasMessages: bytes > 0, status: waiting ? "waiting" : working ? "running" : failed ? "failed" : "idle", waiting };
   });
 }
 var hitKey = (hit) => [hit.at, hit.sessionId, hit.messageId].join("|");
@@ -90001,7 +90093,7 @@ async function searchWorkspace(store, params, signal, sanitize = (content) => co
   const scope = params.get("session") || "";
   const rawLimit = params.get("limit") || "30", limit3 = Number(rawLimit);
   if (!Number.isSafeInteger(limit3) || limit3 < 1 || limit3 > 100) throw new HttpError(400, "\u5206\u9875\u6570\u91CF\u5E94\u4E3A 1\u2013100");
-  const signature2 = crypto5.createHash("sha256").update(JSON.stringify([query, scope])).digest("hex");
+  const signature2 = crypto6.createHash("sha256").update(JSON.stringify([query, scope])).digest("hex");
   let before = "";
   if (params.has("cursor")) {
     try {
@@ -90055,10 +90147,10 @@ async function searchWorkspace(store, params, signal, sanitize = (content) => co
 
 // queue.ts
 import fs14 from "node:fs";
-import crypto11 from "node:crypto";
+import crypto12 from "node:crypto";
 
 // runtime.ts
-import crypto10 from "node:crypto";
+import crypto11 from "node:crypto";
 
 // node_modules/typebox/build/system/memory/memory.mjs
 var memory_exports = {};
@@ -100934,7 +101026,7 @@ init_google_generative_ai();
 // execution.ts
 import fs12 from "node:fs";
 import path9 from "node:path";
-import crypto8 from "node:crypto";
+import crypto9 from "node:crypto";
 import { spawn as spawn3 } from "node:child_process";
 import { pathToFileURL } from "node:url";
 
@@ -102368,11 +102460,14 @@ async function executeExternal(store, key, agentId, turnId, eventId, name, args,
     return fs12.readdirSync(workspacePath(store, key, string(args.path)), { withFileTypes: true }).slice(0, 200).map((item) => ({ name: item.name, directory: item.isDirectory(), link: item.isSymbolicLink() }));
   }
   if (name === "list_mcp_servers") return integrations(store).map(({ id: id2, command, url }) => ({ id: id2, transport: url ? "http" : "stdio", command, url: url ? new URL(url).origin : void 0 }));
-  if (!["create_agent", "delete_agent", "delete_group", "self_rollback", "self_evolve", "write_file", "shell", "run_cli", "mcp"].includes(name)) throw new HttpError(400, "\u672A\u77E5\u7684\u64CD\u4F5C\uFF0C\u672A\u6267\u884C");
+  if (!["create_group", "update_group", "configure_city", "create_agent", "delete_agent", "delete_group", "self_rollback", "self_evolve", "write_file", "shell", "run_cli", "mcp"].includes(name)) throw new HttpError(400, "\u672A\u77E5\u7684\u64CD\u4F5C\uFF0C\u672A\u6267\u884C");
   if (name === "create_agent") {
     if (!string(args.name).trim() || string(args.name).length > 80 || !string(args.rules).trim() || string(args.rules).length > 8e4) throw new HttpError(400, "\u8BF7\u63D0\u4F9B\u6709\u6548\u7684\u540D\u79F0\u548C\u8EAB\u4EFD\u89C4\u5219");
-    if (args.joinGroup === true && store.session(key).kind === "group" && store.groupMembers(key).length >= 12) throw new HttpError(400, "\u672C\u7FA4\u6210\u5458\u5DF2\u6EE1");
+    if (args.joinGroup === true && store.session(key).kind === "group" && store.session(key).componentKind !== "city" && store.groupMembers(key).length >= 12) throw new HttpError(400, "\u672C\u7FA4\u6210\u5458\u5DF2\u6EE1");
   }
+  const editedGroup = name === "update_group" ? store.requireActiveSession(string(args.groupId)) : void 0;
+  if (editedGroup && (editedGroup.kind !== "group" || editedGroup.componentKind === "city")) throw new HttpError(400, "\u8BF7\u901A\u8FC7 configure_city \u7BA1\u7406 City");
+  if (["create_group", "update_group"].includes(name) && (!Array.isArray(args.memberIds) || args.memberIds.some((value) => typeof value !== "string"))) throw new HttpError(400, "\u9700\u8981\u6210\u5458 ID \u6570\u7EC4");
   const deletion = name === "delete_agent" ? store.agent(string(args.agentId)) : void 0;
   if (deletion && (deletion.id === "main" || deletion.id === agentId)) throw new HttpError(403, "\u4E0D\u80FD\u5220\u9664\u4E3B\u52A9\u624B\u6216\u53D1\u8D77\u64CD\u4F5C\u7684\u81EA\u5DF1");
   if (deletion && (!string(args.reason).trim() || string(args.reason).length > 2e3)) throw new HttpError(400, "\u8BF7\u586B\u5199\u79FB\u9664\u539F\u56E0");
@@ -102382,12 +102477,14 @@ async function executeExternal(store, key, agentId, turnId, eventId, name, args,
   if (deletedGroup && (!string(args.reason).trim() || string(args.reason).length > 2e3)) throw new HttpError(400, "\u8BF7\u8BF4\u660E\u5220\u9664\u539F\u56E0");
   const server = name === "mcp" ? integrations(store).find((item) => item.id === string(args.serverId)) : void 0;
   if (name === "mcp" && !server) throw new HttpError(400, "MCP \u670D\u52A1\u4E0D\u5B58\u5728\uFF0C\u8BF7\u5728\u8BBE\u7F6E\u4E2D\u6DFB\u52A0");
-  const serverVersion = server ? crypto8.createHash("sha256").update(JSON.stringify(canonical(server))).digest("hex") : void 0;
+  const serverVersion = server ? crypto9.createHash("sha256").update(JSON.stringify(canonical(server))).digest("hex") : void 0;
   const identity = [turnId, eventId, agentId, name, canonical(args)];
   if (serverVersion) identity.push(serverVersion);
-  const signature2 = crypto8.createHash("sha256").update(JSON.stringify(identity)).digest("hex").slice(0, 32);
+  const signature2 = crypto9.createHash("sha256").update(JSON.stringify(identity)).digest("hex").slice(0, 32);
   let all = actions(store, key), action = all.find((item) => item.id === signature2);
   if (action?.status === "complete" || action?.status === "failed") return { historicalExecution: true, status: action.status, result: action.result, notice: "\u8FD9\u662F\u5DF2\u6267\u884C\u56DE\u6267\uFF0C\u4E0D\u4F1A\u81EA\u52A8\u91CD\u590D\u526F\u4F5C\u7528" };
+  if (editedGroup && args.expected !== editedGroup.updatedAt) throw new HttpError(409, "\u7FA4\u8BBE\u7F6E\u5DF2\u66F4\u65B0\uFF0C\u8BF7\u91CD\u65B0\u8BFB\u53D6");
+  if (name === "configure_city" && args.expected !== cityConfig(store).revision) throw new HttpError(409, "City \u914D\u7F6E\u5DF2\u66F4\u65B0\uFF0C\u8BF7\u91CD\u65B0\u8BFB\u53D6");
   const sessionRevision = store.requireActiveSession(key).lifecycleRevision;
   if (action && action.sessionRevision !== sessionRevision) throw new HttpError(409, "\u7FA4\u804A\u5DF2\u5220\u9664\u6216\u6062\u590D\uFF0C\u65E7\u64CD\u4F5C\u5BA1\u6279\u5931\u6548\uFF0C\u8BF7\u91CD\u65B0\u63D0\u51FA\u8BF7\u6C42");
   if (!action) {
@@ -102446,7 +102543,7 @@ async function executeExternal(store, key, agentId, turnId, eventId, name, args,
     event({ type: "approval", action });
     let result;
     if (name === "create_agent") {
-      const childId = "child-" + crypto8.createHash("sha256").update(JSON.stringify([key, turnId, agentId, string(args.name).trim(), string(args.rules).trim()])).digest("hex").slice(0, 24);
+      const childId = "child-" + crypto9.createHash("sha256").update(JSON.stringify([key, turnId, agentId, string(args.name).trim(), string(args.rules).trim()])).digest("hex").slice(0, 24);
       if (!store.agents(true).some((child2) => child2.id === childId)) store.saveAgent({ id: childId, name: string(args.name).trim(), createdBy: agentId }, string(args.rules).trim(), "");
       const child = store.requireActiveAgent(childId);
       if (args.joinGroup === true && store.session(key).kind === "group") store.saveGroup(store.session(key).title, [.../* @__PURE__ */ new Set([...store.groupMembers(key), childId])], key);
@@ -102459,6 +102556,15 @@ async function executeExternal(store, key, agentId, turnId, eventId, name, args,
       if (!action.preview?.version) throw new HttpError(409, "\u5220\u9664\u7FA4\u804A\u5BA1\u6279\u7F3A\u5C11\u76EE\u6807\u7248\u672C\uFF0C\u8BF7\u91CD\u65B0\u7533\u8BF7");
       const archived = store.archiveGroup(string(args.groupId), string(args.reason), agentId, action.preview.version);
       result = { groupId: archived.id, title: archived.title, archivedAt: archived.archivedAt, historyPreserved: true, approved: true };
+    } else if (name === "configure_city") result = { ...saveCity(store, args), approved: true };
+    else if (name === "create_group" || name === "update_group") {
+      const kind = args.componentKind;
+      if (kind !== void 0 && !["emergent", "chat", "task"].includes(String(kind))) throw new HttpError(400, "\u672A\u77E5\u7FA4\u7EC4\u7C7B\u578B");
+      const groupId = name === "update_group" ? string(args.groupId) : void 0;
+      if (groupId && (store.isRunning(groupId) || groupId === key)) throw new HttpError(409, "\u8BF7\u5728\u7FA4\u7EC4\u7A7A\u95F2\u65F6\u4ECE\u5176\u4ED6\u5BF9\u8BDD\u4FEE\u6539");
+      const members = [.../* @__PURE__ */ new Set([...name === "create_group" ? [agentId] : [], ...args.memberIds])];
+      const group = store.saveGroup(string(args.name), members, groupId, { componentKind: kind ?? (name === "create_group" ? args.discussionMode === "directed" ? "task" : "emergent" : void 0), purpose: typeof args.purpose === "string" ? args.purpose : void 0, coordinatorId: typeof args.coordinatorId === "string" ? args.coordinatorId : void 0, replyMode: name === "create_group" ? "collective" : void 0, discussionMode: args.discussionMode === "brainstorm" ? "brainstorm" : args.discussionMode === "open" ? "open" : args.discussionMode === "directed" ? "directed" : void 0, memberRoles: args.memberRoles === void 0 ? void 0 : object(args.memberRoles), runtimeLimits: args.runtimeLimits === void 0 ? void 0 : runtimeLimits(args.runtimeLimits) }, name === "create_group" ? "group-" + signature2 : void 0, groupId ? string(args.expected) : void 0);
+      result = { ...group, groupId: group.id, approved: true };
     } else if (name === "self_rollback") result = rollbackEvolution(store, string(args.runId));
     else if (name === "self_evolve") {
       result = await evolve(store, args, signal, async (cwd, checkSignal) => {
@@ -102524,7 +102630,7 @@ async function executeExternal(store, key, agentId, turnId, eventId, name, args,
       }
     } else if (name === "mcp") {
       const current = integrations(store).find((item) => item.id === string(args.serverId));
-      if (!server || !current || crypto8.createHash("sha256").update(JSON.stringify(canonical(current))).digest("hex") !== serverVersion) throw new HttpError(409, "MCP \u914D\u7F6E\u5728\u5BA1\u6279\u671F\u95F4\u5DF2\u53D8\u5316\uFF0C\u672A\u6267\u884C\uFF0C\u8BF7\u6309\u65B0\u914D\u7F6E\u91CD\u65B0\u7533\u8BF7");
+      if (!server || !current || crypto9.createHash("sha256").update(JSON.stringify(canonical(current))).digest("hex") !== serverVersion) throw new HttpError(409, "MCP \u914D\u7F6E\u5728\u5BA1\u6279\u671F\u95F4\u5DF2\u53D8\u5316\uFF0C\u672A\u6267\u884C\uFF0C\u8BF7\u6309\u65B0\u914D\u7F6E\u91CD\u65B0\u7533\u8BF7");
       const transport = server.url ? new StreamableHttpTransport({ url: server.url, headers: server.token ? { Authorization: "Bearer " + server.token } : {} }) : new StdioTransport({ command: server.command, args: server.args || [] });
       const client = new McpClient({ name: "taoagent", version: "3.0.0", roots: [{ uri: pathToFileURL(workspace(store, key)).href, name: "workspace" }] });
       const abort = () => {
@@ -102671,8 +102777,8 @@ var agentTools = [createAgent, {
   parameters: { type: "object", properties: { agentId: { type: "string" }, question: { type: "string" } }, required: ["agentId", "question"] }
 }, {
   name: "create_group",
-  description: "\u521B\u5EFA\u5305\u542B\u81EA\u5DF1\u53CA\u5176\u4ED6 Agent \u7684\u7FA4\u804A\u3002\u5148\u901A\u8FC7 list_agents \u67E5\u627E\u6210\u5458 ID\uFF1B\u521B\u5EFA\u7ED3\u679C\u4F1A\u663E\u793A\u7ED9\u7528\u6237\uFF0C\u4E0D\u81EA\u52A8\u5411\u65B0\u7FA4\u8F6C\u53D1\u79C1\u804A\u3002",
-  parameters: { type: "object", properties: { name: { type: "string", description: "\u53EF\u7559\u7A7A\uFF0C\u81EA\u52A8\u53D6\u663E\u793A\u540D\u79F0" }, purpose: { type: "string", description: "\u53EF\u7559\u7A7A\uFF0C\u65E0\u9700\u9884\u8BBE\u4E3B\u9898\u6216\u4EFB\u52A1" }, discussionMode: { type: "string", enum: ["open", "brainstorm", "directed"], description: "open\u81EA\u7531\u8BA8\u8BBA\uFF0Cbrainstorm\u65E0\u4E3B\u9898\u5934\u8111\u98CE\u66B4\uFF0Cdirected\u5B9A\u5411\u534F\u4F5C" }, memberIds: { type: "array", items: { type: "string" } } }, required: ["memberIds"] }
+  description: "\u7533\u8BF7\u521B\u5EFA\u5305\u542B\u81EA\u5DF1\u53CA\u5176\u4ED6 Agent \u7684\u7FA4\u804A\uFF0C\u5FC5\u987B\u7B49\u5F85\u7528\u6237\u9010\u9879\u6279\u51C6\u3002\u5148\u901A\u8FC7 list_agents \u67E5\u627E\u6210\u5458 ID\uFF1B\u521B\u5EFA\u7ED3\u679C\u4F1A\u663E\u793A\u7ED9\u7528\u6237\uFF0C\u4E0D\u81EA\u52A8\u5411\u65B0\u7FA4\u8F6C\u53D1\u79C1\u804A\u3002",
+  parameters: { type: "object", properties: { name: { type: "string", description: "\u53EF\u7559\u7A7A\uFF0C\u81EA\u52A8\u53D6\u663E\u793A\u540D\u79F0" }, componentKind: { type: "string", enum: ["emergent", "chat", "task"], description: "\u6D8C\u73B0\u7FA4\u804A\u3001\u7EAF\u804A\u5929\u6216\u4EFB\u52A1\u7EC4" }, purpose: { type: "string", description: "\u53EF\u7559\u7A7A\uFF0C\u65E0\u9700\u9884\u8BBE\u4E3B\u9898\u6216\u4EFB\u52A1" }, discussionMode: { type: "string", enum: ["open", "brainstorm", "directed"], description: "open\u81EA\u7531\u8BA8\u8BBA\uFF0Cbrainstorm\u65E0\u4E3B\u9898\u5934\u8111\u98CE\u66B4\uFF0Cdirected\u5B9A\u5411\u534F\u4F5C" }, memberIds: { type: "array", items: { type: "string" } } }, required: ["memberIds"] }
 }, {
   name: "remember",
   description: "\u8FFD\u52A0\u4E00\u6761\u786E\u5B9A\u4E8B\u5B9E\u3002\u7FA4\u804A\u9ED8\u8BA4\u5199\u672C\u7FA4\u5171\u4EAB\u8BB0\u5FC6\uFF0C\u79C1\u804A\u9ED8\u8BA4\u5199\u81EA\u5DF1\u7684\u957F\u671F\u8BB0\u5FC6\u3002scope=member \u5199\u81EA\u5DF1\u5728\u672C\u7FA4\u7684\u5DE5\u4F5C\u7B14\u8BB0\uFF0Cscope=agent \u4EC5\u7528\u4E8E\u660E\u786E\u7684\u957F\u671F\u4E2A\u4EBA\u504F\u597D\u3002\u4FDD\u7559\u5907\u4EFD\u4E0E\u6765\u6E90\uFF0C\u4E0D\u8986\u76D6\u65E7\u4E8B\u5B9E\u3002",
@@ -102696,7 +102802,7 @@ async function* streamModel(model, messages, signal, _tools, request) {
 
 // work.ts
 import fs13 from "node:fs";
-import crypto9 from "node:crypto";
+import crypto10 from "node:crypto";
 
 // reasoning.ts
 function reasoningRecords(store, key) {
@@ -102944,11 +103050,11 @@ function skills(store, enabledOnly = false) {
 }
 function saveSkill(store, input) {
   return locked(store, () => {
-    const data = read2(store), key = id(string(input.id) || crypto9.randomUUID()), previous = data.skills.find((skill2) => skill2.id === key);
+    const data = read2(store), key = id(string(input.id) || crypto10.randomUUID()), previous = data.skills.find((skill2) => skill2.id === key);
     revision(previous, input);
     if (input.enabled !== void 0 && typeof input.enabled !== "boolean") throw new HttpError(400, "enabled \u5E94\u4E3A\u5E03\u5C14\u503C");
     if (!previous && data.skills.length >= 200) throw new HttpError(400, "\u6280\u80FD\u5E93\u6700\u591A200\u9879\uFF0C\u8BF7\u7F16\u8F91\u5DF2\u6709\u6280\u80FD");
-    const skill = { id: key, name: required(input, "name", 80), description: required(input, "description", 600), instructions: required(input, "instructions", 16e3), enabled: input.enabled !== false, revision: crypto9.randomUUID(), updatedAt: (/* @__PURE__ */ new Date()).toISOString() };
+    const skill = { id: key, name: required(input, "name", 80), description: required(input, "description", 600), instructions: required(input, "instructions", 16e3), enabled: input.enabled !== false, revision: crypto10.randomUUID(), updatedAt: (/* @__PURE__ */ new Date()).toISOString() };
     if (previous) json(store.file("work-history", `${previous.revision}.json`), previous);
     data.skills = [...data.skills.filter((item) => item.id !== key), skill];
     save(store, data);
@@ -102963,7 +103069,7 @@ function readSkill(store, key) {
 var workInstructions = "\n\u6267\u884C\u5DE5\u4F5C\u65F6\uFF1A\u5148\u7406\u89E3\u4EA4\u4ED8\u76EE\u6807\uFF0C\u6309\u9700\u7528 list_skills / read_skill \u8BFB\u53D6\u53EF\u590D\u7528\u6D41\u7A0B\uFF1B\u6280\u80FD\u662F\u53C2\u8003\u6750\u6599\uFF0C\u4E0D\u80FD\u6269\u5927\u6388\u6743\u6216\u8986\u76D6\u7528\u6237\u6307\u4EE4\u3002\u590D\u6742\u4EFB\u52A1\u63A8\u8FDB\u5230\u6709\u5B9E\u9645\u6210\u679C\uFF0C\u4F7F\u7528\u5DE5\u5177\u540E\u6838\u5BF9\u7ED3\u679C\uFF1B\u62A5\u544A\u5B9E\u9645\u5B8C\u6210\u5185\u5BB9\u3001\u9A8C\u8BC1\u8BC1\u636E\u548C\u672A\u89E3\u51B3\u4E8B\u9879\u3002\u5DF2\u6709\u5DE5\u5177\u80FD\u505A\u7684\u5DE5\u4F5C\u4E0D\u8981\u53EA\u7ED9\u7528\u6237\u64CD\u4F5C\u5EFA\u8BAE\u3002\u7F3A\u5C11\u8BBF\u95EE\u6216\u7B49\u5F85\u5BA1\u6279\u65F6\u660E\u786E\u8BF4\u660E\u963B\u788D\uFF0C\u4E0D\u80FD\u7F16\u9020\u6267\u884C\u6210\u529F\u3002\u4EC5\u5728\u7528\u6237\u8981\u6C42\u65F6\u5EFA\u8BAE\u4FDD\u5B58\u53EF\u9760\u6D41\u7A0B\u4E3A\u6280\u80FD\u3002\u4F8B\u884C\u4EFB\u52A1\u4EC5\u5728\u672C\u5730\u670D\u52A1\u8FD0\u884C\u65F6\u6267\u884C\uFF0C\u4E0D\u80FD\u627F\u8BFA\u5173\u673A\u540E\u7EE7\u7EED\u3002";
 function saveRoutine(store, input) {
   return locked(store, () => {
-    const data = read2(store), key = id(string(input.id) || crypto9.randomUUID()), previous = data.routines.find((item) => item.id === key);
+    const data = read2(store), key = id(string(input.id) || crypto10.randomUUID()), previous = data.routines.find((item) => item.id === key);
     revision(previous, input);
     if (typeof input.enabled !== "boolean") throw new HttpError(400, "\u8BF7\u660E\u786E\u9009\u62E9\u662F\u5426\u542F\u7528\u5B9A\u65F6\u6267\u884C");
     const sessionId = id(required(input, "sessionId", 100)), session = store.requireActiveSession(sessionId);
@@ -102972,7 +103078,7 @@ function saveRoutine(store, input) {
     if (typeof intervalMinutes !== "number" || !Number.isInteger(intervalMinutes) || intervalMinutes < 5 || intervalMinutes > 43200) throw new HttpError(400, "\u95F4\u9694\u5E94\u4E3A5\u201343200\u6574\u6570\u5206\u949F");
     if (!previous && data.routines.length >= 50) throw new HttpError(400, "\u6700\u591A50\u4E2A\u4F8B\u884C\u4EFB\u52A1");
     const name = required(input, "name", 80), instruction = required(input, "instruction", 12e3);
-    const routine = { id: key, name, sessionId, instruction, intervalMinutes, enabled: input.enabled, nextAt: new Date(Date.now() + intervalMinutes * 6e4).toISOString(), revision: crypto9.randomUUID(), updatedAt: (/* @__PURE__ */ new Date()).toISOString() };
+    const routine = { id: key, name, sessionId, instruction, intervalMinutes, enabled: input.enabled, nextAt: new Date(Date.now() + intervalMinutes * 6e4).toISOString(), revision: crypto10.randomUUID(), updatedAt: (/* @__PURE__ */ new Date()).toISOString() };
     if (previous) json(store.file("work-history", `${previous.revision}.json`), previous);
     data.routines = [...data.routines.filter((item) => item.id !== key), routine];
     save(store, data);
@@ -102986,7 +103092,7 @@ function pauseGroupRoutines(store, sessionId) {
     for (const routine of data.routines.filter((item) => item.sessionId === sessionId && item.enabled)) {
       routine.enabled = false;
       routine.pauseReason = "\u76EE\u6807\u7FA4\u804A\u5DF2\u5220\u9664\uFF0C\u6062\u590D\u7FA4\u804A\u540E\u9700\u624B\u52A8\u91CD\u65B0\u542F\u7528";
-      routine.revision = crypto9.randomUUID();
+      routine.revision = crypto10.randomUUID();
       routine.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
     }
     save(store, data);
@@ -103022,7 +103128,7 @@ function createRoutineScheduler(store, active, canRun = () => true) {
         for (const routine3 of data.routines.filter((item) => item.enabled && store.session(item.sessionId).archivedAt)) {
           routine3.enabled = false;
           routine3.pauseReason = "\u76EE\u6807\u7FA4\u804A\u5DF2\u5220\u9664\uFF0C\u6062\u590D\u540E\u9700\u624B\u52A8\u542F\u7528";
-          routine3.revision = crypto9.randomUUID();
+          routine3.revision = crypto10.randomUUID();
           changed = true;
         }
         for (const run3 of data.runs.filter((run4) => run4.status === "running")) {
@@ -103040,7 +103146,7 @@ function createRoutineScheduler(store, active, canRun = () => true) {
             const routine3 = data.routines.find((item) => item.id === run3.routineId);
             if (routine3) {
               routine3.enabled = false;
-              routine3.revision = crypto9.randomUUID();
+              routine3.revision = crypto10.randomUUID();
             }
           }
         }
@@ -103050,7 +103156,7 @@ function createRoutineScheduler(store, active, canRun = () => true) {
           return void 0;
         }
         routine2.nextAt = new Date(now + routine2.intervalMinutes * 6e4).toISOString();
-        const run2 = { id: crypto9.randomUUID(), routineId: routine2.id, sessionId: routine2.sessionId, at: new Date(now).toISOString(), status: "running", pid: process.pid };
+        const run2 = { id: crypto10.randomUUID(), routineId: routine2.id, sessionId: routine2.sessionId, at: new Date(now).toISOString(), status: "running", pid: process.pid };
         data.runs.push(run2);
         save(store, data);
         liveRoutineRuns.add(run2.id);
@@ -103087,7 +103193,7 @@ ${routine.instruction}`, "", signal, () => {
               const latest = data.routines.find((item) => item.id === routine.id);
               if (latest) {
                 latest.enabled = false;
-                latest.revision = crypto9.randomUUID();
+                latest.revision = crypto10.randomUUID();
               }
             }
             save(store, data);
@@ -103123,7 +103229,7 @@ ${routine.instruction}`, "", signal, () => {
 // audience.ts
 function openDiscussion(store, key) {
   const session = store.session(key);
-  return !session.archivedAt && session.kind === "group" && (session.discussionMode ?? "open") !== "directed";
+  return !session.archivedAt && session.componentKind !== "chat" && session.componentKind !== "task" && session.kind === "group" && (session.discussionMode ?? "open") !== "directed";
 }
 function discussionGuidance(store, key) {
   const session = store.session(key);
@@ -103206,7 +103312,7 @@ function canonical2(value) {
   return Array.isArray(value) ? value.map(canonical2) : value && typeof value === "object" ? Object.fromEntries(Object.entries(value).sort(([a], [b]) => a.localeCompare(b)).map(([key, item]) => [key, canonical2(item)])) : value;
 }
 function signature(value) {
-  return crypto10.createHash("sha256").update(JSON.stringify(canonical2(value))).digest("hex").slice(0, 24);
+  return crypto11.createHash("sha256").update(JSON.stringify(canonical2(value))).digest("hex").slice(0, 24);
 }
 var schema = (name, description, properties, required2 = []) => ({ name, description, parameters: { type: "object", properties, required: required2, additionalProperties: false } });
 var text = { type: "string" };
@@ -103214,6 +103320,9 @@ var strings = { type: "array", items: text };
 var communicationFields = { intent: { type: "string", enum: intents }, topic: { type: "string", description: "\u6CBF\u7528\u5F53\u524D\u8BAE\u9898\uFF0C\u6216\u4E3A\u4E0D\u540C\u95EE\u9898\u586B\u5199\u7B80\u77ED\u65B0\u8BAE\u9898" }, replyTo: { type: "string", description: "\u56DE\u590D\u6536\u5230\u7684\u4E8B\u4EF6ID\uFF0C\u987B\u53D1\u56DE\u539F\u53D1\u9001\u8005" }, evidenceIds: { type: "array", items: text, maxItems: 8, description: "\u672C\u7FA4\u5DF2\u5B8C\u6210\u516C\u5F00\u6D88\u606F\u7684ID\uFF0C\u5F15\u7528\u4E0D\u7B49\u4E8E\u5916\u90E8\u4E8B\u5B9E\u5DF2\u9A8C\u8BC1" }, reasoningIds: { type: "array", items: text, maxItems: 8, description: "\u672C\u5BF9\u8BDD\u516C\u5F00\u8BBA\u8BC1ID\uFF0C\u4F7F\u6536\u4EF6\u4EBA\u53EF\u8FFD\u8E2A\u524D\u63D0\u3001\u8D28\u7591\u548C\u4FEE\u6B63" }, reason: { type: "string", description: "\u8054\u7CFB\u6B64\u6210\u5458\u8981\u89E3\u51B3\u7684\u5177\u4F53\u95EE\u9898\u6216\u4F9D\u8D56\uFF0C\u6700\u591A800\u5B57\u7B26" } };
 var tools = [
   ...agentTools.filter((tool) => tool.name !== "consult_agent"),
+  schema("inspect_components", "\u67E5\u770B\u6240\u6709\u7FA4\u7EC4\u7684\u914D\u7F6E\u548C City \u914D\u7F6E\uFF0C\u4E0D\u8BFB\u53D6\u5176\u4ED6\u79C1\u804A\u6216\u6D88\u606F\u3002\u4FEE\u6539\u4F7F\u7528 update_group / configure_city \u7533\u8BF7\u7528\u6237\u6279\u51C6\u3002", {}),
+  schema("update_group", "\u7533\u8BF7\u4FEE\u6539\u5DF2\u6709\u7FA4\u7EC4\u7684\u540D\u79F0\u3001\u76EE\u6807\u3001\u7C7B\u578B\u548C\u6210\u5458\uFF1B\u7B49\u5F85\u7528\u6237\u6279\u51C6\u3002\u5148 inspect_components \u53D6\u5F97 expected \u7248\u672C\u3002", { groupId: text, expected: text, name: text, purpose: text, componentKind: { type: "string", enum: ["emergent", "chat", "task"] }, memberIds: strings, coordinatorId: text, discussionMode: { type: "string", enum: ["open", "brainstorm", "directed"] }, memberRoles: { type: "object", additionalProperties: { type: "string" } }, runtimeLimits: { type: "object", properties: Object.fromEntries(Object.keys(runtimeLimits()).map((key) => [key, { type: "integer", minimum: 1 }])), additionalProperties: false } }, ["groupId", "expected", "name", "memberIds"]),
+  schema("configure_city", "\u7533\u8BF7\u4FEE\u6539 City \u540D\u79F0\u3001\u4ECB\u7ECD\u548C\u4E3B Bot\uFF1B\u5FC5\u987B\u7528\u6237\u6279\u51C6\u3002\u5730\u56FE\u4E0E\u4EA4\u4E92\u6E90\u7801\u53EF\u5728\u6388\u6743\u8303\u56F4\u5185\u7528 self_evolve \u4FEE\u6539\u3002\u5148 inspect_components \u83B7\u53D6 expected \u7248\u672C\u3002", { expected: text, name: text, description: text, leadAgentId: text }, ["expected", "name", "description", "leadAgentId"]),
   schema("read_life", "\u8BFB\u53D6\u81EA\u5DF1\u5728\u672C\u7FA4\u7684\u7ECF\u5386\u3001\u5173\u6CE8\u548C\u4E3B\u89C2\u8BA4\u8BC6\uFF0C\u53EF\u7528nextBefore\u7FFB\u9875\u3002\u4E0D\u8BFB\u53D6\u4ED6\u4EBA\u672A\u5206\u4EAB\u7B14\u8BB0\u3001\u79C1\u804A\u6216\u9690\u85CF\u601D\u8003\u3002", { before: text }),
   schema("record_experience", "\u4FDD\u5B58\u81EA\u5DF1\u5728\u672C\u7FA4\u7684\u89C2\u5BDF\u3001\u4E3B\u89C2\u8BA4\u8BC6\u6216\u610F\u56FE\uFF1B\u4E0D\u662F\u516C\u5171\u4E8B\u5B9E\u3002\u7528supersedes\u4FEE\u6B63\u81EA\u5DF1\u7684\u65E7\u89E3\u91CA\uFF0C\u4FDD\u7559\u539F\u6587\u3002sourceIds\u53EA\u80FD\u5F15\u7528\u672C\u7FA4\u516C\u5F00\u6D88\u606F\u3002", { text, kind: { type: "string", enum: ["observation", "reflection", "intention"] }, sourceIds: strings, supersedes: text, importance: { type: "number", minimum: 0, maximum: 9 }, interests: text, attention: text, stance: text }, ["text"]),
   schema("read_agendas", "\u67E5\u770B\u672C\u7FA4\u6210\u5458\u516C\u5F00\u7684\u6301\u7EED\u8BAE\u9898\u3001\u5F85\u89E3\u51B3\u95EE\u9898\u548C\u7B49\u5F85\u6761\u4EF6\u3002", { before: text }),
@@ -103263,7 +103372,7 @@ async function runConversation(store, key, content, modelOverride, signal, event
   const authorization = improvementSession(store, key);
   const emit = event;
   event = (value) => emit({ ...value, conversationId: key });
-  const session = store.requireActiveSession(key), collective = !!store.collectiveGroup(key);
+  const session = store.requireActiveSession(key), plainChat = session.componentKind === "chat", collective = !!store.collectiveGroup(key);
   const currentMembers = () => {
     const latest = store.session(key);
     return latest.archivedAt || latest.lifecycleRevision !== session.lifecycleRevision ? [] : store.groupMembers(key);
@@ -103281,6 +103390,7 @@ async function runConversation(store, key, content, modelOverride, signal, event
     if (/(?:^|\s)@/.test(body)) throw new HttpError(400, "\u6CA1\u6709\u627E\u5230\u88AB\u63D0\u53CA\u7684\u7FA4\u6210\u5458");
     if (selected !== void 0) return [...new Set(selected)];
     if (!members.length) throw new HttpError(409, "\u672C\u5BF9\u8BDD\u6CA1\u6709\u6D3B\u52A8\u6210\u5458\uFF0C\u8BF7\u5148\u6062\u590D\u6216\u6DFB\u52A0 Bot");
+    if (plainChat) return members;
     if (session.discussionMode === "brainstorm") {
       const lead = members.includes(session.coordinatorId || "") ? session.coordinatorId : members[0], recent = store.turns(key).slice(-5);
       const count = (member2) => recent.reduce((sum, turn2) => sum + turn2.speakers.filter((item) => item.agentId === member2 && item.status === "complete").length, 0);
@@ -103519,7 +103629,7 @@ ${message.content}`).join("\n\n") : "";
       const reasoningRules = "\n\u590D\u6742\u4EFB\u52A1\u5148\u660E\u786E\u95EE\u9898\u3001\u8BC1\u636E\u3001\u4F9D\u8D56\u548C\u4E0D\u786E\u5B9A\u4E8B\u9879\uFF0C\u5FC5\u8981\u65F6\u7528record_reasoning\u4FDD\u5B58\u53EF\u516C\u5F00\u7684\u7B80\u77ED\u8BBA\u8BC1\uFF1B\u4E0D\u7528\u8F93\u51FA\u9010\u5B57\u5185\u90E8\u601D\u8003\u3002\u53D1\u73B0\u65B0\u8BC1\u636E\u65F6\u5148read_reasoning\u68C0\u67E5\u65E7\u524D\u63D0\uFF0C\u4FEE\u6B63\u81EA\u5DF1\u7684\u7ED3\u8BBA\u6216\u8D28\u7591\u4ED6\u4EBA\u7684\u5177\u4F53\u8BB0\u5F55\uFF0C\u5E76\u7528reasoningIds\u628A\u76F8\u5173\u8BB0\u5F55\u4EA4\u7ED9\u9700\u8981\u5B83\u7684\u6210\u5458\u3002\u53EA\u5728\u786E\u6709\u534F\u4F5C\u9700\u8981\u65F6\u7528recommend_agents\u67E5\u627E\u76F8\u5173\u804C\u8D23\u3001\u518D\u51B3\u5B9A\u662F\u5426\u8054\u7CFB\uFF1Breason\u8BF4\u660E\u8054\u7CFB\u539F\u56E0\uFF0C\u4E0D\u4EE5\u6210\u5458\u9644\u548C\u4F5C\u4E3A\u9A8C\u8BC1\u3002\u7528\u6237\u6700\u65B0\u63D2\u8BDD\u4F18\u5148\u4E8E\u6240\u6709\u65E7\u4E8B\u4EF6\uFF0C\u5904\u7406\u65E7\u4EFB\u52A1\u4E5F\u5E94\u9075\u5B88\u6700\u65B0\u7EA6\u675F\u3002";
       const collaborationRules = "\n\u534F\u4F5C\u4E0D\u662F\u5404\u5199\u4E00\u4EFD\u7B54\u6848\u3002\u56F4\u7ED5\u5177\u4F53\u4E3B\u5F20\u3001\u8BC1\u636E\u548C\u7EA6\u675F\u4EA4\u6D41\uFF1A\u63D0\u95EE\u8BF4\u660E\u7F3A\u5C11\u4EC0\u4E48\uFF0C\u8D28\u7591\u6307\u5411\u54EA\u6761\u524D\u63D0\uFF0C\u56DE\u7B54\u8BF4\u660E\u54EA\u4E9B\u5F97\u5230\u89E3\u51B3\u3001\u54EA\u4E9B\u4ECD\u4E0D\u786E\u5B9A\u3002\u522B\u4EBA\u5DE5\u4F5C\u671F\u95F4\u4F60\u53EF\u4EE5\u63A8\u8FDB\u72EC\u7ACB\u90E8\u5206\uFF1Bsend_message\u4EC5\u4EE3\u8868\u6392\u961F\u3002\u5DE5\u5177\u6267\u884C\u6216\u5E76\u884C\u8BA8\u8BBA\u540E\uFF0C\u53EF\u7528read_updates\u6838\u5BF9\u5DF2\u5B8C\u6210\u7684\u65B0\u6D88\u606F\uFF0C\u8282\u9009\u7528read_message\u770B\u5B8C\u6574\u5185\u5BB9\uFF0C\u518D\u51B3\u5B9A\u662F\u5426\u4FEE\u6B63\u3002\u590D\u6742\u6D3E\u5DE5\u8BF7\u5199acceptanceCriteria\uFF1B\u6709\u6807\u51C6\u7684\u4EFB\u52A1\u9ED8\u8BA4\u72EC\u7ACB\u9A8C\u6536\uFF0Ccomplete_task\u53EA\u662F\u63D0\u4EA4\uFF0Creview_task\u901A\u8FC7\u540E\u624D\u91CA\u653E\u4F9D\u8D56\u3002\u53EA\u6709\u6536\u5230\u771F\u5B9E\u7ED3\u679C\u518D\u9A8C\u6536\uFF0C\u4E0D\u81EA\u884C\u66FF\u522B\u4EBA\u5B8C\u6210\u4EFB\u52A1\u3002read_collaboration\u67E5\u770B\u5361\u5728\u54EA\u91CC\u3002\u4E0D\u540C\u6210\u5458\u7684\u89C2\u70B9\u53D1\u751F\u65B0\u7EC4\u5408\u65F6\uFF0C\u53EFrecord_reasoning(kind=synthesis)\uFF0CdependsOn\u5F15\u7528\u81F3\u5C11\u4E24\u4F4D\u6210\u5458\u7684\u524D\u63D0\uFF0Cnovelty\u8BF4\u660E\u8D85\u51FA\u539F\u5EFA\u8BAE\u7684\u53D8\u5316\uFF0Cvalidation\u5199\u80FD\u533A\u5206\u6210\u8D25\u7684\u68C0\u67E5\uFF1B\u8FD9\u53EA\u662F\u53EF\u9A8C\u8BC1\u7684\u7EFC\u5408\u5019\u9009\uFF0C\u4E0D\u80FD\u81EA\u79F0\u5DF2\u4EA7\u751F\u6D8C\u73B0\u3002\u65E0\u65B0\u95EE\u9898\u3001\u7ED3\u679C\u6216\u8BC1\u636E\u65F6\u7ED3\u675F\uFF0C\u4FDD\u7559\u5206\u6B67\u548C\u5F85\u529E\u3002\u521B\u5EFA\u4E0E\u79FB\u9664Bot\u5FC5\u987B\u4F7F\u7528\u4E13\u7528\u5DE5\u5177\u5E76\u7B49\u5F85\u7528\u6237\u6279\u51C6\uFF0C\u4E0D\u7528Shell\u7ED5\u8FC7\u5BA1\u6279\u3002";
       const startedMessageIds = new Set(store.messages(key).map((message) => message.id));
-      const context = store.context(key, model, void 0, agent.id, { system: (session.kind === "group" ? instruction : "\u4F60\u6B63\u5728\u4E0E\u7528\u6237\u4E00\u5BF9\u4E00\u4EA4\u6D41\u3002\u6309\u76EE\u6807\u63A8\u8FDB\u5B9E\u9645\u5DE5\u4F5C\uFF1B\u4E0D\u865A\u6784\u7FA4\u804A\u6216\u540C\u4E8B\u610F\u89C1\u3002") + workInstructions + reasoningRules + collaborationRules + discussionGuidance(store, key) + (model.toolsEnabled === false ? "\n\u672C\u6B21\u63A5\u53E3\u6CA1\u6709\u4EFB\u4F55\u53EF\u8C03\u7528\u5DE5\u5177\u3002\u53EA\u8F93\u51FA\u7ED9\u8BFB\u8005\u7684\u81EA\u7136\u8BED\u8A00\uFF1B\u4E0D\u8981\u8F93\u51FAXML\u3001DSML\u3001tool_call\u6216\u4F2A\u9020\u5DE5\u5177\u8BF7\u6C42\u3002\u9700\u8981\u5DE5\u5177\u7684\u4FE1\u606F\u76EE\u524D\u672A\u77E5\uFF0C\u76F4\u63A5\u8BF4\u660E\u9650\u5236\u6216\u63D0\u51FA\u95EE\u9898\u3002" : "") + (turn.improvementId ? "\n\u7528\u6237\u660E\u786E\u6388\u6743\u7684\u81EA\u52A8\u6E90\u7801\u6539\u8FDB\u4F1A\u8BDD\uFF08\u4E0D\u80FD\u6539\u53D8\u9A8C\u6536\u6807\u51C6\u6216\u8303\u56F4\uFF09\uFF1A\u5148\u7528self_read\u53D1\u73B0\u8303\u56F4\u4E0E\u6D4B\u8BD5\uFF0C\u5206\u9875\u8BFB\u5B8C\u6574\u76F8\u5173\u6E90\u7801\u548C\u6D4B\u8BD5\uFF0C\u5B9A\u4F4D\u5177\u4F53\u95EE\u9898\u540E\u5B9E\u73B0\u5E76\u7528self_evolve\u63D0\u4EA4\u3002\u5931\u8D25\u5148self_history\u5B9A\u4F4D\u7248\u672C\uFF0C\u518Dself_inspect\u8BFB\u53D6\u5931\u8D25\u65E5\u5FD7\u4E0E\u5019\u9009\u6E90\u7801\uFF0C\u5728\u5269\u4F59\u9884\u7B97\u5185\u4FEE\u6B63\u5E76\u91CD\u65B0\u9A8C\u8BC1\uFF1B\u4E0D\u5F97\u91CD\u590D\u65E0\u53D8\u5316\u5019\u9009\u3002\u6210\u529F\u540E\u62A5\u544A\u5B9E\u9645\u9A8C\u8BC1\u8BC1\u636E\u548C\u91CD\u542F\u8981\u6C42\uFF0C\u4E0D\u628A\u56DE\u5F52\u901A\u8FC7\u7B49\u540C\u4E8E\u80FD\u529B\u6536\u76CA\u5DF2\u8BC1\u5B9E\u3002\u6388\u6743\u8BE6\u60C5\uFF1A" + JSON.stringify(authorization) : ""), event: (task.fromAgentId ? `\u6765\u81EA ${store.agent(task.fromAgentId).name} (${task.fromAgentId}) \u7684\u534F\u4F5C\u6D88\u606F\uFF1A
+      const context = store.context(key, model, void 0, agent.id, { system: (session.kind === "group" ? instruction : "\u4F60\u6B63\u5728\u4E0E\u7528\u6237\u4E00\u5BF9\u4E00\u4EA4\u6D41\u3002\u6309\u76EE\u6807\u63A8\u8FDB\u5B9E\u9645\u5DE5\u4F5C\uFF1B\u4E0D\u865A\u6784\u7FA4\u804A\u6216\u540C\u4E8B\u610F\u89C1\u3002") + (plainChat ? "\n\u8FD9\u662F\u7EAF\u804A\u5929\uFF1A\u53EA\u8F93\u51FA\u81EA\u7136\u8BED\u8A00\uFF0C\u4E0D\u6267\u884C\u5DE5\u5177\u3001\u6D3E\u5DE5\u6216\u521B\u5EFA\u7EC4\u4EF6\u3002" : workInstructions + reasoningRules + collaborationRules) + discussionGuidance(store, key) + (model.toolsEnabled === false ? "\n\u672C\u6B21\u63A5\u53E3\u6CA1\u6709\u4EFB\u4F55\u53EF\u8C03\u7528\u5DE5\u5177\u3002\u53EA\u8F93\u51FA\u7ED9\u8BFB\u8005\u7684\u81EA\u7136\u8BED\u8A00\uFF1B\u4E0D\u8981\u8F93\u51FAXML\u3001DSML\u3001tool_call\u6216\u4F2A\u9020\u5DE5\u5177\u8BF7\u6C42\u3002\u9700\u8981\u5DE5\u5177\u7684\u4FE1\u606F\u76EE\u524D\u672A\u77E5\uFF0C\u76F4\u63A5\u8BF4\u660E\u9650\u5236\u6216\u63D0\u51FA\u95EE\u9898\u3002" : "") + (turn.improvementId ? "\n\u7528\u6237\u660E\u786E\u6388\u6743\u7684\u81EA\u52A8\u6E90\u7801\u6539\u8FDB\u4F1A\u8BDD\uFF08\u4E0D\u80FD\u6539\u53D8\u9A8C\u6536\u6807\u51C6\u6216\u8303\u56F4\uFF09\uFF1A\u5148\u7528self_read\u53D1\u73B0\u8303\u56F4\u4E0E\u6D4B\u8BD5\uFF0C\u5206\u9875\u8BFB\u5B8C\u6574\u76F8\u5173\u6E90\u7801\u548C\u6D4B\u8BD5\uFF0C\u5B9A\u4F4D\u5177\u4F53\u95EE\u9898\u540E\u5B9E\u73B0\u5E76\u7528self_evolve\u63D0\u4EA4\u3002\u5931\u8D25\u5148self_history\u5B9A\u4F4D\u7248\u672C\uFF0C\u518Dself_inspect\u8BFB\u53D6\u5931\u8D25\u65E5\u5FD7\u4E0E\u5019\u9009\u6E90\u7801\uFF0C\u5728\u5269\u4F59\u9884\u7B97\u5185\u4FEE\u6B63\u5E76\u91CD\u65B0\u9A8C\u8BC1\uFF1B\u4E0D\u5F97\u91CD\u590D\u65E0\u53D8\u5316\u5019\u9009\u3002\u6210\u529F\u540E\u62A5\u544A\u5B9E\u9645\u9A8C\u8BC1\u8BC1\u636E\u548C\u91CD\u542F\u8981\u6C42\uFF0C\u4E0D\u628A\u56DE\u5F52\u901A\u8FC7\u7B49\u540C\u4E8E\u80FD\u529B\u6536\u76CA\u5DF2\u8BC1\u5B9E\u3002\u6388\u6743\u8BE6\u60C5\uFF1A" + JSON.stringify(authorization) : ""), event: (task.fromAgentId ? `\u6765\u81EA ${store.agent(task.fromAgentId).name} (${task.fromAgentId}) \u7684\u534F\u4F5C\u6D88\u606F\uFF1A
 ${task.body}` : `${turn.lifeRunId ? "\u4F60\u4E3B\u52A8\u9009\u62E9\u7684\u516C\u5F00\u884C\u52A8" : "\u5F53\u524D\u7528\u6237\u4E8B\u4EF6"}\uFF1A
 ${task.body || turn.content}`) + metadata + evidenceText + "\n\u5DF2\u5B8C\u6210\u4F9D\u8D56\u7ED3\u679C\uFF1A" + JSON.stringify(tasks(store, key).filter((item) => task.dependsOnTaskIds?.includes(item.id) && taskSatisfied(item))) + "\n\u672C\u5BF9\u8BDD\u516C\u5F00\u8BBA\u8BC1\u8D44\u6599\uFF1A\n" + reasoning });
       const consideredMessageIds = new Set(context.includedMessageIds);
@@ -103534,7 +103644,8 @@ ${task.body || turn.content}`) + metadata + evidenceText + "\n\u5DF2\u5B8C\u6210
       task.error = void 0;
       persist2();
       taskEvent({ type: "speaker", name: agent.name, modelId: model.id });
-      await runPi(model, context.messages, taskSignal, key + ":" + agent.id, model.toolsEnabled === false ? [] : tools, async (name, args) => {
+      await runPi(model, context.messages, taskSignal, key + ":" + agent.id, model.toolsEnabled === false || plainChat ? [] : tools, async (name, args) => {
+        if (plainChat) throw new HttpError(403, "\u7EAF\u804A\u5929\u4E0D\u6267\u884C\u5DE5\u5177\u6216\u6D3E\u5DE5");
         if (signal.aborted) throw new HttpError(499, "\u5DF2\u6682\u505C");
         if (startedVersion !== steeringVersion) throw new HttpError(409, "\u7528\u6237\u5DF2\u63D2\u8BDD\uFF0C\u505C\u6B62\u65E7\u8981\u6C42\u4E0B\u7684\u5DE5\u5177\u8C03\u7528");
         consume("toolCalls", limits.toolCalls);
@@ -103718,12 +103829,13 @@ ${string(args.content)}${criteria ? "\n\u9A8C\u6536\u6807\u51C6\uFF1A" + criteri
         } else if (name === "delete_group") {
           result = await executeExternal(store, key, agent.id, user.id, task.eventId, name, args, taskSignal, taskEvent);
           event({ type: "group_removed", groupId: string(args.groupId) });
+        } else if (name === "inspect_components") {
+          result = { city: cityConfig(store), groups: store.sessions().filter((item) => item.kind === "group" && !item.archivedAt).map((item) => ({ ...item, memberIds: store.groupMembers(item.id) })) };
         } else if (name === "create_group") {
-          if (!Array.isArray(args.memberIds) || args.memberIds.some((value) => typeof value !== "string")) throw new HttpError(400, "\u9700\u8981\u6210\u5458ID\u6570\u7EC4");
-          const groupId = "group-" + receipt;
-          const group = store.sessions().find((item) => item.id === groupId) || store.saveGroup(string(args.name), [.../* @__PURE__ */ new Set([agent.id, ...args.memberIds])], void 0, { replyMode: "collective", discussionMode: string(args.discussionMode, "open"), purpose: string(args.purpose) }, groupId);
-          result = { groupId: group.id, name: group.title };
-          event({ type: "group_created", group });
+          result = await executeExternal(store, key, agent.id, user.id, task.eventId, name, args, taskSignal, taskEvent);
+          event({ type: "components_updated" });
+          const createdId = string(result.groupId) || string(result.result?.groupId);
+          if (createdId) event({ type: "group_created", group: store.session(createdId) });
         } else return await executeExternal(store, key, agent.id, user.id, task.eventId, name, args, taskSignal, taskEvent);
         if (["remember", "review_memory"].includes(name)) {
           const message = store.append(key, "assistant", `${agent.name} \u66F4\u65B0\u8BB0\u5FC6\uFF1A${string(args.note) || string(args.reason)}`, "complete", { kind: "activity", agentId: agent.id, agentName: agent.name });
@@ -103870,11 +103982,11 @@ function lock(store, key, operation) {
   }
 }
 function persist(store, key, queue) {
-  queue.revision = crypto11.randomUUID();
+  queue.revision = crypto12.randomUUID();
   json(store.file("chats", key, fileName), queue);
 }
 function touch(item) {
-  item.revision = crypto11.randomUUID();
+  item.revision = crypto12.randomUUID();
   item.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
 }
 function visibleSession(store, key) {
@@ -103910,7 +104022,7 @@ function enqueueMessage(store, key, input) {
     }
     if (queue.items.filter((item2) => ["queued", "running"].includes(item2.status)).length >= 100) throw new HttpError(400, "\u6BCF\u4E2A\u5BF9\u8BDD\u6700\u591A 100 \u6761\u672A\u5B8C\u6210\u6392\u961F\u6D88\u606F");
     const now = (/* @__PURE__ */ new Date()).toISOString();
-    const item = { id: requestId, content, modelId, memberIds: memberIds2, lifecycleRevision: session.lifecycleRevision, status: "queued", revision: crypto11.randomUUID(), createdAt: now, updatedAt: now };
+    const item = { id: requestId, content, modelId, memberIds: memberIds2, lifecycleRevision: session.lifecycleRevision, status: "queued", revision: crypto12.randomUUID(), createdAt: now, updatedAt: now };
     queue.items.push(item);
     persist(store, key, queue);
     return item;
@@ -104170,7 +104282,7 @@ function seedTeam(store) {
 }
 
 // context.ts
-import crypto12 from "node:crypto";
+import crypto13 from "node:crypto";
 async function summarize(store, key, agentId, signal) {
   const session = store.session(key), model = store.resolveModel(agentId, session.kind === "group" ? session.modelId : "");
   const previous = store.summary(key), state3 = store.summaryState(key), all = store.messages(key), memoryVersion = store.summaryVersion(key);
@@ -104201,16 +104313,16 @@ ${relevantMemory(previous.text, "", Math.min(12e3, Math.floor(model.contextChars
   if (signal.aborted || !text2.trim()) throw new HttpError(502, "\u6574\u7406\u672A\u5B8C\u6210\uFF0C\u539F\u6458\u8981\u4FDD\u6301\u4E0D\u53D8");
   if (memoryVersion !== store.summaryVersion(key)) throw new HttpError(409, "\u6574\u7406\u671F\u95F4\u8BB0\u5FC6\u53D1\u751F\u53D8\u5316\uFF0C\u539F\u6458\u8981\u4FDD\u6301\u4E0D\u53D8\uFF0C\u8BF7\u91CD\u65B0\u6574\u7406");
   const throughMessageId = selected.at(-1).id;
-  const sourceVersion = crypto12.createHash("sha256").update(JSON.stringify(all.slice(0, all.findIndex((message) => message.id === throughMessageId) + 1))).digest("hex");
+  const sourceVersion = crypto13.createHash("sha256").update(JSON.stringify(all.slice(0, all.findIndex((message) => message.id === throughMessageId) + 1))).digest("hex");
   if (sourceVersion !== store.historyVersion(key, throughMessageId)) throw new HttpError(409, "\u6574\u7406\u671F\u95F4\u539F\u59CB\u5386\u53F2\u53D1\u751F\u53D8\u5316\uFF0C\u539F\u6458\u8981\u4FDD\u6301\u4E0D\u53D8\uFF0C\u8BF7\u91CD\u65B0\u6574\u7406");
-  if (previous) json(store.file("chats", key, "summary-history", crypto12.randomUUID() + ".json"), previous);
+  if (previous) json(store.file("chats", key, "summary-history", crypto13.randomUUID() + ".json"), previous);
   const summary = { text: text2, throughMessageId, sourceIds: [...state3.valid ? previous?.sourceIds || [] : [], ...selected.map((message) => message.id)], memoryVersion, sourceVersion, modelId: model.id, at: (/* @__PURE__ */ new Date()).toISOString() };
   json(store.file("chats", key, "summary.json"), summary);
   return summary;
 }
 
 // social.ts
-import crypto13 from "node:crypto";
+import crypto14 from "node:crypto";
 function decision(text2) {
   let parsed;
   try {
@@ -104249,6 +104361,7 @@ function createLifeScheduler(store, active, publish = () => {
       for (const session of groups) {
         const key = session.id;
         if (active.has(key) || store.isRunning(key) || !canRun(key)) continue;
+        if (session.componentKind === "chat") continue;
         const state3 = lifeState(store, key);
         const abandoned = state3.runs.find((run2) => run2.status === "running" && (!alive(run2.pid) || run2.pid === process.pid && !lifeRunOwned(run2.id)));
         if (abandoned) {
@@ -104280,7 +104393,7 @@ function createLifeScheduler(store, active, publish = () => {
             }
             const messages2 = store.messages(key).filter((item2) => !item2.kind && item2.status === "complete"), own = latest.members.find((item2) => item2.agentId === agentId), unread = messages2.filter((item2) => !own?.readIds.includes(item2.id) && (!own?.lastAt || item2.at > own.lastAt)), due = latest.agendas.filter((item2) => item2.ownerId === agentId && item2.status !== "done" && item2.wakeAt && Date.parse(item2.wakeAt) <= now);
             const trigger = due.length ? "\u6301\u7EED\u8BAE\u9898\u5230\u671F\uFF1A" + due.map((item2) => item2.title).join("\u3001") : unread.length ? "\u6709" + unread.length + "\u6761\u5C1A\u672A\u5438\u6536\u7684\u516C\u5F00\u4EA4\u6D41" : "\u72EC\u7ACB\u65E5\u5E38\uFF1A\u56DE\u770B\u81EA\u5DF1\u7684\u5174\u8DA3\u4E0E\u672A\u5B8C\u95EE\u9898\uFF0C\u5141\u8BB8\u5B89\u9759";
-            const item = { id: crypto13.randomUUID(), agentId, at: new Date(now).toISOString(), pid: process.pid, status: "running", trigger, reservedCalls: 0, actualCalls: 0, estimatedTokens: 0, measuredTokens: 0, policyRevision: latest.revision };
+            const item = { id: crypto14.randomUUID(), agentId, at: new Date(now).toISOString(), pid: process.pid, status: "running", trigger, reservedCalls: 0, actualCalls: 0, estimatedTokens: 0, measuredTokens: 0, policyRevision: latest.revision };
             if (!own) latest.members.push({ agentId, interests: "", attention: "", stance: "", readIds: [] });
             latest.runs.push(item);
             latest.cursor++;
@@ -104388,7 +104501,7 @@ function alive(pid) {
 }
 
 // space.ts
-import crypto14 from "node:crypto";
+import crypto15 from "node:crypto";
 function spaceBrief(store, key) {
   const session = store.requireActiveSession(key);
   if (session.kind !== "group") throw new HttpError(400, "\u8BF7\u9009\u62E9\u5171\u540C\u7A7A\u95F4");
@@ -104446,7 +104559,7 @@ function spaceBrief(store, key) {
     graph: { nodes, edges, notice: "\u7528\u6237\u89C2\u5BDF\u89C6\u89D2\u3002\u8FDE\u7EBF\u4EC5\u8868\u793A\u8BB0\u5F55\u5F52\u5C5E\u4E0E\u660E\u786E\u5F15\u7528\uFF0C\u4E0D\u4EE3\u8868\u8BA4\u540C\u3001\u53CB\u8C0A\u6216\u5DF2\u7ECF\u53D1\u751F\u7684\u6D8C\u73B0\u3002\u6700\u8FD1 24 \u6761\u6709\u6548\u7ECF\u5386\u53CA 12 \u4E2A\u6301\u7EED\u8BAE\u9898\uFF1B\u5B8C\u6574\u8BB0\u5F55\u4FDD\u7559\u5728\u8BB0\u5FC6\u4E0E\u5386\u53F2\u4E2D\u3002" },
     counts: { messages: messages.length, agendas: activeAgendas.length, ready: work.filter((item) => item.stage === "ready").length, blocked: work.filter((item) => item.stage === "blocked").length, review: work.filter((item) => item.stage === "review").length, done: work.filter((item) => item.stage === "done").length }
   };
-  return { revision: crypto14.createHash("sha256").update(JSON.stringify(value)).digest("hex"), ...value };
+  return { revision: crypto15.createHash("sha256").update(JSON.stringify(value)).digest("hex"), ...value };
 }
 
 // civilization.ts
@@ -104712,16 +104825,17 @@ function groupDetails(input) {
   const mode = input.replyMode;
   if (mode !== void 0 && mode !== "round" && mode !== "coordinated" && mode !== "collective") throw new HttpError(400, "\u672A\u77E5\u534F\u4F5C\u6A21\u5F0F");
   if (input.discussionMode !== void 0 && !["open", "directed", "brainstorm"].includes(String(input.discussionMode))) throw new HttpError(400, "\u8BF7\u9009\u62E9\u81EA\u7136\u8BA8\u8BBA\u3001\u5934\u8111\u98CE\u66B4\u6216\u5B9A\u5411\u534F\u4F5C");
-  return { ...input.runtimeLimits === void 0 ? {} : { runtimeLimits: runtimeLimits(input.runtimeLimits) }, ...input.purpose === void 0 ? {} : { purpose: string(input.purpose) }, ...roles ? { memberRoles: roles } : {}, ...mode ? { replyMode: mode } : {}, ...input.discussionMode === void 0 ? {} : { discussionMode: input.discussionMode }, ...input.coordinatorId === void 0 ? {} : { coordinatorId: string(input.coordinatorId) } };
+  if (input.componentKind !== void 0 && !["emergent", "chat", "task", "city"].includes(String(input.componentKind))) throw new HttpError(400, "\u672A\u77E5\u7EC4\u4EF6\u7C7B\u578B");
+  return { ...input.componentKind === void 0 ? {} : { componentKind: input.componentKind }, ...input.runtimeLimits === void 0 ? {} : { runtimeLimits: runtimeLimits(input.runtimeLimits) }, ...input.purpose === void 0 ? {} : { purpose: string(input.purpose) }, ...roles ? { memberRoles: roles } : {}, ...mode ? { replyMode: mode } : {}, ...input.discussionMode === void 0 ? {} : { discussionMode: input.discussionMode }, ...input.coordinatorId === void 0 ? {} : { coordinatorId: string(input.coordinatorId) } };
 }
 function createApp(home = path10.join(ROOT, "home"), options = {}) {
   const store = new Store2(home);
   if (options.seed !== false) seedTeam(store);
-  const assets = new Map(["index.html", "client.js", "style.css", "appearance-boot.js", "town.js", "town.css", "product.css", "square.js", "civilization.js", "civilization.css", "city.bundle.js", "favicon.svg"].map((file) => [file, fs15.readFileSync(path10.join(ROOT, "public", file))]));
+  const assets = new Map(["index.html", "client.js", "style.css", "appearance-boot.js", "town.js", "town.css", "product.css", "square.js", "civilization.js", "civilization.css", "city.bundle.js", "components.css", "sidebar.css", "sidebar.js", "workbench.css", "workbench.js", "favicon.svg"].map((file) => [file, fs15.readFileSync(path10.join(ROOT, "public", file))]));
   const version = string(object(JSON.parse(fs15.readFileSync(path10.join(ROOT, "package.json"), "utf8"))).version);
-  const assetVersions = new Map([...assets].map(([name, bytes]) => [name, { etag: 'W/"' + crypto15.createHash("sha256").update(bytes).digest("hex") + '"', gzip: gzipSync(bytes) }]));
+  const assetVersions = new Map([...assets].map(([name, bytes]) => [name, { etag: 'W/"' + crypto16.createHash("sha256").update(bytes).digest("hex") + '"', gzip: gzipSync(bytes) }]));
   const startedAt = Date.now();
-  const instanceId = process.env.TAOAGENT_INSTANCE_ID || crypto15.randomUUID();
+  const instanceId = process.env.TAOAGENT_INSTANCE_ID || crypto16.randomUUID();
   let searches = 0;
   const safeModel = (model) => ({ ...model, apiKey: "", hasKey: !!store.withCredentials(model).apiKey });
   const active = /* @__PURE__ */ new Map();
@@ -104838,8 +104952,20 @@ function createApp(home = path10.join(ROOT, "home"), options = {}) {
           throw new HttpError(400, "JSON \u683C\u5F0F\u65E0\u6548");
         }
       }
+      if (route === "/api/city" && method === "GET") {
+        send(res, JSON.parse(redact(store, JSON.stringify(cityOverview(store)))));
+        return;
+      }
+      if (route === "/api/city" && method === "PUT") {
+        send(res, saveCity(store, input));
+        return;
+      }
+      if (route === "/api/city/room" && method === "POST") {
+        send(res, cityRoom(store));
+        return;
+      }
       if (route === "/api/town" && method === "GET") {
-        send(res, { spaces: store.sessions().filter((item) => item.kind === "group" && !item.archivedAt).map((item) => ({ id: item.id, title: item.title, memberIds: store.groupMembers(item.id), adopted: !!store.text("chats", item.id, "social", "state.json"), enabled: lifeState(store, item.id).policy.enabled, running: busy2(item.id) })), agents: store.agents().filter((item) => !item.archivedAt).map((item) => ({ id: item.id, name: item.name, background: item.background, responsibilities: item.responsibilities })) });
+        send(res, { spaces: store.sessions().filter((item) => item.kind === "group" && !item.archivedAt && item.componentKind !== "chat" && item.componentKind !== "task").map((item) => ({ id: item.id, title: item.title, memberIds: store.groupMembers(item.id), adopted: !!store.text("chats", item.id, "social", "state.json"), enabled: lifeState(store, item.id).policy.enabled, running: busy2(item.id) })), agents: store.agents().filter((item) => !item.archivedAt).map((item) => ({ id: item.id, name: item.name, background: item.background, responsibilities: item.responsibilities })) });
         return;
       }
       if (route === "/api/town/create" && method === "POST") {
@@ -104983,13 +105109,13 @@ function createApp(home = path10.join(ROOT, "home"), options = {}) {
         return;
       }
       if (route === "/api/state" && method === "GET") {
-        const sessions = store.sessions().map((session) => store.session(session.id));
+        const sessions = store.sessions().map((session) => ({ ...store.session(session.id), ...session.componentKind === "city" ? { memberIds: store.groupMembers(session.id) } : {} }));
         const revisions = Object.fromEntries(sessions.filter((session) => session.kind !== "consult").map((session) => {
           const file = store.file("chats", session.id, "messages.jsonl");
           return [session.id, session.updatedAt + ":" + (fs15.existsSync(file) ? fs15.statSync(file).size : 0)];
         }));
         const running = [.../* @__PURE__ */ new Set([...active.keys(), ...sessions.filter((session) => store.isRunning(session.id)).map((session) => session.id)])];
-        send(res, { version, models: store.models().map(safeModel), account: store.account(), agents: store.agents(), groups: sessions.filter((s2) => s2.kind === "group").map((group) => ({ ...group, groupVersion: store.groupVersion(group.id) })), revisions, running, conversations: workspaceConversations(store, running).map((item) => ({ ...item, queue: queueSummary(store, item.id) })), navigation: store.navigation() });
+        send(res, { version, models: store.models().map(safeModel), account: store.account(), agents: store.agents(), groups: sessions.filter((s2) => s2.kind === "group").map((group) => ({ ...group, groupVersion: store.groupVersion(group.id) })), revisions, running, conversations: workspaceConversations(store, running, createRedactor(store)).map((item) => ({ ...item, queue: queueSummary(store, item.id) })), navigation: store.navigation() });
         return;
       }
       if (route === "/api/account" && method === "PUT") {
@@ -105064,7 +105190,7 @@ function createApp(home = path10.join(ROOT, "home"), options = {}) {
         return;
       }
       if (route === "/api/agents" && method === "PUT") {
-        const key = id(string(input.id) || crypto15.randomUUID());
+        const key = id(string(input.id) || crypto16.randomUUID());
         const old = store.agents().find((agent2) => agent2.id === key);
         if (old && (typeof input.expectedMemory === "string" && input.expectedMemory !== store.text("agents", key, "MEMORY.md") || typeof input.expectedRules === "string" && input.expectedRules !== store.text("agents", key, "RULES.md") || typeof input.expectedName === "string" && input.expectedName !== old.name)) throw new HttpError(409, "\u8FD9\u4F4D Agent \u5DF2\u66F4\u65B0\uFF0C\u8BF7\u5148\u4FDD\u7559\u4F60\u7684\u7F16\u8F91\u518D\u91CD\u65B0\u8F7D\u5165\uFF0C\u907F\u514D\u8986\u76D6\u65B0\u8BB0\u5FC6");
         if (old && typeof input.expectedModelId === "string" && input.expectedModelId !== (old.modelId || "")) throw new HttpError(409, "\u6B64\u6210\u5458\u6A21\u578B\u5DF2\u5728\u5176\u4ED6\u7A97\u53E3\u66F4\u6539\uFF0C\u8BF7\u91CD\u65B0\u8F7D\u5165");
@@ -105143,7 +105269,8 @@ function createApp(home = path10.join(ROOT, "home"), options = {}) {
       if (match2) {
         const key = match2[1];
         const action = match2[2];
-        const session = store.session(key);
+        const storedSession = store.session(key);
+        const session = { ...storedSession, ...storedSession.componentKind === "city" ? { memberIds: store.groupMembers(key) } : {} };
         if (session.archivedAt && method !== "GET" && action !== "stop") throw new HttpError(410, "\u7FA4\u804A\u5DF2\u5220\u9664\uFF0C\u8BF7\u5148\u6062\u590D");
         const agentId = string(input.agentId) || url.searchParams.get("agentId") || session.agentId;
         if (action === "improvement") {
@@ -105245,12 +105372,12 @@ function createApp(home = path10.join(ROOT, "home"), options = {}) {
           if (method === "PUT") {
             if (busy2(key)) throw new HttpError(409, "\u8BF7\u7B49\u672C\u8F6E\u7ED3\u675F\u540E\u4FEE\u6539\u8BB0\u5FC6");
             if (action === "memory-item") {
-              if (input.action === "add") send(res, store.rememberFact(key, agentId, scope, string(input.note), "manual-" + crypto15.randomUUID(), void 0, "manual"));
+              if (input.action === "add") send(res, store.rememberFact(key, agentId, scope, string(input.note), "manual-" + crypto16.randomUUID(), void 0, "manual"));
               else send(res, store.editMemoryItem(key, agentId, scope, string(input.itemId), string(input.action), string(input.expected), string(input.note)));
               return;
             }
             if (typeof input.expected === "string" && input.expected !== store.memory(key, agentId, scope)) throw new HttpError(409, "\u8BB0\u5FC6\u5DF2\u5728\u5176\u4ED6\u7A97\u53E3\u66F4\u65B0\u3002\u4F60\u7684\u7F16\u8F91\u4ECD\u5728\uFF0C\u8BF7\u590D\u5236\u540E\u91CD\u65B0\u8F7D\u5165\u5BF9\u7167");
-            store.updateMemory(key, agentId, scope, string(input.content), crypto15.randomUUID(), false, typeof input.expected === "string" ? input.expected : void 0);
+            store.updateMemory(key, agentId, scope, string(input.content), crypto16.randomUUID(), false, typeof input.expected === "string" ? input.expected : void 0);
             send(res, { ok: true });
             return;
           }

@@ -1,3 +1,4 @@
+import {decide,type Action} from '../execution.ts'
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
@@ -191,10 +192,10 @@ test('group creation survives loss of tool receipt without repeating side effect
   try {
     upstream.listen(0, '127.0.0.1'); await once(upstream, 'listening'); const address = upstream.address(); assert(address && typeof address === 'object')
     store.saveModel({ name: 'mock', model: 'mock', baseUrl: `http://127.0.0.1:${address.port}` }); store.saveAgent({ id: 'other', name: 'Other' }, '', '')
-    await assert.rejects(runConversation(store, dm.id, 'create', '', new AbortController().signal, () => {}))
+    await assert.rejects(runConversation(store, dm.id, 'create', '', new AbortController().signal, event=>{if(event.type==='approval'&&(event.action as Action).status==='pending')setImmediate(()=>decide(store,dm.id,(event.action as Action).id,true))}))
     const turn = store.turns(dm.id)[0], receipt = store.file('chats', dm.id, 'tool-results', turn.id + '.json')
     fs.unlinkSync(receipt); fail = false // operation succeeded, receipt was lost in a crash
-    await runConversation(store, dm.id, 'create', '', new AbortController().signal, () => {}, undefined, { retryTurnId: turn.id })
+    await runConversation(store, dm.id, 'create', '', new AbortController().signal, event=>{if(event.type==='approval'&&(event.action as Action).status==='pending')setImmediate(()=>decide(store,dm.id,(event.action as Action).id,true))}, undefined, { retryTurnId: turn.id })
     assert.equal(store.sessions().filter(session => session.kind === 'group').length, 1)
   } finally { upstream.closeAllConnections(); await new Promise<void>(resolve => upstream.close(() => resolve())); fs.rmSync(root, { recursive: true, force: true }) }
 })

@@ -4,7 +4,26 @@ import crypto from 'node:crypto'
 import { setImmediate } from 'node:timers/promises'
 import { Store, HttpError, type Message } from './store.ts'
 
-export function workspaceConversations(store: Store, running: string[]) {
+// Read only the bounded tail for a roster excerpt; full history remains untouched.
+export function conversationPreview(store:Store,key:string,sanitize:(text:string)=>string=(text)=>text){
+  const file=store.file('chats',key,'messages.jsonl')
+  if(!fs.existsSync(file))return {preview:'',previewAt:'',previewAuthor:'',previewTruncated:false}
+  const size=fs.statSync(file).size,length=Math.min(size,65536),buffer=Buffer.alloc(length),fd=fs.openSync(file,'r')
+  try{fs.readSync(fd,buffer,0,length,size-length)}finally{fs.closeSync(fd)}
+  let tail=buffer.toString('utf8');if(size>length)tail=tail.slice(tail.indexOf('\n')+1)
+  for(const line of tail.trimEnd().split('\n').reverse()){
+    let raw:unknown;try{raw=JSON.parse(line)}catch{continue}
+    if(!raw||typeof raw!=='object'||Array.isArray(raw))continue
+    const message=raw as Record<string,unknown>
+    if(!['user','assistant'].includes(String(message.role))||message.kind||message.status!==undefined&&message.status!=='complete'||typeof message.content!=='string')continue
+    const content=sanitize(message.content).replace(/\s+/gu,' ').trim();if(!content)continue
+    const points=Array.from(content),truncated=points.length>140
+    return {preview:points.slice(0,140).join('')+(truncated?'…':''),previewAt:typeof message.at==='string'?message.at:'',previewAuthor:sanitize(message.role==='user'?'你':typeof message.agentName==='string'?message.agentName:'Bot'),previewTruncated:truncated}
+  }
+  return {preview:size?'打开查看完整交流':'',previewAt:'',previewAuthor:'',previewTruncated:!!size}
+}
+
+export function workspaceConversations(store: Store, running: string[], sanitize:(text:string)=>string=(text)=>text) {
   const agents = new Map(store.agents().map(agent => [agent.id, agent]))
   return store.sessions().filter(session => session.kind !== 'consult' && (session.kind === 'group' || agents.has(session.agentId))).map(session => {
     const file = store.file('chats', session.id, 'messages.jsonl')
@@ -15,7 +34,7 @@ export function workspaceConversations(store: Store, running: string[]) {
     const waiting = actions.filter(action => ['pending', 'uncertain'].includes(action.status)).length
     const working = running.includes(session.id)
     const failed = !working && latest?.speakers.some(speaker => speaker.status === 'failed')
-    return { id: session.id, target: { type: session.kind === 'group' ? 'group' : 'agent', id: session.kind === 'group' ? session.id : session.agentId }, title: session.kind === 'group' ? session.title : agents.get(session.agentId)?.name || session.title, updatedAt: session.updatedAt, revision, hasMessages: bytes > 0, status: waiting ? 'waiting' : working ? 'running' : failed ? 'failed' : 'idle', waiting }
+    return {...conversationPreview(store,session.id,sanitize), id: session.id, target: { type: session.kind === 'group' ? 'group' : 'agent', id: session.kind === 'group' ? session.id : session.agentId }, title: session.kind === 'group' ? session.title : agents.get(session.agentId)?.name || session.title, updatedAt: session.updatedAt, revision, hasMessages: bytes > 0, status: waiting ? 'waiting' : working ? 'running' : failed ? 'failed' : 'idle', waiting }
   })
 }
 

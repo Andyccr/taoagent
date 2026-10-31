@@ -147,15 +147,17 @@ function renderMemory(){
 function init(){
   view=el('section',undefined,'town-view');view.id='town-view';view.hidden=true;view.setAttribute('aria-label','Bot 日常广场');const bar=el('div',undefined,'town-topbar'),brand=el('strong','✳ Taoagent · 同一空间'),tools=el('div',undefined,'town-top-actions');spaceSelect=el('select');spaceSelect.setAttribute('aria-label','选择共同空间');spaceSelect.onchange=()=>{currentId=spaceSelect.value;brief=null;content.replaceChildren(empty('正在读取这个空间…'));window.dispatchEvent(new CustomEvent('tao-select-group',{detail:currentId}));history.replaceState(null,'','#town='+encodeURIComponent(currentId));snapshot=null;load(true).catch(showError)};const modes=el('div',undefined,'space-switch');const chat=button('交流与工作',openChat),daily=button('空间总览',()=>navigate('overview'));chat.setAttribute('aria-pressed','false');daily.setAttribute('aria-pressed','true');modes.append(chat,daily);tools.append(button('☰',()=>q('#menu').click()),spaceSelect,button('＋ 空间',createSpace));bar.append(brand,tools);statusNode=el('p','','town-status');statusNode.setAttribute('role','status');content=el('div',undefined,'town-content');view.append(bar,statusNode,content);document.body.append(view)
   view.addEventListener('input',event=>{const form=event.target.closest('form');if(form)form.dataset.dirty='true'})
-  const utility=el('details',undefined,'village-utilities');utility.append(el('summary','工具'));const hub=q('#work-hub-open');if(hub){utility.append(hub,q('#history-search-open'));const filters=el('details');filters.append(el('summary','筛选对话'),q('#contact-filters'));utility.append(filters);q('#sidebar').insertBefore(utility,q('.side-bottom'))}q('#town-open').onclick=()=>open({tab:'overview'})
+  q('#town-open').onclick=()=>open({tab:'overview'})
   window.addEventListener('tao-town-open',event=>{void open(event.detail||{}).catch(showError)})
+  window.addEventListener('tao-components-open',()=>{if(!view.hidden)close()})
+  window.addEventListener('tao-roster-open',()=>{if(!view.hidden)close()})
   window.addEventListener('tao-civ-open',()=>{if(!view.hidden)close()})
   window.addEventListener('tao-target-changed',event=>{if(view.hidden)return;if(event.detail.type==='group'){if(currentId===event.detail.id)return;currentId=event.detail.id;snapshot=null;void load(true).catch(showError)}else close()})
-  window.addEventListener('resize',syncNavigation);new MutationObserver(syncNavigation).observe(document.body,{attributes:true,attributeFilter:['class']})
+  window.addEventListener('tao-layout-changed',syncNavigation);window.addEventListener('resize',syncNavigation);new MutationObserver(syncNavigation).observe(document.body,{attributes:true,attributeFilter:['class']})
   window.addEventListener('tao-open-group',()=>{if(!view.hidden)close()})
   // A dedicated landing surface; bookmarked conversations still open directly.
   try{const saved=sessionStorage.getItem('taoagent.town.tab');if(['overview','daily','graph','members','agendas','memory','work','activity','settings'].includes(saved))tab=saved}catch{}
-  const bookmark=location.hash.match(/^#town=([a-zA-Z0-9_-]*)$/);if(bookmark)currentId=bookmark[1];if(!location.hash||bookmark)open()
+  const bookmark=location.hash.match(/^#town=([a-zA-Z0-9_-]*)$/);if(bookmark)currentId=bookmark[1];if(bookmark)open()
   setInterval(()=>{if(view.hidden||document.hidden||editing||view.querySelector('form[data-dirty=true]')||view.querySelector('.town-memory-tools:focus-within')||view.querySelector('.space-graph:focus-within')||view.querySelector('.space-board:focus-within'))return;load().catch(showError)},5000)
 }
 init()

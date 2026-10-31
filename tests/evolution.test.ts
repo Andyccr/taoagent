@@ -203,3 +203,20 @@ test('exact edits reject ambiguity, absent matches, stale sources and mixed form
     assert.equal(fs.readFileSync(path.join(f.root,'context.ts'),'utf8'),'same same')
   }finally{f.clean()}
 })
+
+test('validated City bundle and Windows integrity hashes deploy and roll back with their source',async()=>{
+ const f=fixture()
+ try{
+  atomic(path.join(f.root,'public/city.bundle.js'),'old renderer')
+  atomic(path.join(f.root,'windows-release.json'),JSON.stringify({files:[{path:'public/city.bundle.js',bytes:12,sha256:'old'},{path:'context.ts',bytes:1,sha256:'old'}]}))
+  const manifest=fs.readFileSync(path.join(f.root,'windows-release.json'),'utf8')
+  const result=await evolve(f.store,{reason:'City renderer repair',expectedBenefit:'visible updated scene',acceptanceCriteria:'validated bundle is installed',acceptanceTests:['tests/check.test.ts'],changes:[f.change()]},f.signal,async cwd=>{
+   atomic(path.join(cwd,'public/city.bundle.js'),'new validated renderer');atomic(path.join(cwd,'release/server.mjs'),'new server')
+  },f.root)
+  assert.equal(fs.readFileSync(path.join(f.root,'public/city.bundle.js'),'utf8'),'new validated renderer')
+  const installed=JSON.parse(fs.readFileSync(path.join(f.root,'windows-release.json'),'utf8')) as {files:{path:string;bytes:number;sha256:string}[]}
+  assert.equal(installed.files[0].bytes,22);assert.equal(installed.files[0].sha256.length,64)
+  rollbackEvolution(f.store,result.runId,f.root)
+  assert.equal(fs.readFileSync(path.join(f.root,'public/city.bundle.js'),'utf8'),'old renderer');assert.equal(fs.readFileSync(path.join(f.root,'windows-release.json'),'utf8'),manifest)
+ }finally{f.clean()}
+})

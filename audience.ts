@@ -1,7 +1,7 @@
 import {Store,HttpError,type Turn,type Observation,type MessageIntent,runtimeLimits} from './store.ts'
 import {piText,type UsageReporter} from './pi.ts'
 
-export function openDiscussion(store:Store,key:string){const session=store.session(key);return !session.archivedAt&&session.kind==='group'&&(session.discussionMode??'open')!=='directed'}
+export function openDiscussion(store:Store,key:string){const session=store.session(key);return !session.archivedAt&&session.componentKind!=='chat'&&session.componentKind!=='task'&&session.kind==='group'&&(session.discussionMode??'open')!=='directed'}
 export function discussionGuidance(store:Store,key:string){
   const session=store.session(key)
   if(session.kind!=='group'||session.discussionMode==='directed')return ''

@@ -19,11 +19,12 @@ test('space selector synchronizes the underlying target once and approvals open 
 })
 test('pending task loads in an old space do not block or overwrite a newly selected space',async()=>{
   const source=fs.readFileSync('public/client.js','utf8'),requests=new Map<string,(value:unknown[])=>void>(),box={dataset:{} as Record<string,string>,replaceChildren(){},append(){}},panel={hidden:true},count={textContent:''}
-  const context=vm.createContext({current:{id:'old'},workLoading:new Set(),expandedActionChats:new Set(),state:{agents:[]},api:(url:string)=>new Promise(resolve=>requests.set(url,resolve)),document:{createElement:()=>({textContent:'',className:''})},syncAttention:()=>{},$:(selector:string)=>selector==='#work-items'?box:selector==='#work-panel'?panel:count})
+  const inspected:string[]=[]
+  const context=vm.createContext({inspectorWork:null,renderInspector:()=>{inspected.push((context.inspectorWork as {key:string}|null)?.key||'none')},current:{id:'old'},workLoading:new Set(),expandedActionChats:new Set(),state:{agents:[]},api:(url:string)=>new Promise(resolve=>requests.set(url,resolve)),document:{createElement:()=>({textContent:'',className:''})},syncAttention:()=>{},$:(selector:string)=>selector==='#work-items'?box:selector==='#work-panel'?panel:count})
   vm.runInContext(source.slice(source.indexOf('function visibleActions('),source.indexOf('let collaborationLoading='))+'\nglobalThis.refresh=refreshWork',context)
   const first=context.refresh() as Promise<void>;context.current={id:'new'};const next=context.refresh() as Promise<void>;assert.equal(requests.size,4)
   requests.get('/api/chats/new/actions')!([]);requests.get('/api/chats/new/tasks')!([]);await next;assert(box.dataset.fingerprint.includes('new'));assert.equal(panel.hidden,false)
-  requests.get('/api/chats/old/actions')!([]);requests.get('/api/chats/old/tasks')!([]);await first;assert(box.dataset.fingerprint.includes('new'))
+  requests.get('/api/chats/old/actions')!([]);requests.get('/api/chats/old/tasks')!([]);await first;assert(box.dataset.fingerprint.includes('new'));assert.deepEqual(inspected,['new']);assert.equal((context.inspectorWork as {key:string}).key,'new')
 })
 test('space board distinguishes accepted, review, dependencies and departed owners without assuming completion',()=>{
   const f=fixture();try{

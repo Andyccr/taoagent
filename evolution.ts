@@ -5,7 +5,7 @@ import { Store, HttpError, atomic, json, string, id } from './store.ts'
 import { ROOT, sources } from './portable.ts'
 
 // The verifier, approval boundary and tests cannot be rewritten by a candidate.
-export const evolvable = ['context.ts','audience.ts','communication.ts','reasoning.ts','defaults.ts','public/client.js','public/index.html','public/style.css','app.ts','runtime.ts','store.ts','pi.ts','models.ts','opencode-go.ts','portable.ts','migrate.ts']
+export const evolvable = ['public/workbench.js','public/workbench.css','public/sidebar.js','public/sidebar.css','components.ts','civilization.ts','public/civilization.js','public/civilization.css','public/components.css','public/product.css','public/town.js','public/town.css','public/square.js','public/city-entry.js','build-city.mjs',...fs.readdirSync(path.join(ROOT,'public','city')).filter(name=>name.endsWith('.js')).map(name=>'public/city/'+name),'context.ts','audience.ts','communication.ts','reasoning.ts','defaults.ts','public/client.js','public/index.html','public/style.css','app.ts','runtime.ts','store.ts','pi.ts','models.ts','opencode-go.ts','portable.ts','migrate.ts']
 const protectedReadableFiles=['execution.ts','evolution.ts','build.mjs','package.json','package-lock.json','README.md','AGENTS.md','CLAUDE.md']
 const testPath=(name:string)=>/^tests\/[a-zA-Z0-9_-]+\.test\.(ts|mjs)$/.test(name)
 const digest=(text:string)=>crypto.createHash('sha256').update(text).digest('hex')
@@ -118,7 +118,7 @@ export async function evolve(store:Store,args:Record<string,unknown>,signal:Abor
     for(const c of changes)atomic(path.join(candidate,c.path),c.content)
     if(signal.aborted)throw new HttpError(499,'已暂停')
     const protectedFiles=sources.filter(name=>!['release','runtime'].includes(name)&&!changes.some(change=>change.path===name))
-    const protectedHash=()=>{const hash=crypto.createHash('sha256');for(const name of protectedFiles){const visit=(file:string)=>{if(!fs.existsSync(file))return;const stat=fs.lstatSync(file);if(stat.isSymbolicLink())throw new HttpError(400,'验证文件不能是链接');if(stat.isDirectory()){for(const child of fs.readdirSync(file).sort())visit(path.join(file,child))}else hash.update(path.relative(candidate,file)).update(fs.readFileSync(file))};visit(path.join(candidate,name))}return hash.digest('hex')}
+    const protectedHash=()=>{const hash=crypto.createHash('sha256');for(const name of protectedFiles){const visit=(file:string)=>{if(!fs.existsSync(file))return;const stat=fs.lstatSync(file);if(stat.isSymbolicLink())throw new HttpError(400,'验证文件不能是链接');if(stat.isDirectory()){for(const child of fs.readdirSync(file).sort())visit(path.join(file,child))}else if(path.relative(candidate,file).replaceAll(path.sep,'/')!=='public/city.bundle.js')hash.update(path.relative(candidate,file)).update(fs.readFileSync(file))};visit(path.join(candidate,name))}return hash.digest('hex')}
     const beforeValidation=protectedHash()
     validation=await verify(candidate,signal)
     if(beforeValidation!==protectedHash())throw new HttpError(409,'候选验证期间修改了受保护验证文件')
@@ -132,6 +132,22 @@ export async function evolve(store:Store,args:Record<string,unknown>,signal:Abor
       const relative='release/'+name
       originals[relative]=fs.readFileSync(path.join(root,relative),'utf8')
       outputs[relative]=fs.readFileSync(path.join(candidate,relative),'utf8')
+    }
+    // Deploy the renderer produced by the validated City source, together with its recovery copy.
+    const cityBundle='public/city.bundle.js'
+    if(fs.existsSync(path.join(root,cityBundle))&&fs.existsSync(path.join(candidate,cityBundle))){
+      originals[cityBundle]=fs.readFileSync(path.join(root,cityBundle),'utf8')
+      outputs[cityBundle]=fs.readFileSync(path.join(candidate,cityBundle),'utf8')
+    }
+    const manifestFile=path.join(root,'windows-release.json')
+    if(fs.existsSync(manifestFile)){
+      originals['windows-release.json']=fs.readFileSync(manifestFile,'utf8')
+      const manifest=JSON.parse(originals['windows-release.json']) as {files:{path:string;bytes:number;sha256:string}[]}
+      for(const [name,content] of Object.entries(outputs)){
+        const bytes=Buffer.from(content),entry=manifest.files.find(item=>item.path===name)
+        if(entry){entry.bytes=bytes.length;entry.sha256=digest(content)}
+      }
+      outputs['windows-release.json']=JSON.stringify(manifest,null,2)+'\n'
     }
     json(record,{runId,reason,expectedBenefit,acceptanceCriteria,acceptanceTests,at,baselineHash,validation,status:'applying',changes,originals,outputs})
     applied=true
@@ -188,7 +204,7 @@ export function rollbackEvolution(store:Store,runId:string,root=ROOT) {
     const record=JSON.parse(fs.readFileSync(file,'utf8')) as {status:string;originals:Record<string,string>;outputs:Record<string,string>}
     if(record.status!=='applied')throw new HttpError(409,'只能回滚已成功应用的版本')
     for(const [name,output] of Object.entries(record.outputs)){
-      if(!evolvable.includes(name)&&!['release/server.mjs','release/server.mjs.LEGAL.txt','release/build.json','release/THIRD-PARTY-NOTICES.txt'].includes(name))throw new HttpError(400,'无效恢复路径')
+      if(!evolvable.includes(name)&&!['public/city.bundle.js','windows-release.json','release/server.mjs','release/server.mjs.LEGAL.txt','release/build.json','release/THIRD-PARTY-NOTICES.txt'].includes(name))throw new HttpError(400,'无效恢复路径')
       let current=root
       for(const part of name.split('/')){current=path.join(current,part);if(fs.lstatSync(current).isSymbolicLink())throw new HttpError(400,'恢复路径不能为链接')}
       if(fs.readFileSync(current,'utf8')!==output)throw new HttpError(409,'版本之后已有修改，不能覆盖：'+name)
@@ -245,7 +261,7 @@ export function recoverEvolution(store:Store,runId:string,root=ROOT){
   const file=store.file('evolution',id(runId),'record.json')
   const record=JSON.parse(fs.readFileSync(file,'utf8')) as {status:string;originals:Record<string,string>;outputs?:Record<string,string>}
   if(!['applying','recovering','validating','applied','rolled_back'].includes(record.status))throw new HttpError(409,'此版本不需要恢复')
-  const allowed=[...evolvable,'release/server.mjs','release/server.mjs.LEGAL.txt','release/build.json','release/THIRD-PARTY-NOTICES.txt']
+  const allowed=[...evolvable,'public/city.bundle.js','windows-release.json','release/server.mjs','release/server.mjs.LEGAL.txt','release/build.json','release/THIRD-PARTY-NOTICES.txt']
   for(const [name,original] of Object.entries(record.originals)){
     if(!allowed.includes(name))throw new HttpError(400,'无效恢复路径')
     const target=path.join(root,name);if(fs.lstatSync(target).isSymbolicLink())throw new HttpError(400,'恢复路径不能为链接')

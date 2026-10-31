@@ -41,6 +41,7 @@ export function lifeSources(store:Store,key:string,value:unknown):string[]{
   return [...new Set(value as string[])]
 }
 export function saveLifePolicy(store:Store,key:string,input:Record<string,unknown>){
+  if(input.enabled===true&&store.session(key).componentKind==='chat')throw new HttpError(400,'纯聊天不启动自主日常，请使用涌现群聊或 City')
   return changeLife(store,key,state=>{
     if(input.expectedPolicy!==undefined?input.expectedPolicy!==(state.policyRevision||'new'):input.expected!==state.revision)throw new HttpError(409,'日常设置已更新，请重新载入')
     const policy={...state.policy}

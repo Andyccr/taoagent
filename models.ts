@@ -13,8 +13,8 @@ export const agentTools = [createAgent, {
   name: 'consult_agent', description: '实际向另一个 Agent 请求协作并取得其回答。只传必要的问题和上下文，不传 API Key 或无关的私聊。不能请求自己或递归转交任务。',
   parameters: { type: 'object', properties: { agentId: { type: 'string' }, question: { type: 'string' } }, required: ['agentId', 'question'] },
 }, {
-  name: 'create_group', description: '创建包含自己及其他 Agent 的群聊。先通过 list_agents 查找成员 ID；创建结果会显示给用户，不自动向新群转发私聊。',
-  parameters: { type: 'object', properties: { name: { type: 'string',description:'可留空，自动取显示名称' }, purpose:{type:'string',description:'可留空，无需预设主题或任务'}, discussionMode:{type:'string',enum:['open','brainstorm','directed'],description:'open自由讨论，brainstorm无主题头脑风暴，directed定向协作'},memberIds: { type: 'array', items: { type: 'string' } } }, required: ['memberIds'] },
+  name: 'create_group', description: '申请创建包含自己及其他 Agent 的群聊，必须等待用户逐项批准。先通过 list_agents 查找成员 ID；创建结果会显示给用户，不自动向新群转发私聊。',
+  parameters: { type: 'object', properties: { name: { type: 'string',description:'可留空，自动取显示名称' }, componentKind:{type:'string',enum:['emergent','chat','task'],description:'涌现群聊、纯聊天或任务组'},purpose:{type:'string',description:'可留空，无需预设主题或任务'}, discussionMode:{type:'string',enum:['open','brainstorm','directed'],description:'open自由讨论，brainstorm无主题头脑风暴，directed定向协作'},memberIds: { type: 'array', items: { type: 'string' } } }, required: ['memberIds'] },
 }, {
   name: 'remember', description: '追加一条确定事实。群聊默认写本群共享记忆，私聊默认写自己的长期记忆。scope=member 写自己在本群的工作笔记，scope=agent 仅用于明确的长期个人偏好。保留备份与来源，不覆盖旧事实。',
   parameters: { type: 'object', properties: { note: { type: 'string' }, scope: { type: 'string', enum: ['agent', 'group', 'member'] }, category: { type: 'string', enum: ['fact', 'decision', 'lesson', 'question'], description: '群体认识的类型：事实、决定、经验或待验证问题。群体模式下此工具提出候选，需独立复核才采用。' }, evidenceIds: { type: 'array', items: { type: 'string' }, description: '依据的本群公开消息 ID；不能引用其他群或私聊。' }, replacesId: { type: 'string', description: '明确纠正已存事实时，先 search_memory 取得该范围的 memoryId，再填写此 ID；原记录保留。' } }, required: ['note'] },
