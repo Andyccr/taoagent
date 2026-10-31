@@ -7,50 +7,79 @@ export const CANAL = { inner: CORE_R + 2.5, outer: CORE_R + 7.5 };
 export const AVENUE_W = 5;
 export const AVENUES = [0, 45, 90, 135, 180, 225, 270, 315];
 export const LOT = 7;
-export const CITY_EDGE = 170;
-export const OUTER_EDGE = 262;
-export const COUNTRY_EDGE = 330;
-export const RING_ROADS = [52, 72, 92, 112, 132, 152, 182, 222].map((r) => ({ r, w: r >= 182 ? 4 : 3 }));
-export const HARBOUR = { from: 20, to: 70, shore: 256 };
+export const CITY_EDGE = 276;
+export const WALL_R = 283;
+export const OUTER_EDGE = 450;
+export const COUNTRY_EDGE = 580;
+export const RING_ROADS = [52, 72, 92, 112, 132, 152, 176, 202, 230, 258, 292, 328, 366, 408].map((r) => ({ r, w: r === 292 ? 5 : r >= 366 ? 4 : 3 }));
+export const HARBOUR = { from: 20, to: 70, shore: 420 };
+export const RIVER_HALF = 5;
+// The river enters from the western hills, feeds the core canal and leaves through the east of the city to the harbour.
+export const RIVER_LEGS = [
+  { id: 'west', from: { r: 760, a: 236 }, to: { r: CORE_R + 5, a: 236 }, wave: 13, phase: 0.4 },
+  { id: 'east', from: { r: CORE_R + 5, a: 31 }, to: { r: 436, a: 33 }, wave: 11, phase: 1.7 },
+];
+// Meandering river polyline (points every ~4 m); the meander tapers to zero where the leg meets the canal or the sea.
+export function riverLine(leg) {
+  const a = polar(leg.from.r, leg.from.a), b = polar(leg.to.r, leg.to.a);
+  const len = Math.hypot(b.x - a.x, b.z - a.z), n = Math.max(8, Math.ceil(len / 4));
+  const nx = -(b.z - a.z) / len, nz = (b.x - a.x) / len;
+  const pts = [];
+  for (let i = 0; i <= n; i++) {
+    const t = i / n, env = Math.sin(Math.PI * t);
+    const off = leg.wave * env * (Math.sin(t * 9.5 + leg.phase) + 0.45 * Math.sin(t * 23 + leg.phase * 2));
+    pts.push([a.x + (b.x - a.x) * t + nx * off, a.z + (b.z - a.z) * t + nz * off]);
+  }
+  return pts;
+}
 
 const WONDERS = [
   // Larger ceremonial footprints (axis-aligned w×d); plazas clear lots via circleHitsBox.
   { id: 'palace', kind: 'palace', name: '紫宸宫', angle: 180, r: 96, w: 92, d: 118, rotY: Math.PI, district: 'chinese' },
   { id: 'pagoda', kind: 'pagoda', name: '万佛塔', angle: 138, r: 128, w: 40, d: 40, rotY: 0, district: 'chinese' },
-  { id: 'wall', kind: 'wall', name: '万里城关', angle: 180, r: 186, w: 110, d: 40, rotY: 0, district: 'chinese' },
+  { id: 'wall', kind: 'wall', name: '万里城关', angle: 180, r: WALL_R, w: 110, d: 40, rotY: 0, district: 'chinese' },
   { id: 'acropolis', kind: 'acropolis', name: '雅典卫城', angle: 270, r: 108, w: 78, d: 62, rotY: Math.PI / 2, district: 'greek' },
   { id: 'colosseum', kind: 'colosseum', name: '大斗兽场', angle: 58, r: 108, w: 58, d: 48, rotY: 0, district: 'roman' },
   { id: 'pantheon', kind: 'pantheon', name: '万神殿', angle: 120, r: 108, w: 62, d: 42, rotY: -Math.PI / 2, district: 'roman' },
   { id: 'arch', kind: 'arch', name: '凯旋门', angle: 90, r: 68, w: 14, d: 28, rotY: Math.PI / 2, district: 'roman' },
   { id: 'supertall', kind: 'supertall', name: '天穹塔', angle: 0, r: 88, w: 48, d: 48, rotY: 0, district: 'modern' },
+  { id: 'aqueduct', kind: 'aqueduct', name: '大渡槽', angle: 95, r: 206, w: 212, d: 20, rotY: -Math.PI / 2, district: 'roman' },
+  { id: 'heaven', kind: 'heaven', name: '天坛', angle: 210, r: 200, w: 80, d: 80, rotY: 0, district: 'chinese' },
+  { id: 'skyline', kind: 'skyline', name: '双子星塔', angle: 330, r: 192, w: 70, d: 70, rotY: 0, district: 'modern' },
+  { id: 'lighthouse', kind: 'lighthouse', name: '法罗斯灯塔', angle: 45, r: 462, w: 62, d: 62, rotY: Math.PI / 4, district: 'harbour' },
 ];
 
+// Civic kinds cluster near the centre, homes and shops dominate the outer neighbourhoods.
 const KINDS = {
-  chinese: [['siheyuan', 3], ['house', 3], ['pagoda', 1], ['temple', 1], ['pavilion', 1], ['garden', 1]],
-  greek: [['house', 4], ['stoa', 2], ['temple', 1], ['tholos', 1], ['agora', 1], ['garden', 1]],
-  roman: [['insula', 4], ['villa', 2], ['baths', 1], ['market', 1], ['temple', 1], ['plaza', 1]],
-  modern: [['towerTall', 2], ['towerMid', 3], ['office', 2], ['residential', 3], ['glassSlab', 1], ['plaza', 1]],
+  chinese: [['siheyuan', 5], ['house', 5], ['shophouse', 5], ['teahouse', 3], ['courtyardLarge', 2], ['pagoda', 1], ['temple', 2], ['pavilion', 1], ['drumTower', 1], ['gatehouse', 1], ['waterPavilion', 1], ['garden', 2]],
+  greek: [['house', 7], ['villa', 3], ['stoa', 3], ['workshop', 3], ['temple', 1], ['treasury', 1], ['tholos', 1], ['gymnasium', 1], ['bouleuterion', 1], ['fountainHouse', 1], ['agora', 2], ['garden', 2]],
+  roman: [['insula', 7], ['domus', 3], ['tabernae', 4], ['villa', 2], ['thermopolium', 2], ['granary', 1], ['baths', 1], ['basilica', 1], ['theatre', 1], ['market', 2], ['temple', 1], ['plaza', 1]],
+  modern: [['towerTall', 2], ['towerMid', 4], ['glassTower', 1], ['office', 3], ['residential', 4], ['apartmentBlock', 3], ['loftRow', 2], ['hotel', 1], ['mall', 1], ['stationHall', 1], ['glassSlab', 1], ['plaza', 1]],
 };
-const MIXED = [['stalls', 2], ['plaza', 1], ['garden', 2], ['home', 3]];
+const CIVIC = new Set(['pagoda', 'temple', 'drumTower', 'gatehouse', 'tholos', 'treasury', 'bouleuterion', 'gymnasium', 'baths', 'basilica', 'theatre', 'stationHall', 'hotel', 'mall']);
+const MIXED = [['stalls', 2], ['plaza', 1], ['garden', 2], ['home', 3], ['fountainSquare', 1], ['marketHall', 1], ['statueSquare', 1]];
 const HOME = { chinese: 'siheyuan', greek: 'house', roman: 'insula', modern: 'residential' };
+const HOME2 = { chinese: 'shophouse', greek: 'villa', roman: 'domus', modern: 'apartmentBlock' };
 export const CLAIMABLE = {
-  chinese: ['siheyuan', 'house'],
-  greek: ['house'],
-  roman: ['insula', 'villa'],
-  modern: ['office', 'residential'],
+  chinese: ['siheyuan', 'house', 'shophouse'],
+  greek: ['house', 'villa'],
+  roman: ['insula', 'villa', 'domus'],
+  modern: ['office', 'residential', 'apartmentBlock', 'loftRow'],
   outer: ['cottage', 'workshop', 'farmhouse'],
 };
-const COMMON = new Set(['garden', 'plaza', 'stalls']);
-const COMMON_KINDS = ['garden', 'plaza', 'stalls'];
+const COMMON = new Set(['garden', 'plaza', 'stalls', 'fountainSquare', 'statueSquare', 'playground', 'bandstand', 'marketHall']);
+const COMMON_KINDS = ['garden', 'plaza', 'stalls', 'fountainSquare', 'statueSquare', 'playground', 'bandstand', 'marketHall', 'garden'];
 const STYLES = Object.keys(STYLE_ANGLE);
 
 export function hash(text) { let h = 2166136261; for (const ch of String(text)) { h ^= ch.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
 const angDist = (a, b) => { const d = Math.abs((((a - b) % 360) + 360) % 360); return Math.min(d, 360 - d); };
 function pick(list, seed) { const total = list.reduce((s, [, w]) => s + w, 0); let n = seed % total; for (const [k, w] of list) { if (n < w) return k; n -= w; } return list[0][0]; }
 
-export function districtAt(angle) {
+// Mixed seams between the quarters widen with distance from the centre, so the outer city blends the four styles.
+export function districtAt(angle, r = 0) {
   const a = ((angle % 360) + 360) % 360;
-  for (const b of [45, 135, 225, 315]) if (angDist(a, b) <= 10) return 'mixed';
+  const seam = 10 + Math.max(0, r - 176) * 0.09;
+  for (const b of [45, 135, 225, 315]) if (angDist(a, b) <= seam) return 'mixed';
   let best = 'modern', dist = 999;
   for (const [style, at] of Object.entries(STYLE_ANGLE)) { const d = angDist(a, at); if (d < dist) { dist = d; best = style; } }
   return best;
@@ -67,13 +96,14 @@ const NORM = (a) => ((a % 360) + 360) % 360;
 const inHarbour = (a) => { const n = NORM(a); return n >= HARBOUR.from && n <= HARBOUR.to; };
 const SIZE_RANGE = { inner: [5, 7.2], blend: [5.5, 8], suburb: [6, 7], industrial: [8, 9], harbour: [7, 8.5], country: [7, 9] };
 const RADIAL_STEP = { inner: 7, blend: 7.2, suburb: 8.5, industrial: 9.5, harbour: 8.5, country: 14 };
-const KEEP_PROB = { inner: 0.95, blend: 0.88, suburb: 0.6, industrial: 0.75, harbour: 0.8, country: 0.22 };
+const KEEP_PROB = { inner: 0.95, blend: 0.88, suburb: 0.62, industrial: 0.75, harbour: 0.8, country: 0.2 };
 
 function zoneAt(r, a) {
   if (r < CITY_EDGE) return 'inner';
-  if (r >= 182 && r < 222) return 'blend';
-  if (r >= 222 && r < OUTER_EDGE) {
-    if (inHarbour(a)) return 'harbour';
+  if (r < 292) return null; // the city wall and its glacis
+  if (r < 366) return inHarbour(a) && r > HARBOUR.shore ? null : 'blend';
+  if (r < OUTER_EDGE) {
+    if (inHarbour(a)) return r < HARBOUR.shore + 2 ? 'harbour' : null;
     const n = NORM(a);
     if ((n >= 70 && n <= 120) || (n >= 290 && n <= 330)) return 'industrial';
     return 'suburb';
@@ -94,23 +124,6 @@ function weightedStyle(angle, R) {
 let cached = null;
 export function computeMetropolis() {
   if (cached) return cached;
-  const wonders = WONDERS.map(wonderBox);
-  const canal = { ...CANAL, half: CANAL_HALF, pts: canalLine(CANAL.inner, CANAL.outer) };
-  const rings = RING_ROADS.map((x) => ringLoop(x.r, x.w));
-  const avenues = AVENUES.map((a, i) => avenueLine(a, CANAL.outer + 1, OUTER_EDGE, AVENUE_W, i));
-  const rawStreets = buildStreets(RING_ROADS.map((x) => x.r), AVENUES, 'empire-city');
-  const streets = [];
-  for (const road of rawStreets) {
-    let cut = road.pts.length;
-    for (let i = 0; i < road.pts.length; i++) {
-      const p = road.pts[i];
-      if (wonders.some((w) => circleHitsBox(p[0], p[1], 1, w, 1))) { cut = i; break; }
-    }
-    if (cut >= 2) streets.push({ ...road, pts: road.pts.slice(0, cut) });
-  }
-  const roads = [...rings, ...avenues, ...streets];
-  const index = makeRoadIndex(roads);
-
   const distanceToLine = (pts, x, z) => {
     let best = Infinity;
     for (let i = 1; i < pts.length; i++) {
@@ -119,6 +132,25 @@ export function computeMetropolis() {
     }
     return best;
   };
+  const wonders = WONDERS.map(wonderBox);
+  const canal = { ...CANAL, half: CANAL_HALF, pts: canalLine(CANAL.inner, CANAL.outer) };
+  const river = { half: RIVER_HALF, legs: RIVER_LEGS.map((leg) => ({ id: leg.id, pts: riverLine(leg) })) };
+  const riverDistance = (x, z) => { let best = Infinity; for (const leg of river.legs) best = Math.min(best, distanceToLine(leg.pts, x, z)); return best; };
+  const rings = RING_ROADS.map((x) => ringLoop(x.r, x.w));
+  const avenues = AVENUES.map((a, i) => avenueLine(a, CANAL.outer + 1, OUTER_EDGE, AVENUE_W, i));
+  const rawStreets = buildStreets(RING_ROADS.map((x) => x.r), AVENUES, 'empire-city');
+  const streets = [];
+  for (const road of rawStreets) {
+    let cut = road.pts.length;
+    for (let i = 0; i < road.pts.length; i++) {
+      const p = road.pts[i];
+      if (wonders.some((w) => circleHitsBox(p[0], p[1], 1, w, 1)) || riverDistance(p[0], p[1]) < RIVER_HALF + 1.5) { cut = i; break; }
+    }
+    if (cut >= 2) streets.push({ ...road, pts: road.pts.slice(0, cut) });
+  }
+  const roads = [...rings, ...avenues, ...streets];
+  const index = makeRoadIndex(roads);
+
 
   const boundaries = [CANAL.outer, ...RING_ROADS.map((x) => x.r), OUTER_EDGE, COUNTRY_EDGE];
   const bands = boundaries.slice(0, -1).map((inner, i) => [inner, boundaries[i + 1]]);
@@ -206,7 +238,7 @@ export function computeMetropolis() {
 
         let harbourKind = null;
         if (zone === 'harbour') {
-          harbourKind = 'warehouse';
+          harbourKind = R() < 0.82 ? 'warehouse' : 'boathouse';
           if (jr >= HARBOUR.shore - 14 && jr <= HARBOUR.shore + 2) harbourKind = R() < 0.5 ? 'pier' : 'crane';
         }
 
@@ -231,7 +263,9 @@ export function computeMetropolis() {
           const half = att.size / 2;
           if (distanceToRoads(index, x, z) < half + (dense ? 0.2 : 0.4)) continue;
           if (distanceToLine(canal.pts, x, z) < CANAL_HALF + half + 0.8) continue;
+          if (riverDistance(x, z) < RIVER_HALF + half + 2.2) continue;
           if (att.jr - half <= CANAL.outer + 0.5) continue;
+          if (Math.abs(att.jr - WALL_R) < half + 3) continue;
           if (wonders.some((w) => circleHitsBox(x, z, half * 1.1, w, 1.2))) continue;
           if (inHarbour(att.ja)) {
             if (harbourKind === 'pier' || harbourKind === 'crane') {
@@ -262,23 +296,26 @@ export function computeMetropolis() {
           kind = harbourKind;
           district = 'harbour';
         } else if (zone === 'inner') {
-          district = districtAt(pja);
+          district = districtAt(pja, pjr);
           const seed = hash(id);
           style = district;
           if (district === 'mixed') {
             const pair = neighbours(pja);
             style = pair[seed % 2];
             kind = pick(MIXED, seed >>> 3);
-            if (kind === 'home') kind = HOME[style];
+            if (kind === 'home') kind = (seed >>> 9) % 3 ? HOME[style] : HOME2[style];
           } else kind = pick(KINDS[district], seed >>> 3);
+          // Monuments thin out towards the walls; the outer neighbourhoods are homes, shops and workshops.
+          if (CIVIC.has(kind) && pjr > 200 && (seed >>> 12) % 3) kind = (seed >>> 14) % 2 ? HOME[style] : HOME2[style];
           if (style === 'modern' && kind === 'towerMid' && band >= 1 && (seed & 3) === 0) kind = 'towerTall';
           if (COMMON.has(kind)) style = 'common';
         } else if (zone === 'blend') {
           district = 'blend';
           style = weightedStyle(pja, R);
           const roll = R();
-          if (roll < 0.35) { kind = 'workshop'; style = 'outer'; }
-          else if (roll < 0.65) kind = HOME[style];
+          if (roll < 0.22) { kind = 'workshop'; style = 'outer'; }
+          else if (roll < 0.5) kind = HOME[style];
+          else if (roll < 0.65) kind = HOME2[style];
           else if (roll < 0.73) { kind = COMMON_KINDS[Math.floor(R() * COMMON_KINDS.length)]; style = 'common'; }
           else if (roll < 0.80) { kind = 'towerMid'; style = 'modern'; }
           else if (roll < 0.83) { kind = 'towerTall'; style = 'modern'; }
@@ -290,16 +327,21 @@ export function computeMetropolis() {
         } else if (zone === 'suburb') {
           district = 'suburb';
           const roll = R();
-          if (roll < 0.7) { kind = 'cottage'; style = 'outer'; }
-          else if (roll < 0.8) { kind = 'garden'; style = 'common'; }
-          else if (roll < 0.9) { kind = 'farmhouse'; style = 'outer'; }
+          if (roll < 0.62) { kind = 'cottage'; style = 'outer'; }
+          else if (roll < 0.7) { kind = R() < 0.5 ? 'garden' : 'playground'; style = 'common'; }
+          else if (roll < 0.8) { kind = 'farmhouse'; style = 'outer'; }
+          else if (roll < 0.86) { kind = 'vineyard'; style = 'outer'; }
+          else if (roll < 0.9) { kind = 'bandstand'; style = 'common'; }
           else { style = neighbours(pja)[0]; kind = HOME[style]; }
         } else {
           district = 'country';
           style = 'outer';
-          kind = R() < 0.55 ? 'farmhouse' : 'barn';
+          const roll = R();
+          if (riverDistance(x, z) < RIVER_HALF + 14) kind = 'watermill';
+          else kind = roll < 0.45 ? 'farmhouse' : roll < 0.75 ? 'barn' : roll < 0.88 ? 'windmill' : 'vineyard';
         }
 
+        if (COMMON.has(kind)) style = 'common';
         const rp = nearestRoadPoint(index, x, z);
         let rotY;
         if (kind === 'pier' || kind === 'crane') rotY = Math.atan2(x, z);
@@ -326,7 +368,7 @@ export function computeMetropolis() {
 
   const fields = [];
   let fieldIndex = 0;
-  for (let fr = 268; fr <= 324; fr += 18) {
+  for (let fr = 466; fr <= 572; fr += 17) {
     const FR = rng('field' + fr);
     let a = 0;
     while (a < 360) {
@@ -338,6 +380,7 @@ export function computeMetropolis() {
       const w = 10 + FR() * 10, d = 8 + FR() * 8;
       const radius = Math.max(w, d) / 2;
       if (distanceToRoads(index, p.x, p.z) < radius) continue;
+      if (riverDistance(p.x, p.z) < RIVER_HALF + radius + 1) continue;
       let hit = false;
       for (const lot of lots) {
         if (Math.hypot(p.x - lot.x, p.z - lot.z) < radius + lot.size / 2) { hit = true; break; }
@@ -352,11 +395,42 @@ export function computeMetropolis() {
     const p = polar(canalRadius(angle, CANAL.inner, CANAL.outer), angle);
     return { x: p.x, z: p.z, angle };
   });
+  // River bridges wherever a ring road or avenue crosses the river (rotY spans the deck along the road).
+  const riverBridges = [];
+  for (const road of [...rings, ...avenues]) {
+    for (const leg of river.legs) {
+      for (let i = 1; i < road.pts.length; i++) {
+        const a = road.pts[i - 1], b = road.pts[i];
+        for (let j = 1; j < leg.pts.length; j++) {
+          const hit = segmentCross(a, b, leg.pts[j - 1], leg.pts[j]);
+          if (!hit) continue;
+          if (riverBridges.some((br) => Math.hypot(br.x - hit[0], br.z - hit[1]) < 6)) continue;
+          riverBridges.push({ x: hit[0], z: hit[1], rotY: Math.atan2(b[0] - a[0], b[1] - a[1]), w: road.w + 1.6, kind: road.kind });
+        }
+      }
+    }
+  }
+
+  // Rolling hills and a mountain range beyond the farmland (deterministic; rendered as one terrain mesh).
+  const hills = [];
+  const HR = rng('hills');
+  for (let i = 0; i < 70; i++) {
+    const far = i >= 40;
+    const r = far ? 980 + HR() * 420 : 610 + HR() * 300, a = HR() * 360;
+    if (inHarbour(a) || NORM(a - 45) < 40 || NORM(45 - a) < 40) continue;
+    const p = polar(r, a);
+    if (riverDistance(p.x, p.z) < (far ? 90 : 50)) continue;
+    hills.push({ x: p.x, z: p.z, r: far ? 120 + HR() * 160 : 45 + HR() * 70, h: far ? 90 + HR() * 170 : 10 + HR() * 26, mountain: far });
+  }
 
   const usedParks = parks.filter((p) => p.used).map((p, i) => ({ id: `pk${i}`, x: p.x, z: p.z, r: p.r, kind: p.kind }));
   const result = {
     coreR: CORE_R,
     canal,
+    river,
+    riverBridges,
+    hills,
+    wallR: WALL_R,
     roads,
     ringRoads: rings,
     avenues,
@@ -377,7 +451,7 @@ export function computeMetropolis() {
 }
 
 export function buildGroundPatches(plan) {
-  const MAX = 2200;
+  const MAX = 9000;
   const patches = [];
   const vertices = (radius, seed) => {
     const R = rng(`patch-${seed}`);
@@ -391,7 +465,7 @@ export function buildGroundPatches(plan) {
     return pts;
   };
   const lotStyle = (lot) => {
-    if (lot.zone === 'inner') return districtAt(lot.angle);
+    if (lot.zone === 'inner') return districtAt(lot.angle, lot.r);
     if (lot.zone === 'blend') return 'blend';
     if (lot.zone === 'harbour') return 'harbour';
     if (lot.zone === 'industrial') return 'industrial';
@@ -410,6 +484,16 @@ export function buildGroundPatches(plan) {
     patches.push({ zone: 'park', style: park.kind || 'park', pts });
   }
   return patches;
+}
+
+function segmentCross(a, b, c, d) {
+  const rx = b[0] - a[0], rz = b[1] - a[1], sx = d[0] - c[0], sz = d[1] - c[1];
+  const den = rx * sz - rz * sx;
+  if (Math.abs(den) < 1e-9) return null;
+  const qx = c[0] - a[0], qz = c[1] - a[1];
+  const t = (qx * sz - qz * sx) / den, u = (qx * rz - qz * rx) / den;
+  if (t < 0 || t > 1 || u < 0 || u > 1) return null;
+  return [a[0] + rx * t, a[1] + rz * t];
 }
 
 function compareKeys(a, b) { for (let i = 0; i < 3; i++) if (a[i] !== b[i]) return a[i] - b[i]; return a[3] < b[3] ? -1 : a[3] > b[3] ? 1 : 0; }

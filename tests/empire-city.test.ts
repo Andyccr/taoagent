@@ -9,7 +9,7 @@ import { createApp } from '../app.ts'
 // Browser modules are plain ESM JavaScript; their pure helpers run in Node without a DOM.
 import { visualState, rosterFrom } from '../public/city-entry.js'
 import { computeCity, PER_RING, CORE_RINGS, STYLE_ANGLE } from '../public/city/layout.js'
-import { computeMetropolis, assignClaims, circleHitsBox, CANAL, CITY_EDGE, OUTER_EDGE, HARBOUR } from '../public/city/metropolis-plan.js'
+import { computeMetropolis, assignClaims, circleHitsBox, CANAL, CITY_EDGE, OUTER_EDGE, COUNTRY_EDGE, HARBOUR, RIVER_HALF, WALL_R } from '../public/city/metropolis-plan.js'
 import { makeRoadIndex, distanceToRoads, pointSegmentDistance } from '../public/city/metropolis-streets.js'
 import { CANAL_HALF } from '../public/city/metropolis-roads.js'
 
@@ -74,10 +74,16 @@ test('core layout keeps 18 plots in 3 rings and overflows deterministically into
 test('the metropolis is an organic city with a mixed outer ring, collision free and anchored by wonders', () => {
   const plan = computeMetropolis() as any
   const lots = plan.lots as any[]
-  assert(lots.length >= 1200, 'hundreds of buildings: ' + lots.length)
-  assert(lots.filter((lot: any) => lot.claimable).length >= 450, 'plenty of claimable lots')
-  assert(lots.filter((lot: any) => lot.zone === 'inner').length >= 550, 'a dense inner city')
-  assert(lots.filter((lot: any) => lot.zone === 'blend').length >= 250, 'a mixed outer blend')
+  assert(lots.length >= 3500, 'thousands of buildings: ' + lots.length)
+  assert(lots.filter((lot: any) => lot.claimable).length >= 1500, 'plenty of claimable lots')
+  assert(lots.filter((lot: any) => lot.zone === 'inner').length >= 1400, 'a dense inner city')
+  assert(lots.filter((lot: any) => lot.zone === 'blend').length >= 800, 'a mixed outer blend')
+  assert(OUTER_EDGE >= 440 && COUNTRY_EDGE >= 560, 'the city reaches far beyond the old 262 m edge')
+  const kindsByStyle = new Map<string, Set<string>>()
+  for (const lot of lots) { if (!kindsByStyle.has(lot.style)) kindsByStyle.set(lot.style, new Set()); kindsByStyle.get(lot.style)!.add(lot.kind) }
+  for (const style of ['chinese', 'greek', 'roman', 'modern']) assert(kindsByStyle.get(style)!.size >= 10, style + ' has many archetypes: ' + [...kindsByStyle.get(style)!].join(','))
+  assert(kindsByStyle.get('common')!.size >= 6, 'many kinds of squares and parks')
+  assert(lots.every((lot: any) => Math.abs(Math.hypot(lot.x, lot.z) - WALL_R) >= lot.size / 2 + 2.9), 'the wall and its glacis stay clear')
 
   const zones = new Set(lots.map((lot: any) => lot.zone))
   for (const zone of ['inner', 'blend', 'suburb', 'industrial', 'harbour', 'country']) assert(zones.has(zone), zone)
@@ -118,6 +124,11 @@ test('the metropolis is an organic city with a mixed outer ring, collision free 
     }
     return best
   }
+  const riverDistance = (x: number, z: number) => {
+    let best = Infinity
+    for (const leg of plan.river.legs) for (let i = 1; i < leg.pts.length; i++) best = Math.min(best, pointSegmentDistance(x, z, leg.pts[i - 1][0], leg.pts[i - 1][1], leg.pts[i][0], leg.pts[i][1]))
+    return best
+  }
   const CELL = 16
   const buckets = new Map<string, any[]>()
   for (const lot of lots) {
@@ -129,6 +140,7 @@ test('the metropolis is an organic city with a mixed outer ring, collision free 
     const half = lot.size / 2
     assert(distanceToRoads(roads, lot.x, lot.z) >= half + 0.19, lot.id + ' is off the roads')
     assert(canalDistance(lot.x, lot.z) >= CANAL_HALF + half + 0.79, lot.id + ' is off the canal')
+    assert(riverDistance(lot.x, lot.z) >= RIVER_HALF + half + 2.1, lot.id + ' is off the river')
     for (const wonder of plan.wonders) assert(!circleHitsBox(lot.x, lot.z, half, wonder, 1.1), lot.id + ' overlaps ' + wonder.id)
     const cx = Math.floor(lot.x / CELL), cz = Math.floor(lot.z / CELL)
     for (let ix = cx - 1; ix <= cx + 1; ix++) for (let iz = cz - 1; iz <= cz + 1; iz++) {
@@ -141,17 +153,21 @@ test('the metropolis is an organic city with a mixed outer ring, collision free 
     }
   }
 
-  assert.equal(plan.wonders.length, 8)
-  assert.deepEqual(plan.wonders.map((wonder: any) => wonder.id).sort(), ['acropolis', 'arch', 'colosseum', 'pagoda', 'palace', 'pantheon', 'supertall', 'wall'])
+  assert.equal(plan.wonders.length, 12)
+  assert.deepEqual(plan.wonders.map((wonder: any) => wonder.id).sort(), ['acropolis', 'aqueduct', 'arch', 'colosseum', 'heaven', 'lighthouse', 'pagoda', 'palace', 'pantheon', 'skyline', 'supertall', 'wall'])
   for (const a of plan.wonders) {
     assert(Math.hypot(a.x, a.z) > CANAL.outer, a.id + ' stays outside the canal')
+    for (let x = a.x0; x <= a.x1; x += 2) for (let z = a.z0; z <= a.z1; z += 2) assert(riverDistance(x, z) > RIVER_HALF, a.id + ' stays out of the river')
     for (const b of plan.wonders) if (a !== b) assert(!(a.x0 < b.x1 && b.x0 < a.x1 && a.z0 < b.z1 && b.z0 < a.z1), a.id + ' overlaps ' + b.id)
   }
   assert.equal(plan.cityEdge, CITY_EDGE)
   assert.equal(plan.outerEdge, OUTER_EDGE)
   assert.deepEqual(plan.sea, HARBOUR)
   assert(plan.fields.length >= 40, 'farms surround the city: ' + plan.fields.length)
-  assert(plan.parks.length >= 10, 'parks dot the city: ' + plan.parks.length)
+  assert(plan.parks.length >= 40, 'parks dot the city: ' + plan.parks.length)
+  assert.equal(plan.wallR, WALL_R)
+  assert(plan.river.legs.length === 2 && plan.riverBridges.length >= 10, 'the river is crossed by bridges: ' + plan.riverBridges.length)
+  assert(plan.hills.some((hill: any) => hill.mountain) && plan.hills.some((hill: any) => !hill.mountain), 'hills and mountains on the horizon')
 
   assert.equal(computeMetropolis(), plan, 'the plan is computed once and is static')
   assert.equal(new Set(lots.map((lot: any) => lot.id)).size, lots.length, 'lot ids are unique')
