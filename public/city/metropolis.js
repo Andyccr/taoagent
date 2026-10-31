@@ -22,7 +22,7 @@ import { STREET_PROPS } from './street-props.js';
 import { antenna, chimneyPot } from './detail-props.js';
 import { createLodBatch, treeProxyGeometry } from './metro-batch.js';
 import { scatterProps } from './metro-scatter.js';
-import { riverGeometry, wallGeometry, terrainGeometry } from './metro-terrain.js';
+import { riverGeometry, wallGeometry, terrainGeometry, quayGeometry } from './metro-terrain.js';
 import { buildLife, buildNightLights } from './metro-life.js';
 import { buildPalace } from './wonder-palace.js';
 import { buildGreatPagoda } from './wonder-pagoda.js';
@@ -203,6 +203,15 @@ function staticGeometry() {
   }
   const merge = (gs) => gs && gs.length ? mergeGeometries(gs) : null;
   const roads = [];
+  // Raised pavements along both sides of every avenue and ring road.
+  const walks = [];
+  for (const road of plan.roads) {
+    if (road.kind !== 'avenue' && road.kind !== 'ring') continue;
+    const a = road.pts[0], b = road.pts[road.pts.length - 1];
+    const closed = road.kind === 'ring' && (a[0] !== b[0] || a[1] !== b[1]);
+    for (const side of [-1, 1]) walks.push(ribbon(offsetPolyline(road.pts, side * (road.w / 2 + 0.55), closed), 1.1, closed));
+  }
+  const pavement = merge(walks); if (pavement) roads.push({ geo: pavement, color: '#e3dccb', y: 0.04 });
   const main = merge([...byKind.ring, ...byKind.avenue]);
   if (main) roads.push({ geo: main, color: '#d8d0bc', y: 0.02 });
   const street = merge(byKind.street); if (street) roads.push({ geo: street, color: '#cfc5ae', y: 0.025 });
@@ -218,7 +227,7 @@ function staticGeometry() {
 
   sharedStatic = {
     roads, waterGeo, kerbs, sea, crosswalks: crosswalkGeometry(plan), bridge: bridgeWithRail(canal.half * 2 + 1.5, 5.2),
-    riverBridge: bridge(plan.river.half * 2 + 2, 6.4), wall: wallGeometry(plan), terrain: terrainGeometry(plan),
+    riverBridge: bridge(plan.river.half * 2 + 2, 6.4), wall: wallGeometry(plan), terrain: terrainGeometry(plan), quay: quayGeometry(plan),
   };
   return sharedStatic;
 }
@@ -368,6 +377,7 @@ export function buildMetropolis(scene, { claimedLots = new Set(), quality = 'med
     plan.riverBridges.forEach((b, i) => { q.setFromAxisAngle(up, b.rotY); m4.compose(pos.set(b.x, 0, b.z), q, sc.set(b.w / 6.4, 1, 1)); rb.setMatrixAt(i, m4); });
     rb.computeBoundingSphere(); root.add(rb); stats.instancedMeshes++;
   }
+  const seaWall = new THREE.Mesh(st.quay, solid); seaWall.receiveShadow = quality !== 'low'; root.add(seaWall);
   const wall = new THREE.Mesh(st.wall, solid); wall.name = 'cityWall'; wall.castShadow = quality === 'high'; wall.receiveShadow = quality !== 'low'; root.add(wall);
   if (st.terrain.hills) { const hills = new THREE.Mesh(st.terrain.hills, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, flatShading: true })); hills.name = 'hills'; root.add(hills); }
   if (st.terrain.mountains) { const range = new THREE.Mesh(st.terrain.mountains, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, flatShading: true, fog: false })); range.name = 'mountains'; root.add(range); }

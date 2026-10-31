@@ -40,6 +40,21 @@ export function riverGeometry(plan) {
   return { water: mergeGeometries(water), quay: mergeGeometries(quay), path: mergeGeometries(path) };
 }
 
+// Harbour quay: a stone sea wall with a paved edge along the shore arc.
+export function quayGeometry(plan) {
+  const g = createGeo(), { from, to, shore } = plan.sea;
+  const n = Math.ceil(((to - from) * Math.PI / 180) * shore / 4);
+  for (let i = 0; i < n; i++) {
+    const deg = from + (to - from) * (i + 0.5) / n, [x, z] = polarXZ(shore - 0.6, deg);
+    g.group({ x, z, ry: -rad(deg) + Math.PI }, (w) => {
+      w.box(4.3, 1.4, 2.2, 0, -0.9, 0, 0x8f877a);
+      w.box(4.3, 0.12, 1.4, 0, 0.5, -0.6, 0xbdb39f);
+      if (i % 3 === 0) w.cyl(0.18, 0.22, 0.5, 0, 0.5, 0.7, 0x3a3733, 6);
+    });
+  }
+  return g.build();
+}
+
 // City wall: crenellated curtain wall on plan.wallR with bastions; gatehouses where avenues cross,
 // water gates where the river crosses, and a gap where the 万里城关 wonder stands in for the main gate.
 export function wallGeometry(plan) {
@@ -121,7 +136,7 @@ export function wallGeometry(plan) {
 // street level instead of turning into flat fog-coloured cut-outs.
 export function terrainGeometry(plan) {
   const parts = [], far = [];
-  const haze = new THREE.Color(0xc9cfd2);
+  const haze = new THREE.Color(0xb7c4cf);
   const grass = new THREE.Color(0x9fb27c), forest = new THREE.Color(0x6f8a58), rock = new THREE.Color(0x9a9183), snow = new THREE.Color(0xf1efe8);
   const c = new THREE.Color();
   for (const [hi, h] of plan.hills.entries()) {
@@ -137,12 +152,12 @@ export function terrainGeometry(plan) {
       const ridge = h.mountain ? 0.12 * Math.sin(ang * 5 + hi) * (1 - d) : 0;
       const y = h.h * Math.max(0, prof + ridge);
       pos.setXYZ(i, h.x + x * h.r, y - 0.4, h.z + z * h.r);
-      const k = y / 260;
+      const k = y / 170;
       if (!h.mountain) c.copy(grass).lerp(forest, Math.min(1, y / (h.h + 1) * 0.9 + ((hi + i) % 3) * 0.05));
       else if (k > 0.62) c.copy(snow);
       else if (k > 0.32) c.copy(rock).lerp(snow, (k - 0.32) * 1.2);
       else c.copy(forest).lerp(rock, k * 2.6);
-      if (h.mountain) c.lerp(haze, 0.42);
+      if (h.mountain) c.lerp(haze, 0.55);
       colors[i * 3] = c.r; colors[i * 3 + 1] = c.g; colors[i * 3 + 2] = c.b;
     }
     base.setAttribute('color', new THREE.BufferAttribute(colors, 3));

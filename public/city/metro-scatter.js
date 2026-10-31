@@ -159,7 +159,7 @@ export function scatterProps(plan, { claimedLots = new Set(), quality = 'medium'
     if (lot.kind === 'warehouse' || lot.kind === 'workshop' || lot.kind === 'factory' || lot.kind === 'boathouse') { if (h % 2 === 0) put('barrelStack', side * lot.size * 0.3, front, 0, 'prop'); if (h % 5 === 0) put('handcart', -side * lot.size * 0.2, front + 0.3, 0.4, 'prop'); }
     if (lot.kind === 'barn' || lot.kind === 'farmhouse' || lot.kind === 'windmill') { put('haystack', side * lot.size * 0.62, 0, 0, 'prop'); if (h % 3 === 0) put('oxcart', -side * lot.size * 0.3, front + 0.4, 0.3, 'prop'); }
     if (lot.kind === 'cottage' || lot.kind === 'farmhouse' || lot.kind === 'vineyard') {
-      for (const lat of [-2.1, 0, 2.1]) if (Math.abs(lat) > 0.5 || h % 3) put('fence', lat * lot.size / 7, front - 0.15, 0, 'prop');
+      for (const lat of [-2.1, 0, 2.1]) if (Math.abs(lat) > 0.5 || h % 3) put('fence', lat * lot.size / 7, lot.size / 2 - 0.25, 0, 'prop');
       if (h % 2) put(pickTree('outer', h >>> 4), -side * (lot.size / 2 + 1.3), -0.8, 0, 'tree', 0.9);
     }
     if ((lot.style === 'chinese' || lot.style === 'common') && (lot.kind === 'siheyuan' || lot.kind === 'courtyardLarge') && h % 3 === 0) put('blossom', side * (lot.size / 2 + 1.1), 0.5, 0, 'tree', 0.85);
@@ -200,6 +200,22 @@ export function scatterProps(plan, { claimedLots = new Set(), quality = 'medium'
       const x = f.x + Math.cos(f.rotY) * (f.w / 2 + 1.5) + Math.sin(f.rotY) * k * 3.2, z = f.z - Math.sin(f.rotY) * (f.w / 2 + 1.5) + Math.cos(f.rotY) * k * 3.2;
       if (free(x, z, 0.4, 0.5)) push('poplar', x, z, k, 1, 'tree', (h + k) & 1);
     }
+  }
+  // 8. Groves and orchards on open land outside the walls, thinning out into the countryside.
+  const GR = (n) => { let h = hash('grove' + n); return () => ((h = Math.imul(h ^ (h >>> 15), 2246822519) >>> 0) / 4294967296); };
+  const gr = GR(quality);
+  for (let x = -640; x <= 640; x += 13) for (let z = -640; z <= 640; z += 13) {
+    const jx = x + (gr() - 0.5) * 9, jz = z + (gr() - 0.5) * 9, r = Math.hypot(jx, jz);
+    if (r < plan.wallR + 10 || r > 640) continue;
+    const a = angleOf(jx, jz);
+    if (inHarbour(plan, a) && r > plan.sea.shore - 6) continue;
+    const clump = Math.sin(jx * 0.021 + 1.3) * Math.cos(jz * 0.017 - 0.7) + Math.sin((jx + jz) * 0.011);
+    if (clump < 0.2 || gr() > 0.8) continue;
+    if (plan.fields.some((f) => Math.abs(f.x - jx) < f.w / 2 + 1.5 && Math.abs(f.z - jz) < f.d / 2 + 1.5)) continue;
+    if (!free(jx, jz, 1.2, 1.2)) continue;
+    const h = hash(Math.round(jx) + ':' + Math.round(jz) + 'g');
+    const orchard = r > plan.outerEdge && h % 3 === 0;
+    push(orchard ? 'blossom' : ['planeTree', 'poplar', 'pine', 'cypress', 'planeTree'][h % 5], jx, jz, (h % 628) / 100, orchard ? 0.8 : 0.95 + (h % 40) / 100, 'tree', h % 3);
   }
   return out;
 }

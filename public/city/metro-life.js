@@ -132,7 +132,7 @@ export function buildNightLights(plan, props, claimedLots) {
   grad.addColorStop(0, 'rgba(255,255,255,1)'); grad.addColorStop(0.35, 'rgba(255,255,255,0.75)'); grad.addColorStop(1, 'rgba(255,255,255,0)');
   ctx.fillStyle = grad; ctx.fillRect(0, 0, 32, 32);
   const tex = new THREE.CanvasTexture(dot); tex.colorSpace = THREE.SRGBColorSpace;
-  const pts = new THREE.Points(g, new THREE.PointsMaterial({ size: 3.4, map: tex, vertexColors: true, transparent: true, depthWrite: false, sizeAttenuation: true, fog: true, blending: THREE.AdditiveBlending }));
+  const pts = new THREE.Points(g, new THREE.PointsMaterial({ size: 4.6, map: tex, vertexColors: true, transparent: true, depthWrite: false, sizeAttenuation: true, fog: false, blending: THREE.AdditiveBlending }));
   pts.name = 'nightLights'; pts.visible = false; pts.frustumCulled = false;
   return pts;
 }

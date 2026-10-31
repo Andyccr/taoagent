@@ -95,8 +95,8 @@ export function circleHitsBox(x, z, r, b, margin = 0) {
 const NORM = (a) => ((a % 360) + 360) % 360;
 const inHarbour = (a) => { const n = NORM(a); return n >= HARBOUR.from && n <= HARBOUR.to; };
 const SIZE_RANGE = { inner: [5, 7.2], blend: [5.5, 8], suburb: [6, 7], industrial: [8, 9], harbour: [7, 8.5], country: [7, 9] };
-const RADIAL_STEP = { inner: 7, blend: 7.2, suburb: 8.5, industrial: 9.5, harbour: 8.5, country: 14 };
-const KEEP_PROB = { inner: 0.95, blend: 0.88, suburb: 0.62, industrial: 0.75, harbour: 0.8, country: 0.2 };
+const RADIAL_STEP = { inner: 7, blend: 7.2, suburb: 7.6, industrial: 9.5, harbour: 8.5, country: 14 };
+const KEEP_PROB = { inner: 0.95, blend: 0.92, suburb: 0.8, industrial: 0.8, harbour: 0.85, country: 0.24 };
 
 function zoneAt(r, a) {
   if (r < CITY_EDGE) return 'inner';
@@ -416,11 +416,11 @@ export function computeMetropolis() {
   const HR = rng('hills');
   for (let i = 0; i < 70; i++) {
     const far = i >= 40;
-    const r = far ? 980 + HR() * 420 : 610 + HR() * 300, a = HR() * 360;
+    const r = far ? 1150 + HR() * 450 : 610 + HR() * 300, a = HR() * 360;
     if (inHarbour(a) || NORM(a - 45) < 40 || NORM(45 - a) < 40) continue;
     const p = polar(r, a);
     if (riverDistance(p.x, p.z) < (far ? 90 : 50)) continue;
-    hills.push({ x: p.x, z: p.z, r: far ? 120 + HR() * 160 : 45 + HR() * 70, h: far ? 90 + HR() * 170 : 10 + HR() * 26, mountain: far });
+    hills.push({ x: p.x, z: p.z, r: far ? 140 + HR() * 170 : 45 + HR() * 70, h: far ? 55 + HR() * 105 : 10 + HR() * 26, mountain: far });
   }
 
   const usedParks = parks.filter((p) => p.used).map((p, i) => ({ id: `pk${i}`, x: p.x, z: p.z, r: p.r, kind: p.kind }));
