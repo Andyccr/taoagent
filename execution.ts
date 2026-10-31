@@ -192,6 +192,9 @@ export async function executeExternal(store: Store,key: string,agentId: string,t
   let releaseDurable:(()=>void)|undefined
   try {
     releaseDurable=durableEffectLock(store)
+    // Another caller may have executed the same approved action while this one waited for the locks.
+    const settled=actions(store,key).find(item=>item.id===signature)
+    if(settled?.status==='complete'||settled?.status==='failed')return {historicalExecution:true,status:settled.status,result:settled.result,notice:'这是已执行回执，不会自动重复副作用'}
     if(store.requireActiveSession(key).lifecycleRevision!==action.sessionRevision)throw new HttpError(409,'群聊生命周期已更改，旧审批不再执行')
     if(action.automaticSessionId){const session=improvementSession(store,key);if(session?.id!==action.automaticSessionId||session.status!=='active'||Date.now()>=session.expiresAt)throw new HttpError(403,'原自动改进授权已失效，不会重放')}
     if(!store.groupMembers(key).includes(agentId))throw new HttpError(403,'成员已离群')

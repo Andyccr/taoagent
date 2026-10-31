@@ -85,3 +85,24 @@ test('unexpected server failures are logged locally with credentials redacted, e
     assert.ok(!logged[0].includes('stability-secret-key'))
   } finally { console.error = original; app.server.closeAllConnections(); app.server.close(); fs.rmSync(root, { recursive: true, force: true }) }
 })
+
+test('an approved action already executed elsewhere while waiting for the operation lock is not executed twice', { skip: process.platform === 'win32' }, async () => {
+  const { root, store } = fixture()
+  try {
+    const chat = store.directSession('main'), signal = new AbortController().signal
+    const holder = executeExternal(store, chat.id, 'main', 't', 'hold', 'shell', { command: 'sleep 1' }, signal, () => {})
+    decide(store, chat.id, actions(store, chat.id)[0].id, true)
+    await new Promise(resolve => setTimeout(resolve, 200))
+    const waiting = executeExternal(store, chat.id, 'main', 't', 'write', 'write_file', { path: 'twice.txt', content: 'x' }, signal, () => {})
+    const target = actions(store, chat.id).find(item => item.name === 'write_file')!
+    decide(store, chat.id, target.id, true)
+    await new Promise(resolve => setTimeout(resolve, 100))
+    const all = actions(store, chat.id); Object.assign(all.find(item => item.id === target.id)!, { status: 'complete', result: { written: true, elsewhere: true } })
+    json(store.file('chats', chat.id, 'actions.json'), all)
+    await holder
+    const result = await waiting as { historicalExecution?: boolean }
+    assert.equal(result.historicalExecution, true)
+    assert.equal(fs.existsSync(store.file('workspace', chat.id, 'twice.txt')), false)
+    assert.equal(actions(store, chat.id).find(item => item.id === target.id)?.status, 'complete')
+  } finally { fs.rmSync(root, { recursive: true, force: true }) }
+})
