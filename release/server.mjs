@@ -89420,27 +89420,30 @@ var Store2 = class {
     this.session(key);
     const directory = this.file("chats", id(key), "turn-history"), active = this.file("chats", key, "turns.json");
     for (let attempt = 0; ; attempt++) {
-      const files = [...sealedSegments(directory, ".json"), active], signature2 = segmentsSignature(files);
+      const sealed = sealedSegments(directory, ".json");
+      const current = fs2.existsSync(active) ? read(active, this.root) : [];
+      if (sealedSegments(directory, ".json").join("\n") !== sealed.join("\n")) {
+        if (attempt >= 100) throw new HttpError(409, "\u8F6E\u6B21\u6B63\u5728\u5206\u6BB5\uFF0C\u8BF7\u91CD\u8BD5");
+        continue;
+      }
       const byId = /* @__PURE__ */ new Map();
-      for (const file of files) {
+      for (const file of sealed) {
         const fileSig = fileSignature(file);
         if (!fileSig) continue;
-        let turns;
-        if (file === active) turns = read(file, this.root);
-        else {
-          let cached = this.sealedTurns.get(file);
-          if (cached?.signature !== fileSig) {
-            cached = { signature: fileSig, turns: read(file, this.root) };
-            this.sealedTurns.set(file, cached);
-          }
-          turns = structuredClone(cached.turns);
+        let cached = this.sealedTurns.get(file);
+        if (cached?.signature !== fileSig) {
+          cached = { signature: fileSig, turns: read(file, this.root) };
+          this.sealedTurns.set(file, cached);
         }
-        for (const turn of turns) {
+        for (const turn of structuredClone(cached.turns)) {
           byId.delete(turn.id);
           byId.set(turn.id, turn);
         }
       }
-      if (attempt < 3 && segmentsSignature([...sealedSegments(directory, ".json"), active]) !== signature2) continue;
+      for (const turn of current) {
+        byId.delete(turn.id);
+        byId.set(turn.id, turn);
+      }
       return [...byId.values()];
     }
   }
@@ -89629,31 +89632,32 @@ ${text2}`).join("\n\n");
   messageCache = /* @__PURE__ */ new Map();
   messages(key) {
     this.session(key);
-    const chat = this.file("chats", id(key));
+    const chat = this.file("chats", id(key)), directory = this.file("chats", key, "history"), active = this.file("chats", key, "messages.jsonl");
     for (let attempt = 0; ; attempt++) {
-      const files = this.historyFiles(key), signature2 = segmentsSignature(files);
+      const sealedFiles = sealedSegments(directory, ".jsonl"), signature2 = segmentsSignature([...sealedFiles, active]);
       let cached = this.messageCache.get(chat);
       if (cached?.signature !== signature2) {
+        let text2 = "";
+        try {
+          text2 = fs2.readFileSync(active, "utf8");
+        } catch (error) {
+          if (error.code !== "ENOENT") throw error;
+        }
+        if (sealedSegments(directory, ".jsonl").join("\n") !== sealedFiles.join("\n")) {
+          if (attempt >= 100) throw new HttpError(409, "\u5386\u53F2\u6B63\u5728\u5206\u6BB5\uFF0C\u8BF7\u91CD\u8BD5");
+          continue;
+        }
         const sealed = /* @__PURE__ */ new Map(), messages = [];
-        let activeCount = 0, vanished = false;
-        for (const file of files) {
+        for (const file of sealedFiles) {
           const fileSig = fileSignature(file);
           if (!fileSig) continue;
-          const reuse = file === files.at(-1) ? void 0 : cached?.sealed.get(file);
-          let parsed;
-          try {
-            parsed = reuse?.signature === fileSig ? reuse.messages : parseJsonl(fs2.readFileSync(file, "utf8"));
-          } catch (error) {
-            if (error.code !== "ENOENT" || attempt >= 3) throw error;
-            vanished = true;
-            break;
-          }
-          if (file === files.at(-1)) activeCount = parsed.length;
-          else sealed.set(file, { signature: fileSig, messages: parsed });
+          const reuse = cached?.sealed.get(file), parsed = reuse?.signature === fileSig ? reuse.messages : parseJsonl(fs2.readFileSync(file, "utf8"));
+          sealed.set(file, { signature: fileSig, messages: parsed });
           for (const message of parsed) messages.push(message);
         }
-        if (vanished || attempt < 3 && segmentsSignature(this.historyFiles(key)) !== signature2) continue;
-        cached = { signature: signature2, sealed, messages, activeCount };
+        const current = parseJsonl(text2);
+        for (const message of current) messages.push(message);
+        cached = { signature: signature2, sealed, messages, activeCount: current.length };
       }
       this.messageCache.delete(chat);
       this.messageCache.set(chat, cached);
