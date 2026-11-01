@@ -118,6 +118,7 @@ export function steerConversation(store:Store,key:string,content:string,memberId
 
 export async function runConversation(store:Store,key:string,content:string,modelOverride:string,signal:AbortSignal,event:(value:Record<string,unknown>)=>void,requestedMembers?:unknown,options:{retryTurnId?:string;requestId?:string;lifeOrigin?:{agentId:string;runId:string};modelCallLimit?:number}={}){
   const authorization=improvementSession(store,key)
+  try{store.rotateContextSnapshots(key)}catch(error){console.error('[taoagent] context snapshot rotation skipped: '+(error instanceof Error?error.message:String(error)))}
   const emit=event;event=value=>emit({...value,conversationId:key})
   const session=store.requireActiveSession(key),plainChat=session.componentKind==='chat',collective=!!store.collectiveGroup(key)
   const currentMembers=()=>{const latest=store.session(key);return latest.archivedAt||latest.lifecycleRevision!==session.lifecycleRevision?[]:store.groupMembers(key)}
@@ -136,7 +137,7 @@ export async function runConversation(store:Store,key:string,content:string,mode
     if(!members.length)throw new HttpError(409,'本对话没有活动成员，请先恢复或添加 Bot')
     if(plainChat)return members
     if(session.discussionMode==='brainstorm'){
-      const lead=members.includes(session.coordinatorId||'')?session.coordinatorId!:members[0],recent=store.turns(key).slice(-5)
+      const lead=members.includes(session.coordinatorId||'')?session.coordinatorId!:members[0],recent=store.recentTurns(key,5)
       const count=(member:string)=>recent.reduce((sum,turn)=>sum+turn.speakers.filter(item=>item.agentId===member&&item.status==='complete').length,0)
       const peer=members.filter(member=>member!==lead).sort((a,b)=>count(a)-count(b)||members.indexOf(a)-members.indexOf(b))[0]
       return peer?[lead,peer]:[lead]
@@ -146,7 +147,7 @@ export async function runConversation(store:Store,key:string,content:string,mode
   if(options.requestId&&!options.retryTurnId){id(options.requestId);const existing=store.turns(key).find(turn=>turn.requestId===options.requestId);if(existing){if(existing.content!==content)throw new HttpError(409,'本次提交标识已用于另一条消息');event({type:'accepted',message:store.messages(key).find(message=>message.id===existing.id)});event({type:'turn',turn:existing});event({type:'done',duplicate:true});return}}
   const previous=options.retryTurnId?store.turns(key).find(turn=>turn.id===options.retryTurnId):undefined
   if(options.retryTurnId&&!previous)throw new HttpError(400,'找不到待继续的讨论')
-  if(previous&&store.turns(key).at(-1)?.id!==previous.id)throw new HttpError(400,'只能继续最近一轮讨论')
+  if(previous&&store.recentTurns(key,1)[0]?.id!==previous.id)throw new HttpError(400,'只能继续最近一轮讨论')
   if(previous){
     for(let index=0;index<previous.speakers.length;index++){
       const entry=previous.speakers[index]

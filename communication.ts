@@ -44,7 +44,7 @@ export function discussionView(turn: Turn, topic?: string) {
 }
 
 export function relationshipView(store: Store,key: string){
-  const session=store.session(key),members=store.groupMembers(key),turns=store.turns(key).slice(-20)
+  const session=store.session(key),members=store.groupMembers(key),turns=store.recentTurns(key,20)
   const edges=new Map<string,{from:string;to:string;delivered:number;failed:number;pending:number;openQuestions:number}>()
   for(const turn of turns){
     const questions=discussionView(turn).questions

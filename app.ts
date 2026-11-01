@@ -71,8 +71,8 @@ export function createApp(home = path.join(ROOT, 'home'), options: {seed?: boole
     const all = store.messages(key), end = before ? all.findIndex(message => message.id === before) : all.length
     if (end < 0) throw new HttpError(400, '历史游标不存在，请刷新后重试')
     const start = Math.max(0, end - 100)
-    const session = store.session(key), file = store.file('chats', key, 'messages.jsonl')
-    return { messages: all.slice(start, end), hasOlder: start > 0, total: all.length, turns: store.turns(key).slice(-10), revision: session.updatedAt + ':' + (fs.existsSync(file) ? fs.statSync(file).size : 0) }
+    const session = store.session(key)
+    return { messages: all.slice(start, end), hasOlder: start > 0, total: all.length, turns: store.recentTurns(key, 10), revision: session.updatedAt + ':' + store.historyBytes(key) }
   }
   const send = (res: http.ServerResponse, value: unknown, status = 200) => {
     res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' })
@@ -196,8 +196,7 @@ export function createApp(home = path.join(ROOT, 'home'), options: {seed?: boole
       if (route === '/api/state' && method === 'GET') {
         const sessions = store.sessions().map(session=>({...store.session(session.id),...(session.componentKind==='city'?{memberIds:store.groupMembers(session.id)}:{})}))
         const revisions = Object.fromEntries(sessions.filter(session => session.kind !== 'consult').map(session => {
-          const file = store.file('chats', session.id, 'messages.jsonl')
-          return [session.id, session.updatedAt + ':' + (fs.existsSync(file) ? fs.statSync(file).size : 0)]
+          return [session.id, session.updatedAt + ':' + store.historyBytes(session.id)]
         }))
         const running = [...new Set([...active.keys(), ...sessions.filter(session => store.isRunning(session.id)).map(session => session.id)])]
         send(res, { version, models: store.models().map(safeModel), account: store.account(), agents: store.agents(), groups: sessions.filter(s => s.kind === 'group').map(group=>({...group,groupVersion:store.groupVersion(group.id)})), revisions, running, conversations: workspaceConversations(store, running, createRedactor(store)).map(item=>({...item,queue:queueSummary(store,item.id)})), navigation: store.navigation() }); return
@@ -312,10 +311,10 @@ export function createApp(home = path.join(ROOT, 'home'), options: {seed?: boole
             send(res,authorizeImprovement(store,key,input));return
           }
         }
-        if(action==='relations'&&method==='GET'){send(res,JSON.parse(redact(store,JSON.stringify({...relationshipView(store,key),health:collaborationHealth(store,key,store.turns(key).at(-1),tasks(store,key))}))));return}
+        if(action==='relations'&&method==='GET'){send(res,JSON.parse(redact(store,JSON.stringify({...relationshipView(store,key),health:collaborationHealth(store,key,store.recentTurns(key,1)[0],tasks(store,key))}))));return}
         if(action==='reasoning'&&method==='GET'){send(res,JSON.parse(redact(store,JSON.stringify(reasoningView(store,key,{topic:url.searchParams.get('topic')||undefined,recordId:url.searchParams.get('recordId')||undefined,before:url.searchParams.get('before')||undefined})))));return}
         if(action==='communication'&&method==='GET'){
-          const turnId=url.searchParams.get('turnId'),turn=turnId?store.turns(key).find(item=>item.id===turnId):store.turns(key).at(-1)
+          const turnId=url.searchParams.get('turnId'),turn=turnId?store.turns(key).find(item=>item.id===turnId):store.recentTurns(key,1)[0]
           if(!turn)throw new HttpError(404,'没有找到本对话的讨论轮次')
           send(res,JSON.parse(redact(store,JSON.stringify(discussionView(turn,url.searchParams.get('topic')||undefined)))));return
         }

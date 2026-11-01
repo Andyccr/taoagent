@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
+import { gzipSync, gunzipSync } from 'node:zlib'
 import { lifeContext } from './social-state.ts'
 import { goProfile, isGoUrl } from './opencode-go.ts'
 
@@ -70,7 +71,7 @@ export function id(value: string): string {
   if (!/^[a-zA-Z0-9_-]{1,100}$/.test(value)) throw new HttpError(400, '无效 ID')
   return value
 }
-export function atomic(file: string, content: string) {
+export function atomic(file: string, content: string | Uint8Array) {
   fs.mkdirSync(path.dirname(file), { recursive: true })
   const tmp = file + '.' + crypto.randomUUID() + '.tmp'
   try { fs.writeFileSync(tmp, content, { mode: 0o600 }); fs.renameSync(tmp, file) }
@@ -103,6 +104,38 @@ export function appendAtomic(file: string, content: string) {
     fs.appendFileSync(tmp, content, { mode: 0o600 })
     fs.renameSync(tmp, file)
   } finally { if (fs.existsSync(tmp)) fs.unlinkSync(tmp) }
+}
+// Sealed segments of a segmented file, oldest first: zero-padded sequence numbers in one directory.
+export function sealedSegments(directory: string, extension: string): string[] {
+  let names: string[]
+  try { names = fs.readdirSync(directory) } catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') return []; throw error }
+  return names.filter(name => name.endsWith(extension) && /^\d{6,}$/.test(name.slice(0, -extension.length)))
+    .sort((a, b) => Number(a.slice(0, -extension.length)) - Number(b.slice(0, -extension.length))).map(name => path.join(directory, name))
+}
+export function nextSegment(directory: string, extension: string): string {
+  fs.mkdirSync(directory, { recursive: true })
+  const last = sealedSegments(directory, extension).at(-1), next = last ? Number(path.basename(last).slice(0, -extension.length)) + 1 : 1
+  return path.join(directory, String(next).padStart(6, '0') + extension)
+}
+export function segmentsSignature(files: string[]): string { return files.map(file => path.basename(file) + '=' + fileSignature(file)).join('|') }
+function parseJsonl(text: string): Message[] { return text.split('\n').filter(Boolean).flatMap(line => { try { return [JSON.parse(line) as Message] } catch { return [] } }) }
+// Windows can briefly refuse a rename while a scanner or reader holds the file; retry a few times.
+function renameRetrying(from: string, to: string) {
+  if (fs.existsSync(to)) throw new HttpError(409, '历史分段编号冲突，请重试')
+  for (let attempt = 0; ; attempt++) {
+    try { fs.renameSync(from, to); return } catch (error) {
+      const code = (error as NodeJS.ErrnoException).code
+      if (attempt >= 5 || (code !== 'EPERM' && code !== 'EBUSY' && code !== 'EACCES')) throw error
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 20 * (attempt + 1))
+    }
+  }
+}
+// One byte-identical copy before a file is first split; never overwritten.
+function backupOnce(file: string, backup: string) {
+  if (!fs.existsSync(file) || fs.existsSync(backup)) return
+  fs.mkdirSync(path.dirname(backup), { recursive: true })
+  const tmp = backup + '.' + crypto.randomUUID() + '.tmp'
+  try { fs.copyFileSync(file, tmp); if (!fs.existsSync(backup)) fs.renameSync(tmp, backup) } finally { if (fs.existsSync(tmp)) fs.unlinkSync(tmp) }
 }
 export function json(file: string, value: unknown) { atomic(file, JSON.stringify(value, null, 2) + '\n') }
 const corruptCopies = new Set<string>()
@@ -142,8 +175,7 @@ export class Store {
         if (input.pinned) value.pinned.push(input.targetKey)
       } else {
         const key = id(string(input.sessionId)), session = this.requireActiveSession(key)
-        const file = this.file('chats', key, 'messages.jsonl')
-        const revision = session.updatedAt + ':' + (fs.existsSync(file) ? fs.statSync(file).size : 0)
+        const revision = session.updatedAt + ':' + this.historyBytes(key)
         if (input.seenRevision !== revision) throw new HttpError(409, '对话已有新消息，请载入后重试')
         value.seen[key] = revision
       }
@@ -192,7 +224,7 @@ export class Store {
     this.seed('PROFILE.md', '# 我的个人信息\n\n在这里填写称呼、偏好、背景和希望 AI 记住的信息。此文件会随对话发送给所选模型。\n')
     this.seed('MEMORY.md', '# 长期记忆\n\n在这里维护跨对话共享的事实。\n')
     this.seed('RULES.md', '# 全局规则\n\n使用用户的语言，直接、简洁、诚实地回答。\n不要声称执行了没有执行的操作。\n尊重个人信息，不把猜测当成事实。\n')
-    this.seed('FORMAT.md', "# Taoagent 数据约定 v6\n\naccount.json：账户默认模型；models.json：账户绑定的 API、工具开关和输出参数；provider-keys.json：OpenCode Go 账户共享凭据。\nPROFILE.md：个人信息；RULES.md：全局规则；MEMORY.md：共享长期记忆。\nagents/<id>/agent.json：名字、可选模型覆盖、createdBy 创建者。RULES.md：身份规则；MEMORY.md：专属记忆；memory-history/：记忆修改前的快照。\nchats/<id>/session.json：固定私聊、群聊或 consult 内部协作；memberIds：成员。messages.jsonl：完整历史、作者、时间、操作活动；context.md：摘要；context.json 与 context-<agentId>.json：实际上下文及工具往返记录。\n每个 Agent 一个固定私聊入口；内部协作不会占用或读取用户与该 Agent 的私聊。群成员只读取自己的专属记忆与群内公开记录；@成员指定回复者，@全体唤起全员。\ncreate_agent 创建助手；list_agents 查找同事；consult_agent 实际咨询同事；create_group 组建群聊；remember 按 agent/group/member 范围追加记忆；search_history/search_memory 检索窗口外原文。群目标 purpose、memberRoles 职责、replyMode 协作方式、coordinatorId 负责人保存在 session.json。群 MEMORY.md 对全员可见；chats/<id>/agents/<agentId>/MEMORY.md 只向所属成员提供。summary.json 保存旧历史摘要与来源消息检查点，summary-history/ 保留旧摘要；原始历史不删除。操作记录可见，协作不能无限递归。\ndrafts/<agent|group>-<id>.txt：未发送草稿；files/：个人文件；archive/：旧数据。files/ 与 archive/ 不自动发送给模型。\nmemory-items.json：记忆来源、状态、置顶与纠错关系；MEMORY.md 仍可直接编辑并优先生效。turns.json：原问题与各成员进度；tool-results/<用户消息ID>.json：已执行工具回执；profile-history/：个人信息修改前版本。.run-lock/：临时进程锁，不随迁移包导出。\n手动记忆 sourceType=manual，消息提取为 message；纠正保留 replacesId。summary.json 的 memoryVersion 校验当前有效事实，过时摘要不再作为检查点；群摘要不读取成员私有笔记。turns.json 的 skipped 表示成员离群，attempts 与 modelId 记录实际尝试。\n所有路径相对 home/，文本 UTF-8，JSON 原子替换，历史按逻辑追加不删除。整体打包即可迁移。\n")
+    this.seed('FORMAT.md', "# Taoagent 数据约定 v6\n\naccount.json：账户默认模型；models.json：账户绑定的 API、工具开关和输出参数；provider-keys.json：OpenCode Go 账户共享凭据。\nPROFILE.md：个人信息；RULES.md：全局规则；MEMORY.md：共享长期记忆。\nagents/<id>/agent.json：名字、可选模型覆盖、createdBy 创建者。RULES.md：身份规则；MEMORY.md：专属记忆；memory-history/：记忆修改前的快照。\nchats/<id>/session.json：固定私聊、群聊或 consult 内部协作；memberIds：成员。messages.jsonl：最近的历史分段（满 1 MiB 后原样移入 history/NNNNNN.jsonl，完整历史 = history/ 各段 + messages.jsonl）、作者、时间、操作活动；context.md：摘要；context.json 与 context-<agentId>.json：实际上下文及工具往返记录。\n每个 Agent 一个固定私聊入口；内部协作不会占用或读取用户与该 Agent 的私聊。群成员只读取自己的专属记忆与群内公开记录；@成员指定回复者，@全体唤起全员。\ncreate_agent 创建助手；list_agents 查找同事；consult_agent 实际咨询同事；create_group 组建群聊；remember 按 agent/group/member 范围追加记忆；search_history/search_memory 检索窗口外原文。群目标 purpose、memberRoles 职责、replyMode 协作方式、coordinatorId 负责人保存在 session.json。群 MEMORY.md 对全员可见；chats/<id>/agents/<agentId>/MEMORY.md 只向所属成员提供。summary.json 保存旧历史摘要与来源消息检查点，summary-history/ 保留旧摘要；原始历史不删除。操作记录可见，协作不能无限递归。\ndrafts/<agent|group>-<id>.txt：未发送草稿；files/：个人文件；archive/：旧数据。files/ 与 archive/ 不自动发送给模型。\nmemory-items.json：记忆来源、状态、置顶与纠错关系；MEMORY.md 仍可直接编辑并优先生效。turns.json：最近的轮次（原问题与各成员进度；较早轮次按顺序封存在 turn-history/NNNNNN.json，同一轮以最后出现者为准）；contexts/<轮次>/：每次模型调用的上下文快照，较早轮次无损压缩到 contexts/archive/<轮次>.json.gz；tool-results/<用户消息ID>.json：已执行工具回执；profile-history/：个人信息修改前版本。.run-lock/：临时进程锁，不随迁移包导出。\n手动记忆 sourceType=manual，消息提取为 message；纠正保留 replacesId。summary.json 的 memoryVersion 校验当前有效事实，过时摘要不再作为检查点；群摘要不读取成员私有笔记。turns.json 的 skipped 表示成员离群，attempts 与 modelId 记录实际尝试。\n所有路径相对 home/，文本 UTF-8，JSON 原子替换，历史按逻辑追加不删除。整体打包即可迁移。\n")
     if (!fs.existsSync(this.file('agents', 'main', 'agent.json'))) this.saveAgent({ id: 'main', name: '助手', modelId: '' }, '你是我的个人助手。先理解我的目标，再给出清晰、实用的回答。', '')
   }
   file(...parts: string[]) { return path.join(this.root, ...parts) }
@@ -714,13 +746,75 @@ export class Store {
     this.commitMemory(key, agentId, scope, text, crypto.randomUUID(), items)
     return item
   }
+  // Turns: turns.json is the bounded active array (most recently saved last). When it grows past
+  // activeTurnLimit, its oldest half is sealed into turn-history/NNNNNN.json (written first, atomically),
+  // then turns.json is rewritten without them. Readers concatenate sealed segments and the active array and
+  // keep each turn's LAST occurrence, which reproduces the original "saved turn moves to the end" order and
+  // makes a crash between the two writes harmless (the duplicate is identical or older).
+  activeTurnLimit = 64
+  private sealedTurns = new Map<string, { signature: string; turns: Turn[] }>()
   turns(key: string): Turn[] {
-    this.session(key); const file = this.file('chats', key, 'turns.json')
-    return fs.existsSync(file) ? read<Turn[]>(file, this.root) : []
+    this.session(key)
+    const directory = this.file('chats', id(key), 'turn-history'), active = this.file('chats', key, 'turns.json')
+    for (let attempt = 0; ; attempt++) {
+      const files = [...sealedSegments(directory, '.json'), active], signature = segmentsSignature(files)
+      const byId = new Map<string, Turn>()
+      for (const file of files) {
+        const fileSig = fileSignature(file)
+        if (!fileSig) continue
+        let turns: Turn[]
+        if (file === active) turns = read<Turn[]>(file, this.root)
+        else {
+          let cached = this.sealedTurns.get(file)
+          if (cached?.signature !== fileSig) { cached = { signature: fileSig, turns: read<Turn[]>(file, this.root) }; this.sealedTurns.set(file, cached) }
+          turns = structuredClone(cached.turns)
+        }
+        for (const turn of turns) { byId.delete(turn.id); byId.set(turn.id, turn) }
+      }
+      if (attempt < 3 && segmentsSignature([...sealedSegments(directory, '.json'), active]) !== signature) continue
+      return [...byId.values()]
+    }
+  }
+  // Per-model-call context snapshots (contexts/<turnId>/<event>-<attempt>.json) stay raw for the newest
+  // turns; older turn directories are packed losslessly into contexts/archive/<turnId>.json.gz. Packing merges
+  // with an existing archive (raw files win) before the directory is removed, so a crash or a second process
+  // repeating the step loses nothing.
+  rotateContextSnapshots(key: string, keep = 24, quietMs = 600000) {
+    const directory = this.file('chats', id(key), 'contexts')
+    let entries: fs.Dirent[]
+    try { entries = fs.readdirSync(directory, { withFileTypes: true }) } catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') return 0; throw error }
+    const turns = entries.filter(entry => entry.isDirectory() && entry.name !== 'archive' && /^[a-zA-Z0-9_-]{1,100}$/.test(entry.name))
+      .map(entry => ({ name: entry.name, at: fs.statSync(path.join(directory, entry.name)).mtimeMs })).sort((a, b) => b.at - a.at || b.name.localeCompare(a.name))
+    let packed = 0
+    for (const turn of turns.slice(keep)) {
+      if (Date.now() - turn.at < quietMs) continue // Never pack a directory that may still be receiving snapshots.
+      const source = path.join(directory, turn.name), archive = path.join(directory, 'archive', turn.name + '.json.gz')
+      const files: Record<string, string> = fs.existsSync(archive) ? (JSON.parse(gunzipSync(fs.readFileSync(archive)).toString('utf8')) as { files: Record<string, string> }).files : {}
+      for (const entry of fs.readdirSync(source, { withFileTypes: true })) if (entry.isFile() && entry.name.endsWith('.json')) files[entry.name] = fs.readFileSync(path.join(source, entry.name), 'utf8')
+      atomic(archive, gzipSync(JSON.stringify({ turnId: turn.name, files })))
+      fs.rmSync(source, { recursive: true, force: true }); packed++
+    }
+    return packed
+  }
+  // The newest turns come from the bounded active array alone whenever it holds enough of them.
+  recentTurns(key: string, count: number): Turn[] {
+    this.session(key)
+    const file = this.file('chats', id(key), 'turns.json'), active = fs.existsSync(file) ? read<Turn[]>(file, this.root) : []
+    return active.length >= count ? active.slice(-count) : this.turns(key).slice(-count)
   }
   saveTurn(key: string, turn: Turn) {
+    this.session(key)
     turn.updatedAt = new Date().toISOString()
-    json(this.file('chats', key, 'turns.json'), [...this.turns(key).filter(item => item.id !== turn.id), turn])
+    const file = this.file('chats', id(key), 'turns.json')
+    let next = [...(fs.existsSync(file) ? read<Turn[]>(file, this.root) : []).filter(item => item.id !== turn.id), turn]
+    if (next.length > this.activeTurnLimit) {
+      const directory = this.file('chats', key, 'turn-history'), keep = Math.max(1, Math.floor(this.activeTurnLimit / 2))
+      // First split of a pre-segmentation turns.json: keep a byte-identical copy once.
+      if (!sealedSegments(directory, '.json').length) backupOnce(file, this.file('chats', key, 'backups', 'turns.json.pre-segments.bak'))
+      json(nextSegment(directory, '.json'), next.slice(0, next.length - keep))
+      next = next.slice(-keep)
+    }
+    json(file, next)
   }
   isRunning(key: string): boolean {
     const dir = this.file('chats', id(key), '.run-lock')
@@ -807,21 +901,43 @@ export class Store {
       return true
     })
   }
-  // Parsed histories are reused while the file identity (inode, size, mtime, ctime) is unchanged.
+  // Messages: messages.jsonl is the active segment. Once it reaches historySegmentBytes it is renamed, intact,
+  // to history/NNNNNN.jsonl (an atomic, lossless move that also migrates large pre-segmentation files) and a
+  // new active segment starts, so every append copies at most one bounded segment. Full history = sealed
+  // segments in order + active.
+  historySegmentBytes = 1048576
+  historyFiles(key: string): string[] { return [...sealedSegments(this.file('chats', id(key), 'history'), '.jsonl'), this.file('chats', key, 'messages.jsonl')] }
+  // Total history size: grows with every append and is unchanged by sealing, so revisions stay comparable.
+  historyBytes(key: string): number { return this.historyFiles(key).reduce((sum, file) => { try { return sum + fs.statSync(file).size } catch { return sum } }, 0) }
+  // Parsed histories are reused while every segment's identity (inode, size, mtime, ctime) is unchanged.
   // Every write goes through atomic rename, so any change, including one from another local instance, invalidates the entry.
-  private messageCache = new Map<string, { signature: string; messages: Message[] }>()
+  private messageCache = new Map<string, { signature: string; sealed: Map<string, { signature: string; messages: Message[] }>; messages: Message[]; activeCount: number }>()
   messages(key: string): Message[] {
     this.session(key)
-    const file = this.file('chats', id(key), 'messages.jsonl'), signature = fileSignature(file)
-    if (!signature) { this.messageCache.delete(file); return [] }
-    let cached = this.messageCache.get(file)
-    if (cached?.signature !== signature) {
-      const messages = fs.readFileSync(file, 'utf8').split('\n').filter(Boolean).flatMap(line => { try { return [JSON.parse(line) as Message] } catch { return [] } })
-      cached = { signature, messages }
-      this.messageCache.delete(file); this.messageCache.set(file, cached)
+    const chat = this.file('chats', id(key))
+    for (let attempt = 0; ; attempt++) {
+      const files = this.historyFiles(key), signature = segmentsSignature(files)
+      let cached = this.messageCache.get(chat)
+      if (cached?.signature !== signature) {
+        const sealed = new Map<string, { signature: string; messages: Message[] }>(), messages: Message[] = []
+        let activeCount = 0, vanished = false
+        for (const file of files) {
+          const fileSig = fileSignature(file)
+          if (!fileSig) continue
+          const reuse = file === files.at(-1) ? undefined : cached?.sealed.get(file)
+          let parsed: Message[]
+          try { parsed = reuse?.signature === fileSig ? reuse.messages : parseJsonl(fs.readFileSync(file, 'utf8')) }
+          catch (error) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT' || attempt >= 3) throw error; vanished = true; break } // Sealed by another instance mid-read.
+          if (file === files.at(-1)) activeCount = parsed.length; else sealed.set(file, { signature: fileSig, messages: parsed })
+          for (const message of parsed) messages.push(message)
+        }
+        if (vanished || attempt < 3 && segmentsSignature(this.historyFiles(key)) !== signature) continue
+        cached = { signature, sealed, messages, activeCount }
+      }
+      this.messageCache.delete(chat); this.messageCache.set(chat, cached)
       if (this.messageCache.size > 24) this.messageCache.delete(this.messageCache.keys().next().value as string)
-    } else { this.messageCache.delete(file); this.messageCache.set(file, cached) }
-    return cached.messages.map(message => ({ ...message }))
+      return cached.messages.map(message => ({ ...message }))
+    }
   }
   append(key: string, role: Message['role'], content: string, status: Message['status'] = 'complete', extra: Pick<Message, 'agentId' | 'agentName' | 'kind' | 'turnId' | 'phase' | 'contextMessageIds' | 'concurrentMessageIds' | 'replyToMessageId' | 'responseIntent'> = {}, messageId?: string) {
     return this.withMemoryLock(this.file('chats',id(key),'MEMORY.md'),()=>{
@@ -831,10 +947,17 @@ export class Store {
     // Append through a complete temp copy and atomic rename: a crash cannot leave a half JSON line.
     const file = this.file('chats', id(key), 'messages.jsonl')
     const message: Message = { id: messageId ? id(messageId) : crypto.randomUUID(), role, content, at, status, ...extra }
-    const before = fileSignature(file), cached = this.messageCache.get(file)
+    const chat = this.file('chats', id(key)), before = segmentsSignature(this.historyFiles(key)), cached = this.messageCache.get(chat)
+    let sealedFile = ''
+    try { if (fs.statSync(file).size >= this.historySegmentBytes) { sealedFile = nextSegment(this.file('chats', key, 'history'), '.jsonl'); renameRetrying(file, sealedFile) } }
+    catch (error) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error }
     appendAtomic(file, JSON.stringify(message) + '\n')
     // Extend a current cache entry instead of reparsing the whole history on the next read.
-    if (cached && before && cached.signature === before) this.messageCache.set(file, { signature: fileSignature(file), messages: [...cached.messages, { ...message }] })
+    if (cached && cached.signature === before) {
+      const sealed = new Map(cached.sealed)
+      if (sealedFile) sealed.set(sealedFile, { signature: fileSignature(sealedFile), messages: cached.messages.slice(cached.messages.length - cached.activeCount) })
+      this.messageCache.set(chat, { signature: segmentsSignature(this.historyFiles(key)), sealed, messages: [...cached.messages, { ...message }], activeCount: sealedFile ? 1 : cached.activeCount + 1 })
+    }
     // Persist the stored record, not the active-member view, so archived members return when restored.
     const stored = this.storedSession(key)
     stored.updatedAt = at

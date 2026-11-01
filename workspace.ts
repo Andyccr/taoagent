@@ -6,32 +6,37 @@ import { Store, HttpError, type Message } from './store.ts'
 
 // Read only the bounded tail for a roster excerpt; full history remains untouched.
 export function conversationPreview(store:Store,key:string,sanitize:(text:string)=>string=(text)=>text){
-  const file=store.file('chats',key,'messages.jsonl')
-  if(!fs.existsSync(file))return {preview:'',previewAt:'',previewAuthor:'',previewTruncated:false}
-  const size=fs.statSync(file).size,length=Math.min(size,65536),buffer=Buffer.alloc(length),fd=fs.openSync(file,'r')
-  try{fs.readSync(fd,buffer,0,length,size-length)}finally{fs.closeSync(fd)}
-  let tail=buffer.toString('utf8');if(size>length)tail=tail.slice(tail.indexOf('\n')+1)
-  for(const line of tail.trimEnd().split('\n').reverse()){
-    let raw:unknown;try{raw=JSON.parse(line)}catch{continue}
-    if(!raw||typeof raw!=='object'||Array.isArray(raw))continue
-    const message=raw as Record<string,unknown>
-    if(!['user','assistant'].includes(String(message.role))||message.kind||message.status!==undefined&&message.status!=='complete'||typeof message.content!=='string')continue
-    const content=sanitize(message.content).replace(/\s+/gu,' ').trim();if(!content)continue
-    const points=Array.from(content),truncated=points.length>140
-    return {preview:points.slice(0,140).join('')+(truncated?'…':''),previewAt:typeof message.at==='string'?message.at:'',previewAuthor:sanitize(message.role==='user'?'你':typeof message.agentName==='string'?message.agentName:'Bot'),previewTruncated:truncated}
+  // Scan the last 64 KiB of history, newest segment first (the active segment can be short right after sealing).
+  const files=store.historyFiles(key).filter(file=>fs.existsSync(file)).reverse()
+  if(!files.length)return {preview:'',previewAt:'',previewAuthor:'',previewTruncated:false}
+  let budget=65536,total=0
+  for(const file of files){
+    const size=fs.statSync(file).size;total+=size
+    if(budget<=0||!size)continue
+    const length=Math.min(size,budget),buffer=Buffer.alloc(length),fd=fs.openSync(file,'r');budget-=length
+    try{fs.readSync(fd,buffer,0,length,size-length)}finally{fs.closeSync(fd)}
+    let tail=buffer.toString('utf8');if(size>length)tail=tail.slice(tail.indexOf('\n')+1)
+    for(const line of tail.trimEnd().split('\n').reverse()){
+      let raw:unknown;try{raw=JSON.parse(line)}catch{continue}
+      if(!raw||typeof raw!=='object'||Array.isArray(raw))continue
+      const message=raw as Record<string,unknown>
+      if(!['user','assistant'].includes(String(message.role))||message.kind||message.status!==undefined&&message.status!=='complete'||typeof message.content!=='string')continue
+      const content=sanitize(message.content).replace(/\s+/gu,' ').trim();if(!content)continue
+      const points=Array.from(content),truncated=points.length>140
+      return {preview:points.slice(0,140).join('')+(truncated?'…':''),previewAt:typeof message.at==='string'?message.at:'',previewAuthor:sanitize(message.role==='user'?'你':typeof message.agentName==='string'?message.agentName:'Bot'),previewTruncated:truncated}
+    }
   }
-  return {preview:size?'打开查看完整交流':'',previewAt:'',previewAuthor:'',previewTruncated:!!size}
+  return {preview:total?'打开查看完整交流':'',previewAt:'',previewAuthor:'',previewTruncated:!!total}
 }
 
 export function workspaceConversations(store: Store, running: string[], sanitize:(text:string)=>string=(text)=>text) {
   const agents = new Map(store.agents().map(agent => [agent.id, agent]))
   return store.sessions().filter(session => session.kind !== 'consult' && (session.kind === 'group' || agents.has(session.agentId))).map(session => {
-    const file = store.file('chats', session.id, 'messages.jsonl')
-    const bytes = fs.existsSync(file) ? fs.statSync(file).size : 0
+    const bytes = store.historyBytes(session.id)
     const revision = session.updatedAt + ':' + bytes
     let actions: {status: string}[] = [], latest: ReturnType<Store['turns']>[number] | undefined
     try { actions = JSON.parse(store.text('chats', session.id, 'actions.json') || '[]') as {status: string}[] } catch { actions = [] }
-    try { latest = store.turns(session.id).at(-1) } catch { latest = undefined }
+    try { latest = store.recentTurns(session.id, 1)[0] } catch { latest = undefined }
     const waiting = actions.filter(action => ['pending', 'uncertain'].includes(action.status)).length
     const working = running.includes(session.id)
     const failed = !working && latest?.speakers.some(speaker => speaker.status === 'failed')
@@ -64,7 +69,8 @@ export async function searchWorkspace(store: Store, params: URLSearchParams, sig
   let scanned = 0
   for (const session of conversations) {
     signal?.throwIfAborted()
-    const file = store.file('chats', session.id, 'messages.jsonl')
+    // Sealed history segments first, then the active segment.
+    for (const file of store.historyFiles(session.id)) {
     if (!fs.existsSync(file)) continue
     const stream = fs.createReadStream(file, {encoding: 'utf8', signal})
     const lines = readline.createInterface({input: stream, crlfDelay: Infinity})
@@ -85,6 +91,7 @@ export async function searchWorkspace(store: Store, params: URLSearchParams, sig
         if (hits.length > limit + 1) hits.pop()
       }
     } finally { lines.close(); stream.destroy() }
+    }
   }
   const hasMore = hits.length > limit
   if (hasMore) hits.pop()

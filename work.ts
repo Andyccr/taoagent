@@ -90,7 +90,7 @@ export function workOverview(store: Store) {
       const common = { sessionId: session.id, title: session.title }
       const approvals = actions(store, session.id).filter(action => ['pending', 'uncertain'].includes(action.status)).map(action => ({ ...common, kind: 'approval', label: `${store.agent(action.agentId).name} · ${action.name}`, at: action.at }))
       const pending = tasks(store, session.id).filter(task => !taskSatisfied(task)).map(task => ({ ...common, kind: 'task', label: task.title+(task.review?.status==='awaiting_review'?' · 待独立验收':''), at: task.at }))
-      const turn = store.turns(session.id).at(-1)
+      const turn = store.recentTurns(session.id, 1)[0]
       const resume = turn && !store.isRunning(session.id) && unfinished(turn) ? [{ ...common, kind: 'resume', label: '这轮工作尚未完成', at: turn.at }] : []
       return [...approvals, ...pending, ...resume]
     }),
