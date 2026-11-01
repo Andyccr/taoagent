@@ -756,22 +756,24 @@ export class Store {
   turns(key: string): Turn[] {
     this.session(key)
     const directory = this.file('chats', id(key), 'turn-history'), active = this.file('chats', key, 'turns.json')
+    // Sealed segments never change once written, so the active array read between two identical listings is
+    // consistent with them; a seal in between (sealed file written first) changes the listing and the read retries.
     for (let attempt = 0; ; attempt++) {
-      const files = [...sealedSegments(directory, '.json'), active], signature = segmentsSignature(files)
+      const sealed = sealedSegments(directory, '.json')
+      const current = fs.existsSync(active) ? read<Turn[]>(active, this.root) : []
+      if (sealedSegments(directory, '.json').join('\n') !== sealed.join('\n')) {
+        if (attempt >= 100) throw new HttpError(409, '轮次正在分段，请重试')
+        continue
+      }
       const byId = new Map<string, Turn>()
-      for (const file of files) {
+      for (const file of sealed) {
         const fileSig = fileSignature(file)
         if (!fileSig) continue
-        let turns: Turn[]
-        if (file === active) turns = read<Turn[]>(file, this.root)
-        else {
-          let cached = this.sealedTurns.get(file)
-          if (cached?.signature !== fileSig) { cached = { signature: fileSig, turns: read<Turn[]>(file, this.root) }; this.sealedTurns.set(file, cached) }
-          turns = structuredClone(cached.turns)
-        }
-        for (const turn of turns) { byId.delete(turn.id); byId.set(turn.id, turn) }
+        let cached = this.sealedTurns.get(file)
+        if (cached?.signature !== fileSig) { cached = { signature: fileSig, turns: read<Turn[]>(file, this.root) }; this.sealedTurns.set(file, cached) }
+        for (const turn of structuredClone(cached.turns)) { byId.delete(turn.id); byId.set(turn.id, turn) }
       }
-      if (attempt < 3 && segmentsSignature([...sealedSegments(directory, '.json'), active]) !== signature) continue
+      for (const turn of current) { byId.delete(turn.id); byId.set(turn.id, turn) }
       return [...byId.values()]
     }
   }
@@ -914,25 +916,31 @@ export class Store {
   private messageCache = new Map<string, { signature: string; sealed: Map<string, { signature: string; messages: Message[] }>; messages: Message[]; activeCount: number }>()
   messages(key: string): Message[] {
     this.session(key)
-    const chat = this.file('chats', id(key))
+    const chat = this.file('chats', id(key)), directory = this.file('chats', key, 'history'), active = this.file('chats', key, 'messages.jsonl')
     for (let attempt = 0; ; attempt++) {
-      const files = this.historyFiles(key), signature = segmentsSignature(files)
+      const sealedFiles = sealedSegments(directory, '.jsonl'), signature = segmentsSignature([...sealedFiles, active])
       let cached = this.messageCache.get(chat)
       if (cached?.signature !== signature) {
+        // Sealed segments never change, so the active text read between two identical listings is consistent with
+        // them. A seal by another instance in between (or the active file briefly missing) changes the listing: retry.
+        let text = ''
+        try { text = fs.readFileSync(active, 'utf8') } catch (error) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error }
+        if (sealedSegments(directory, '.jsonl').join('\n') !== sealedFiles.join('\n')) {
+          if (attempt >= 100) throw new HttpError(409, '历史正在分段，请重试')
+          continue
+        }
         const sealed = new Map<string, { signature: string; messages: Message[] }>(), messages: Message[] = []
-        let activeCount = 0, vanished = false
-        for (const file of files) {
+        for (const file of sealedFiles) {
           const fileSig = fileSignature(file)
           if (!fileSig) continue
-          const reuse = file === files.at(-1) ? undefined : cached?.sealed.get(file)
-          let parsed: Message[]
-          try { parsed = reuse?.signature === fileSig ? reuse.messages : parseJsonl(fs.readFileSync(file, 'utf8')) }
-          catch (error) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT' || attempt >= 3) throw error; vanished = true; break } // Sealed by another instance mid-read.
-          if (file === files.at(-1)) activeCount = parsed.length; else sealed.set(file, { signature: fileSig, messages: parsed })
+          const reuse = cached?.sealed.get(file), parsed = reuse?.signature === fileSig ? reuse.messages : parseJsonl(fs.readFileSync(file, 'utf8'))
+          sealed.set(file, { signature: fileSig, messages: parsed })
           for (const message of parsed) messages.push(message)
         }
-        if (vanished || attempt < 3 && segmentsSignature(this.historyFiles(key)) !== signature) continue
-        cached = { signature, sealed, messages, activeCount }
+        const current = parseJsonl(text)
+        for (const message of current) messages.push(message)
+        // The signature was taken before the read, so the entry is never newer-labelled than its content.
+        cached = { signature, sealed, messages, activeCount: current.length }
       }
       this.messageCache.delete(chat); this.messageCache.set(chat, cached)
       if (this.messageCache.size > 24) this.messageCache.delete(this.messageCache.keys().next().value as string)

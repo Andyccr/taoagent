@@ -196,3 +196,23 @@ test('reading while another process appends and seals never fails, duplicates or
     assert.ok(sealed(store, key).length > 20)
   } finally { fs.rmSync(root, { recursive: true, force: true }) }
 })
+
+test('reading turns while another process saves and seals them never drops, duplicates or reorders', async () => {
+  const { root, store, key } = fixture()
+  try {
+    const { spawn } = await import('node:child_process')
+    const script = `const {Store}=await import(${JSON.stringify(path.resolve('store.ts'))});const s=new Store(${JSON.stringify(root)});s.activeTurnLimit=4;for(let i=0;i<200;i++){const at=new Date().toISOString();s.saveTurn(${JSON.stringify(key)},{id:'t'+i,content:'turn '+i,modelId:'',at,updatedAt:at,speakers:[]})}`
+    const child = spawn(process.execPath, ['--experimental-strip-types', '--disable-warning=ExperimentalWarning', '--input-type=module', '-e', script], { stdio: 'inherit' })
+    const exited = once(child, 'exit')
+    let done = false; void exited.then(() => { done = true })
+    let reads = 0
+    while (!done) {
+      const seen = store.turns(key).map(item => item.id); reads++
+      assert.deepEqual(seen, Array.from({ length: seen.length }, (_, index) => 't' + index))
+      await new Promise(resolve => setImmediate(resolve))
+    }
+    const [code] = await exited
+    assert.equal(code, 0); assert.ok(reads > 5)
+    assert.deepEqual(store.turns(key).map(item => item.id), Array.from({ length: 200 }, (_, index) => 't' + index))
+  } finally { fs.rmSync(root, { recursive: true, force: true }) }
+})
